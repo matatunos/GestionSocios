@@ -15,11 +15,20 @@ class InstallerController {
             $admin_pass = $_POST['admin_pass'] ?? '';
 
             // 1. Test Connection
+            // 1. Test Connection & Create DB
             try {
+                // Connect without DB first to create it
+                $conn = new PDO("mysql:host=$host", $username, $password);
+                $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                
+                // Create DB if not exists
+                $conn->exec("CREATE DATABASE IF NOT EXISTS `$db_name` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+                
+                // Connect to the specific DB
                 $conn = new PDO("mysql:host=$host;dbname=$db_name", $username, $password);
                 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             } catch (PDOException $e) {
-                $error = "Error de conexión a la base de datos: " . $e->getMessage();
+                $error = "Error de conexión o creación de base de datos: " . $e->getMessage();
                 require __DIR__ . '/../Views/install.php';
                 return;
             }

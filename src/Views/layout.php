@@ -69,6 +69,18 @@ if (!isset($associationName)) {
                     </a>
                 </li>
                 <li>
+                    <a href="index.php?page=donors" class="nav-link <?php echo ($page === 'donors') ? 'active' : ''; ?>">
+                        <i class="fas fa-address-book"></i>
+                        <span>Donantes</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="index.php?page=book" class="nav-link <?php echo ($page === 'book') ? 'active' : ''; ?>">
+                        <i class="fas fa-book-open"></i>
+                        <span>Libro Fiestas</span>
+                    </a>
+                </li>
+                <li>
                     <a href="index.php?page=fees" class="nav-link <?php echo ($page === 'fees') ? 'active' : ''; ?>">
                         <i class="fas fa-receipt"></i>
                         <span>Cuotas</span>

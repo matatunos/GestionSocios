@@ -88,6 +88,22 @@ switch ($page) {
         else if ($action === 'store') $controller->store();
         else $controller->index();
         break;
+    case 'donors':
+        $controller = new DonorController();
+        if ($action === 'create') $controller->create();
+        else if ($action === 'store') $controller->store();
+        else if ($action === 'edit') $controller->edit($_GET['id']);
+        else if ($action === 'update') $controller->update($_GET['id']);
+        else if ($action === 'delete') $controller->delete($_GET['id']);
+        else $controller->index();
+        break;
+    case 'book':
+        $controller = new BookAdController();
+        if ($action === 'create') $controller->create();
+        else if ($action === 'store') $controller->store();
+        else if ($action === 'delete') $controller->delete($_GET['id']);
+        else $controller->index();
+        break;
     case 'settings':
         $controller = new SettingsController();
         if ($action === 'updateGeneral') $controller->updateGeneral();
