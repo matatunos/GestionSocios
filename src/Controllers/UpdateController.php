@@ -103,6 +103,41 @@ class UpdateController {
                     $this->db->exec("ALTER TABLE payments ADD COLUMN IF NOT EXISTS event_id INT DEFAULT NULL");
                 } catch (Exception $e) { /* Ignore */ }
 
+                // 6. Create donations table
+                $this->db->exec("CREATE TABLE IF NOT EXISTS donations (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    member_id INT NOT NULL,
+                    amount DECIMAL(10,2) NOT NULL,
+                    type ENUM('media','full','cover') NOT NULL,
+                    year YEAR NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE
+                )");
+
+                // 7. Create donors table
+                $this->db->exec("CREATE TABLE IF NOT EXISTS donors (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    name VARCHAR(150) NOT NULL,
+                    contact_person VARCHAR(100),
+                    phone VARCHAR(20),
+                    email VARCHAR(150),
+                    address TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )");
+
+                // 8. Create book_ads table
+                $this->db->exec("CREATE TABLE IF NOT EXISTS book_ads (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    donor_id INT NOT NULL,
+                    year YEAR NOT NULL,
+                    ad_type ENUM('media', 'full', 'cover', 'back_cover') NOT NULL,
+                    amount DECIMAL(10, 2) NOT NULL,
+                    status ENUM('paid', 'pending') DEFAULT 'pending',
+                    image_url VARCHAR(255),
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (donor_id) REFERENCES donors(id) ON DELETE CASCADE
+                )");
+
                 $message .= "Database updated successfully. All tables and settings configured.<br>";
                 $message .= "<strong>Update completed successfully!</strong>";
 
