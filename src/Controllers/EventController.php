@@ -21,11 +21,13 @@ class EventController {
     public function show($id) {
         $this->checkAdmin();
         // Load event data
-        $event = $this->event->readOne($id);
-        if (!$event) {
+        $this->event->id = $id;
+        if (!$this->event->readOne()) {
             header('Location: index.php?page=events&error=notfound');
             exit;
         }
+        $event = $this->event;
+        
         // Get all active members
         $stmt = $this->member->readAll();
         $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -44,8 +46,8 @@ class EventController {
     public function markPaid($eventId, $memberId) {
         $this->checkAdmin();
         // Ensure event exists
-        $event = $this->event->readOne($eventId);
-        if (!$event) {
+        $this->event->id = $eventId;
+        if (!$this->event->readOne()) {
             header('Location: index.php?page=events&error=notfound');
             exit;
         }
@@ -60,9 +62,9 @@ class EventController {
             $ins = $this->db->prepare("INSERT INTO payments (member_id, amount, payment_date, concept, status, fee_year, payment_type, event_id) VALUES (?, ?, ?, ?, 'paid', NULL, 'event', ?)");
             $ins->execute([
                 $memberId,
-                $event['price'],
+                $this->event->price,
                 date('Y-m-d'),
-                'Evento: ' . $event['name'],
+                'Evento: ' . $this->event->name,
                 $eventId
             ]);
         }
