@@ -93,24 +93,52 @@
 <div class="card">
     <div class="flex justify-between items-center mb-4">
         <h2>Actividad Reciente</h2>
-        <a href="#" class="btn btn-sm btn-secondary">Ver todo</a>
+        <a href="index.php?page=payments" class="btn btn-sm btn-secondary">Ver todos los pagos</a>
     </div>
     <div class="table-container">
         <table class="table">
             <thead>
                 <tr>
                     <th>Fecha</th>
-                    <th>Usuario</th>
-                    <th>Acción</th>
-                    <th>Detalle</th>
+                    <th>Socio</th>
+                    <th>Concepto</th>
+                    <th style="text-align: right;">Importe</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td colspan="4" style="text-align: center; padding: 2rem; color: var(--text-muted);">
-                        No hay actividad reciente para mostrar.
-                    </td>
-                </tr>
+                <?php if (empty($recentActivity)): ?>
+                    <tr>
+                        <td colspan="4" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                            No hay actividad reciente para mostrar.
+                        </td>
+                    </tr>
+                <?php else: ?>
+                    <?php 
+                    $typeIcons = [
+                        'fee' => 'fa-receipt',
+                        'event' => 'fa-calendar-alt',
+                        'donation' => 'fa-hand-holding-heart'
+                    ];
+                    foreach ($recentActivity as $activity): 
+                        $icon = $typeIcons[$activity['payment_type']] ?? 'fa-money-bill';
+                    ?>
+                        <tr>
+                            <td style="font-size: 0.875rem; color: var(--text-muted);">
+                                <?= date('d/m/Y H:i', strtotime($activity['activity_date'])) ?>
+                            </td>
+                            <td style="font-weight: 500;">
+                                <?= htmlspecialchars($activity['first_name'] . ' ' . $activity['last_name']) ?>
+                            </td>
+                            <td>
+                                <i class="fas <?= $icon ?>" style="margin-right: 0.5rem; color: var(--primary-600);"></i>
+                                <?= htmlspecialchars($activity['concept']) ?>
+                            </td>
+                            <td style="text-align: right; font-weight: 600; color: var(--secondary-600);">
+                                <?= number_format($activity['amount'], 2) ?> €
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </tbody>
         </table>
     </div>
