@@ -40,6 +40,12 @@ class SettingsController {
         $adPrices = $adPriceController->getPrices($currentYear);
         $nextYearPrices = $adPriceController->getPrices($currentYear + 1);
 
+        // Fetch Annual Fees
+        require_once __DIR__ . '/../Models/Fee.php';
+        $feeModel = new Fee($this->db);
+        $feesStmt = $feeModel->readAll();
+        $fees = $feesStmt->fetchAll(PDO::FETCH_ASSOC);
+
         // Do not expose password
         require __DIR__ . '/../Views/settings/index.php';
     }

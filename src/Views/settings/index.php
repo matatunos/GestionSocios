@@ -7,6 +7,7 @@
 <div class="card" style="padding: 0; overflow: hidden;">
     <div style="display: flex; border-bottom: 1px solid var(--border-light);">
         <button class="tab-btn active" onclick="openTab(event, 'general')">General</button>
+        <button class="tab-btn" onclick="openTab(event, 'fees')">Cuotas</button>
         <button class="tab-btn" onclick="openTab(event, 'ad_prices')">Precios Anuncios</button>
         <button class="tab-btn" onclick="openTab(event, 'appearance')">Apariencia</button>
         <button class="tab-btn" onclick="openTab(event, 'database')">Base de Datos</button>
@@ -120,6 +121,58 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Member Fees Tab -->
+        <div id="fees" class="tab-content" style="display: none;">
+            <h2 class="text-lg font-semibold mb-4">Cuotas de Socios</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Define New Fee -->
+                <div class="card">
+                    <h3 class="text-md font-semibold mb-4">Definir Nueva Cuota</h3>
+                    <form action="index.php?page=fees&action=store" method="POST">
+                        <div class="form-group">
+                            <label class="form-label">Año</label>
+                            <input type="number" name="year" class="form-control" value="<?php echo date('Y'); ?>" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Importe (€)</label>
+                            <input type="number" step="0.01" name="amount" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-full">
+                            <i class="fas fa-save"></i> Guardar Cuota
+                        </button>
+                    </form>
+                </div>
+
+                <!-- List Fees -->
+                <div class="card">
+                    <h3 class="text-md font-semibold mb-4">Cuotas Definidas</h3>
+                    <table class="table w-full">
+                        <thead>
+                            <tr>
+                                <th>Año</th>
+                                <th>Importe</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($fees as $fee): ?>
+                                <tr>
+                                    <td style="font-weight: 600;"><?php echo $fee['year']; ?></td>
+                                    <td><?php echo number_format($fee['amount'], 2); ?> €</td>
+                                    <td>
+                                        <a href="index.php?page=fees&action=generate&year=<?php echo $fee['year']; ?>" class="btn btn-sm btn-secondary" onclick="return confirm('¿Generar pagos pendientes para todos los socios activos para el año <?php echo $fee['year']; ?>?');">
+                                            <i class="fas fa-file-invoice-dollar"></i> Generar Pagos
+                                        </a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

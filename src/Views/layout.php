@@ -54,12 +54,7 @@ if (!isset($associationName)) {
                         <span>Socios</span>
                     </a>
                 </li>
-                <li>
-                    <a href="index.php?page=fees" class="nav-link <?php echo ($page === 'fees') ? 'active' : ''; ?>">
-                        <i class="fas fa-receipt"></i>
-                        <span>Cuotas</span>
-                    </a>
-                </li>
+                <!-- Fees link removed and moved to Settings -->
                 <li>
                     <a href="index.php?page=payments" class="nav-link <?php echo ($page === 'payments') ? 'active' : ''; ?>">
                         <i class="fas fa-money-bill-wave"></i>

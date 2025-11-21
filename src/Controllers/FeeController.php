@@ -19,9 +19,9 @@ class FeeController {
 
     public function index() {
         $this->checkAdmin();
-        $stmt = $this->fee->readAll();
-        $fees = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        require __DIR__ . '/../Views/fees/index.php';
+        // Redirect to settings as fees are now managed there
+        header('Location: index.php?page=settings&tab=fees');
+        exit;
     }
 
     public function store() {
@@ -37,19 +37,16 @@ class FeeController {
 
                 if ($this->fee->createOrUpdate()) {
                     $action = $exists ? 'updated' : 'created';
-                    header("Location: index.php?page=fees&success=$action&year=$year");
+                    header("Location: index.php?page=settings&tab=fees&success=$action&year=$year");
                     exit;
                 } else {
-                    $error = "Error al guardar la cuota.";
-                    $stmt = $this->fee->readAll();
-                    $fees = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                    require __DIR__ . '/../Views/fees/index.php';
+                    // In case of error, we might want to redirect back with error param
+                    header("Location: index.php?page=settings&tab=fees&error=save_failed");
+                    exit;
                 }
             } catch (Exception $e) {
-                $error = "Error: " . $e->getMessage();
-                $stmt = $this->fee->readAll();
-                $fees = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                require __DIR__ . '/../Views/fees/index.php';
+                header("Location: index.php?page=settings&tab=fees&error=" . urlencode($e->getMessage()));
+                exit;
             }
         }
     }
@@ -65,7 +62,7 @@ class FeeController {
         $fee = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$fee) {
-            header('Location: index.php?page=fees&error=no_fee_defined');
+            header('Location: index.php?page=settings&tab=fees&error=no_fee_defined');
             exit;
         }
 
@@ -103,6 +100,6 @@ class FeeController {
             }
         }
 
-        header("Location: index.php?page=fees&success=generated&count=$count&year=$year");
+        header("Location: index.php?page=settings&tab=fees&success=generated&count=$count&year=$year");
     }
 }
