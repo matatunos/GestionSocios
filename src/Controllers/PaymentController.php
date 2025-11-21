@@ -37,34 +37,71 @@ class PaymentController {
         $stmtEvents = $eventModel->readActive();
         $events = $stmtEvents->fetchAll(PDO::FETCH_ASSOC);
 
+        // Load Annual Fees for auto-fill
+        $feeModel = new Fee($this->db);
+        $stmtFees = $feeModel->readAll();
+        $fees = $stmtFees->fetchAll(PDO::FETCH_ASSOC);
+
         require __DIR__ . '/../Views/payments/create.php';
     }
 
     public function store() {
         $this->checkAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->payment->member_id = $_POST['member_id'];
-            $this->payment->amount = $_POST['amount'];
-            $this->payment->payment_date = $_POST['payment_date'];
-            $this->payment->concept = $_POST['concept'];
-            $this->payment->status = $_POST['status'];
-            $this->payment->payment_type = $_POST['payment_type'] ?? 'fee';
-            $this->payment->event_id = !empty($_POST['event_id']) ? $_POST['event_id'] : null;
-            
-            if ($this->payment->payment_type === 'fee') {
-                $this->payment->fee_year = date('Y', strtotime($this->payment->payment_date));
-            }
+            try {
+                $member_id = $_POST['member_id'];
+                $payment_type = $_POST['payment_type'] ?? 'fee';
+                $payment_date = $_POST['payment_date'];
+                
+                // If it's a fee payment, check for duplicates
+                if ($payment_type === 'fee') {
+                    $fee_year = date('Y', strtotime($payment_date));
+                    
+                    // Check if member already paid this year
+                    $checkStmt = $this->db->prepare(
+                        "SELECT id FROM payments 
+                         WHERE member_id = ? AND fee_year = ? AND payment_type = 'fee'"
+                    );
+                    $checkStmt->execute([$member_id, $fee_year]);
+                    
+                    if ($checkStmt->fetch()) {
+                        // Duplicate found - redirect with error
+                        header("Location: index.php?page=payments&action=create&error=duplicate_fee&year=$fee_year");
+                        exit;
+                    }
+                    
+                    $this->payment->fee_year = $fee_year;
+                }
+                
+                $this->payment->member_id = $member_id;
+                $this->payment->amount = $_POST['amount'];
+                $this->payment->payment_date = $payment_date;
+                $this->payment->concept = $_POST['concept'];
+                $this->payment->status = $_POST['status'];
+                $this->payment->payment_type = $payment_type;
+                $this->payment->event_id = !empty($_POST['event_id']) ? $_POST['event_id'] : null;
 
-            if ($this->payment->create()) {
-                header('Location: index.php?page=payments');
-            } else {
-                $error = "Error creating payment.";
+                if ($this->payment->create()) {
+                    header('Location: index.php?page=payments&success=created');
+                    exit;
+                } else {
+                    throw new Exception("Error al crear el pago.");
+                }
+            } catch (Exception $e) {
+                $error = $e->getMessage();
                 $stmt = $this->member->readAll();
                 $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                // Reload events if error
+                
+                // Reload events
                 $eventModel = new Event($this->db);
                 $stmtEvents = $eventModel->readActive();
                 $events = $stmtEvents->fetchAll(PDO::FETCH_ASSOC);
+                
+                // Reload fees
+                $feeModel = new Fee($this->db);
+                $stmtFees = $feeModel->readAll();
+                $fees = $stmtFees->fetchAll(PDO::FETCH_ASSOC);
+                
                 require __DIR__ . '/../Views/payments/create.php';
             }
         }

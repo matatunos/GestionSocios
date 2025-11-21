@@ -1,5 +1,24 @@
 <?php ob_start(); ?>
 
+<?php if (isset($_GET['error']) && $_GET['error'] === 'duplicate_fee'): ?>
+    <div class="alert alert-error">
+        <i class="fas fa-exclamation-circle"></i>
+        El socio ya ha pagado la cuota anual para el año <?php echo $_GET['year'] ?? ''; ?>. No se permiten pagos duplicados.
+    </div>
+<?php endif; ?>
+
+<?php if (isset($error)): ?>
+    <div class="alert alert-error">
+        <i class="fas fa-exclamation-circle"></i>
+        <?php echo htmlspecialchars($error); ?>
+    </div>
+<?php endif; ?>
+
+<script>
+// Annual fees data for auto-fill
+const annualFees = <?php echo json_encode($fees ?? []); ?>;
+</script>
+
 <div class="mb-4">
     <a href="index.php?page=payments" class="btn btn-sm btn-secondary mb-4">
         <i class="fas fa-arrow-left"></i> Volver al listado
@@ -88,7 +107,7 @@ function toggleEventSelect() {
         document.getElementById('event_id').required = false;
         document.getElementById('event_id').value = '';
         if (type === 'fee') {
-            conceptInput.value = 'Cuota Anual ' + new Date().getFullYear();
+            updateFeeAmount(); // Auto-fill when switching to fee
         } else {
             conceptInput.value = '';
         }
@@ -112,8 +131,37 @@ function updateAmountFromEvent() {
     }
 }
 
+function updateFeeAmount() {
+    const paymentType = document.getElementById('payment_type').value;
+    const paymentDateInput = document.querySelector('input[name="payment_date"]');
+    const amountInput = document.getElementById('amount');
+    const conceptInput = document.getElementById('concept');
+    
+    if (paymentType === 'fee' && paymentDateInput.value) {
+        const year = new Date(paymentDateInput.value).getFullYear();
+        const fee = annualFees.find(f => f.year == year);
+        
+        if (fee) {
+            amountInput.value = fee.amount;
+            conceptInput.value = 'Cuota Anual ' + year;
+        } else {
+            // No fee defined for this year
+            amountInput.value = '';
+            conceptInput.value = 'Cuota Anual ' + year;
+            // Could show a warning here if desired
+        }
+    }
+}
+
 // Initialize
 toggleEventSelect();
+
+// Add event listener to payment date to auto-update fee amount
+document.querySelector('input[name="payment_date"]').addEventListener('change', function() {
+    if (document.getElementById('payment_type').value === 'fee') {
+        updateFeeAmount();
+    }
+});
 </script>
 
 <?php 
