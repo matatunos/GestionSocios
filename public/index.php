@@ -19,23 +19,36 @@ spl_autoload_register(function ($class_name) {
     }
 });
 
-// Check Installation
+// Determine page
+$page = $_GET['page'] ?? 'dashboard';
+
+// Check Installation & DB Connection
 if (!file_exists(__DIR__ . '/../src/Config/config.php')) {
     $page = 'install';
 } else {
-    $page = $_GET['page'] ?? 'dashboard';
+    // Config exists, verify connection if not already in install mode
+    if ($page !== 'install') {
+        require_once __DIR__ . '/../src/Config/Database.php';
+        $dbTest = new Database();
+        if ($dbTest->getConnection() === null) {
+            $page = 'db_error';
+        }
+    }
 }
 
 $action = $_GET['action'] ?? 'index';
 
-// Check Auth (skip for login, install, and update)
-if (!isset($_SESSION['user_id']) && $page !== 'login' && $page !== 'install' && $page !== 'update') {
+// Check Auth (skip for login, install, update, and db_error)
+if (!isset($_SESSION['user_id']) && $page !== 'login' && $page !== 'install' && $page !== 'update' && $page !== 'db_error') {
     header('Location: index.php?page=login');
     exit;
 }
 
 // Routing Logic
 switch ($page) {
+    case 'db_error':
+        require __DIR__ . '/../src/Views/install/db_error.php';
+        break;
     case 'install':
         $controller = new InstallerController();
         if ($action === 'run') $controller->install();
