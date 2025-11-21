@@ -45,15 +45,47 @@ if (!isset($associationName)) {
                     </a>
                 </li>
                 <li>
-                    <div style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 0.5rem;">
-                        <i class="fas fa-user-circle" style="margin-right: 0.5rem;"></i>
-                        <?php echo htmlspecialchars($_SESSION['username'] ?? 'Usuario'); ?>
-                    </div>
-                    <a href="index.php?page=login&action=logout" class="btn btn-sm btn-danger w-full">
-                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    <a href="index.php?page=members" class="nav-link <?php echo ($page === 'members') ? 'active' : ''; ?>">
+                        <i class="fas fa-users"></i>
+                        <span>Socios</span>
                     </a>
+                </li>
+                <li>
+                    <a href="index.php?page=payments" class="nav-link <?php echo ($page === 'payments') ? 'active' : ''; ?>">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Pagos</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="index.php?page=events" class="nav-link <?php echo ($page === 'events') ? 'active' : ''; ?>">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Eventos</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="index.php?page=fees" class="nav-link <?php echo ($page === 'fees') ? 'active' : ''; ?>">
+                        <i class="fas fa-receipt"></i>
+                        <span>Cuotas</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="index.php?page=settings" class="nav-link <?php echo ($page === 'settings') ? 'active' : ''; ?>">
+                        <i class="fas fa-cog"></i>
+                        <span>Configuración</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <div style="margin-top: auto; padding-top: 2rem; border-top: 1px solid var(--border-light);">
+                <div style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+                    <i class="fas fa-user-circle" style="margin-right: 0.5rem;"></i>
+                    <?php echo htmlspecialchars($_SESSION['username'] ?? 'Usuario'); ?>
                 </div>
+                <a href="index.php?page=login&action=logout" class="btn btn-sm btn-danger w-full">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </a>
             </div>
+
         </aside>
 
         <!-- Main Content -->
