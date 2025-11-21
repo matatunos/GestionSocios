@@ -4,7 +4,7 @@ Sistema de gestión integral para asociaciones desarrollado en PHP con arquitect
 
 ![Dashboard](https://img.shields.io/badge/PHP-8.5-777BB4?style=flat&logo=php&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=flat&logo=mysql&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-green.svg)
+![License](https://img.shields.io/badge/License-Unlicense-blue.svg)
 
 ## 📋 Características
 
@@ -297,7 +297,9 @@ Las contribuciones son bienvenidas. Por favor:
 
 ## 📄 Licencia
 
-Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+Este proyecto está bajo la Unlicense (dominio público). Ver el archivo `LICENSE` para más detalles.
+
+Esto significa que puedes usar, copiar, modificar, distribuir y vender este software libremente sin ninguna restricción.
 
 ## 👥 Autor
 
