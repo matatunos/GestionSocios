@@ -31,7 +31,11 @@ if (!isset($associationName)) {
 <body>
     <div class="app-container">
         <!-- Sidebar -->
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-toggle" onclick="toggleSidebar()">
+                <i class="fas fa-chevron-left"></i>
+            </div>
+
             <a href="index.php" class="nav-brand">
                 <i class="fas fa-users-rectangle"></i>
                 <span><?php echo htmlspecialchars($associationName); ?></span>
@@ -100,13 +104,13 @@ if (!isset($associationName)) {
                 </li>
             </ul>
             
-            <div style="margin-top: auto; padding-top: 2rem; border-top: 1px solid var(--border-light);">
-                <div style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+            <div class="sidebar-footer">
+                <div class="user-info" style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 0.5rem;">
                     <i class="fas fa-user-circle" style="margin-right: 0.5rem;"></i>
                     <?php echo htmlspecialchars($_SESSION['username'] ?? 'Usuario'); ?>
                 </div>
-                <a href="index.php?page=login&action=logout" class="btn btn-sm btn-danger w-full">
-                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                <a href="index.php?page=login&action=logout" class="btn btn-sm btn-danger w-full btn-logout">
+                    <i class="fas fa-sign-out-alt"></i> <span class="btn-logout-text">Cerrar Sesión</span>
                 </a>
             </div>
 
@@ -119,7 +123,21 @@ if (!isset($associationName)) {
     </div>
 
     <script>
-        // Simple mobile sidebar toggle could be added here
+        // Initialize Dark Mode
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+
+        // Initialize Sidebar State
+        if (localStorage.getItem('sidebarCollapsed') === 'true') {
+            document.getElementById('sidebar').classList.add('collapsed');
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+        }
     </script>
 </body>
 </html>

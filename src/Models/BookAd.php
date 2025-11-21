@@ -42,7 +42,7 @@ class BookAd {
     }
 
     public function readAllByYear($year) {
-        $query = "SELECT b.*, d.name as donor_name FROM " . $this->table_name . " b JOIN donors d ON b.donor_id = d.id WHERE b.year = ? ORDER BY b.created_at DESC";
+        $query = "SELECT b.*, d.name as donor_name, d.logo_url as donor_logo FROM " . $this->table_name . " b JOIN donors d ON b.donor_id = d.id WHERE b.year = ? ORDER BY b.created_at DESC";
         $stmt = $this->conn->prepare($query);
         $stmt->execute([$year]);
         return $stmt;

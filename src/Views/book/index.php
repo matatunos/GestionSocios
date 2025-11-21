@@ -46,6 +46,7 @@
         <table class="table">
             <thead>
                 <tr>
+                    <th style="width: 80px;">Imagen</th>
                     <th>Donante / Negocio</th>
                     <th>Tipo de Anuncio</th>
                     <th>Importe</th>
@@ -56,11 +57,22 @@
             <tbody>
                 <?php if (empty($ads)): ?>
                     <tr>
-                        <td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-muted);">No hay anuncios registrados para este año.</td>
+                        <td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">No hay anuncios registrados para este año.</td>
                     </tr>
                 <?php else: ?>
                     <?php foreach ($ads as $row): ?>
                         <tr>
+                            <td>
+                                <?php if (!empty($row['image_url'])): ?>
+                                    <img src="<?php echo htmlspecialchars($row['image_url']); ?>" alt="Anuncio" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-color);">
+                                <?php elseif (!empty($row['donor_logo'])): ?>
+                                    <img src="<?php echo htmlspecialchars($row['donor_logo']); ?>" alt="Logo Donante" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-color);">
+                                <?php else: ?>
+                                    <div style="width: 50px; height: 50px; background: var(--bg-color); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--text-muted);">
+                                        <i class="fas fa-image"></i>
+                                    </div>
+                                <?php endif; ?>
+                            </td>
                             <td style="font-weight: 500;">
                                 <?php echo htmlspecialchars($row['donor_name']); ?>
                             </td>

@@ -7,8 +7,7 @@
 <div class="card" style="padding: 0; overflow: hidden;">
     <div style="display: flex; border-bottom: 1px solid var(--border-light);">
         <button class="tab-btn active" onclick="openTab(event, 'general')">General</button>
-        <button class="tab-btn" onclick="openTab(event, 'events')">Eventos y Conceptos</button>
-        <button class="tab-btn" onclick="openTab(event, 'fees')">Cuotas Anuales</button>
+        <button class="tab-btn" onclick="openTab(event, 'appearance')">Apariencia</button>
         <button class="tab-btn" onclick="openTab(event, 'database')">Base de Datos</button>
     </div>
 
@@ -26,27 +25,21 @@
             </form>
         </div>
 
-        <!-- Events Tab (Iframe or Include? Let's link or include content. Linking is easier for now to avoid conflicts, but embedding is nicer. Let's provide a link/summary or just redirect logic) -->
-        <!-- Actually, let's just put the links here or replicate the UI. Replicating might be complex. 
-             Better: "Manage Events" button that goes to the events page, OR we include the events view here.
-             Given the structure, let's just link to the modules for now to keep it simple, 
-             OR we can render the sub-views if we refactor Controllers. 
-             Let's keep it simple: provide quick access cards.
-        -->
-        <div id="events" class="tab-content" style="display: none;">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-lg font-semibold">Gestión de Eventos</h2>
-                <a href="index.php?page=events" class="btn btn-primary">Ir al Panel de Eventos</a>
+        <!-- Appearance Tab -->
+        <div id="appearance" class="tab-content" style="display: none;">
+            <h2 class="text-lg font-semibold mb-4">Apariencia y Tema</h2>
+            <div class="card" style="max-width: 500px; margin: 0;">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 style="font-size: 1rem; margin-bottom: 0.25rem;">Modo Oscuro</h3>
+                        <p style="font-size: 0.875rem; margin: 0;">Activar tema oscuro para la interfaz</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
             </div>
-            <p>Gestione aquí los eventos, excursiones y actividades que sirven como conceptos de pago.</p>
-        </div>
-
-        <div id="fees" class="tab-content" style="display: none;">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-lg font-semibold">Cuotas Anuales</h2>
-                <a href="index.php?page=fees" class="btn btn-primary">Ir al Panel de Cuotas</a>
-            </div>
-            <p>Defina las cuotas anuales y genere los pagos pendientes para los socios.</p>
         </div>
 
         <!-- Database Tab -->
@@ -96,6 +89,67 @@
     color: var(--primary-600);
     border-bottom-color: var(--primary-600);
 }
+
+/* Switch Toggle Styles */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: var(--primary-600);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px var(--primary-600);
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
 </style>
 
 <script>
@@ -112,6 +166,26 @@ function openTab(evt, tabName) {
     document.getElementById(tabName).style.display = "block";
     evt.currentTarget.className += " active";
 }
+
+// Dark Mode Logic
+function toggleDarkMode() {
+    const isChecked = document.getElementById('darkModeToggle').checked;
+    if (isChecked) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+    } else {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('theme', 'light');
+    }
+}
+
+// Set initial state
+document.addEventListener('DOMContentLoaded', function() {
+    const currentTheme = localStorage.getItem('theme');
+    if (currentTheme === 'dark') {
+        document.getElementById('darkModeToggle').checked = true;
+    }
+});
 </script>
 
 <?php 
