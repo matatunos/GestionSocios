@@ -63,6 +63,7 @@ switch ($page) {
         else if ($action === 'update') $controller->update($_GET['id']);
         else if ($action === 'deactivate') $controller->deactivate($_GET['id']);
         else if ($action === 'delete') $controller->delete($_GET['id']);
+        else if ($action === 'markPaid') $controller->markPaid($_GET['id']);
         else $controller->index();
         break;
     case 'fees':

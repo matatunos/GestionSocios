@@ -88,6 +88,6 @@ class FeeController {
             }
         }
 
-        header("Location: index.php?page=fees&success=generated&count=$count");
+        header("Location: index.php?page=fees&success=generated&count=$count&year=$year");
     }
 }

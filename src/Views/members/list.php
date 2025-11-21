@@ -6,6 +6,7 @@
         <?php 
             if ($_GET['msg'] === 'deactivated') echo 'Socio dado de baja correctamente.';
             else if ($_GET['msg'] === 'deleted') echo 'Socio eliminado correctamente.';
+            else if ($_GET['msg'] === 'marked_paid') echo 'Cuota marcada como pagada correctamente.';
         ?>
     </div>
 <?php endif; ?>
@@ -13,7 +14,10 @@
 <?php if (isset($_GET['error'])): ?>
     <div class="alert alert-error">
         <i class="fas fa-exclamation-circle"></i>
-        Error al procesar la operación.
+        <?php
+            if ($_GET['error'] === 'no_fee') echo 'No hay cuota definida para el año actual. Por favor, defínela primero en la sección de Cuotas.';
+            else echo 'Error al procesar la operación.';
+        ?>
     </div>
 <?php endif; ?>
 
@@ -87,6 +91,14 @@
                                 <a href="index.php?page=members&action=edit&id=<?php echo $row['id']; ?>" class="btn btn-sm btn-secondary">
                                     <i class="fas fa-edit"></i> Editar
                                 </a>
+                                
+                                <?php if (($_GET['filter'] ?? '') === 'delinquent'): ?>
+                                    <a href="index.php?page=members&action=markPaid&id=<?php echo $row['id']; ?>" 
+                                       class="btn btn-sm btn-primary"
+                                       onclick="return confirm('¿Marcar la cuota de <?php echo date('Y'); ?> como pagada para este socio?');">
+                                        <i class="fas fa-check"></i> Marcar como Pagado
+                                    </a>
+                                <?php endif; ?>
                                 
                                 <?php if ($row['status'] === 'active'): ?>
                                     <a href="index.php?page=members&action=deactivate&id=<?php echo $row['id']; ?>" 

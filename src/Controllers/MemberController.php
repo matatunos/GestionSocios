@@ -147,4 +147,43 @@ class MemberController {
         header('Location: index.php?page=members&error=1');
         exit;
     }
+
+    public function markPaid($id) {
+        $this->checkAdmin();
+        $currentYear = date('Y');
+        
+        // Check if fee for current year exists
+        $feeStmt = $this->db->prepare("SELECT amount FROM annual_fees WHERE year = ?");
+        $feeStmt->execute([$currentYear]);
+        $fee = $feeStmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$fee) {
+            header('Location: index.php?page=members&filter=delinquent&error=no_fee');
+            exit;
+        }
+        
+        // Check if payment already exists
+        $checkStmt = $this->db->prepare("SELECT id, status FROM payments WHERE member_id = ? AND fee_year = ? AND payment_type = 'fee'");
+        $checkStmt->execute([$id, $currentYear]);
+        $existingPayment = $checkStmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($existingPayment) {
+            // Update existing payment to paid
+            $updateStmt = $this->db->prepare("UPDATE payments SET status = 'paid', payment_date = ? WHERE id = ?");
+            $updateStmt->execute([date('Y-m-d'), $existingPayment['id']]);
+        } else {
+            // Create new payment as paid
+            $insertStmt = $this->db->prepare("INSERT INTO payments (member_id, amount, payment_date, concept, status, fee_year, payment_type) VALUES (?, ?, ?, ?, 'paid', ?, 'fee')");
+            $insertStmt->execute([
+                $id,
+                $fee['amount'],
+                date('Y-m-d'),
+                "Cuota Anual " . $currentYear,
+                $currentYear
+            ]);
+        }
+        
+        header('Location: index.php?page=members&filter=delinquent&msg=marked_paid');
+        exit;
+    }
 }
