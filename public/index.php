@@ -19,6 +19,9 @@ spl_autoload_register(function ($class_name) {
     }
 });
 
+// Load Security utilities for CSRF protection
+require_once __DIR__ . '/../src/Config/Security.php';
+
 // Check Installation
 if (!file_exists(__DIR__ . '/../src/Config/config.php')) {
     $page = 'install';

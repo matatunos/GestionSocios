@@ -11,6 +11,7 @@
         <a href="index.php?page=dashboard" class="btn btn-primary">Ir al Dashboard</a>
     <?php else: ?>
         <form action="index.php?page=update" method="POST">
+            <?php echo csrf_input_field(); ?>
             <button type="submit" class="btn btn-primary">
                 <i class="fas fa-sync"></i> Actualizar Ahora
             </button>

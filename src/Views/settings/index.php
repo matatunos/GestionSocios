@@ -17,6 +17,7 @@
         <div id="general" class="tab-content" style="display: block;">
             <h2 class="text-lg font-semibold mb-4">Configuración General</h2>
             <form action="index.php?page=settings&action=updateGeneral" method="POST" style="max-width: 500px;">
+                <?php echo csrf_input_field(); ?>
                 <div class="form-group">
                     <label class="form-label">Nombre de la Asociación</label>
                     <input type="text" name="association_name" class="form-control" value="<?php echo htmlspecialchars($settings['association_name'] ?? 'Mi Asociación'); ?>" required>
@@ -56,6 +57,7 @@
                 <i class="fas fa-exclamation-triangle"></i> <strong>Cuidado:</strong> Cambiar estos valores puede dejar la aplicación inoperativa. Asegúrese de que los nuevos datos son correctos.
             </div>
             <form action="index.php?page=settings&action=updateDatabase" method="POST" style="max-width: 500px;">
+                <?php echo csrf_input_field(); ?>
                 <div class="form-group">
                     <label class="form-label">Host</label>
                     <input type="text" name="db_host" class="form-control" value="<?php echo htmlspecialchars($dbConfig['host']); ?>" required>

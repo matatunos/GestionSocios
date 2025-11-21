@@ -43,6 +43,18 @@ class PaymentController {
     public function store() {
         $this->checkAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Validate CSRF token
+            if (!validate_csrf_token()) {
+                $error = "Invalid security token. Please try again.";
+                $stmt = $this->member->readAll();
+                $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                $eventModel = new Event($this->db);
+                $stmtEvents = $eventModel->readActive();
+                $events = $stmtEvents->fetchAll(PDO::FETCH_ASSOC);
+                require __DIR__ . '/../Views/payments/create.php';
+                return;
+            }
+            
             $this->payment->member_id = $_POST['member_id'];
             $this->payment->amount = $_POST['amount'];
             $this->payment->payment_date = $_POST['payment_date'];
@@ -86,6 +98,18 @@ class PaymentController {
     public function update($id) {
         $this->checkAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Validate CSRF token
+            if (!validate_csrf_token()) {
+                $this->payment->id = $id;
+                $this->payment->readOne();
+                $error = "Invalid security token. Please try again.";
+                $stmt = $this->member->readAll();
+                $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                $payment = $this->payment;
+                require __DIR__ . '/../Views/payments/edit.php';
+                return;
+            }
+            
             $this->payment->id = $id;
             $this->payment->member_id = $_POST['member_id'];
             $this->payment->amount = $_POST['amount'];

@@ -40,6 +40,15 @@ class DonationController {
     public function store() {
         $this->checkAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Validate CSRF token
+            if (!validate_csrf_token()) {
+                $error = "Invalid security token. Please try again.";
+                $membersStmt = $this->member->readAll();
+                $members = $membersStmt->fetchAll(PDO::FETCH_ASSOC);
+                require __DIR__ . '/../Views/donations/create.php';
+                return;
+            }
+            
             $this->donation->member_id = $_POST['member_id'];
             $this->donation->amount = $_POST['amount'];
             $this->donation->type = $_POST['type'];

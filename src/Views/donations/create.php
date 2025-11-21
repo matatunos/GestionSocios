@@ -18,6 +18,7 @@
         <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
     <?php endif; ?>
     <form method="post" action="index.php?page=donations&action=store">
+        <?php echo csrf_input_field(); ?>
         <div class="form-group">
             <label for="member_id">Socio</label>
             <select name="member_id" id="member_id" class="form-control" required>

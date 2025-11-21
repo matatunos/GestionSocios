@@ -16,6 +16,13 @@ class AuthController {
 
     public function login() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Validate CSRF token
+            if (!validate_csrf_token()) {
+                $error = "Invalid security token. Please try again.";
+                require __DIR__ . '/../Views/login.php';
+                return;
+            }
+            
             $username = $_POST['username'] ?? '';
             $password = $_POST['password'] ?? '';
 

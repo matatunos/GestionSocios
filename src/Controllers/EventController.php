@@ -11,6 +11,13 @@ class EventController {
         $this->event = new Event($this->db);
         $this->member = new Member($this->db);
     }
+
+    private function checkAdmin() {
+        if (($_SESSION['role'] ?? '') !== 'admin') {
+            header('Location: index.php?page=events');
+            exit;
+        }
+    }
     public function show($id) {
         $this->checkAdmin();
         // Load event data
@@ -78,6 +85,13 @@ class EventController {
     public function store() {
         $this->checkAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Validate CSRF token
+            if (!validate_csrf_token()) {
+                $error = "Invalid security token. Please try again.";
+                require __DIR__ . '/../Views/events/create.php';
+                return;
+            }
+            
             $this->event->name = $_POST['name'];
             $this->event->description = $_POST['description'];
             $this->event->date = $_POST['date'];
@@ -104,6 +118,16 @@ class EventController {
     public function update($id) {
         $this->checkAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Validate CSRF token
+            if (!validate_csrf_token()) {
+                $this->event->id = $id;
+                $this->event->readOne();
+                $error = "Invalid security token. Please try again.";
+                $event = $this->event;
+                require __DIR__ . '/../Views/events/edit.php';
+                return;
+            }
+            
             $this->event->id = $id;
             $this->event->name = $_POST['name'];
             $this->event->description = $_POST['description'];

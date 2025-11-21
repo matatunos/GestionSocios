@@ -9,6 +9,7 @@
 
 <div class="card" style="max-width: 800px;">
     <form action="index.php?page=events&action=store" method="POST">
+        <?php echo csrf_input_field(); ?>
         <div class="form-group">
             <label class="form-label">Nombre del Evento</label>
             <input type="text" name="name" class="form-control" required placeholder="Ej: Cena de Navidad 2024">

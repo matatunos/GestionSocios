@@ -39,6 +39,13 @@ class SettingsController {
     public function updateGeneral() {
         $this->checkAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Validate CSRF token
+            if (!validate_csrf_token()) {
+                $_SESSION['error'] = "Invalid security token. Please try again.";
+                header('Location: index.php?page=settings&tab=general');
+                return;
+            }
+            
             $name = $_POST['association_name'] ?? '';
             $stmt = $this->db->prepare("INSERT INTO settings (setting_key, setting_value) VALUES ('association_name', ?) ON DUPLICATE KEY UPDATE setting_value = ?");
             $stmt->execute([$name, $name]);
@@ -49,6 +56,13 @@ class SettingsController {
     public function updateDatabase() {
         $this->checkAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Validate CSRF token
+            if (!validate_csrf_token()) {
+                $_SESSION['error'] = "Invalid security token. Please try again.";
+                header('Location: index.php?page=settings&tab=database');
+                return;
+            }
+            
             $host = $_POST['db_host'] ?? '';
             $name = $_POST['db_name'] ?? '';
             $user = $_POST['db_user'] ?? '';

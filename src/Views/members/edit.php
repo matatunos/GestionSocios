@@ -9,6 +9,7 @@
 
 <div class="card" style="max-width: 800px;">
     <form action="index.php?page=members&action=update&id=<?php echo $member->id; ?>" method="POST" enctype="multipart/form-data">
+        <?php echo csrf_input_field(); ?>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
             <div class="form-group" style="margin-bottom: 0;">
                 <label class="form-label">Nombre</label>

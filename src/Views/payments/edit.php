@@ -9,6 +9,7 @@
 
 <div class="card" style="max-width: 800px;">
     <form action="index.php?page=payments&action=update&id=<?php echo $payment->id; ?>" method="POST">
+        <?php echo csrf_input_field(); ?>
         <div class="form-group">
             <label class="form-label">Socio</label>
             <select name="member_id" class="form-control" required>

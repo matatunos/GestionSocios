@@ -14,6 +14,13 @@ class UpdateController {
     public function index() {
         $message = "";
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Validate CSRF token
+            if (!validate_csrf_token()) {
+                $message = "Invalid security token. Please try again.";
+                require __DIR__ . '/../Views/update.php';
+                return;
+            }
+            
             try {
                 // 0. Create settings table FIRST
                 $this->db->exec("CREATE TABLE IF NOT EXISTS settings (

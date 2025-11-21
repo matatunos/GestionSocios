@@ -40,6 +40,13 @@ class MemberController {
     public function store() {
         $this->checkAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Validate CSRF token
+            if (!validate_csrf_token()) {
+                $error = "Invalid security token. Please try again.";
+                require __DIR__ . '/../Views/members/create.php';
+                return;
+            }
+            
             $this->member->first_name = $_POST['first_name'];
             $this->member->last_name = $_POST['last_name'];
             $this->member->email = $_POST['email'];
@@ -88,6 +95,16 @@ class MemberController {
     public function update($id) {
         $this->checkAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Validate CSRF token
+            if (!validate_csrf_token()) {
+                $this->member->id = $id;
+                $this->member->readOne();
+                $member = $this->member;
+                $error = "Invalid security token. Please try again.";
+                require __DIR__ . '/../Views/members/edit.php';
+                return;
+            }
+            
             $this->member->id = $id;
             $this->member->first_name = $_POST['first_name'];
             $this->member->last_name = $_POST['last_name'];

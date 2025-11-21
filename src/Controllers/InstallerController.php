@@ -7,6 +7,13 @@ class InstallerController {
 
     public function install() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Validate CSRF token
+            if (!validate_csrf_token()) {
+                $error = "Invalid security token. Please try again.";
+                require __DIR__ . '/../Views/install.php';
+                return;
+            }
+            
             $host = $_POST['host'] ?? '';
             $db_name = $_POST['db_name'] ?? '';
             $username = $_POST['username'] ?? '';

@@ -27,6 +27,13 @@ class FeeController {
     public function store() {
         $this->checkAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Validate CSRF token
+            if (!validate_csrf_token()) {
+                $_SESSION['error'] = "Invalid security token. Please try again.";
+                header('Location: index.php?page=fees');
+                return;
+            }
+            
             $this->fee->year = $_POST['year'];
             $this->fee->amount = $_POST['amount'];
 

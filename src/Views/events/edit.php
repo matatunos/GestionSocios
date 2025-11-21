@@ -9,6 +9,7 @@
 
 <div class="card" style="max-width: 800px;">
     <form action="index.php?page=events&action=update&id=<?php echo $event->id; ?>" method="POST">
+        <?php echo csrf_input_field(); ?>
         <div class="form-group">
             <label class="form-label">Nombre del Evento</label>
             <input type="text" name="name" class="form-control" required value="<?php echo htmlspecialchars($event->name); ?>">

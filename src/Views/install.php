@@ -49,6 +49,7 @@
         <?php endif; ?>
 
         <form action="index.php?page=install&action=run" method="POST">
+            <?php echo csrf_input_field(); ?>
             <div class="step-title">1. Base de Datos</div>
             <div class="form-group">
                 <label class="form-label">Host</label>

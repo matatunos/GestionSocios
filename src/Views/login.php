@@ -46,6 +46,7 @@ if (!isset($associationName)) {
         <?php endif; ?>
 
         <form action="index.php?page=login&action=login" method="POST">
+            <?php echo csrf_input_field(); ?>
             <div class="form-group">
                 <label class="form-label">Usuario</label>
                 <div style="position: relative;">
