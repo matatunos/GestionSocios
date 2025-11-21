@@ -26,7 +26,7 @@ class Donation {
     }
 
     public function readAllByYear($year) {
-        $query = "SELECT d.*, m.name as member_name FROM " . $this->table_name . " d JOIN members m ON d.member_id = m.id WHERE d.year = ? ORDER BY d.created_at DESC";
+        $query = "SELECT d.*, CONCAT(m.first_name, ' ', m.last_name) as member_name FROM " . $this->table_name . " d JOIN members m ON d.member_id = m.id WHERE d.year = ? ORDER BY d.created_at DESC";
         $stmt = $this->conn->prepare($query);
         $stmt->execute([$year]);
         return $stmt;
