@@ -10,6 +10,7 @@ class Donor {
     public $phone;
     public $email;
     public $address;
+    public $logo_url;
     public $created_at;
 
     public function __construct($db) {
@@ -17,7 +18,7 @@ class Donor {
     }
 
     public function create() {
-        $query = "INSERT INTO " . $this->table_name . " SET name=:name, contact_person=:contact_person, phone=:phone, email=:email, address=:address";
+        $query = "INSERT INTO " . $this->table_name . " SET name=:name, contact_person=:contact_person, phone=:phone, email=:email, address=:address, logo_url=:logo_url";
         $stmt = $this->conn->prepare($query);
 
         $this->name = htmlspecialchars(strip_tags($this->name));
@@ -31,6 +32,7 @@ class Donor {
         $stmt->bindParam(":phone", $this->phone);
         $stmt->bindParam(":email", $this->email);
         $stmt->bindParam(":address", $this->address);
+        $stmt->bindParam(":logo_url", $this->logo_url);
 
         if($stmt->execute()) {
             return true;
@@ -58,6 +60,7 @@ class Donor {
             $this->phone = $row['phone'];
             $this->email = $row['email'];
             $this->address = $row['address'];
+            $this->logo_url = $row['logo_url'];
             $this->created_at = $row['created_at'];
             return true;
         }
@@ -65,7 +68,7 @@ class Donor {
     }
 
     public function update() {
-        $query = "UPDATE " . $this->table_name . " SET name=:name, contact_person=:contact_person, phone=:phone, email=:email, address=:address WHERE id=:id";
+        $query = "UPDATE " . $this->table_name . " SET name=:name, contact_person=:contact_person, phone=:phone, email=:email, address=:address, logo_url=:logo_url WHERE id=:id";
         $stmt = $this->conn->prepare($query);
 
         $this->name = htmlspecialchars(strip_tags($this->name));
@@ -80,6 +83,7 @@ class Donor {
         $stmt->bindParam(":phone", $this->phone);
         $stmt->bindParam(":email", $this->email);
         $stmt->bindParam(":address", $this->address);
+        $stmt->bindParam(":logo_url", $this->logo_url);
         $stmt->bindParam(":id", $this->id);
 
         if($stmt->execute()) {
