@@ -13,15 +13,13 @@ class DashboardController {
     }
 
     public function index() {
-        // Get stats
-        $monthlyIncome = $this->payment->getMonthlyIncome();
-        $pendingPayments = $this->payment->getPendingCount();
-        
-        // Get active members count
-        $query = "SELECT COUNT(*) as total FROM members WHERE status = 'active'";
-        $stmt = $this->db->prepare($query);
-        $stmt->execute();
-        $activeMembers = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+        $payment = new Payment($this->db);
+        $member = new Member($this->db);
+
+        $yearlyIncome = $payment->getYearlyIncome();
+        $incomeByType = $payment->getIncomeByType();
+        $pendingPayments = $payment->getPendingCount();
+        $activeMembers = $member->getActiveCount();
 
         require __DIR__ . '/../Views/dashboard.php';
     }

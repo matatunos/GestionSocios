@@ -56,13 +56,28 @@ class Payment {
         return false;
     }
 
-    public function getMonthlyIncome() {
+    public function getYearlyIncome() {
         $query = "SELECT SUM(amount) as total FROM " . $this->table_name . " 
-                  WHERE status = 'paid' AND MONTH(payment_date) = MONTH(CURRENT_DATE()) AND YEAR(payment_date) = YEAR(CURRENT_DATE())";
+                  WHERE status = 'paid' 
+                  AND YEAR(payment_date) = YEAR(CURRENT_DATE())";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row['total'] ?? 0;
+    }
+
+    public function getIncomeByType() {
+        $query = "SELECT 
+                    payment_type,
+                    SUM(amount) as total,
+                    COUNT(*) as count
+                  FROM " . $this->table_name . "
+                  WHERE status = 'paid'
+                  AND YEAR(payment_date) = YEAR(CURRENT_DATE())
+                  GROUP BY payment_type";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getPendingCount() {

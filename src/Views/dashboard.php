@@ -24,9 +24,9 @@
     <div class="card">
         <div class="flex items-center justify-between">
             <div>
-                <h3 style="margin: 0; font-size: 0.875rem; color: var(--text-muted); text-transform: uppercase;">Ingresos este Mes</h3>
+                <h3 style="margin: 0; font-size: 0.875rem; color: var(--text-muted); text-transform: uppercase;">Ingresos <?php echo date('Y'); ?></h3>
                 <p style="font-size: 2rem; font-weight: 700; margin: 0.5rem 0 0; color: var(--secondary-600);">
-                    <?php echo number_format($monthlyIncome, 2); ?> €
+                    <?php echo number_format($yearlyIncome, 2); ?> €
                 </p>
             </div>
             <div style="background: #dcfce7; padding: 1rem; border-radius: 50%;">
@@ -47,6 +47,47 @@
             </div>
         </div>
     </div>
+</div>
+
+<!-- Income Breakdown -->
+<div class="card" style="margin-bottom: 2rem;">
+    <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;">Desglose de Ingresos <?php echo date('Y'); ?></h2>
+    
+    <?php if (empty($incomeByType)): ?>
+        <p style="color: var(--text-muted); text-align: center; padding: 2rem;">No hay ingresos registrados para este año.</p>
+    <?php else: ?>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Tipo</th>
+                    <th>Cantidad de Pagos</th>
+                    <th style="text-align: right;">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php 
+                $typeLabels = [
+                    'fee' => ['label' => 'Cuotas Anuales', 'icon' => 'fa-receipt'],
+                    'event' => ['label' => 'Eventos', 'icon' => 'fa-calendar-alt'],
+                    'donation' => ['label' => 'Donaciones', 'icon' => 'fa-hand-holding-heart']
+                ];
+                foreach ($incomeByType as $type): 
+                    $info = $typeLabels[$type['payment_type']] ?? ['label' => $type['payment_type'], 'icon' => 'fa-money-bill'];
+                ?>
+                    <tr>
+                        <td>
+                            <i class="fas <?php echo $info['icon']; ?>" style="margin-right: 0.5rem; color: var(--primary-600);"></i>
+                            <?php echo $info['label']; ?>
+                        </td>
+                        <td><?php echo $type['count']; ?> pago<?php echo $type['count'] > 1 ? 's' : ''; ?></td>
+                        <td style="text-align: right; font-weight: 600; color: var(--secondary-600);">
+                            <?php echo number_format($type['total'], 2); ?> €
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php endif; ?>
 </div>
 
 <div class="card">
