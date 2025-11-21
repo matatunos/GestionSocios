@@ -27,14 +27,29 @@ class FeeController {
     public function store() {
         $this->checkAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->fee->year = $_POST['year'];
-            $this->fee->amount = $_POST['amount'];
+            try {
+                $year = $_POST['year'];
+                $this->fee->year = $year;
+                $this->fee->amount = $_POST['amount'];
 
-            if ($this->fee->create()) {
-                header('Location: index.php?page=fees');
-            } else {
-                $error = "Error creating fee.";
-                $this->index();
+                // Check if fee already exists to provide appropriate message
+                $exists = $this->fee->exists($year);
+
+                if ($this->fee->createOrUpdate()) {
+                    $action = $exists ? 'updated' : 'created';
+                    header("Location: index.php?page=fees&success=$action&year=$year");
+                    exit;
+                } else {
+                    $error = "Error al guardar la cuota.";
+                    $stmt = $this->fee->readAll();
+                    $fees = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    require __DIR__ . '/../Views/fees/index.php';
+                }
+            } catch (Exception $e) {
+                $error = "Error: " . $e->getMessage();
+                $stmt = $this->fee->readAll();
+                $fees = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                require __DIR__ . '/../Views/fees/index.php';
             }
         }
     }

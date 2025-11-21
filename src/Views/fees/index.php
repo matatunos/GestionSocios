@@ -1,9 +1,23 @@
 <?php ob_start(); ?>
 
-<?php if (isset($_GET['success'])): ?>
+<?php if (isset($_GET['success']) && $_GET['success'] === 'generated'): ?>
     <div class="alert alert-success">
         <i class="fas fa-check-circle"></i>
         Se han generado <?php echo $_GET['count']; ?> pagos pendientes para el año <?php echo $_GET['year'] ?? ''; ?>.
+    </div>
+<?php endif; ?>
+
+<?php if (isset($_GET['success']) && $_GET['success'] === 'created'): ?>
+    <div class="alert alert-success">
+        <i class="fas fa-check-circle"></i>
+        Cuota para el año <?php echo $_GET['year'] ?? ''; ?> creada correctamente.
+    </div>
+<?php endif; ?>
+
+<?php if (isset($_GET['success']) && $_GET['success'] === 'updated'): ?>
+    <div class="alert alert-success">
+        <i class="fas fa-check-circle"></i>
+        Cuota para el año <?php echo $_GET['year'] ?? ''; ?> actualizada correctamente.
     </div>
 <?php endif; ?>
 
@@ -11,6 +25,13 @@
     <div class="alert alert-error">
         <i class="fas fa-exclamation-circle"></i>
         No hay cuota definida para ese año. Por favor, defínela primero.
+    </div>
+<?php endif; ?>
+
+<?php if (isset($error)): ?>
+    <div class="alert alert-error">
+        <i class="fas fa-exclamation-circle"></i>
+        <?php echo htmlspecialchars($error); ?>
     </div>
 <?php endif; ?>
 
