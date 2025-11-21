@@ -154,13 +154,11 @@ const chart = new Chart(ctx, {
         maintainAspectRatio: false,
         scales: {
             x: {
-                stacked: true,
                 grid: {
                     display: false
                 }
             },
             y: {
-                stacked: true,
                 beginAtZero: true,
                 ticks: {
                     callback: function(value) {
