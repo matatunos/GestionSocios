@@ -49,6 +49,14 @@
                          alt="Logo actual" 
                          style="max-width: 200px; max-height: 150px; border: 1px solid var(--border-color); border-radius: 4px; padding: 0.5rem;">
                     <p style="font-size: 0.875rem; color: var(--text-muted); margin-top: 0.5rem;">Logo actual</p>
+                    <div class="flex gap-2 mt-2">
+                        <a href="<?php echo htmlspecialchars($donor->logo_url); ?>" target="_blank" class="btn btn-sm btn-secondary">
+                            <i class="fas fa-eye"></i> Ver
+                        </a>
+                        <a href="<?php echo htmlspecialchars($donor->logo_url); ?>" download class="btn btn-sm btn-secondary">
+                            <i class="fas fa-download"></i> Descargar
+                        </a>
+                    </div>
                 </div>
             <?php endif; ?>
             <input type="file" id="logo" name="logo" class="form-control" accept="image/jpeg,image/png,image/gif,image/webp">

@@ -49,6 +49,11 @@
                                 <?php echo htmlspecialchars($row['phone']); ?>
                             </td>
                             <td style="text-align: right;">
+                                <?php if (!empty($row['logo_url'])): ?>
+                                    <a href="<?php echo htmlspecialchars($row['logo_url']); ?>" target="_blank" class="btn btn-sm btn-secondary" title="Ver Logo">
+                                        <i class="fas fa-image"></i>
+                                    </a>
+                                <?php endif; ?>
                                 <a href="index.php?page=donors&action=edit&id=<?php echo $row['id']; ?>" class="btn btn-sm btn-secondary">
                                     <i class="fas fa-edit"></i> Editar
                                 </a>
