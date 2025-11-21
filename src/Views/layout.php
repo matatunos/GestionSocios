@@ -87,6 +87,12 @@ if (!isset($associationName)) {
                     </a>
                 </li>
                 <li>
+                    <a href="index.php?page=reports&action=executive" class="nav-link <?php echo ($page === 'reports') ? 'active' : ''; ?>">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Informes</span>
+                    </a>
+                </li>
+                <li>
                     <a href="index.php?page=settings" class="nav-link <?php echo ($page === 'settings') ? 'active' : ''; ?>">
                         <i class="fas fa-cog"></i>
                         <span>Configuración</span>

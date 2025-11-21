@@ -119,6 +119,11 @@ switch ($page) {
         else if ($action === 'delete') $controller->delete($_GET['id']);
         else $controller->index();
         break;
+    case 'reports':
+        $controller = new ReportController();
+        if ($action === 'executive') $controller->executiveReport();
+        else $controller->executiveReport();
+        break;
     default:
         echo "404 Not Found";
         break;
