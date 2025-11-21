@@ -78,6 +78,14 @@ switch ($page) {
         else if ($action === 'store') $controller->store();
         else if ($action === 'edit') $controller->edit($_GET['id']);
         else if ($action === 'update') $controller->update($_GET['id']);
+        else if ($action === 'show') $controller->show($_GET['id']);
+        else if ($action === 'markPaid') $controller->markPaid($_GET['id'], $_GET['member_id'] ?? null);
+        else $controller->index();
+        break;
+    case 'donations':
+        $controller = new DonationController();
+        if ($action === 'create') $controller->create();
+        else if ($action === 'store') $controller->store();
         else $controller->index();
         break;
     case 'settings':

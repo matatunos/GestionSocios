@@ -3,18 +3,64 @@
 class EventController {
     private $db;
     private $event;
+    private $member;
 
     public function __construct() {
         $database = new Database();
         $this->db = $database->getConnection();
         $this->event = new Event($this->db);
+        $this->member = new Member($this->db);
     }
-
-    private function checkAdmin() {
-        if (($_SESSION['role'] ?? '') !== 'admin') {
-            header('Location: index.php?page=dashboard');
+    public function show($id) {
+        $this->checkAdmin();
+        // Load event data
+        $event = $this->event->readOne($id);
+        if (!$event) {
+            header('Location: index.php?page=events&error=notfound');
             exit;
         }
+        // Get all active members
+        $stmt = $this->member->readAll();
+        $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Build participants array with payment info
+        $participants = [];
+        foreach ($members as $m) {
+            $payStmt = $this->db->prepare("SELECT id, status FROM payments WHERE member_id = ? AND event_id = ? AND payment_type = 'event'");
+            $payStmt->execute([$m['id'], $id]);
+            $pay = $payStmt->fetch(PDO::FETCH_ASSOC);
+            $participants[] = ['member' => $m, 'payment' => $pay];
+        }
+        require __DIR__ . '/../Views/events/show.php';
+    }
+
+    // Mark participant as paid for an event
+    public function markPaid($eventId, $memberId) {
+        $this->checkAdmin();
+        // Ensure event exists
+        $event = $this->event->readOne($eventId);
+        if (!$event) {
+            header('Location: index.php?page=events&error=notfound');
+            exit;
+        }
+        // Check existing payment record
+        $checkStmt = $this->db->prepare("SELECT id FROM payments WHERE member_id = ? AND event_id = ? AND payment_type = 'event'");
+        $checkStmt->execute([$memberId, $eventId]);
+        $existing = $checkStmt->fetch(PDO::FETCH_ASSOC);
+        if ($existing) {
+            $upd = $this->db->prepare("UPDATE payments SET status = 'paid', payment_date = ? WHERE id = ?");
+            $upd->execute([date('Y-m-d'), $existing['id']]);
+        } else {
+            $ins = $this->db->prepare("INSERT INTO payments (member_id, amount, payment_date, concept, status, fee_year, payment_type, event_id) VALUES (?, ?, ?, ?, 'paid', NULL, 'event', ?)");
+            $ins->execute([
+                $memberId,
+                $event['price'],
+                date('Y-m-d'),
+                'Evento: ' . $event['name'],
+                $eventId
+            ]);
+        }
+        header("Location: index.php?page=events&action=show&id=$eventId&msg=paid");
+        exit;
     }
 
     public function index() {
