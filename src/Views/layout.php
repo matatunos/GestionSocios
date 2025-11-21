@@ -74,6 +74,12 @@ if (!isset($associationName)) {
                     </a>
                 </li>
                 <li>
+                    <a href="index.php?page=donors&action=gallery" class="nav-link <?php echo ($page === 'donors' && $action === 'gallery') ? 'active' : ''; ?>">
+                        <i class="fas fa-images"></i>
+                        <span>Galería Logos</span>
+                    </a>
+                </li>
+                <li>
                     <a href="index.php?page=donations" class="nav-link <?php echo ($page === 'donations') ? 'active' : ''; ?>">
                         <i class="fas fa-hand-holding-heart"></i>
                         <span>Donaciones</span>

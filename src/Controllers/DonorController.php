@@ -141,5 +141,11 @@ class DonorController {
             header('Location: index.php?page=donors&error=1');
         }
     }
+
+    public function gallery() {
+        $stmt = $this->donor->readAll();
+        $donors = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        require __DIR__ . '/../Views/donors/gallery.php';
+    }
 }
 ?>

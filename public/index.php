@@ -108,6 +108,7 @@ switch ($page) {
         else if ($action === 'edit') $controller->edit($_GET['id']);
         else if ($action === 'update') $controller->update($_GET['id']);
         else if ($action === 'delete') $controller->delete($_GET['id']);
+        else if ($action === 'gallery') $controller->gallery();
         else $controller->index();
         break;
     case 'book':
