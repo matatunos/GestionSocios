@@ -36,8 +36,8 @@ class Security {
         
         $sessionToken = self::getCsrfToken();
         
-        // Both must exist and match
-        if (empty($token) || empty($sessionToken)) {
+        // Both must exist and match - use strict checks
+        if ($token === '' || $sessionToken === null || $sessionToken === '') {
             return false;
         }
         
