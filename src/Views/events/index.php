@@ -35,6 +35,9 @@
                             </span>
                         </td>
                         <td>
+                            <a href="index.php?page=events&action=show&id=<?php echo $row['id']; ?>" class="btn btn-sm btn-info">
+                                <i class="fas fa-users"></i> Participantes
+                            </a>
                             <a href="index.php?page=events&action=edit&id=<?php echo $row['id']; ?>" class="btn btn-sm btn-secondary">
                                 <i class="fas fa-edit"></i> Editar
                             </a>

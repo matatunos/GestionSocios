@@ -63,6 +63,12 @@ if (!isset($associationName)) {
                     </a>
                 </li>
                 <li>
+                    <a href="index.php?page=donations" class="nav-link <?php echo ($page === 'donations') ? 'active' : ''; ?>">
+                        <i class="fas fa-hand-holding-heart"></i>
+                        <span>Donaciones</span>
+                    </a>
+                </li>
+                <li>
                     <a href="index.php?page=fees" class="nav-link <?php echo ($page === 'fees') ? 'active' : ''; ?>">
                         <i class="fas fa-receipt"></i>
                         <span>Cuotas</span>
