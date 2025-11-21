@@ -104,4 +104,62 @@ class Member {
         }
         return false;
     }
+
+    public function delete() {
+        $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
+        $stmt = $this->conn->prepare($query);
+        $this->id = htmlspecialchars(strip_tags($this->id));
+        $stmt->bindParam(1, $this->id);
+        
+        if ($stmt->execute()) {
+            return true;
+        }
+        return false;
+    }
+
+    public function getPaymentStatus() {
+        // Verificar si tiene pagada la cuota del año actual
+        $currentYear = date('Y');
+        $query = "SELECT COUNT(*) as count FROM payments 
+                  WHERE member_id = ? 
+                  AND payment_type = 'fee' 
+                  AND fee_year = ? 
+                  AND status = 'paid'";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(1, $this->id);
+        $stmt->bindParam(2, $currentYear);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row['count'] > 0 ? 'current' : 'delinquent';
+    }
+
+    public function readByPaymentStatus($paymentStatus) {
+        // Retorna socios activos filtrados por estado de pago
+        $currentYear = date('Y');
+        
+        if ($paymentStatus === 'current') {
+            $query = "SELECT DISTINCT m.* FROM " . $this->table_name . " m
+                      INNER JOIN payments p ON m.id = p.member_id
+                      WHERE m.status = 'active'
+                      AND p.payment_type = 'fee'
+                      AND p.fee_year = ?
+                      AND p.status = 'paid'
+                      ORDER BY m.last_name, m.first_name";
+        } else {
+            $query = "SELECT m.* FROM " . $this->table_name . " m
+                      WHERE m.status = 'active'
+                      AND m.id NOT IN (
+                          SELECT member_id FROM payments
+                          WHERE payment_type = 'fee'
+                          AND fee_year = ?
+                          AND status = 'paid'
+                      )
+                      ORDER BY m.last_name, m.first_name";
+        }
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(1, $currentYear);
+        $stmt->execute();
+        return $stmt;
+    }
 }

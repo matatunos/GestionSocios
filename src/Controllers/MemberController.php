@@ -18,7 +18,16 @@ class MemberController {
     }
 
     public function index() {
-        $stmt = $this->member->readAll();
+        $filter = $_GET['filter'] ?? 'all';
+        
+        if ($filter === 'current') {
+            $stmt = $this->member->readByPaymentStatus('current');
+        } elseif ($filter === 'delinquent') {
+            $stmt = $this->member->readByPaymentStatus('delinquent');
+        } else {
+            $stmt = $this->member->readAll();
+        }
+        
         $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
         require __DIR__ . '/../Views/members/list.php';
     }
@@ -112,5 +121,30 @@ class MemberController {
                 require __DIR__ . '/../Views/members/edit.php';
             }
         }
+    }
+
+    public function deactivate($id) {
+        $this->checkAdmin();
+        $this->member->id = $id;
+        if ($this->member->readOne()) {
+            $this->member->status = 'inactive';
+            if ($this->member->update()) {
+                header('Location: index.php?page=members&msg=deactivated');
+                exit;
+            }
+        }
+        header('Location: index.php?page=members&error=1');
+        exit;
+    }
+
+    public function delete($id) {
+        $this->checkAdmin();
+        $this->member->id = $id;
+        if ($this->member->delete()) {
+            header('Location: index.php?page=members&msg=deleted');
+            exit;
+        }
+        header('Location: index.php?page=members&error=1');
+        exit;
     }
 }
