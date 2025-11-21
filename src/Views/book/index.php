@@ -65,7 +65,7 @@
                             <td>
                                 <?php if (!empty($row['image_url'])): ?>
                                     <img src="<?php echo htmlspecialchars($row['image_url']); ?>" alt="Anuncio" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-color);">
-                                <?php elseif (!empty($row['donor_logo'])): ?>
+                                <?php elseif (isset($row['donor_logo']) && !empty($row['donor_logo'])): ?>
                                     <img src="<?php echo htmlspecialchars($row['donor_logo']); ?>" alt="Logo Donante" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-color);">
                                 <?php else: ?>
                                     <div style="width: 50px; height: 50px; background: var(--bg-color); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--text-muted);">
