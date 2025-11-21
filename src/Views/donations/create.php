@@ -17,11 +17,11 @@
 <div class="card">
     <form method="post" action="index.php?page=donations&action=store">
         <div class="form-group">
-            <label for="member_id">Socio</label>
-            <select name="member_id" id="member_id" class="form-control" required>
-                <option value="">Seleccionar socio...</option>
-                <?php foreach ($members as $m): ?>
-                    <option value="<?= $m['id'] ?>"><?= htmlspecialchars($m['name']) ?></option>
+            <label for="donor_id">Donante</label>
+            <select name="donor_id" id="donor_id" class="form-control" required>
+                <option value="">Seleccionar donante...</option>
+                <?php foreach ($donors as $d): ?>
+                    <option value="<?= $d['id'] ?>"><?= htmlspecialchars($d['name']) ?></option>
                 <?php endforeach; ?>
             </select>
         </div>

@@ -12,7 +12,7 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>Socio</th>
+                    <th>Donante</th>
                     <th>Importe (€)</th>
                     <th>Tipo</th>
                     <th>Fecha</th>
@@ -26,7 +26,7 @@
                 <?php else: ?>
                     <?php foreach ($donations as $d): ?>
                         <tr>
-                            <td style="font-weight: 500;"><?= htmlspecialchars($d['member_name'] ?? $d['member_id']) ?></td>
+                            <td style="font-weight: 500;"><?= htmlspecialchars($d['donor_name'] ?? $d['donor_id']) ?></td>
                             <td><?= number_format($d['amount'], 2) ?> €</td>
                             <td>
                                 <span class="badge badge-active">
