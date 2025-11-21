@@ -14,32 +14,15 @@ CREATE TABLE IF NOT EXISTS members (
     phone VARCHAR(20),
     address TEXT,
     status ENUM('active', 'inactive') DEFAULT 'active',
+    photo_url VARCHAR(255) DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
-CREATE TABLE IF NOT EXISTS payments (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    member_id INT NOT NULL,
-    amount DECIMAL(10, 2) NOT NULL,
-    payment_date DATE NOT NULL,
-    concept VARCHAR(255) NOT NULL,
-    status ENUM('paid', 'pending') DEFAULT 'paid',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE
-);
-
--- Phase 1 Updates
-ALTER TABLE members ADD COLUMN IF NOT EXISTS photo_url VARCHAR(255) DEFAULT NULL;
 
 CREATE TABLE IF NOT EXISTS annual_fees (
     year INT PRIMARY KEY,
     amount DECIMAL(10, 2) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
-ALTER TABLE payments ADD COLUMN IF NOT EXISTS fee_year INT DEFAULT NULL;
-ALTER TABLE payments ADD COLUMN IF NOT EXISTS payment_type ENUM('fee', 'event', 'donation') DEFAULT 'fee';
-ALTER TABLE payments ADD COLUMN IF NOT EXISTS event_id INT DEFAULT NULL;
 
 CREATE TABLE IF NOT EXISTS events (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -51,24 +34,20 @@ CREATE TABLE IF NOT EXISTS events (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-ALTER TABLE payments ADD FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE SET NULL;
-
-CREATE TABLE IF NOT EXISTS donations (
+CREATE TABLE IF NOT EXISTS payments (
     id INT AUTO_INCREMENT PRIMARY KEY,
     member_id INT NOT NULL,
-    amount DECIMAL(10,2) NOT NULL,
-    type ENUM('media','full','cover') NOT NULL,
-    year YEAR NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    payment_date DATE NOT NULL,
+    concept VARCHAR(255) NOT NULL,
+    status ENUM('paid', 'pending') DEFAULT 'paid',
+    fee_year INT DEFAULT NULL,
+    payment_type ENUM('fee', 'event', 'donation') DEFAULT 'fee',
+    event_id INT DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE
+    FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE,
+    FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE SET NULL
 );
-
-CREATE TABLE IF NOT EXISTS settings (
-    setting_key VARCHAR(50) PRIMARY KEY,
-    setting_value TEXT,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
 
 CREATE TABLE IF NOT EXISTS donors (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -77,7 +56,18 @@ CREATE TABLE IF NOT EXISTS donors (
     phone VARCHAR(20),
     email VARCHAR(150),
     address TEXT,
+    logo_url VARCHAR(255) DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS donations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    donor_id INT NOT NULL,
+    amount DECIMAL(10,2) NOT NULL,
+    type ENUM('media','full','cover') NOT NULL,
+    year YEAR NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (donor_id) REFERENCES donors(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS book_ads (
@@ -90,6 +80,22 @@ CREATE TABLE IF NOT EXISTS book_ads (
     image_url VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (donor_id) REFERENCES donors(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS ad_prices (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    year YEAR NOT NULL,
+    type ENUM('media', 'full', 'cover', 'back_cover') NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_year_type (year, type)
+);
+
+CREATE TABLE IF NOT EXISTS settings (
+    setting_key VARCHAR(50) PRIMARY KEY,
+    setting_value TEXT,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 INSERT INTO settings (setting_key, setting_value) VALUES ('association_name', 'Mi Asociación') ON DUPLICATE KEY UPDATE setting_key=setting_key;
