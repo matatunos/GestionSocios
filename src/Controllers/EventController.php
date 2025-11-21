@@ -11,6 +11,13 @@ class EventController {
         $this->event = new Event($this->db);
         $this->member = new Member($this->db);
     }
+
+    private function checkAdmin() {
+        if (($_SESSION['role'] ?? '') !== 'admin') {
+            header('Location: index.php?page=events');
+            exit;
+        }
+    }
     public function show($id) {
         $this->checkAdmin();
         // Load event data
