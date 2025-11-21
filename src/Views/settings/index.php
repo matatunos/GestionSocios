@@ -7,6 +7,7 @@
 <div class="card" style="padding: 0; overflow: hidden;">
     <div style="display: flex; border-bottom: 1px solid var(--border-light);">
         <button class="tab-btn active" onclick="openTab(event, 'general')">General</button>
+        <button class="tab-btn" onclick="openTab(event, 'ad_prices')">Precios Anuncios</button>
         <button class="tab-btn" onclick="openTab(event, 'appearance')">Apariencia</button>
         <button class="tab-btn" onclick="openTab(event, 'database')">Base de Datos</button>
     </div>
@@ -23,6 +24,104 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Guardar Cambios</button>
             </form>
+        </div>
+
+        <!-- Ad Prices Tab -->
+        <div id="ad_prices" class="tab-content" style="display: none;">
+            <h2 class="text-lg font-semibold mb-4">Precios de Anuncios (Libro de Fiestas)</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Form to Update Prices -->
+                <div class="card">
+                    <h3 class="text-md font-semibold mb-4">Actualizar Precios</h3>
+                    <form action="index.php?page=ad_prices&action=store" method="POST">
+                        <div class="form-group">
+                            <label class="form-label">Año</label>
+                            <input type="number" name="year" class="form-control" value="<?php echo date('Y'); ?>" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Media Página (€)</label>
+                            <input type="number" step="0.01" name="price_media" class="form-control" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Página Completa (€)</label>
+                            <input type="number" step="0.01" name="price_full" class="form-control" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Portada (€)</label>
+                            <input type="number" step="0.01" name="price_cover" class="form-control" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Contraportada (€)</label>
+                            <input type="number" step="0.01" name="price_back_cover" class="form-control" placeholder="0.00">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-full">Guardar Precios</button>
+                    </form>
+                </div>
+
+                <!-- Current Prices Display -->
+                <div>
+                    <div class="card mb-4">
+                        <h3 class="text-md font-semibold mb-2">Precios <?php echo $currentYear; ?></h3>
+                        <table class="table w-full">
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th class="text-right">Precio</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Media Página</td>
+                                    <td class="text-right"><?php echo number_format($adPrices['media'] ?? 0, 2); ?> €</td>
+                                </tr>
+                                <tr>
+                                    <td>Página Completa</td>
+                                    <td class="text-right"><?php echo number_format($adPrices['full'] ?? 0, 2); ?> €</td>
+                                </tr>
+                                <tr>
+                                    <td>Portada</td>
+                                    <td class="text-right"><?php echo number_format($adPrices['cover'] ?? 0, 2); ?> €</td>
+                                </tr>
+                                <tr>
+                                    <td>Contraportada</td>
+                                    <td class="text-right"><?php echo number_format($adPrices['back_cover'] ?? 0, 2); ?> €</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="text-md font-semibold mb-2">Precios <?php echo $currentYear + 1; ?></h3>
+                        <table class="table w-full">
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th class="text-right">Precio</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Media Página</td>
+                                    <td class="text-right"><?php echo number_format($nextYearPrices['media'] ?? 0, 2); ?> €</td>
+                                </tr>
+                                <tr>
+                                    <td>Página Completa</td>
+                                    <td class="text-right"><?php echo number_format($nextYearPrices['full'] ?? 0, 2); ?> €</td>
+                                </tr>
+                                <tr>
+                                    <td>Portada</td>
+                                    <td class="text-right"><?php echo number_format($nextYearPrices['cover'] ?? 0, 2); ?> €</td>
+                                </tr>
+                                <tr>
+                                    <td>Contraportada</td>
+                                    <td class="text-right"><?php echo number_format($nextYearPrices['back_cover'] ?? 0, 2); ?> €</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Appearance Tab -->

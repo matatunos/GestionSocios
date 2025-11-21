@@ -35,9 +35,18 @@ class BookAdController {
 
     public function create() {
         $this->checkAdmin();
-        $year = $_GET['year'] ?? date('Y');
-        $stmt = $this->donor->readAll();
-        $donors = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Get donors for the dropdown
+        require_once __DIR__ . '/../Models/Donor.php';
+        $donorModel = new Donor($this->db);
+        $donors = $donorModel->readAll();
+
+        // Get ad prices for current year
+        require_once __DIR__ . '/../Models/AdPrice.php';
+        $adPriceModel = new AdPrice($this->db);
+        $currentYear = date('Y');
+        $adPrices = $adPriceModel->getPricesByYear($currentYear);
+        
         require __DIR__ . '/../Views/book/create_ad.php';
     }
 
@@ -56,8 +65,10 @@ class BookAdController {
             } else {
                 $error = "Error creating ad.";
                 $year = $_POST['year'];
-                $stmt = $this->donor->readAll();
-                $donors = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                // Re-fetch donors for the view
+                require_once __DIR__ . '/../Models/Donor.php';
+                $donorModel = new Donor($this->db);
+                $donors = $donorModel->readAll();
                 require __DIR__ . '/../Views/book/create_ad.php';
             }
         }

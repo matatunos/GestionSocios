@@ -32,6 +32,14 @@ class SettingsController {
         if (defined('DB_HOST')) $dbConfig['host'] = DB_HOST;
         if (defined('DB_NAME')) $dbConfig['name'] = DB_NAME;
         if (defined('DB_USER')) $dbConfig['user'] = DB_USER;
+        
+        // Fetch Ad Prices
+        require_once __DIR__ . '/AdPriceController.php';
+        $adPriceController = new AdPriceController();
+        $currentYear = date('Y');
+        $adPrices = $adPriceController->getPrices($currentYear);
+        $nextYearPrices = $adPriceController->getPrices($currentYear + 1);
+
         // Do not expose password
         require __DIR__ . '/../Views/settings/index.php';
     }

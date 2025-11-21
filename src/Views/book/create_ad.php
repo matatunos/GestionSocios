@@ -36,10 +36,11 @@
             <div class="form-group">
                 <label for="ad_type">Tipo de Anuncio</label>
                 <select id="ad_type" name="ad_type" class="form-control" required onchange="updatePrice()">
-                    <option value="media" data-price="50">Media Página</option>
-                    <option value="full" data-price="100">Página Completa</option>
-                    <option value="cover" data-price="200">Portada</option>
-                    <option value="back_cover" data-price="150">Contraportada</option>
+                    <option value="">Seleccionar Tipo...</option>
+                    <option value="media">Media Página</option>
+                    <option value="full">Página Completa</option>
+                    <option value="cover">Portada</option>
+                    <option value="back_cover">Contraportada</option>
                 </select>
             </div>
             <div class="form-group">
@@ -65,20 +66,21 @@
 </div>
 
 <script>
+// Ad Prices from Database
+const adPrices = <?php echo json_encode($adPrices ?? []); ?>;
+
 function updatePrice() {
     const select = document.getElementById('ad_type');
     const priceInput = document.getElementById('amount');
-    const selectedOption = select.options[select.selectedIndex];
-    const price = selectedOption.getAttribute('data-price');
+    const type = select.value;
     
-    // Only update if empty or matches a standard price (to allow custom overrides)
-    // For simplicity, let's just suggest it if empty
-    if (priceInput.value === '' || priceInput.value === '0') {
-        priceInput.value = price;
+    if (type && adPrices[type]) {
+        priceInput.value = adPrices[type];
+    } else if (type) {
+        // Default fallback if price not set in DB
+        priceInput.value = '';
     }
 }
-// Run on load
-updatePrice();
 </script>
 
 <?php 

@@ -120,9 +120,19 @@ switch ($page) {
         else $controller->index();
         break;
     case 'reports':
+        require_once __DIR__ . '/../src/Controllers/ReportController.php';
         $controller = new ReportController();
         if ($action === 'executive') $controller->executiveReport();
         else $controller->executiveReport();
+        break;
+    case 'ad_prices':
+        require_once __DIR__ . '/../src/Controllers/AdPriceController.php';
+        $controller = new AdPriceController();
+        if ($action === 'store') {
+            $controller->store();
+        } else {
+            $controller->index();
+        }
         break;
     default:
         echo "404 Not Found";
