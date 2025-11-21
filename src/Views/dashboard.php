@@ -1,0 +1,81 @@
+<?php ob_start(); ?>
+
+<div class="flex justify-between items-center mb-4">
+    <h1>Panel de Control</h1>
+    <a href="index.php?page=members&action=create" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Nuevo Socio
+    </a>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+    <div class="card">
+        <div class="flex items-center justify-between">
+            <div>
+                <h3 style="margin: 0; font-size: 0.875rem; color: var(--text-muted); text-transform: uppercase;">Socios Activos</h3>
+                <p style="font-size: 2rem; font-weight: 700; margin: 0.5rem 0 0; color: var(--primary-600);">
+                    <?php echo $activeMembers; ?>
+                </p>
+            </div>
+            <div style="background: var(--primary-50); padding: 1rem; border-radius: 50%;">
+                <i class="fas fa-users" style="font-size: 1.5rem; color: var(--primary-600);"></i>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="flex items-center justify-between">
+            <div>
+                <h3 style="margin: 0; font-size: 0.875rem; color: var(--text-muted); text-transform: uppercase;">Ingresos este Mes</h3>
+                <p style="font-size: 2rem; font-weight: 700; margin: 0.5rem 0 0; color: var(--secondary-600);">
+                    <?php echo number_format($monthlyIncome, 2); ?> €
+                </p>
+            </div>
+            <div style="background: #dcfce7; padding: 1rem; border-radius: 50%;">
+                <i class="fas fa-euro-sign" style="font-size: 1.5rem; color: var(--secondary-600);"></i>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="flex items-center justify-between">
+            <div>
+                <h3 style="margin: 0; font-size: 0.875rem; color: var(--text-muted); text-transform: uppercase;">Pagos Pendientes</h3>
+                <p style="font-size: 2rem; font-weight: 700; margin: 0.5rem 0 0; color: var(--danger-600);">
+                    <?php echo $pendingPayments; ?>
+                </p>
+            </div>
+            <div style="background: #fee2e2; padding: 1rem; border-radius: 50%;">
+                <i class="fas fa-exclamation-circle" style="font-size: 1.5rem; color: var(--danger-600);"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="flex justify-between items-center mb-4">
+        <h2>Actividad Reciente</h2>
+        <a href="#" class="btn btn-sm btn-secondary">Ver todo</a>
+    </div>
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Usuario</th>
+                    <th>Acción</th>
+                    <th>Detalle</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                        No hay actividad reciente para mostrar.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<?php 
+$content = ob_get_clean(); 
+require __DIR__ . '/layout.php'; 
+?>
