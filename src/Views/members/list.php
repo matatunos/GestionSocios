@@ -32,7 +32,7 @@
     </a>
     <a href="index.php?page=members&filter=delinquent" 
        class="filter-tab <?php echo ($_GET['filter'] ?? '') === 'delinquent' ? 'active' : ''; ?>">
-        <i class="fas fa-exclamation-triangle"></i> Morosos
+        <i class="fas fa-exclamation-triangle"></i> Pendientes de pago
     </a>
 </div>
 
@@ -92,13 +92,11 @@
                                     <i class="fas fa-edit"></i> Editar
                                 </a>
                                 
-                                <?php if (($_GET['filter'] ?? '') === 'delinquent'): ?>
-                                    <a href="index.php?page=members&action=markPaid&id=<?php echo $row['id']; ?>" 
-                                       class="btn btn-sm btn-primary"
-                                       onclick="return confirm('¿Marcar la cuota de <?php echo date('Y'); ?> como pagada para este socio?');">
-                                        <i class="fas fa-check"></i> Marcar como Pagado
-                                    </a>
-                                <?php endif; ?>
+                                <a href="index.php?page=members&action=markPaid&id=<?php echo $row['id']; ?>" 
+                                   class="btn btn-sm btn-primary"
+                                   onclick="return confirm('¿Marcar la cuota de <?php echo date('Y'); ?> como pagada para este socio?');">
+                                    <i class="fas fa-check"></i> Marcar como Pagado
+                                </a>
                                 
                                 <?php if ($row['status'] === 'active'): ?>
                                     <a href="index.php?page=members&action=deactivate&id=<?php echo $row['id']; ?>" 
