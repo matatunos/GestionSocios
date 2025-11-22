@@ -14,16 +14,15 @@ CREATE TABLE IF NOT EXISTS users_new (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Copiar datos existentes si hay columnas compatibles
--- Si la tabla antigua tenía username, lo usamos como email
+-- Copiar datos existentes (tabla actual tiene: id, email, name, password, role, active, created_at)
 INSERT IGNORE INTO users_new (id, email, name, password, role, active, created_at)
 SELECT 
     id,
-    COALESCE(email, CONCAT('user', id, '@temp.com')) as email,
-    COALESCE(name, username, 'Usuario') as name,
-    COALESCE(password, password_hash) as password,
+    email,
+    name,
+    password,
     role,
-    COALESCE(active, 1) as active,
+    active,
     created_at
 FROM users;
 
