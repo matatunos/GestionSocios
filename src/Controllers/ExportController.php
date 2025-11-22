@@ -18,7 +18,8 @@ class ExportController {
      */
     public function exportMembersExcel() {
         $memberModel = new Member($this->db);
-        $members = $memberModel->read();
+        $stmt = $memberModel->readAll();
+        $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         // Headers para descargar como archivo Excel (CSV)
         header('Content-Type: text/csv; charset=utf-8');
