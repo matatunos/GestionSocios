@@ -2,8 +2,9 @@
 
 <style>
 .comparison-container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
+    padding: 2rem;
 }
 
 .comparison-header {
@@ -14,6 +15,7 @@
 .comparison-header h1 {
     font-size: 2rem;
     margin-bottom: 0.5rem;
+    color: var(--text-color);
 }
 
 .comparison-header p {
@@ -24,21 +26,22 @@
 .images-comparison {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 2rem;
+    gap: 3rem;
     margin-bottom: 2rem;
 }
 
 @media (max-width: 768px) {
     .images-comparison {
         grid-template-columns: 1fr;
+        gap: 2rem;
     }
 }
 
 .image-option {
-    background: var(--card-bg);
-    border: 3px solid var(--border-color);
+    background: white;
+    border: 3px solid #e5e7eb;
     border-radius: 12px;
-    padding: 1.5rem;
+    padding: 2rem;
     transition: all 0.3s ease;
     text-align: center;
 }
@@ -50,10 +53,10 @@
 }
 
 .image-label {
-    font-weight: 600;
-    font-size: 1.25rem;
-    margin-bottom: 1rem;
-    color: var(--text-color);
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: #1f2937;
 }
 
 .image-label i {
@@ -61,21 +64,23 @@
 }
 
 .image-preview {
-    background: var(--bg-color);
+    background: #f9fafb;
     border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    min-height: 300px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    min-height: 350px;
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 2px solid #e5e7eb;
 }
 
 .image-preview img {
     max-width: 100%;
-    max-height: 400px;
+    max-height: 450px;
     border-radius: 4px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    object-fit: contain;
 }
 
 .button-group {
@@ -86,53 +91,58 @@
 }
 
 .btn-choice {
-    padding: 1rem 2rem;
-    font-size: 1.125rem;
-    font-weight: 600;
-    border-radius: 8px;
-    border: 2px solid;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
+    padding: 1.25rem 2rem !important;
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    border-radius: 8px !important;
+    border: 3px solid !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.75rem !important;
+    text-transform: uppercase !important;
 }
 
 .btn-keep-old {
-    background: var(--card-bg);
-    border-color: var(--border-color);
-    color: var(--text-color);
+    background: #6b7280 !important;
+    border-color: #6b7280 !important;
+    color: white !important;
 }
 
 .btn-keep-old:hover {
-    background: var(--bg-color);
-    border-color: var(--text-color);
+    background: #4b5563 !important;
+    border-color: #4b5563 !important;
+    transform: scale(1.05) !important;
 }
 
 .btn-use-new {
-    background: var(--primary-color);
-    border-color: var(--primary-color);
-    color: white;
+    background: #10b981 !important;
+    border-color: #10b981 !important;
+    color: white !important;
 }
 
 .btn-use-new:hover {
-    background: var(--primary-hover);
-    border-color: var(--primary-hover);
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    background: #059669 !important;
+    border-color: #059669 !important;
+    transform: scale(1.05) !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4) !important;
 }
 
 .alert-info {
     background: #3b82f6;
     color: white;
-    padding: 1rem 1.5rem;
+    padding: 1.25rem 1.5rem;
     border-radius: 8px;
     margin-bottom: 2rem;
     border-left: 4px solid #1d4ed8;
     font-size: 1.125rem;
+    font-weight: 600;
 }
 
 .alert-info i {
-    margin-right: 0.5rem;
+    margin-right: 0.75rem;
 }
 </style>
 
