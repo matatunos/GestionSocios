@@ -144,6 +144,10 @@ switch ($page) {
         else if ($action === 'delete') $controller->delete();
         else $controller->index();
         break;
+    case 'treasury':
+        $controller = new TreasuryController($db);
+        $controller->dashboard();
+        break;
     case 'settings':
         $controller = new SettingsController();
         if ($action === 'updateGeneral') $controller->updateGeneral();
