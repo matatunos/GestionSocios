@@ -102,29 +102,31 @@ class DonorController {
             // Handle logo upload
             $logoUrl = $currentLogo; // Keep current logo by default
             
-            // Debug output
-            echo "<pre style='background: #f0f0f0; padding: 20px; border: 2px solid #333;'>";
-            echo "=== DONOR IMAGE UPDATE DEBUG ===\n";
-            echo "Current Logo: " . ($currentLogo ?? 'NULL') . "\n";
-            echo "Current Logo is truthy: " . ($currentLogo ? 'YES' : 'NO') . "\n";
-            echo "Has uploaded file: " . (isset($_FILES['logo']) ? 'YES' : 'NO') . "\n";
+            // Debug to file
+            $debugLog = __DIR__ . '/../../public/donor_update_debug.txt';
+            $debugContent = "=== DONOR UPDATE DEBUG - " . date('Y-m-d H:i:s') . " ===\n";
+            $debugContent .= "Donor ID: " . $id . "\n";
+            $debugContent .= "Current Logo: " . ($currentLogo ?? 'NULL') . "\n";
+            $debugContent .= "Current Logo is truthy: " . ($currentLogo ? 'YES' : 'NO') . "\n";
+            $debugContent .= "Has uploaded file: " . (isset($_FILES['logo']) ? 'YES' : 'NO') . "\n";
             if (isset($_FILES['logo'])) {
-                echo "Upload error code: " . $_FILES['logo']['error'] . "\n";
-                echo "File type: " . ($_FILES['logo']['type'] ?? 'UNKNOWN') . "\n";
-                echo "File name: " . ($_FILES['logo']['name'] ?? 'UNKNOWN') . "\n";
+                $debugContent .= "Upload error code: " . $_FILES['logo']['error'] . " (0 = OK)\n";
+                $debugContent .= "File type: " . ($_FILES['logo']['type'] ?? 'UNKNOWN') . "\n";
+                $debugContent .= "File name: " . ($_FILES['logo']['name'] ?? 'UNKNOWN') . "\n";
+                $debugContent .= "File size: " . ($_FILES['logo']['size'] ?? 0) . " bytes\n";
             }
-            echo "\nCondition check:\n";
-            echo "isset(\$_FILES['logo']): " . (isset($_FILES['logo']) ? 'TRUE' : 'FALSE') . "\n";
-            echo "\$_FILES['logo']['error'] === UPLOAD_ERR_OK: " . (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK ? 'TRUE' : 'FALSE') . "\n";
-            echo "\$currentLogo: " . ($currentLogo ? 'TRUE' : 'FALSE') . "\n";
-            echo "ALL CONDITIONS: " . (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK && $currentLogo ? 'TRUE - SHOULD ENTER COMPARISON' : 'FALSE - WONT ENTER COMPARISON') . "\n";
-            echo "</pre>";
+            $debugContent .= "\nCondition checks:\n";
+            $debugContent .= "isset(\$_FILES['logo']): " . (isset($_FILES['logo']) ? 'TRUE' : 'FALSE') . "\n";
+            $debugContent .= "\$_FILES['logo']['error'] === UPLOAD_ERR_OK: " . (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK ? 'TRUE' : 'FALSE') . "\n";
+            $debugContent .= "\$currentLogo truthy: " . ($currentLogo ? 'TRUE' : 'FALSE') . "\n";
+            $debugContent .= "ALL CONDITIONS MET: " . (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK && $currentLogo ? 'YES - ENTERING COMPARISON' : 'NO - NOT ENTERING COMPARISON') . "\n";
+            $debugContent .= "\n";
+            file_put_contents($debugLog, $debugContent);
             
             // Check if a new logo is being uploaded and there's already a current logo
             if (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK && $currentLogo) {
-                echo "<pre style='background: #90EE90; padding: 20px; border: 2px solid green;'>";
-                echo "✓ Entering comparison flow\n";
-                echo "</pre>";
+                $debugContent .= "✓ ENTERED COMPARISON FLOW\n";
+                file_put_contents($debugLog, $debugContent);
                 
                 // Save the new image temporarily and redirect to comparison
                 $uploadDir = __DIR__ . '/../../public/uploads/donors/temp/';
@@ -141,10 +143,10 @@ class DonorController {
                     $tempPath = $uploadDir . $tempFileName;
 
                     if (move_uploaded_file($_FILES['logo']['tmp_name'], $tempPath)) {
-                        echo "<pre style='background: #90EE90; padding: 20px; border: 2px solid green;'>";
-                        echo "✓ Temp file created: " . $tempPath . "\n";
-                        echo "✓ About to redirect to comparison view...\n";
-                        echo "</pre>";
+                        $debugContent .= "✓ Temp file created: " . $tempPath . "\n";
+                        $debugContent .= "✓ Storing data in session\n";
+                        $debugContent .= "✓ Redirecting to compareImages\n";
+                        file_put_contents($debugLog, $debugContent);
                         
                         // Store data in session for comparison
                         $_SESSION['image_comparison'] = [
@@ -160,30 +162,21 @@ class DonorController {
                             ]
                         ];
                         
-                        echo "<pre style='background: #FFD700; padding: 20px; border: 2px solid orange;'>";
-                        echo "REDIRECT: index.php?page=donors&action=compareImages\n";
-                        echo "Click here if not redirected automatically:\n";
-                        echo "<a href='index.php?page=donors&action=compareImages'>Go to comparison</a>\n";
-                        echo "</pre>";
-                        
                         // Redirect to comparison view
                         header('Location: index.php?page=donors&action=compareImages');
                         exit;
                     } else {
-                        echo "<pre style='background: #FFB6C1; padding: 20px; border: 2px solid red;'>";
-                        echo "✗ Failed to move uploaded file\n";
-                        echo "</pre>";
+                        $debugContent .= "✗ Failed to move uploaded file\n";
+                        file_put_contents($debugLog, $debugContent);
                     }
                 } else {
-                    echo "<pre style='background: #FFB6C1; padding: 20px; border: 2px solid red;'>";
-                    echo "✗ File type not allowed: " . $fileType . "\n";
-                    echo "Allowed types: " . implode(', ', $allowedTypes) . "\n";
-                    echo "</pre>";
+                    $debugContent .= "✗ File type not allowed: " . $fileType . "\n";
+                    $debugContent .= "Allowed: " . implode(', ', $allowedTypes) . "\n";
+                    file_put_contents($debugLog, $debugContent);
                 }
             } elseif (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
-                echo "<pre style='background: #ADD8E6; padding: 20px; border: 2px solid blue;'>";
-                echo "→ Entering normal upload flow (no existing logo)\n";
-                echo "</pre>";
+                $debugContent .= "→ NORMAL UPLOAD FLOW (no existing logo)\n";
+                file_put_contents($debugLog, $debugContent);
                 $uploadDir = __DIR__ . '/../../public/uploads/donors/';
                 if (!is_dir($uploadDir)) {
                     mkdir($uploadDir, 0777, true);
