@@ -90,6 +90,46 @@
     <?php endif; ?>
 </div>
 
+<!-- Notifications Widget -->
+<?php if (!empty($recentNotifications)): ?>
+<div class="card" style="margin-bottom: 2rem; border-left: 4px solid var(--primary-600);">
+    <div class="flex justify-between items-center mb-4">
+        <h2 style="display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fas fa-bell" style="color: var(--primary-600);"></i>
+            Notificaciones Recientes
+        </h2>
+        <a href="index.php?page=notifications" class="btn btn-sm btn-secondary">Ver todas</a>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <?php foreach ($recentNotifications as $notification): ?>
+            <div style="padding: 1rem; background: <?php echo $notification['is_read'] ? 'var(--bg-body)' : 'var(--primary-50)'; ?>; border-radius: var(--radius-md); display: flex; align-items: start; gap: 1rem;">
+                <div style="flex-shrink: 0; width: 40px; height: 40px; background: var(--primary-600); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <div style="flex: 1;">
+                    <p style="margin: 0; font-weight: <?php echo $notification['is_read'] ? '400' : '600'; ?>;">
+                        <?php echo htmlspecialchars($notification['message']); ?>
+                    </p>
+                    <p style="margin: 0.25rem 0 0; font-size: 0.875rem; color: var(--text-muted);">
+                        <?php 
+                        $time = strtotime($notification['created_at']);
+                        $diff = time() - $time;
+                        if ($diff < 60) echo 'Hace un momento';
+                        elseif ($diff < 3600) echo 'Hace ' . floor($diff / 60) . ' minutos';
+                        elseif ($diff < 86400) echo 'Hace ' . floor($diff / 3600) . ' horas';
+                        else echo date('d/m/Y H:i', $time);
+                        ?>
+                    </p>
+                </div>
+                <?php if (!$notification['is_read']): ?>
+                    <span style="flex-shrink: 0; width: 8px; height: 8px; background: var(--primary-600); border-radius: 50%;"></span>
+                <?php endif; ?>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+<?php endif; ?>
+
 <div class="card">
     <div class="flex justify-between items-center mb-4">
         <h2>Actividad Reciente</h2>

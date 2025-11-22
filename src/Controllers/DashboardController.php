@@ -75,6 +75,15 @@ class DashboardController {
         // Limit to top 10
         $recentActivity = array_slice($recentActivity, 0, 10);
 
+        // Get recent notifications
+        $recentNotifications = [];
+        if (isset($_SESSION['user_id'])) {
+            require_once __DIR__ . '/../Models/Notification.php';
+            $notificationModel = new Notification($this->db);
+            $notificationsStmt = $notificationModel->getUserNotifications($_SESSION['user_id'], 5);
+            $recentNotifications = $notificationsStmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+
         require __DIR__ . '/../Views/dashboard.php';
     }
 }

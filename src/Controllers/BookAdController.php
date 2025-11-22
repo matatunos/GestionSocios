@@ -62,6 +62,12 @@ class BookAdController {
             $this->bookAd->image_url = ''; // Handle upload if needed later
 
             if ($this->bookAd->create()) {
+                // Get the last inserted ID
+                $adId = $this->db->lastInsertId();
+                
+                // Create payment record immediately (pending or paid)
+                $this->syncPayment($adId);
+                
                 header('Location: index.php?page=book&year=' . $_POST['year']);
             } else {
                 $error = "Error creating ad.";
@@ -170,19 +176,25 @@ class BookAdController {
         
         if ($existingPayment) {
             // Update existing payment
-            $updateStmt = $this->db->prepare("UPDATE payments SET amount = ?, payment_date = ?, status = 'paid' WHERE id = ?");
+            $paymentStatus = $this->bookAd->status === 'paid' ? 'paid' : 'pending';
+            $paymentDate = $this->bookAd->status === 'paid' ? date('Y-m-d') : NULL;
+            $updateStmt = $this->db->prepare("UPDATE payments SET amount = ?, payment_date = ?, status = ? WHERE id = ?");
             $updateStmt->execute([
                 $this->bookAd->amount,
-                date('Y-m-d'),
+                $paymentDate,
+                $paymentStatus,
                 $existingPayment['id']
             ]);
         } else {
-            // Create new payment record
-            $insertStmt = $this->db->prepare("INSERT INTO payments (member_id, amount, payment_date, concept, status, fee_year, payment_type, book_ad_id) VALUES (NULL, ?, ?, ?, 'paid', ?, 'book_ad', ?)");
+            // Create new payment record (pending or paid)
+            $paymentStatus = $this->bookAd->status === 'paid' ? 'paid' : 'pending';
+            $paymentDate = $this->bookAd->status === 'paid' ? date('Y-m-d') : NULL;
+            $insertStmt = $this->db->prepare("INSERT INTO payments (member_id, amount, payment_date, concept, status, fee_year, payment_type, book_ad_id) VALUES (NULL, ?, ?, ?, ?, ?, 'book_ad', ?)");
             $insertStmt->execute([
                 $this->bookAd->amount,
-                date('Y-m-d'),
+                $paymentDate,
                 'Anuncio Libro Fiestas ' . $this->bookAd->year . ' - ' . $donorModel->name,
+                $paymentStatus,
                 $this->bookAd->year,
                 $adId
             ]);

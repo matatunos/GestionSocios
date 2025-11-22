@@ -107,9 +107,6 @@
                 </a>
             </div>
         </div>
-        <a href="index.php?page=members&action=create" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Nuevo Socio
-        </a>
     </div>
 </div>
 
