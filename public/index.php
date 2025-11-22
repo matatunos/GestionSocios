@@ -268,6 +268,16 @@ switch ($page) {
         $controller = new ApiController();
         $controller->index();
         break;
+    case 'tasks':
+        $controller = new TaskController($db);
+        if ($action === 'create') $controller->create();
+        else if ($action === 'edit') $controller->edit();
+        else if ($action === 'view') $controller->view();
+        else if ($action === 'delete') $controller->delete();
+        else if ($action === 'complete') $controller->complete();
+        else if ($action === 'addComment') $controller->addComment();
+        else $controller->index();
+        break;
     default:
         echo "404 Not Found";
         break;

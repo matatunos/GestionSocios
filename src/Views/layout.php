@@ -140,6 +140,12 @@ if (isset($_SESSION['user_id'])) {
                     </a>
                 </li>
                 <li>
+                    <a href="index.php?page=tasks" class="nav-link <?php echo ($page === 'tasks') ? 'active' : ''; ?>">
+                        <i class="fas fa-tasks"></i>
+                        <span>Tareas</span>
+                    </a>
+                </li>
+                <li>
                     <a href="index.php?page=notifications" class="nav-link <?php echo ($page === 'notifications') ? 'active' : ''; ?>">
                         <i class="fas fa-bell"></i>
                         <span>Notificaciones</span>
