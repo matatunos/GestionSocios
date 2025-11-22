@@ -41,10 +41,10 @@ class AdPriceController {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $year = $_POST['year'];
             $prices = [
-                'media' => $_POST['price_media'] ?? 0,
-                'full' => $_POST['price_full'] ?? 0,
-                'cover' => $_POST['price_cover'] ?? 0,
-                'back_cover' => $_POST['price_back_cover'] ?? 0
+                'media' => !empty($_POST['price_media']) ? floatval($_POST['price_media']) : 0.00,
+                'full' => !empty($_POST['price_full']) ? floatval($_POST['price_full']) : 0.00,
+                'cover' => !empty($_POST['price_cover']) ? floatval($_POST['price_cover']) : 0.00,
+                'back_cover' => !empty($_POST['price_back_cover']) ? floatval($_POST['price_back_cover']) : 0.00
             ];
 
             $success = true;

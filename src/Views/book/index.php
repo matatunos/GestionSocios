@@ -96,10 +96,21 @@
                                 </span>
                             </td>
                             <td style="text-align: right;">
+                                <?php if ($row['status'] === 'pending'): ?>
+                                    <a href="index.php?page=book&action=markPaid&id=<?php echo $row['id']; ?>" 
+                                       class="btn btn-sm btn-primary"
+                                       onclick="return confirm('¿Marcar este anuncio como pagado?');">
+                                        <i class="fas fa-check"></i> Marcar Pagado
+                                    </a>
+                                <?php endif; ?>
+                                <a href="index.php?page=book&action=edit&id=<?php echo $row['id']; ?>" 
+                                   class="btn btn-sm btn-secondary">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
                                 <a href="index.php?page=book&action=delete&id=<?php echo $row['id']; ?>" 
                                    class="btn btn-sm btn-danger"
                                    onclick="return confirm('¿Estás seguro de eliminar este anuncio?');">
-                                    <i class="fas fa-trash"></i> Eliminar
+                                    <i class="fas fa-trash"></i>
                                 </a>
                             </td>
                         </tr>

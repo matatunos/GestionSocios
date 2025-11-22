@@ -75,11 +75,130 @@ class BookAdController {
         }
     }
 
+    public function edit($id) {
+        $this->checkAdmin();
+        $this->bookAd->id = $id;
+        
+        if ($this->bookAd->readOne()) {
+            $bookAd = $this->bookAd;
+            
+            // Get donors for dropdown
+            require_once __DIR__ . '/../Models/Donor.php';
+            $donorModel = new Donor($this->db);
+            $donors = $donorModel->readAll();
+            
+            // Get ad prices for current year
+            require_once __DIR__ . '/../Models/AdPrice.php';
+            $adPriceModel = new AdPrice($this->db);
+            $adPrices = $adPriceModel->getPricesByYear($bookAd->year);
+            
+            require __DIR__ . '/../Views/book/edit_ad.php';
+        } else {
+            header('Location: index.php?page=book&error=1');
+        }
+    }
+    
+    public function update($id) {
+        $this->checkAdmin();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->bookAd->id = $id;
+            $this->bookAd->donor_id = $_POST['donor_id'];
+            $this->bookAd->year = $_POST['year'];
+            $this->bookAd->ad_type = $_POST['ad_type'];
+            $this->bookAd->amount = !empty($_POST['amount']) ? floatval($_POST['amount']) : 0.00;
+            $this->bookAd->status = $_POST['status'];
+            $this->bookAd->image_url = ''; // Keep existing
+            
+            if ($this->bookAd->update()) {
+                // If marked as paid, create/update payment record
+                if ($_POST['status'] === 'paid') {
+                    $this->syncPayment($id);
+                }
+                header('Location: index.php?page=book&year=' . $_POST['year'] . '&msg=updated');
+                exit;
+            } else {
+                $error = "Error actualizando anuncio.";
+                $bookAd = $this->bookAd;
+                
+                // Re-fetch data for view
+                require_once __DIR__ . '/../Models/Donor.php';
+                $donorModel = new Donor($this->db);
+                $donors = $donorModel->readAll();
+                
+                require_once __DIR__ . '/../Models/AdPrice.php';
+                $adPriceModel = new AdPrice($this->db);
+                $adPrices = $adPriceModel->getPricesByYear($_POST['year']);
+                
+                require __DIR__ . '/../Views/book/edit_ad.php';
+            }
+        }
+    }
+    
+    public function markPaid($id) {
+        $this->checkAdmin();
+        $this->bookAd->id = $id;
+        
+        if ($this->bookAd->readOne()) {
+            $year = $this->bookAd->year;
+            $this->bookAd->status = 'paid';
+            
+            if ($this->bookAd->update()) {
+                // Create payment record
+                $this->syncPayment($id);
+                header('Location: index.php?page=book&year=' . $year . '&msg=marked_paid');
+                exit;
+            }
+        }
+        header('Location: index.php?page=book&error=1');
+    }
+    
+    private function syncPayment($adId) {
+        // Sync book ad payment with payments table
+        $this->bookAd->id = $adId;
+        $this->bookAd->readOne();
+        
+        // Get donor info
+        require_once __DIR__ . '/../Models/Donor.php';
+        $donorModel = new Donor($this->db);
+        $donorModel->id = $this->bookAd->donor_id;
+        $donorModel->readOne();
+        
+        // Check if payment already exists
+        $checkStmt = $this->db->prepare("SELECT id FROM payments WHERE payment_type = 'book_ad' AND book_ad_id = ?");
+        $checkStmt->execute([$adId]);
+        $existingPayment = $checkStmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($existingPayment) {
+            // Update existing payment
+            $updateStmt = $this->db->prepare("UPDATE payments SET amount = ?, payment_date = ?, status = 'paid' WHERE id = ?");
+            $updateStmt->execute([
+                $this->bookAd->amount,
+                date('Y-m-d'),
+                $existingPayment['id']
+            ]);
+        } else {
+            // Create new payment record
+            $insertStmt = $this->db->prepare("INSERT INTO payments (member_id, amount, payment_date, concept, status, fee_year, payment_type, book_ad_id) VALUES (NULL, ?, ?, ?, 'paid', ?, 'book_ad', ?)");
+            $insertStmt->execute([
+                $this->bookAd->amount,
+                date('Y-m-d'),
+                'Anuncio Libro Fiestas ' . $this->bookAd->year . ' - ' . $donorModel->name,
+                $this->bookAd->year,
+                $adId
+            ]);
+        }
+    }
+
     public function delete($id) {
         $this->checkAdmin();
         $this->bookAd->id = $id;
         if ($this->bookAd->readOne()) {
             $year = $this->bookAd->year;
+            
+            // Delete associated payment if exists
+            $deletePaymentStmt = $this->db->prepare("DELETE FROM payments WHERE payment_type = 'book_ad' AND book_ad_id = ?");
+            $deletePaymentStmt->execute([$id]);
+            
             if ($this->bookAd->delete()) {
                 header('Location: index.php?page=book&year=' . $year . '&msg=deleted');
                 exit;

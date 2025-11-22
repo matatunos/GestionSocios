@@ -25,7 +25,7 @@ class AdPrice {
 
         $this->year = htmlspecialchars(strip_tags($this->year));
         $this->type = htmlspecialchars(strip_tags($this->type));
-        $this->amount = htmlspecialchars(strip_tags($this->amount));
+        $this->amount = floatval($this->amount);
 
         $stmt->bindParam(":year", $this->year);
         $stmt->bindParam(":type", $this->type);

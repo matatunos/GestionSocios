@@ -6,11 +6,19 @@
 # Description: Creates compressed MySQL dumps with timestamp and rotation
 ###############################################################################
 
-# Configuration
-DB_HOST="192.168.1.22"
-DB_USER="root"
-DB_PASS="your_password_here"  # CHANGE THIS!
-DB_NAME="asociacion_db"
+# Get database credentials from config.php
+CONFIG_FILE="/opt/GestionSocios/src/Config/config.php"
+
+if [ ! -f "$CONFIG_FILE" ]; then
+    echo "ERROR: Config file not found at $CONFIG_FILE"
+    exit 1
+fi
+
+# Extract database credentials from config.php
+DB_HOST=$(grep "define('DB_HOST'" "$CONFIG_FILE" | sed "s/.*'\(.*\)'.*/\1/")
+DB_USER=$(grep "define('DB_USER'" "$CONFIG_FILE" | sed "s/.*'\(.*\)'.*/\1/")
+DB_PASS=$(grep "define('DB_PASS'" "$CONFIG_FILE" | sed "s/.*'\(.*\)'.*/\1/")
+DB_NAME=$(grep "define('DB_NAME'" "$CONFIG_FILE" | sed "s/.*'\(.*\)'.*/\1/")
 
 # Backup settings
 BACKUP_DIR="/opt/GestionSocios/backups"
