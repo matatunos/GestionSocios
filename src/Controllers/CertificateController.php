@@ -17,16 +17,10 @@ class CertificateController {
      * Generate membership certificate
      */
     public function membership() {
-        // Check authentication and permissions
+        // Check authentication
         if (!isset($_SESSION['user_id'])) {
             $_SESSION['error'] = 'Debe iniciar sesión';
             header('Location: index.php?page=login');
-            exit;
-        }
-        
-        if (!Auth::hasPermission('members', 'view')) {
-            $_SESSION['error'] = 'No tiene permisos para generar certificados';
-            header('Location: index.php?page=dashboard');
             exit;
         }
         
@@ -65,16 +59,10 @@ class CertificateController {
      * Generate payment certificate
      */
     public function payments() {
-        // Check authentication and permissions
+        // Check authentication
         if (!isset($_SESSION['user_id'])) {
             $_SESSION['error'] = 'Debe iniciar sesión';
             header('Location: index.php?page=login');
-            exit;
-        }
-        
-        if (!Auth::hasPermission('members', 'view')) {
-            $_SESSION['error'] = 'No tiene permisos para generar certificados';
-            header('Location: index.php?page=dashboard');
             exit;
         }
         
@@ -115,16 +103,10 @@ class CertificateController {
      * Generate donation certificate
      */
     public function donations() {
-        // Check authentication and permissions
+        // Check authentication
         if (!isset($_SESSION['user_id'])) {
             $_SESSION['error'] = 'Debe iniciar sesión';
             header('Location: index.php?page=login');
-            exit;
-        }
-        
-        if (!Auth::hasPermission('donors', 'view')) {
-            $_SESSION['error'] = 'No tiene permisos para generar certificados';
-            header('Location: index.php?page=dashboard');
             exit;
         }
         
