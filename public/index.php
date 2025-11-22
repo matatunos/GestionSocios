@@ -232,6 +232,16 @@ switch ($page) {
         $controller = new GalleryController();
         $controller->index();
         break;
+    case 'polls':
+        $controller = new PollController($db);
+        if ($action === 'create') $controller->create();
+        else if ($action === 'store') $controller->store();
+        else if ($action === 'view') $controller->view();
+        else if ($action === 'vote') $controller->vote();
+        else if ($action === 'close') $controller->close();
+        else if ($action === 'delete') $controller->delete();
+        else $controller->index();
+        break;
     default:
         echo "404 Not Found";
         break;
