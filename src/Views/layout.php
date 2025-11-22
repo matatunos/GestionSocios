@@ -86,9 +86,6 @@ if (isset($_SESSION['user_id'])) {
                         <span><?= htmlspecialchars($orgInfo['short_name']) ?></span>
                     <?php endif; ?>
                 </div>
-                <button class="sidebar-toggle" onclick="toggleSidebar()">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
             </div>
             
             <!-- Global Search -->
@@ -312,17 +309,6 @@ if (isset($_SESSION['user_id'])) {
                 localStorage.setItem('theme', 'light');
             }
         });
-
-        // Initialize Sidebar State
-        if (localStorage.getItem('sidebarCollapsed') === 'true') {
-            document.getElementById('sidebar').classList.add('collapsed');
-        }
-
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('collapsed');
-            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
-        }
 
         // Global Search
         const searchInput = document.getElementById('globalSearchInput');
