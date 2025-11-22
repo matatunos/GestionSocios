@@ -149,6 +149,12 @@ if (isset($_SESSION['user_id'])) {
                     </a>
                 </li>
                 <li>
+                    <a href="index.php?page=documents" class="nav-link <?php echo ($page === 'documents') ? 'active' : ''; ?>">
+                        <i class="fas fa-folder-open"></i>
+                        <span>Documentos</span>
+                    </a>
+                </li>
+                <li>
                     <a href="index.php?page=book" class="nav-link <?php echo ($page === 'book') ? 'active' : ''; ?>">
                         <i class="fas fa-book-open"></i>
                         <span>Libro Fiestas</span>

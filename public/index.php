@@ -205,6 +205,16 @@ switch ($page) {
         else if ($action === 'payments_excel') $controller->exportPaymentsExcel();
         else header('Location: index.php?page=dashboard');
         break;
+    case 'documents':
+        $controller = new DocumentController($db);
+        if ($action === 'create') $controller->create();
+        else if ($action === 'store') $controller->store();
+        else if ($action === 'edit') $controller->edit();
+        else if ($action === 'update') $controller->update();
+        else if ($action === 'delete') $controller->delete();
+        else if ($action === 'download') $controller->download();
+        else $controller->index();
+        break;
     case 'ad_prices':
         require_once __DIR__ . '/../src/Controllers/AdPriceController.php';
         $controller = new AdPriceController();
