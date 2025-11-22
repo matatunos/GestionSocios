@@ -32,6 +32,9 @@ if (!file_exists(__DIR__ . '/../src/Config/config.php')) {
         $dbTest = new Database();
         if ($dbTest->getConnection() === null) {
             $page = 'db_error';
+        } else {
+            // Initialize $db for controllers
+            $db = $dbTest->getConnection();
         }
     }
 }
