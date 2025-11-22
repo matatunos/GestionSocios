@@ -328,7 +328,8 @@ class Certificate {
         $orgName = htmlspecialchars($orgSettings['org_name'] ?? 'la Asociación');
         $name = htmlspecialchars($member['first_name'] . ' ' . $member['last_name']);
         $dni = htmlspecialchars($member['dni'] ?? '');
-        $memberNumber = htmlspecialchars($member['member_number'] ?? '');
+        // Use member_number if available, otherwise use ID
+        $memberNumber = htmlspecialchars($member['member_number'] ?? $member['id']);
         $joinDate = date('d/m/Y', strtotime($member['join_date']));
         $category = htmlspecialchars($member['category_name'] ?? 'General');
         

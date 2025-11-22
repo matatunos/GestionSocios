@@ -146,6 +146,15 @@ class Member {
         $stmt->bindParam(":photo_url", $this->photo_url);
 
         if ($stmt->execute()) {
+            // Get the inserted ID
+            $newId = $this->conn->lastInsertId();
+            
+            // Update member_number to be the same as ID
+            $updateQuery = "UPDATE " . $this->table_name . " SET member_number = :id WHERE id = :id";
+            $updateStmt = $this->conn->prepare($updateQuery);
+            $updateStmt->bindParam(":id", $newId);
+            $updateStmt->execute();
+            
             return true;
         }
         return false;
