@@ -168,6 +168,10 @@ switch ($page) {
         else if ($action === 'export_movements') $controller->exportMovements();
         else $controller->executiveReport();
         break;
+    case 'search':
+        $controller = new SearchController();
+        $controller->search();
+        break;
     case 'ad_prices':
         require_once __DIR__ . '/../src/Controllers/AdPriceController.php';
         $controller = new AdPriceController();

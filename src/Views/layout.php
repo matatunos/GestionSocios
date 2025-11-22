@@ -45,6 +45,16 @@ if (!isset($associationName)) {
                 </button>
             </div>
             
+            <!-- Global Search -->
+            <div class="global-search" id="globalSearch">
+                <div class="search-input-wrapper">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="globalSearchInput" placeholder="Buscar..." autocomplete="off">
+                    <kbd class="search-shortcut">Ctrl+K</kbd>
+                </div>
+                <div class="search-results" id="searchResults" style="display: none;"></div>
+            </div>
+            
             <ul class="nav-menu">
                 <li>
                     <a href="index.php?page=dashboard" class="nav-link <?php echo ($page === 'dashboard') ? 'active' : ''; ?>">
@@ -173,6 +183,73 @@ if (!isset($associationName)) {
             sidebar.classList.toggle('collapsed');
             localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
         }
+
+        // Global Search
+        const searchInput = document.getElementById('globalSearchInput');
+        const searchResults = document.getElementById('searchResults');
+        let searchTimeout;
+
+        // Keyboard shortcut (Ctrl+K)
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                searchInput.focus();
+            }
+            // ESC to close results
+            if (e.key === 'Escape') {
+                searchResults.style.display = 'none';
+            }
+        });
+
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            const query = this.value.trim();
+
+            if (query.length < 2) {
+                searchResults.style.display = 'none';
+                return;
+            }
+
+            searchTimeout = setTimeout(() => {
+                fetch('index.php?page=search&q=' + encodeURIComponent(query))
+                    .then(response => response.json())
+                    .then(data => {
+                        displaySearchResults(data.results);
+                    })
+                    .catch(error => console.error('Search error:', error));
+            }, 300);
+        });
+
+        function displaySearchResults(results) {
+            if (results.length === 0) {
+                searchResults.innerHTML = '<div class="search-no-results"><i class="fas fa-search"></i><br>No se encontraron resultados</div>';
+                searchResults.style.display = 'block';
+                return;
+            }
+
+            let html = '';
+            results.forEach(result => {
+                html += `
+                    <a href="${result.url}" class="search-result-item" style="display: block; text-decoration: none; color: inherit;">
+                        <span class="search-result-type" style="background: ${result.type_color}">
+                            ${result.type_label}
+                        </span>
+                        <div class="search-result-title">${result.title}</div>
+                        <div class="search-result-subtitle">${result.subtitle}</div>
+                    </a>
+                `;
+            });
+
+            searchResults.innerHTML = html;
+            searchResults.style.display = 'block';
+        }
+
+        // Click outside to close
+        document.addEventListener('click', function(e) {
+            if (!document.getElementById('globalSearch').contains(e.target)) {
+                searchResults.style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
