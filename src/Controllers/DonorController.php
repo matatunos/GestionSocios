@@ -41,6 +41,10 @@ class DonorController {
             $logoUrl = null;
             if (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
                 $uploadDir = __DIR__ . '/../../public/uploads/donors/';
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0777, true);
+                }
+                
                 $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
                 $maxSize = 2 * 1024 * 1024; // 2MB
 
@@ -99,6 +103,10 @@ class DonorController {
             $logoUrl = $currentLogo; // Keep current logo by default
             if (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
                 $uploadDir = __DIR__ . '/../../public/uploads/donors/';
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0777, true);
+                }
+
                 $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
                 $maxSize = 2 * 1024 * 1024; // 2MB
 
