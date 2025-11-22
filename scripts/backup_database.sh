@@ -70,16 +70,30 @@ fi
 # Perform backup
 log_message "Creating backup file: $BACKUP_FILE"
 
-if mysqldump -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" \
+# Run mysqldump and capture exit code
+mysqldump -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" \
     --single-transaction \
     --routines \
     --triggers \
     --events \
     --add-drop-database \
-    --databases "$DB_NAME" | gzip > "$BACKUP_FILE"; then
-    
+    --databases "$DB_NAME" 2>&1 | gzip > "$BACKUP_FILE"
+
+# Check if mysqldump succeeded by checking pipe status
+if [ ${PIPESTATUS[0]} -eq 0 ]; then
     # Backup successful
     BACKUP_SIZE=$(du -h "$BACKUP_FILE" | cut -f1)
+    
+    # Verify backup is not empty (should be at least 1KB)
+    BACKUP_SIZE_BYTES=$(stat -f%z "$BACKUP_FILE" 2>/dev/null || stat -c%s "$BACKUP_FILE" 2>/dev/null)
+    
+    if [ "$BACKUP_SIZE_BYTES" -lt 1024 ]; then
+        log_message "ERROR: Backup file is too small ($BACKUP_SIZE_BYTES bytes). Backup likely failed."
+        send_notification "Backup Failed" "Backup file is suspiciously small"
+        rm -f "$BACKUP_FILE"
+        exit 1
+    fi
+    
     log_message "SUCCESS: Backup completed successfully"
     log_message "Backup size: $BACKUP_SIZE"
     
