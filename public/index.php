@@ -256,6 +256,15 @@ switch ($page) {
         else if ($action === 'startDirect') $controller->startDirect();
         else $controller->index();
         break;
+    case 'language':
+        $controller = new LanguageController();
+        if ($action === 'change') $controller->change();
+        else header('Location: index.php?page=dashboard');
+        break;
+    case 'api':
+        $controller = new ApiController();
+        $controller->index();
+        break;
     default:
         echo "404 Not Found";
         break;
