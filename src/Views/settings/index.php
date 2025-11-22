@@ -102,23 +102,26 @@
 
     <div class="tabs-container">
         <div class="tabs-nav">
-            <button class="tab-btn active" onclick="openTab(event, 'general')">
-                <i class="fas fa-building"></i> General
+            <button class="tab-btn <?= ($_GET['tab'] ?? 'general') === 'general' ? 'active' : '' ?>" onclick="openTab(event, 'general')">
+                <i class="fas fa-cog"></i> General
             </button>
-            <button class="tab-btn" onclick="openTab(event, 'fees')">
+            <button class="tab-btn <?= ($_GET['tab'] ?? '') === 'organization' ? 'active' : '' ?>" onclick="openTab(event, 'organization')">
+                <i class="fas fa-building"></i> Organización
+            </button>
+            <button class="tab-btn <?= ($_GET['tab'] ?? '') === 'fees' ? 'active' : '' ?>" onclick="openTab(event, 'fees')">
                 <i class="fas fa-euro-sign"></i> Cuotas
             </button>
-            <button class="tab-btn" onclick="openTab(event, 'ad_prices')">
+            <button class="tab-btn <?= ($_GET['tab'] ?? '') === 'ad_prices' ? 'active' : '' ?>" onclick="openTab(event, 'ad_prices')">
                 <i class="fas fa-tags"></i> Precios Anuncios
             </button>
-            <button class="tab-btn" onclick="openTab(event, 'database')">
+            <button class="tab-btn <?= ($_GET['tab'] ?? '') === 'database' ? 'active' : '' ?>" onclick="openTab(event, 'database')">
                 <i class="fas fa-database"></i> Base de Datos
             </button>
         </div>
 
         <div class="tab-content-wrapper">
             <!-- General Tab -->
-            <div id="general" class="tab-content" style="display: block;">
+            <div id="general" class="tab-content" style="display: <?= ($_GET['tab'] ?? 'general') === 'general' ? 'block' : 'none' ?>;">
                 <h2 class="section-title">Configuración General</h2>
                 <form action="index.php?page=settings&action=updateGeneral" method="POST" style="max-width: 600px;">
                 <div class="form-group">
@@ -129,6 +132,189 @@
                 <button type="submit" class="btn btn-primary">Guardar Cambios</button>
             </form>
         </div>
+
+            <!-- Organization Tab -->
+            <div id="organization" class="tab-content" style="display: <?= ($_GET['tab'] ?? '') === 'organization' ? 'block' : 'none' ?>;">
+                <h2 class="section-title">Configuración de la Organización</h2>
+                
+                <?php if (isset($_SESSION['success'])): ?>
+                    <div class="alert alert-success"><?= $_SESSION['success']; unset($_SESSION['success']); ?></div>
+                <?php endif; ?>
+                <?php if (isset($_SESSION['error'])): ?>
+                    <div class="alert alert-danger"><?= $_SESSION['error']; unset($_SESSION['error']); ?></div>
+                <?php endif; ?>
+                
+                <form action="index.php?page=settings&action=updateOrganization" method="POST" enctype="multipart/form-data">
+                    <!-- Información General -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h3 class="h5 mb-3"><i class="fas fa-info-circle"></i> Información General</h3>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Nombre Completo</label>
+                                    <input type="text" name="org_name" class="form-control" 
+                                           value="<?= htmlspecialchars($generalSettings['org_name']['value'] ?? '') ?>">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Siglas</label>
+                                    <input type="text" name="org_short_name" class="form-control" 
+                                           value="<?= htmlspecialchars($generalSettings['org_short_name']['value'] ?? '') ?>">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Año Fundación</label>
+                                    <input type="number" name="org_founded_year" class="form-control" 
+                                           value="<?= htmlspecialchars($generalSettings['org_founded_year']['value'] ?? '') ?>">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">CIF/NIF</label>
+                                    <input type="text" name="org_cif" class="form-control" 
+                                           value="<?= htmlspecialchars($generalSettings['org_cif']['value'] ?? '') ?>">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Nº Registro Oficial</label>
+                                    <input type="text" name="org_registry_number" class="form-control" 
+                                           value="<?= htmlspecialchars($generalSettings['org_registry_number']['value'] ?? '') ?>">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contacto -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h3 class="h5 mb-3"><i class="fas fa-address-card"></i> Datos de Contacto</h3>
+                            <div class="row">
+                                <div class="col-md-8 mb-3">
+                                    <label class="form-label">Dirección</label>
+                                    <input type="text" name="org_address" class="form-control" 
+                                           value="<?= htmlspecialchars($contactSettings['org_address']['value'] ?? '') ?>">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Código Postal</label>
+                                    <input type="text" name="org_postal_code" class="form-control" 
+                                           value="<?= htmlspecialchars($contactSettings['org_postal_code']['value'] ?? '') ?>">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Ciudad</label>
+                                    <input type="text" name="org_city" class="form-control" 
+                                           value="<?= htmlspecialchars($contactSettings['org_city']['value'] ?? '') ?>">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Provincia</label>
+                                    <input type="text" name="org_province" class="form-control" 
+                                           value="<?= htmlspecialchars($contactSettings['org_province']['value'] ?? '') ?>">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">País</label>
+                                    <input type="text" name="org_country" class="form-control" 
+                                           value="<?= htmlspecialchars($contactSettings['org_country']['value'] ?? '') ?>">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Teléfono</label>
+                                    <input type="text" name="org_phone" class="form-control" 
+                                           value="<?= htmlspecialchars($contactSettings['org_phone']['value'] ?? '') ?>">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" name="org_email" class="form-control" 
+                                           value="<?= htmlspecialchars($contactSettings['org_email']['value'] ?? '') ?>">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Sitio Web</label>
+                                    <input type="url" name="org_website" class="form-control" 
+                                           value="<?= htmlspecialchars($contactSettings['org_website']['value'] ?? '') ?>">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Logo y Branding -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h3 class="h5 mb-3"><i class="fas fa-palette"></i> Logo y Marca</h3>
+                            
+                            <?php $currentLogo = $brandingSettings['org_logo']['value'] ?? ''; ?>
+                            <?php if ($currentLogo): ?>
+                                <div class="mb-3">
+                                    <label class="form-label">Logo Actual</label>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <img src="<?= htmlspecialchars($currentLogo) ?>" alt="Logo" style="max-height: 100px; max-width: 300px;">
+                                        <a href="index.php?page=settings&action=deleteLogo" 
+                                           class="btn btn-danger btn-sm" 
+                                           onclick="return confirm('¿Eliminar el logo actual?')">
+                                            <i class="fas fa-trash"></i> Eliminar
+                                        </a>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Subir Nuevo Logo</label>
+                                <input type="file" name="org_logo" class="form-control" accept="image/*">
+                                <small class="text-muted">Formatos: JPG, PNG, GIF, SVG, WEBP. Tamaño máximo: 5MB</small>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Ancho del Logo (px)</label>
+                                    <input type="number" name="org_logo_width" class="form-control" 
+                                           value="<?= htmlspecialchars($brandingSettings['org_logo_width']['value'] ?? 180) ?>">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Color Primario</label>
+                                    <input type="color" name="org_primary_color" class="form-control" 
+                                           value="<?= htmlspecialchars($brandingSettings['org_primary_color']['value'] ?? '#6366f1') ?>">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Color Secundario</label>
+                                    <input type="color" name="org_secondary_color" class="form-control" 
+                                           value="<?= htmlspecialchars($brandingSettings['org_secondary_color']['value'] ?? '#8b5cf6') ?>">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Representantes Legales -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h3 class="h5 mb-3"><i class="fas fa-user-tie"></i> Representantes Legales</h3>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Presidente/a</label>
+                                    <input type="text" name="org_president_name" class="form-control" 
+                                           value="<?= htmlspecialchars($legalSettings['org_president_name']['value'] ?? '') ?>">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Secretario/a</label>
+                                    <input type="text" name="org_secretary_name" class="form-control" 
+                                           value="<?= htmlspecialchars($legalSettings['org_secretary_name']['value'] ?? '') ?>">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Tesorero/a</label>
+                                    <input type="text" name="org_treasurer_name" class="form-control" 
+                                           value="<?= htmlspecialchars($legalSettings['org_treasurer_name']['value'] ?? '') ?>">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Texto Legal (para documentos)</label>
+                                <textarea name="org_legal_text" class="form-control" rows="3"><?= htmlspecialchars($legalSettings['org_legal_text']['value'] ?? '') ?></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Guardar Configuración
+                        </button>
+                    </div>
+                </form>
+            </div>
 
             <!-- Ad Prices Tab -->
             <div id="ad_prices" class="tab-content" style="display: none;">

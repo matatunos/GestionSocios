@@ -33,6 +33,14 @@ class SettingsController {
         if (defined('DB_NAME')) $dbConfig['name'] = DB_NAME;
         if (defined('DB_USER')) $dbConfig['user'] = DB_USER;
         
+        // Fetch Organization Settings
+        require_once __DIR__ . '/../Models/OrganizationSettings.php';
+        $orgSettings = new OrganizationSettings($this->db);
+        $generalSettings = $orgSettings->getByCategory('general');
+        $contactSettings = $orgSettings->getByCategory('contact');
+        $brandingSettings = $orgSettings->getByCategory('branding');
+        $legalSettings = $orgSettings->getByCategory('legal');
+        
         // Fetch Ad Prices
         require_once __DIR__ . '/AdPriceController.php';
         $adPriceController = new AdPriceController();
@@ -85,6 +93,69 @@ class SettingsController {
         $stmt = $this->db->prepare("UPDATE users SET password_hash = ? WHERE username = 'admin'");
         $stmt->execute([$passwordHash]);
         header('Location: index.php?page=settings&tab=general&reset=1');
+    }
+
+    public function updateOrganization() {
+        $this->checkAdmin();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            require_once __DIR__ . '/../Models/OrganizationSettings.php';
+            $orgSettings = new OrganizationSettings($this->db);
+            
+            // Procesar subida de logo si existe
+            if (isset($_FILES['org_logo']) && $_FILES['org_logo']['error'] === UPLOAD_ERR_OK) {
+                try {
+                    // Eliminar logo anterior
+                    $oldLogo = $orgSettings->get('org_logo');
+                    if ($oldLogo) {
+                        $orgSettings->deleteLogo($oldLogo);
+                    }
+                    
+                    // Subir nuevo logo
+                    $logoPath = $orgSettings->uploadLogo($_FILES['org_logo']);
+                    $_POST['org_logo'] = $logoPath;
+                } catch (Exception $e) {
+                    $_SESSION['error'] = $e->getMessage();
+                    header('Location: index.php?page=settings&tab=organization');
+                    exit;
+                }
+            } else {
+                // Mantener logo actual si no se sube uno nuevo
+                unset($_POST['org_logo']);
+            }
+            
+            // Actualizar configuraciones
+            $settingsToUpdate = [];
+            foreach ($_POST as $key => $value) {
+                if (strpos($key, 'org_') === 0) {
+                    $settingsToUpdate[$key] = $value;
+                }
+            }
+            
+            if ($orgSettings->updateMultiple($settingsToUpdate, $_SESSION['user_id'])) {
+                $_SESSION['success'] = 'Configuración actualizada correctamente';
+            } else {
+                $_SESSION['error'] = 'Error al actualizar la configuración';
+            }
+            
+            header('Location: index.php?page=settings&tab=organization');
+            exit;
+        }
+    }
+
+    public function deleteLogo() {
+        $this->checkAdmin();
+        require_once __DIR__ . '/../Models/OrganizationSettings.php';
+        $orgSettings = new OrganizationSettings($this->db);
+        
+        $logoPath = $orgSettings->get('org_logo');
+        if ($logoPath) {
+            $orgSettings->deleteLogo($logoPath);
+            $orgSettings->set('org_logo', '', $_SESSION['user_id']);
+            $_SESSION['success'] = 'Logo eliminado correctamente';
+        }
+        
+        header('Location: index.php?page=settings&tab=organization');
+        exit;
     }
 }
 ?>

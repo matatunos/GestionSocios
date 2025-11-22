@@ -60,8 +60,21 @@ if (isset($_SESSION['user_id'])) {
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="nav-brand">
-                    <i class="fas fa-users-cog"></i>
-                    <span>Gestión</span>
+                    <?php
+                    // Obtener logo de la organización
+                    require_once __DIR__ . '/../Models/OrganizationSettings.php';
+                    $orgSettings = new OrganizationSettings($db ?? $this->db ?? null);
+                    $orgInfo = $orgSettings->getOrganizationInfo();
+                    
+                    if (!empty($orgInfo['logo'])):
+                    ?>
+                        <img src="<?= htmlspecialchars($orgInfo['logo']) ?>" 
+                             alt="<?= htmlspecialchars($orgInfo['name']) ?>" 
+                             style="max-height: 40px; max-width: <?= (int)$orgInfo['logo_width'] ?>px;">
+                    <?php else: ?>
+                        <i class="fas fa-users-cog"></i>
+                        <span><?= htmlspecialchars($orgInfo['short_name'] ?: 'Gestión') ?></span>
+                    <?php endif; ?>
                 </div>
                 <button class="sidebar-toggle" onclick="toggleSidebar()">
                     <i class="fas fa-chevron-left"></i>

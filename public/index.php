@@ -181,6 +181,8 @@ switch ($page) {
         $controller = new SettingsController();
         if ($action === 'updateGeneral') $controller->updateGeneral();
         else if ($action === 'updateDatabase') $controller->updateDatabase();
+        else if ($action === 'updateOrganization') $controller->updateOrganization();
+        else if ($action === 'deleteLogo') $controller->deleteLogo();
         else $controller->index();
         break;
     case 'payments':
