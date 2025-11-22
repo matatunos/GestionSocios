@@ -65,7 +65,7 @@ class InstallerController {
 
             // 4. Create/Update Admin User
             $password_hash = password_hash($admin_pass, PASSWORD_DEFAULT);
-            $stmt = $conn->prepare("INSERT INTO users (email, password_hash, role) VALUES (:email, :password, 'admin') ON DUPLICATE KEY UPDATE password_hash=:password, role='admin'");
+            $stmt = $conn->prepare("INSERT INTO users (email, name, password, role) VALUES (:email, 'Administrator', :password, 'admin') ON DUPLICATE KEY UPDATE password=:password, role='admin'");
             $stmt->bindParam(':email', $admin_user);
             $stmt->bindParam(':password', $password_hash);
             
