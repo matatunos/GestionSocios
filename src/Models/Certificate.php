@@ -136,10 +136,27 @@ class Certificate {
      * Create PDF document
      */
     private function createPDF($type, $data, $orgSettings) {
-        require_once __DIR__ . '/../../vendor/autoload.php';
+        $autoloadPath = __DIR__ . '/../../vendor/autoload.php';
         
-        // Create new PDF document
-        $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
+        if (!file_exists($autoloadPath)) {
+            error_log('Certificate Error: Composer autoload not found at ' . $autoloadPath);
+            throw new Exception('Sistema de generación de PDFs no disponible. Ejecute: composer install');
+        }
+        
+        require_once $autoloadPath;
+        
+        if (!class_exists('TCPDF')) {
+            error_log('Certificate Error: TCPDF class not found after autoload');
+            throw new Exception('Librería TCPDF no está instalada. Ejecute: composer require tecnickcom/tcpdf');
+        }
+        
+        try {
+            // Create new PDF document
+            $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
+        } catch (Exception $e) {
+            error_log('Certificate Error creating TCPDF: ' . $e->getMessage());
+            throw new Exception('Error al crear documento PDF: ' . $e->getMessage());
+        }
         
         // Set document information
         $pdf->SetCreator('Sistema de Gestión');

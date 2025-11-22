@@ -39,11 +39,18 @@ class CertificateController {
         }
         
         // Generate certificate
-        $pdf = $this->certificateModel->generateMembershipCertificate($memberId);
-        
-        if (!$pdf) {
-            $_SESSION['error'] = 'No se pudo generar el certificado';
-            header('Location: index.php?page=members&action=view&id=' . $memberId);
+        try {
+            $pdf = $this->certificateModel->generateMembershipCertificate($memberId);
+            
+            if (!$pdf) {
+                $_SESSION['error'] = 'No se pudo generar el certificado: Socio no encontrado';
+                header('Location: index.php?page=members');
+                exit;
+            }
+        } catch (Exception $e) {
+            error_log('Certificate generation error: ' . $e->getMessage());
+            $_SESSION['error'] = 'Error al generar certificado: ' . $e->getMessage();
+            header('Location: index.php?page=members');
             exit;
         }
         
@@ -82,11 +89,18 @@ class CertificateController {
         }
         
         // Generate certificate
-        $pdf = $this->certificateModel->generatePaymentCertificate($memberId, $year);
-        
-        if (!$pdf) {
-            $_SESSION['error'] = 'No se pudo generar el certificado';
-            header('Location: index.php?page=members&action=view&id=' . $memberId);
+        try {
+            $pdf = $this->certificateModel->generatePaymentCertificate($memberId, $year);
+            
+            if (!$pdf) {
+                $_SESSION['error'] = 'No se pudo generar el certificado: Socio no encontrado';
+                header('Location: index.php?page=members');
+                exit;
+            }
+        } catch (Exception $e) {
+            error_log('Payment certificate error: ' . $e->getMessage());
+            $_SESSION['error'] = 'Error al generar certificado: ' . $e->getMessage();
+            header('Location: index.php?page=members');
             exit;
         }
         
@@ -125,11 +139,18 @@ class CertificateController {
         }
         
         // Generate certificate
-        $pdf = $this->certificateModel->generateDonationCertificate($donorId, $year);
-        
-        if (!$pdf) {
-            $_SESSION['error'] = 'No se pudo generar el certificado';
-            header('Location: index.php?page=donors&action=view&id=' . $donorId);
+        try {
+            $pdf = $this->certificateModel->generateDonationCertificate($donorId, $year);
+            
+            if (!$pdf) {
+                $_SESSION['error'] = 'No se pudo generar el certificado: Donante no encontrado';
+                header('Location: index.php?page=donors');
+                exit;
+            }
+        } catch (Exception $e) {
+            error_log('Donation certificate error: ' . $e->getMessage());
+            $_SESSION['error'] = 'Error al generar certificado: ' . $e->getMessage();
+            header('Location: index.php?page=donors');
             exit;
         }
         
