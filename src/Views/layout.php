@@ -55,6 +55,57 @@ if (isset($_SESSION['user_id'])) {
     <!-- Mobile Overlay -->
     <div class="mobile-overlay" id="mobileOverlay"></div>
     
+    <!-- Mobile Menu Modal -->
+    <div class="mobile-menu-modal" id="mobileMenuModal">
+        <div class="mobile-menu-header">
+            <h3>Menú</h3>
+            <button class="mobile-menu-close" id="mobileMenuClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="mobile-menu-content">
+            <a href="index.php?page=dashboard" class="mobile-menu-item">
+                <i class="fas fa-home"></i> Panel
+            </a>
+            <a href="index.php?page=members" class="mobile-menu-item">
+                <i class="fas fa-users"></i> Socios
+            </a>
+            <a href="index.php?page=members&action=map" class="mobile-menu-item">
+                <i class="fas fa-map-marked-alt"></i> Mapa de Socios
+            </a>
+            <a href="index.php?page=member_categories" class="mobile-menu-item">
+                <i class="fas fa-tags"></i> Categorías
+            </a>
+            <a href="index.php?page=events" class="mobile-menu-item">
+                <i class="fas fa-calendar-alt"></i> Eventos
+            </a>
+            <a href="index.php?page=donors" class="mobile-menu-item">
+                <i class="fas fa-address-book"></i> Donantes
+            </a>
+            <a href="index.php?page=donations" class="mobile-menu-item">
+                <i class="fas fa-hand-holding-heart"></i> Donaciones
+            </a>
+            <a href="index.php?page=expenses" class="mobile-menu-item">
+                <i class="fas fa-receipt"></i> Gastos
+            </a>
+            <a href="index.php?page=treasury" class="mobile-menu-item">
+                <i class="fas fa-coins"></i> Tesorería
+            </a>
+            <a href="index.php?page=tasks" class="mobile-menu-item">
+                <i class="fas fa-tasks"></i> Tareas
+            </a>
+            <a href="index.php?page=analytics" class="mobile-menu-item">
+                <i class="fas fa-chart-line"></i> Estadísticas
+            </a>
+            <a href="index.php?page=settings" class="mobile-menu-item">
+                <i class="fas fa-cog"></i> Configuración
+            </a>
+            <a href="index.php?page=logout" class="mobile-menu-item" style="color: #dc3545;">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </a>
+        </div>
+    </div>
+    
     <div class="app-container">
         <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
@@ -424,47 +475,44 @@ if (isset($_SESSION['user_id'])) {
         // Mobile Menu
         const mobileMenuToggle = document.getElementById('mobileMenuToggle');
         const mobileOverlay = document.getElementById('mobileOverlay');
+        const mobileMenuModal = document.getElementById('mobileMenuModal');
+        const mobileMenuClose = document.getElementById('mobileMenuClose');
         const sidebar = document.getElementById('sidebar');
 
         // Show mobile menu button on mobile devices
         if (window.innerWidth <= 768) {
             mobileMenuToggle.style.display = 'flex';
-            // Ensure sidebar starts hidden on mobile
-            sidebar.style.left = '-280px';
+            sidebar.style.display = 'none';
         }
 
         window.addEventListener('resize', function() {
             if (window.innerWidth <= 768) {
                 mobileMenuToggle.style.display = 'flex';
+                sidebar.style.display = 'none';
             } else {
                 mobileMenuToggle.style.display = 'none';
-                sidebar.classList.remove('mobile-open');
+                sidebar.style.display = 'flex';
+                mobileMenuModal.classList.remove('active');
                 mobileOverlay.classList.remove('active');
             }
         });
 
         mobileMenuToggle.addEventListener('click', function() {
-            const isOpen = sidebar.classList.contains('mobile-open');
-            
-            if (isOpen) {
-                // Close menu
-                sidebar.classList.remove('mobile-open');
-                mobileOverlay.classList.remove('active');
-                sidebar.style.left = '-280px';
-            } else {
-                // Open menu
-                sidebar.classList.add('mobile-open');
-                mobileOverlay.classList.add('active');
-                sidebar.style.left = '0';
-                sidebar.style.visibility = 'visible';
-                sidebar.style.opacity = '1';
-            }
+            mobileMenuModal.classList.add('active');
+            mobileOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        mobileMenuClose.addEventListener('click', function() {
+            mobileMenuModal.classList.remove('active');
+            mobileOverlay.classList.remove('active');
+            document.body.style.overflow = '';
         });
 
         mobileOverlay.addEventListener('click', function() {
-            sidebar.classList.remove('mobile-open');
+            mobileMenuModal.classList.remove('active');
             mobileOverlay.classList.remove('active');
-            sidebar.style.left = '-280px';
+            document.body.style.overflow = '';
         });
 
         // Notifications System
