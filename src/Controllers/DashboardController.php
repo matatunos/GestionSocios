@@ -80,8 +80,7 @@ class DashboardController {
         if (isset($_SESSION['user_id'])) {
             require_once __DIR__ . '/../Models/Notification.php';
             $notificationModel = new Notification($this->db);
-            $notificationsStmt = $notificationModel->getUserNotifications($_SESSION['user_id'], 5);
-            $recentNotifications = $notificationsStmt->fetchAll(PDO::FETCH_ASSOC);
+            $recentNotifications = $notificationModel->readByMember($_SESSION['user_id'], 5);
         }
 
         require __DIR__ . '/../Views/dashboard.php';
