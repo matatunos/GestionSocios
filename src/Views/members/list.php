@@ -86,9 +86,6 @@
             <span style="color: var(--primary-600);">(filtrado)</span>
         <?php endif; ?>
     </div>
-    <a href="index.php?page=members&action=create" class="btn btn-primary btn-sm">
-        <i class="fas fa-plus"></i> Nuevo Socio
-    </a>
 </div>
 
 <div class="flex justify-between items-center mb-4">
@@ -107,6 +104,9 @@
                 </a>
             </div>
         </div>
+        <a href="index.php?page=members&action=create" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Nuevo Socio
+        </a>
     </div>
 </div>
 

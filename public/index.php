@@ -130,6 +130,9 @@ switch ($page) {
         $controller = new BookAdController();
         if ($action === 'create') $controller->create();
         else if ($action === 'store') $controller->store();
+        else if ($action === 'edit') $controller->edit($_GET['id']);
+        else if ($action === 'update') $controller->update($_GET['id']);
+        else if ($action === 'markPaid') $controller->markPaid($_GET['id']);
         else if ($action === 'delete') $controller->delete($_GET['id']);
         else $controller->index();
         break;
