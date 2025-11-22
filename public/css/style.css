@@ -453,8 +453,69 @@ h2 {
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
 }
 
+/* Dark Mode Styles */
+[data-theme="dark"] {
+    --bg-body: #0f172a;
+    --bg-card: rgba(30, 41, 59, 0.8);
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    --text-light: #64748b;
+    --border-light: rgba(51, 65, 85, 0.8);
+}
+
+[data-theme="dark"] body {
+    background: #0f172a;
+    color: #f1f5f9;
+}
+
+[data-theme="dark"] .sidebar {
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    border-right-color: #334155;
+}
+
+[data-theme="dark"] .sidebar-header {
+    border-bottom-color: #334155;
+}
+
+[data-theme="dark"] .nav-brand {
+    color: #f1f5f9;
+}
+
+[data-theme="dark"] .nav-link {
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .nav-link:hover {
+    background: rgba(99, 102, 241, 0.15);
+    color: #818cf8;
+}
+
+[data-theme="dark"] .nav-link.active {
+    background: rgba(99, 102, 241, 0.2);
+    color: #818cf8;
+}
+
+[data-theme="dark"] .sidebar-footer {
+    border-top-color: #334155;
+}
+
+[data-theme="dark"] .user-info {
+    color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .dark-mode-toggle {
+    background: rgba(99, 102, 241, 0.1);
+    border-color: rgba(99, 102, 241, 0.2);
+}
+
 [data-theme="dark"] .main-content {
     background: linear-gradient(to bottom right, #0f172a, #1e293b);
+}
+
+[data-theme="dark"] .card {
+    background: rgba(30, 41, 59, 0.8);
+    border-color: #334155;
+    color: #f1f5f9;
 }
 
 [data-theme="dark"] .form-control {
@@ -463,9 +524,28 @@ h2 {
     color: #f1f5f9;
 }
 
+[data-theme="dark"] .form-control:focus {
+    border-color: var(--primary-500);
+    background: #0f172a;
+}
+
+[data-theme="dark"] .form-label {
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .table {
+    background: transparent;
+}
+
 [data-theme="dark"] .table th {
     background: rgba(30, 41, 59, 0.9);
     color: #e2e8f0;
+    border-bottom-color: #334155;
+}
+
+[data-theme="dark"] .table td {
+    color: #cbd5e1;
+    border-bottom-color: #334155;
 }
 
 [data-theme="dark"] .table tr:hover td {
@@ -476,6 +556,32 @@ h2 {
     background: transparent;
     border-color: #475569;
     color: #f1f5f9;
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+    background: #475569;
+    border-color: #64748b;
+}
+
+[data-theme="dark"] .alert {
+    background: rgba(30, 41, 59, 0.6);
+    border-color: #334155;
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] h1, 
+[data-theme="dark"] h2, 
+[data-theme="dark"] h3, 
+[data-theme="dark"] h4 {
+    color: #f1f5f9;
+}
+
+[data-theme="dark"] .section-title {
+    color: #f1f5f9;
+}
+
+[data-theme="dark"] .text-muted {
+    color: #94a3b8 !important;
 }
 
 .sidebar.collapsed .nav-link span,
