@@ -141,28 +141,45 @@ ob_start();
 
 <!-- Load FullCalendar from CDN -->
 <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css' rel='stylesheet' />
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.js'></script>
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/locales/es.js'></script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('FullCalendar loading...');
+// Load FullCalendar scripts and initialize calendar
+(function() {
+    console.log('Loading FullCalendar scripts...');
     
-    // Check if FullCalendar is loaded
-    if (typeof FullCalendar === 'undefined') {
-        console.error('FullCalendar library not loaded!');
-        return;
-    }
+    // Load main script
+    var script1 = document.createElement('script');
+    script1.src = 'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.js';
+    script1.onload = function() {
+        console.log('FullCalendar main.js loaded');
+        
+        // Load locale script
+        var script2 = document.createElement('script');
+        script2.src = 'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/locales/es.js';
+        script2.onload = function() {
+            console.log('FullCalendar es.js loaded');
+            initCalendar();
+        };
+        script2.onerror = function() {
+            console.error('Failed to load FullCalendar locale');
+        };
+        document.head.appendChild(script2);
+    };
+    script1.onerror = function() {
+        console.error('Failed to load FullCalendar main script');
+    };
+    document.head.appendChild(script1);
     
-    var calendarEl = document.getElementById('calendar');
-    if (!calendarEl) {
-        console.error('Calendar element not found!');
-        return;
-    }
-    
-    console.log('Initializing FullCalendar...');
-    
-    var calendar = new FullCalendar.Calendar(calendarEl, {
+    function initCalendar() {
+        console.log('Initializing FullCalendar...');
+        
+        var calendarEl = document.getElementById('calendar');
+        if (!calendarEl) {
+            console.error('Calendar element not found!');
+            return;
+        }
+        
+        var calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         locale: 'es',
         headerToolbar: {
@@ -225,7 +242,8 @@ document.addEventListener('DOMContentLoaded', function() {
         attributes: true,
         attributeFilter: ['data-theme']
     });
-});
+    }
+})();
 </script>
 
 <?php 
