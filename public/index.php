@@ -159,6 +159,11 @@ switch ($page) {
             $controller->index();
         }
         break;
+    case 'gallery':
+        require_once __DIR__ . '/../src/Controllers/GalleryController.php';
+        $controller = new GalleryController();
+        $controller->index();
+        break;
     default:
         echo "404 Not Found";
         break;
