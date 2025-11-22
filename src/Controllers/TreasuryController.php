@@ -84,7 +84,7 @@ class TreasuryController {
         // Month balance
         $stats['month_balance'] = $stats['month_income'] - $stats['month_expenses'];
         
-        // Count pending payments
+        // Count pending payments (members + book ads)
         $query = "SELECT COUNT(*) as total 
                   FROM members m
                   WHERE m.status = 'active'
@@ -95,7 +95,18 @@ class TreasuryController {
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':year', $year);
         $stmt->execute();
-        $stats['pending_count'] = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+        $membersPending = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+        
+        // Count pending book ad payments
+        $query = "SELECT COUNT(*) as total
+                  FROM payments
+                  WHERE payment_type = 'book_ad' AND status = 'pending' AND fee_year = :year";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':year', $year);
+        $stmt->execute();
+        $bookAdsPending = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+        
+        $stats['pending_count'] = $membersPending + $bookAdsPending;
         
         // Estimated pending amount (sum of default fees for pending members + book_ad pending)
         $query = "SELECT COALESCE(SUM(COALESCE(mc.default_fee, 0)), 0) as total
