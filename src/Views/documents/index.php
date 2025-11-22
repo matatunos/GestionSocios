@@ -1,6 +1,8 @@
-<?php ob_start(); ?>
-
-<?php $title = 'Gestión de Documentos'; ?>
+<?php 
+ob_start(); 
+require_once __DIR__ . '/../../Helpers/Auth.php';
+$title = 'Gestión de Documentos'; 
+?>
 
 <div class="page-header">
     <div>

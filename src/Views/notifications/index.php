@@ -1,6 +1,8 @@
-<?php ob_start(); ?>
-
-<?php $title = 'Notificaciones'; ?>
+<?php 
+ob_start(); 
+require_once __DIR__ . '/../../Helpers/Auth.php';
+$title = 'Notificaciones'; 
+?>
 
 <div class="page-header">
     <div>
