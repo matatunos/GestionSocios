@@ -58,7 +58,7 @@ class ExportController {
                 $member['address'],
                 $member['status'],
                 $member['category_name'] ?? 'Sin categoría',
-                $member['active'] ? 'Sí' : 'No',
+                $member['status'] === 'active' ? 'Sí' : 'No',
                 date('d/m/Y', strtotime($member['created_at']))
             ], ';');
         }
