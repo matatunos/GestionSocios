@@ -214,6 +214,69 @@ ob_start();
 </div>
 <?php endif; ?>
 
+<!-- Pending Book Ads Table -->
+<?php if (!empty($pendingBookAds)): ?>
+<div class="card" style="padding: 0; overflow: hidden; margin-top: 1.5rem;">
+    <div style="padding: 1.5rem; border-bottom: 1px solid var(--border-light); background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);">
+        <h2 style="margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fas fa-book" style="color: #d97706;"></i>
+            Anuncios Libro Pendientes de Pago (<?php echo count($pendingBookAds); ?>)
+        </h2>
+    </div>
+    <div class="table-container" style="border: none; border-radius: 0;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Donante/Negocio</th>
+                    <th>Contacto</th>
+                    <th>Tipo Anuncio</th>
+                    <th style="text-align: right;">Importe</th>
+                    <th style="text-align: right;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($pendingBookAds as $ad): ?>
+                    <tr>
+                        <td style="font-weight: 500;">
+                            <?php echo htmlspecialchars($ad['donor_name']); ?>
+                        </td>
+                        <td style="font-size: 0.875rem;">
+                            <?php if (!empty($ad['donor_email'])): ?>
+                                <div><i class="fas fa-envelope" style="color: var(--text-light); width: 20px;"></i> <?php echo htmlspecialchars($ad['donor_email']); ?></div>
+                            <?php endif; ?>
+                            <?php if (!empty($ad['donor_phone'])): ?>
+                                <div style="margin-top: 0.25rem;"><i class="fas fa-phone" style="color: var(--text-light); width: 20px;"></i> <?php echo htmlspecialchars($ad['donor_phone']); ?></div>
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <?php 
+                                $adTypes = [
+                                    'media' => 'Media Página',
+                                    'full' => 'Página Completa',
+                                    'cover' => 'Portada',
+                                    'back_cover' => 'Contraportada'
+                                ];
+                                echo $adTypes[$ad['ad_type']] ?? $ad['ad_type'];
+                            ?>
+                        </td>
+                        <td style="text-align: right; font-weight: 600; color: #d97706;">
+                            <?php echo number_format($ad['amount'], 2); ?> €
+                        </td>
+                        <td style="text-align: right;">
+                            <a href="index.php?page=book&action=markPaid&id=<?php echo $ad['book_ad_id']; ?>" 
+                               class="btn btn-sm btn-primary"
+                               onclick="return confirm('¿Marcar este anuncio como pagado?');">
+                                <i class="fas fa-check"></i> Registrar Pago
+                            </a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+<?php endif; ?>
+
 <script>
 // Monthly Evolution Chart
 const ctx = document.getElementById('monthlyChart');
