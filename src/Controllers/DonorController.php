@@ -102,8 +102,18 @@ class DonorController {
             // Handle logo upload
             $logoUrl = $currentLogo; // Keep current logo by default
             
+            // Debug logging
+            error_log("=== DONOR IMAGE UPDATE DEBUG ===");
+            error_log("Current Logo: " . ($currentLogo ?? 'NULL'));
+            error_log("Has uploaded file: " . (isset($_FILES['logo']) ? 'YES' : 'NO'));
+            if (isset($_FILES['logo'])) {
+                error_log("Upload error code: " . $_FILES['logo']['error']);
+                error_log("File type: " . ($_FILES['logo']['type'] ?? 'UNKNOWN'));
+            }
+            
             // Check if a new logo is being uploaded and there's already a current logo
             if (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK && $currentLogo) {
+                error_log("Entering comparison flow");
                 // Save the new image temporarily and redirect to comparison
                 $uploadDir = __DIR__ . '/../../public/uploads/donors/temp/';
                 if (!is_dir($uploadDir)) {
@@ -119,6 +129,7 @@ class DonorController {
                     $tempPath = $uploadDir . $tempFileName;
 
                     if (move_uploaded_file($_FILES['logo']['tmp_name'], $tempPath)) {
+                        error_log("Temp file created: " . $tempPath);
                         // Store data in session for comparison
                         $_SESSION['image_comparison'] = [
                             'donor_id' => $id,
@@ -133,12 +144,18 @@ class DonorController {
                             ]
                         ];
                         
+                        error_log("Redirecting to comparison view");
                         // Redirect to comparison view
                         header('Location: index.php?page=donors&action=compareImages');
                         exit;
+                    } else {
+                        error_log("Failed to move uploaded file");
                     }
+                } else {
+                    error_log("File type not allowed: " . $fileType);
                 }
             } elseif (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
+                error_log("Entering normal upload flow (no existing logo)");
                 $uploadDir = __DIR__ . '/../../public/uploads/donors/';
                 if (!is_dir($uploadDir)) {
                     mkdir($uploadDir, 0777, true);
