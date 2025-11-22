@@ -219,13 +219,18 @@
 
 .modal-content {
     max-width: 90%;
-    max-height: 90%;
+    max-height: 90vh;
     position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .modal-content img {
     max-width: 100%;
-    max-height: 90vh;
+    height: auto;
     object-fit: contain;
 }
 

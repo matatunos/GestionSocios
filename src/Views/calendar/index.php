@@ -163,17 +163,23 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         height: 'auto',
         events: function(info, successCallback, failureCallback) {
-            // Fetch events from API
-            const year = info.start.getFullYear();
-            const month = info.start.getMonth() + 1;
+            // Fetch events from API with date range
+            const start = info.start.toISOString().split('T')[0];
+            const end = info.end.toISOString().split('T')[0];
             
-            fetch(`index.php?page=calendar&action=api&year=${year}&month=${month}`)
-                .then(response => response.json())
+            fetch(`index.php?page=calendar&action=api&start=${start}&end=${end}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
                 .then(data => {
+                    console.log('Calendar events loaded:', data);
                     successCallback(data);
                 })
                 .catch(error => {
-                    console.error('Error loading events:', error);
+                    console.error('Error loading calendar events:', error);
                     failureCallback(error);
                 });
         },

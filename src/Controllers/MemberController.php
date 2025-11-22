@@ -49,6 +49,11 @@ class MemberController {
 
     public function create() {
         $this->checkAdmin();
+        
+        // Get categories for dropdown
+        $categoryModel = new MemberCategory($this->db);
+        $categories = $categoryModel->readAll();
+        
         require __DIR__ . '/../Views/members/create.php';
     }
 
@@ -61,6 +66,7 @@ class MemberController {
             $this->member->phone = $_POST['phone'];
             $this->member->address = $_POST['address'];
             $this->member->status = $_POST['status'];
+            $this->member->category_id = !empty($_POST['category_id']) ? $_POST['category_id'] : null;
             $this->member->photo_url = $this->handleUpload();
 
             if ($this->member->create()) {
@@ -108,6 +114,11 @@ class MemberController {
         $this->member->id = $id;
         if ($this->member->readOne()) {
             $member = $this->member; // Pass object to view
+            
+            // Get categories for dropdown
+            $categoryModel = new MemberCategory($this->db);
+            $categories = $categoryModel->readAll();
+            
             require __DIR__ . '/../Views/members/edit.php';
         } else {
             header('Location: index.php?page=members');
@@ -129,6 +140,7 @@ class MemberController {
             $this->member->phone = $_POST['phone'];
             $this->member->address = $_POST['address'];
             $this->member->status = $_POST['status'];
+            $this->member->category_id = !empty($_POST['category_id']) ? $_POST['category_id'] : null;
             
             // Handle photo upload
             $photoUrl = $currentPhoto; // Keep current photo by default

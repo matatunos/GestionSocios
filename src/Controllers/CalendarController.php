@@ -51,14 +51,25 @@ class CalendarController {
         // API endpoint for AJAX requests
         header('Content-Type: application/json');
         
-        $year = isset($_GET['year']) ? (int)$_GET['year'] : date('Y');
-        $month = isset($_GET['month']) ? (int)$_GET['month'] : date('n');
+        // FullCalendar sends start and end dates in the query
+        $start = isset($_GET['start']) ? $_GET['start'] : null;
+        $end = isset($_GET['end']) ? $_GET['end'] : null;
         
         $eventModel = new Event($this->db);
-        $stmt = $eventModel->readByMonth($year, $month);
+        
+        // If start and end are provided, use date range
+        if ($start && $end) {
+            $stmt = $eventModel->readByDateRange($start, $end);
+        } else {
+            // Fallback to month-based query
+            $year = isset($_GET['year']) ? (int)$_GET['year'] : date('Y');
+            $month = isset($_GET['month']) ? (int)$_GET['month'] : date('n');
+            $stmt = $eventModel->readByMonth($year, $month);
+        }
+        
         $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
-        // Format events for FullCalendar or custom calendar
+        // Format events for FullCalendar
         $calendarEvents = [];
         foreach ($events as $event) {
             $calendarEvents[] = [
@@ -71,7 +82,7 @@ class CalendarController {
                 'location' => $event['location'],
                 'price' => $event['price'],
                 'type' => $event['event_type'] ?? 'other',
-                'url' => 'index.php?page=events&action=view&id=' . $event['id']
+                'url' => 'index.php?page=calendar&action=viewEvent&id=' . $event['id']
             ];
         }
         
