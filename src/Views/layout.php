@@ -340,13 +340,45 @@ if (isset($_SESSION['user_id'])) {
 
             let html = '';
             results.forEach(result => {
+                // Avatar or icon
+                let avatarHtml = '';
+                if (result.avatar) {
+                    avatarHtml = `<img src="${result.avatar}" class="search-result-avatar" alt="">`;
+                } else {
+                    const iconClass = result.type_icon || 'fa-circle';
+                    avatarHtml = `<div class="search-result-icon" style="background: ${result.type_color}"><i class="fas ${iconClass}"></i></div>`;
+                }
+                
+                // Status badge
+                let statusBadge = '';
+                if (result.status === 'active') {
+                    statusBadge = '<span class="status-indicator status-active"></span>';
+                } else if (result.status === 'inactive') {
+                    statusBadge = '<span class="status-indicator status-inactive"></span>';
+                } else if (result.status === 'pending') {
+                    statusBadge = '<span class="status-indicator status-pending"></span>';
+                }
+                
+                // Category badge
+                let categoryBadge = '';
+                if (result.badge) {
+                    categoryBadge = `<span class="search-result-badge" style="background: ${result.badge_color}">${result.badge}</span>`;
+                }
+                
                 html += `
-                    <a href="${result.url}" class="search-result-item" style="display: block; text-decoration: none; color: inherit;">
-                        <span class="search-result-type" style="background: ${result.type_color}">
-                            ${result.type_label}
-                        </span>
-                        <div class="search-result-title">${result.title}</div>
-                        <div class="search-result-subtitle">${result.subtitle}</div>
+                    <a href="${result.url}" class="search-result-item">
+                        ${avatarHtml}
+                        <div class="search-result-content">
+                            <div class="search-result-header">
+                                <span class="search-result-type" style="background: ${result.type_color}">
+                                    <i class="fas ${result.type_icon || 'fa-circle'}"></i> ${result.type_label}
+                                </span>
+                                ${statusBadge}
+                                ${categoryBadge}
+                            </div>
+                            <div class="search-result-title">${result.title}</div>
+                            <div class="search-result-subtitle">${result.subtitle}</div>
+                        </div>
                     </a>
                 `;
             });
