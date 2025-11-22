@@ -44,13 +44,13 @@ class Lang {
      * Load translation file
      */
     private function loadTranslations() {
-        $file = __DIR__ . "/Lang/{$this->lang}.php";
+        $file = __DIR__ . "/../Lang/{$this->lang}.php";
         
         if (file_exists($file)) {
             $this->translations = require $file;
         } else {
             // Fallback to Spanish
-            $this->translations = require __DIR__ . "/Lang/es.php";
+            $this->translations = require __DIR__ . "/../Lang/es.php";
         }
     }
     
