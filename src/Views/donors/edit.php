@@ -45,15 +45,15 @@
             <label for="logo">Logo / Imagen (para Libro de Fiestas)</label>
             <?php if ($donor->logo_url): ?>
                 <div style="margin-bottom: 1rem;">
-                    <img src="<?php echo htmlspecialchars($donor->logo_url); ?>" 
+                    <img src="/<?php echo htmlspecialchars($donor->logo_url); ?>" 
                          alt="Logo actual" 
                          style="max-width: 200px; max-height: 150px; border: 1px solid var(--border-color); border-radius: 4px; padding: 0.5rem;">
                     <p style="font-size: 0.875rem; color: var(--text-muted); margin-top: 0.5rem;">Logo actual</p>
                     <div class="flex gap-2 mt-2">
-                        <a href="<?php echo htmlspecialchars($donor->logo_url); ?>" target="_blank" class="btn btn-sm btn-secondary">
+                        <a href="/<?php echo htmlspecialchars($donor->logo_url); ?>" target="_blank" class="btn btn-sm btn-secondary">
                             <i class="fas fa-eye"></i> Ver
                         </a>
-                        <a href="<?php echo htmlspecialchars($donor->logo_url); ?>" download class="btn btn-sm btn-secondary">
+                        <a href="/<?php echo htmlspecialchars($donor->logo_url); ?>" download class="btn btn-sm btn-secondary">
                             <i class="fas fa-download"></i> Descargar
                         </a>
                         <?php 

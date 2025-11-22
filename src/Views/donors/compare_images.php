@@ -164,7 +164,7 @@
                     <i class="fas fa-history"></i> Imagen Actual
                 </div>
                 <div class="image-preview">
-                    <img src="<?php echo htmlspecialchars($_SESSION['image_comparison']['old_image']); ?>" 
+                    <img src="/<?php echo htmlspecialchars($_SESSION['image_comparison']['old_image']); ?>" 
                          alt="Imagen actual">
                 </div>
                 <button type="button" class="btn-choice btn-keep-old" onclick="selectChoice('old')" style="width: 100%; font-size: 1.25rem; padding: 1.25rem;">
@@ -177,7 +177,7 @@
                     <i class="fas fa-sparkles"></i> Nueva Imagen
                 </div>
                 <div class="image-preview" style="border: 2px solid var(--primary-color);">
-                    <img src="<?php echo htmlspecialchars($_SESSION['image_comparison']['new_image_temp']); ?>" 
+                    <img src="/<?php echo htmlspecialchars($_SESSION['image_comparison']['new_image_temp']); ?>" 
                          alt="Nueva imagen">
                 </div>
                 <button type="button" class="btn-choice btn-use-new" onclick="selectChoice('new')" style="width: 100%; font-size: 1.25rem; padding: 1.25rem;">

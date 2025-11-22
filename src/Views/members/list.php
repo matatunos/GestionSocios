@@ -64,7 +64,7 @@
                         <tr>
                             <td style="font-weight: 500; display: flex; align-items: center; gap: 1rem;">
                                 <?php if (!empty($row['photo_url'])): ?>
-                                    <img src="<?php echo htmlspecialchars($row['photo_url']); ?>" alt="Foto" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%;">
+                                    <img src="/<?php echo htmlspecialchars($row['photo_url']); ?>" alt="Foto" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%;">
                                 <?php else: ?>
                                     <div style="width: 40px; height: 40px; background: var(--primary-100); color: var(--primary-700); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
                                         <i class="fas fa-user"></i>

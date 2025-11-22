@@ -330,9 +330,9 @@
 
             <div class="image-grid">
                 <?php foreach ($donors as $donor): ?>
-                    <div class="image-card" onclick="openModal('<?php echo htmlspecialchars($donor['logo_url']); ?>', '<?php echo htmlspecialchars($donor['name']); ?>')">
+                    <div class="image-card" onclick="openModal('/<?php echo htmlspecialchars($donor['logo_url']); ?>', '<?php echo htmlspecialchars($donor['name']); ?>')">
                         <div class="image-wrapper">
-                            <img src="<?php echo htmlspecialchars($donor['logo_url']); ?>" 
+                            <img src="/<?php echo htmlspecialchars($donor['logo_url']); ?>" 
                                  alt="Logo <?php echo htmlspecialchars($donor['name']); ?>">
                         </div>
                         <div class="image-info">
@@ -365,9 +365,9 @@
 
             <div class="image-grid">
                 <?php foreach ($members as $member): ?>
-                    <div class="image-card" onclick="openModal('<?php echo htmlspecialchars($member['photo_url']); ?>', '<?php echo htmlspecialchars($member['first_name'] . ' ' . $member['last_name']); ?>')">
+                    <div class="image-card" onclick="openModal('/<?php echo htmlspecialchars($member['photo_url']); ?>', '<?php echo htmlspecialchars($member['first_name'] . ' ' . $member['last_name']); ?>')">
                         <div class="image-wrapper">
-                            <img src="<?php echo htmlspecialchars($member['photo_url']); ?>" 
+                            <img src="/<?php echo htmlspecialchars($member['photo_url']); ?>" 
                                  alt="Foto <?php echo htmlspecialchars($member['first_name'] . ' ' . $member['last_name']); ?>"
                                  class="member-photo">
                         </div>

@@ -300,7 +300,7 @@
                     <?php endif; ?>
                     
                     <div class="image-container">
-                        <img src="<?php echo htmlspecialchars($image['image_url']); ?>" 
+                        <img src="/<?php echo htmlspecialchars($image['image_url']); ?>" 
                              alt="Imagen del histórico">
                     </div>
                     
@@ -332,7 +332,7 @@
                         </div>
                         
                         <div class="card-actions">
-                            <a href="<?php echo htmlspecialchars($image['image_url']); ?>" 
+                            <a href="/<?php echo htmlspecialchars($image['image_url']); ?>" 
                                target="_blank" 
                                class="btn-view">
                                 <i class="fas fa-eye"></i>

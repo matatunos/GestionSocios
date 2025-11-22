@@ -50,7 +50,7 @@
                             </td>
                             <td style="text-align: right;">
                                 <?php if (!empty($row['logo_url'])): ?>
-                                    <a href="<?php echo htmlspecialchars($row['logo_url']); ?>" target="_blank" class="btn btn-sm btn-secondary" title="Ver Logo">
+                                    <a href="/<?php echo htmlspecialchars($row['logo_url']); ?>" target="_blank" class="btn btn-sm btn-secondary" title="Ver Logo">
                                         <i class="fas fa-image"></i>
                                     </a>
                                 <?php endif; ?>
