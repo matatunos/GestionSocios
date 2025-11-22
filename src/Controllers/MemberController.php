@@ -298,7 +298,7 @@ class MemberController {
                 $this->imageHistory->markAllAsNotCurrent($id);
                 
                 // Add old image to history if not already there
-                if ($comparisonData['old_image']) {
+                if ($comparisonData['old_image'] && !$this->imageHistory->imageExists($id, $comparisonData['old_image'])) {
                     $this->imageHistory->member_id = $id;
                     $this->imageHistory->image_url = $comparisonData['old_image'];
                     $this->imageHistory->is_current = false;

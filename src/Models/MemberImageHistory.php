@@ -159,5 +159,20 @@ class MemberImageHistory {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row['total'];
     }
+    /**
+     * Check if an image URL already exists in history for a member
+     */
+    public function imageExists($memberId, $imageUrl) {
+        $query = "SELECT COUNT(*) as total FROM " . $this->table_name . " 
+                  WHERE member_id = :member_id AND image_url = :image_url";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":member_id", $memberId);
+        $stmt->bindParam(":image_url", $imageUrl);
+        $stmt->execute();
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row['total'] > 0;
+    }
 }
 ?>

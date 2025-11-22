@@ -208,9 +208,8 @@ class DonorController {
     }
 
     public function gallery() {
-        $stmt = $this->donor->readAll();
-        $donors = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        require __DIR__ . '/../Views/donors/gallery.php';
+        header('Location: index.php?page=gallery');
+        exit;
     }
 
     public function compareImages() {
@@ -267,8 +266,7 @@ class DonorController {
                 $this->imageHistory->markAllAsNotCurrent($id);
                 
                 // Add old image to history if not already there
-                $currentInHistory = $this->imageHistory->getCurrentImage($id);
-                if (!$currentInHistory && $comparison['old_image']) {
+                if ($comparison['old_image'] && !$this->imageHistory->imageExists($id, $comparison['old_image'])) {
                     $this->imageHistory->donor_id = $id;
                     $this->imageHistory->image_url = $comparison['old_image'];
                     $this->imageHistory->is_current = false;
