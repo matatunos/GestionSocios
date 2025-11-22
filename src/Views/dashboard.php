@@ -90,6 +90,48 @@
     <?php endif; ?>
 </div>
 
+<!-- Charts Row -->
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+    <!-- Monthly Income Chart -->
+    <div class="card">
+        <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;">
+            <i class="fas fa-chart-line" style="margin-right: 0.5rem; color: var(--primary-600);"></i>
+            Evolución de Ingresos <?php echo date('Y'); ?>
+        </h2>
+        <canvas id="monthlyIncomeChart" style="max-height: 300px;"></canvas>
+    </div>
+    
+    <!-- Payment Status Pie Chart -->
+    <div class="card">
+        <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;">
+            <i class="fas fa-chart-pie" style="margin-right: 0.5rem; color: var(--secondary-600);"></i>
+            Estado de Pagos
+        </h2>
+        <canvas id="paymentStatusChart" style="max-height: 300px;"></canvas>
+    </div>
+</div>
+
+<!-- Category Distribution and Member Growth -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+    <!-- Category Distribution -->
+    <div class="card">
+        <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;">
+            <i class="fas fa-users-cog" style="margin-right: 0.5rem; color: var(--warning-600);"></i>
+            Distribución por Categorías
+        </h2>
+        <canvas id="categoryChart" style="max-height: 250px;"></canvas>
+    </div>
+    
+    <!-- Member Growth -->
+    <div class="card">
+        <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;">
+            <i class="fas fa-user-plus" style="margin-right: 0.5rem; color: var(--info-600);"></i>
+            Nuevos Socios <?php echo date('Y'); ?>
+        </h2>
+        <canvas id="memberGrowthChart" style="max-height: 250px;"></canvas>
+    </div>
+</div>
+
 <!-- Notifications Widget -->
 <?php if (!empty($recentNotifications)): ?>
 <div class="card" style="margin-bottom: 2rem; border-left: 4px solid var(--primary-600);">
@@ -193,6 +235,209 @@
         </table>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+// Chart.js Global Configuration
+Chart.defaults.font.family = 'Inter, sans-serif';
+Chart.defaults.color = '#64748b';
+
+// Monthly Income Chart
+const monthlyIncomeData = <?php echo json_encode(array_values($monthlyIncome)); ?>;
+const monthlyIncomeCtx = document.getElementById('monthlyIncomeChart');
+new Chart(monthlyIncomeCtx, {
+    type: 'line',
+    data: {
+        labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        datasets: [{
+            label: 'Ingresos (€)',
+            data: monthlyIncomeData,
+            borderColor: '#6366f1',
+            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            pointBackgroundColor: '#6366f1',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                padding: 12,
+                titleFont: { size: 14 },
+                bodyFont: { size: 13 },
+                callbacks: {
+                    label: function(context) {
+                        return context.parsed.y.toFixed(2) + ' €';
+                    }
+                }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value) {
+                        return value + ' €';
+                    }
+                },
+                grid: {
+                    color: 'rgba(0, 0, 0, 0.05)'
+                }
+            },
+            x: {
+                grid: {
+                    display: false
+                }
+            }
+        }
+    }
+});
+
+// Payment Status Pie Chart
+const paymentStatusData = <?php echo json_encode(array_values($paymentStatus)); ?>;
+const paymentStatusCtx = document.getElementById('paymentStatusChart');
+new Chart(paymentStatusCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Pagados', 'Pendientes'],
+        datasets: [{
+            data: paymentStatusData,
+            backgroundColor: ['#10b981', '#f59e0b'],
+            borderWidth: 0,
+            hoverOffset: 10
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    padding: 15,
+                    font: { size: 13 },
+                    usePointStyle: true
+                }
+            },
+            tooltip: {
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                padding: 12,
+                callbacks: {
+                    label: function(context) {
+                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                        const percentage = ((context.parsed / total) * 100).toFixed(1);
+                        return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
+                    }
+                }
+            }
+        }
+    }
+});
+
+// Category Distribution Chart
+const categoryData = <?php echo json_encode($categoryDistribution); ?>;
+const categoryCtx = document.getElementById('categoryChart');
+new Chart(categoryCtx, {
+    type: 'bar',
+    data: {
+        labels: categoryData.map(c => c.name),
+        datasets: [{
+            label: 'Socios',
+            data: categoryData.map(c => c.count),
+            backgroundColor: categoryData.map(c => c.color || '#6366f1'),
+            borderRadius: 6,
+            borderSkipped: false
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: 'y',
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                padding: 12
+            }
+        },
+        scales: {
+            x: {
+                beginAtZero: true,
+                ticks: {
+                    stepSize: 1
+                },
+                grid: {
+                    color: 'rgba(0, 0, 0, 0.05)'
+                }
+            },
+            y: {
+                grid: {
+                    display: false
+                }
+            }
+        }
+    }
+});
+
+// Member Growth Chart
+const memberGrowthData = <?php echo json_encode(array_values($memberGrowth)); ?>;
+const memberGrowthCtx = document.getElementById('memberGrowthChart');
+new Chart(memberGrowthCtx, {
+    type: 'bar',
+    data: {
+        labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        datasets: [{
+            label: 'Nuevos Socios',
+            data: memberGrowthData,
+            backgroundColor: '#06b6d4',
+            borderRadius: 6,
+            borderSkipped: false
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                padding: 12
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    stepSize: 1
+                },
+                grid: {
+                    color: 'rgba(0, 0, 0, 0.05)'
+                }
+            },
+            x: {
+                grid: {
+                    display: false
+                }
+            }
+        }
+    }
+});
+</script>
 
 <?php 
 $content = ob_get_clean(); 
