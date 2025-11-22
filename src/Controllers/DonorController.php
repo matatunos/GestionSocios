@@ -38,6 +38,8 @@ class DonorController {
             $this->donor->phone = $_POST['phone'];
             $this->donor->email = $_POST['email'];
             $this->donor->address = $_POST['address'];
+            $this->donor->latitude = $_POST['latitude'] ?? null;
+            $this->donor->longitude = $_POST['longitude'] ?? null;
 
             // Handle logo upload
             $logoUrl = null;
@@ -98,6 +100,8 @@ class DonorController {
             $this->donor->phone = $_POST['phone'];
             $this->donor->email = $_POST['email'];
             $this->donor->address = $_POST['address'];
+            $this->donor->latitude = $_POST['latitude'] ?? null;
+            $this->donor->longitude = $_POST['longitude'] ?? null;
 
             // Handle logo upload
             $logoUrl = $currentLogo; // Keep current logo by default

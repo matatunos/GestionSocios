@@ -444,6 +444,16 @@ class MemberController {
         $stmt->execute();
         $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
+        // Get all donors with geolocation data
+        $donorQuery = "SELECT id, name, contact_person, phone, email, address, latitude, longitude, logo_url 
+                       FROM donors 
+                       WHERE latitude IS NOT NULL AND longitude IS NOT NULL
+                       ORDER BY name";
+        
+        $donorStmt = $this->db->prepare($donorQuery);
+        $donorStmt->execute();
+        $donors = $donorStmt->fetchAll(PDO::FETCH_ASSOC);
+        
         require __DIR__ . '/../Views/members/map.php';
     }
 }
