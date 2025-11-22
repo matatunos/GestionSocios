@@ -56,6 +56,19 @@
                         <a href="<?php echo htmlspecialchars($donor->logo_url); ?>" download class="btn btn-sm btn-secondary">
                             <i class="fas fa-download"></i> Descargar
                         </a>
+                        <?php 
+                        // Check if donor has images in history
+                        require_once __DIR__ . '/../../Models/DonorImageHistory.php';
+                        $database = new Database();
+                        $db = $database->getConnection();
+                        $imageHistory = new DonorImageHistory($db);
+                        $historyCount = $imageHistory->countByDonor($donor->id);
+                        if ($historyCount > 0):
+                        ?>
+                        <a href="index.php?page=donors&action=imageHistory&id=<?php echo $donor->id; ?>" class="btn btn-sm btn-primary">
+                            <i class="fas fa-history"></i> Histórico (<?php echo $historyCount; ?>)
+                        </a>
+                        <?php endif; ?>
                     </div>
                 </div>
             <?php endif; ?>
