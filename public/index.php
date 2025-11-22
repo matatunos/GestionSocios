@@ -148,6 +148,15 @@ switch ($page) {
         $controller = new TreasuryController($db);
         $controller->dashboard();
         break;
+    case 'calendar':
+        $controller = new CalendarController($db);
+        if ($action === 'api') $controller->api();
+        else if ($action === 'viewEvent') $controller->viewEvent();
+        else if ($action === 'registerAttendance') $controller->registerAttendance();
+        else if ($action === 'updateAttendanceStatus') $controller->updateAttendanceStatus();
+        else if ($action === 'deleteAttendance') $controller->deleteAttendance();
+        else $controller->index();
+        break;
     case 'settings':
         $controller = new SettingsController();
         if ($action === 'updateGeneral') $controller->updateGeneral();

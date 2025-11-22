@@ -88,15 +88,24 @@ class EventController {
         $this->checkAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->event->name = $_POST['name'];
+            $this->event->event_type = $_POST['event_type'] ?? 'other';
+            $this->event->color = $_POST['color'] ?? '#6366f1';
             $this->event->description = $_POST['description'];
+            $this->event->location = !empty($_POST['location']) ? $_POST['location'] : null;
             $this->event->date = $_POST['date'];
+            $this->event->start_time = !empty($_POST['start_time']) ? $_POST['start_time'] : null;
+            $this->event->end_time = !empty($_POST['end_time']) ? $_POST['end_time'] : null;
             $this->event->price = $_POST['price'];
+            $this->event->max_attendees = !empty($_POST['max_attendees']) ? $_POST['max_attendees'] : null;
+            $this->event->requires_registration = isset($_POST['requires_registration']) ? 1 : 0;
+            $this->event->registration_deadline = !empty($_POST['registration_deadline']) ? $_POST['registration_deadline'] : null;
             $this->event->is_active = isset($_POST['is_active']) ? 1 : 0;
 
             if ($this->event->create()) {
-                header('Location: index.php?page=events');
+                $_SESSION['success'] = "Evento creado correctamente";
+                header('Location: index.php?page=calendar');
             } else {
-                $error = "Error creating event.";
+                $error = "Error al crear el evento";
                 require __DIR__ . '/../Views/events/create.php';
             }
         }
@@ -115,13 +124,22 @@ class EventController {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->event->id = $id;
             $this->event->name = $_POST['name'];
+            $this->event->event_type = $_POST['event_type'] ?? 'other';
+            $this->event->color = $_POST['color'] ?? '#6366f1';
             $this->event->description = $_POST['description'];
+            $this->event->location = !empty($_POST['location']) ? $_POST['location'] : null;
             $this->event->date = $_POST['date'];
+            $this->event->start_time = !empty($_POST['start_time']) ? $_POST['start_time'] : null;
+            $this->event->end_time = !empty($_POST['end_time']) ? $_POST['end_time'] : null;
             $this->event->price = $_POST['price'];
+            $this->event->max_attendees = !empty($_POST['max_attendees']) ? $_POST['max_attendees'] : null;
+            $this->event->requires_registration = isset($_POST['requires_registration']) ? 1 : 0;
+            $this->event->registration_deadline = !empty($_POST['registration_deadline']) ? $_POST['registration_deadline'] : null;
             $this->event->is_active = isset($_POST['is_active']) ? 1 : 0;
 
             if ($this->event->update()) {
-                header('Location: index.php?page=events');
+                $_SESSION['success'] = "Evento actualizado correctamente";
+                header('Location: index.php?page=calendar');
             } else {
                 $error = "Error updating event.";
                 $event = $this->event;

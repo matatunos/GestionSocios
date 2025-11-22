@@ -119,6 +119,12 @@ if (!isset($associationName)) {
                     </a>
                 </li>
                 <li>
+                    <a href="index.php?page=calendar" class="nav-link <?php echo ($page === 'calendar') ? 'active' : ''; ?>">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Calendario</span>
+                    </a>
+                </li>
+                <li>
                     <a href="index.php?page=book" class="nav-link <?php echo ($page === 'book') ? 'active' : ''; ?>">
                         <i class="fas fa-book-open"></i>
                         <span>Libro Fiestas</span>
