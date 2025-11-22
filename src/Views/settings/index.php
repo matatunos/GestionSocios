@@ -17,7 +17,7 @@
 }
 
 .tabs-container {
-    background: white;
+    background: var(--bg-card);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
     overflow: hidden;
@@ -27,9 +27,9 @@
     display: flex;
     justify-content: center;
     gap: 1rem;
-    border-bottom: 3px solid #e5e7eb;
+    border-bottom: 3px solid var(--border-light);
     padding-bottom: 0;
-    background: white;
+    background: var(--bg-card);
 }
 
 .tab-btn {
@@ -37,8 +37,8 @@
     border: none;
     padding: 1.25rem 2rem;
     font-size: 1.125rem;
-    font-weight: 700;
-    color: #6b7280;
+    font-weight: 500;
+    color: var(--text-muted);
     cursor: pointer;
     position: relative;
     transition: all 0.3s ease;
@@ -47,13 +47,14 @@
 }
 
 .tab-btn:hover {
-    color: var(--primary-color);
-    background: #f9fafb;
+    color: var(--primary-600);
+    background: var(--primary-50);
 }
 
 .tab-btn.active {
-    color: var(--primary-color);
-    border-bottom-color: var(--primary-color);
+    color: var(--primary-600);
+    font-weight: 700;
+    border-bottom-color: var(--primary-600);
 }
 
 .tab-btn i {

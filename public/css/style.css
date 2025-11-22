@@ -627,6 +627,113 @@ h2 {
     color: #94a3b8 !important;
 }
 
+/* Dark mode for settings tabs */
+[data-theme="dark"] .tabs-container {
+    background: rgba(30, 41, 59, 0.8);
+    border-color: #334155;
+}
+
+[data-theme="dark"] .tabs-nav {
+    background: rgba(30, 41, 59, 0.9);
+    border-bottom-color: #334155;
+}
+
+[data-theme="dark"] .tab-btn {
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .tab-btn:hover {
+    color: #818cf8;
+    background: rgba(99, 102, 241, 0.1);
+}
+
+[data-theme="dark"] .tab-btn.active {
+    color: #818cf8;
+    font-weight: 700;
+    border-bottom-color: #818cf8;
+}
+
+[data-theme="dark"] .tab-content-wrapper {
+    background: rgba(30, 41, 59, 0.8);
+}
+
+/* Dark mode improvements */
+[data-theme="dark"] select.form-control {
+    background: #1e293b;
+    border-color: #334155;
+    color: #f1f5f9;
+}
+
+[data-theme="dark"] select.form-control option {
+    background: #1e293b;
+    color: #f1f5f9;
+}
+
+[data-theme="dark"] textarea.form-control {
+    background: #1e293b;
+    border-color: #334155;
+    color: #f1f5f9;
+}
+
+[data-theme="dark"] .filter-form {
+    background: rgba(30, 41, 59, 0.8);
+    border-color: #334155;
+}
+
+[data-theme="dark"] small,
+[data-theme="dark"] .text-sm {
+    color: #94a3b8 !important;
+}
+
+/* Dark mode for alerts and special backgrounds */
+[data-theme="dark"] .alert-warning {
+    background: rgba(120, 53, 15, 0.3) !important;
+    color: #fbbf24 !important;
+    border-color: #92400e;
+}
+
+[data-theme="dark"] .alert-success {
+    background: rgba(6, 95, 70, 0.3) !important;
+    color: #34d399 !important;
+    border-color: #065f46;
+}
+
+[data-theme="dark"] .alert-info {
+    background: rgba(30, 64, 175, 0.3) !important;
+    color: #93c5fd !important;
+    border-color: #1e40af;
+}
+
+/* Dark mode for stat cards */
+[data-theme="dark"] .stat-card {
+    background: rgba(30, 41, 59, 0.6);
+    border-left-color: currentColor !important;
+}
+
+/* Dark mode for toggle switches */
+[data-theme="dark"] .slider {
+    background-color: #475569;
+}
+
+[data-theme="dark"] .slider:before {
+    background-color: #e2e8f0;
+}
+
+/* Dark mode for chart tabs */
+[data-theme="dark"] .chart-tab {
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .chart-tab:hover {
+    color: #818cf8;
+    background: rgba(99, 102, 241, 0.1);
+}
+
+[data-theme="dark"] .chart-tab.active {
+    background: #4f46e5;
+    color: white;
+}
+
 .sidebar.collapsed .nav-link span,
 .sidebar.collapsed .user-info,
 .sidebar.collapsed .btn-logout-text {
