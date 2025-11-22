@@ -203,6 +203,7 @@ switch ($page) {
         else if ($action === 'updateDatabase') $controller->updateDatabase();
         else if ($action === 'updateOrganization') $controller->updateOrganization();
         else if ($action === 'deleteLogo') $controller->deleteLogo();
+        else if ($action === 'changePassword') $controller->changePassword();
         else $controller->index();
         break;
     case 'payments':

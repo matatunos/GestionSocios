@@ -157,5 +157,70 @@ class SettingsController {
         header('Location: index.php?page=settings&tab=organization');
         exit;
     }
+
+    public function changePassword() {
+        $this->checkAdmin();
+        
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: index.php?page=settings&tab=security');
+            exit;
+        }
+
+        $currentPassword = $_POST['current_password'] ?? '';
+        $newPassword = $_POST['new_password'] ?? '';
+        $confirmPassword = $_POST['confirm_password'] ?? '';
+
+        // Validaciones
+        if (empty($currentPassword) || empty($newPassword) || empty($confirmPassword)) {
+            $_SESSION['password_error'] = 'Todos los campos son obligatorios.';
+            header('Location: index.php?page=settings&tab=security');
+            exit;
+        }
+
+        if (strlen($newPassword) < 6) {
+            $_SESSION['password_error'] = 'La nueva contraseña debe tener al menos 6 caracteres.';
+            header('Location: index.php?page=settings&tab=security');
+            exit;
+        }
+
+        if ($newPassword !== $confirmPassword) {
+            $_SESSION['password_error'] = 'Las contraseñas no coinciden.';
+            header('Location: index.php?page=settings&tab=security');
+            exit;
+        }
+
+        // Obtener el hash actual de la contraseña del usuario
+        $userId = $_SESSION['user_id'];
+        $stmt = $this->db->prepare("SELECT password FROM users WHERE id = ?");
+        $stmt->execute([$userId]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$user) {
+            $_SESSION['password_error'] = 'Usuario no encontrado.';
+            header('Location: index.php?page=settings&tab=security');
+            exit;
+        }
+
+        // Verificar contraseña actual
+        if (!password_verify($currentPassword, $user['password'])) {
+            $_SESSION['password_error'] = 'La contraseña actual es incorrecta.';
+            header('Location: index.php?page=settings&tab=security');
+            exit;
+        }
+
+        // Generar nuevo hash
+        $newPasswordHash = password_hash($newPassword, PASSWORD_DEFAULT);
+
+        // Actualizar contraseña
+        $stmt = $this->db->prepare("UPDATE users SET password = ? WHERE id = ?");
+        if ($stmt->execute([$newPasswordHash, $userId])) {
+            $_SESSION['password_success'] = 'Contraseña cambiada correctamente.';
+        } else {
+            $_SESSION['password_error'] = 'Error al cambiar la contraseña.';
+        }
+
+        header('Location: index.php?page=settings&tab=security');
+        exit;
+    }
 }
 ?>
