@@ -1,15 +1,13 @@
 <?php
 
 require_once __DIR__ . '/../Models/Task.php';
-require_once __DIR__ . '/../Helpers/AuthHelper.php';
+require_once __DIR__ . '/../Helpers/Auth.php';
 
 class TaskController {
     private $db;
-    private $authHelper;
 
     public function __construct($db) {
         $this->db = $db;
-        $this->authHelper = new AuthHelper($db);
     }
 
     /**
@@ -17,13 +15,13 @@ class TaskController {
      */
     public function index() {
         // Verificar autenticación
-        if (!$this->authHelper->checkAuth()) {
+        if (!isset($_SESSION['user_id'])) {
             header('Location: /index.php?page=login');
             exit;
         }
 
         // Verificar permiso
-        if (!$this->authHelper->hasPermission('tasks.view')) {
+        if (!Auth::hasPermission('tasks', 'view')) {
             $_SESSION['error'] = 'No tienes permiso para ver tareas';
             header('Location: /index.php?page=dashboard');
             exit;
@@ -76,12 +74,12 @@ class TaskController {
      * Ver detalle de tarea
      */
     public function view() {
-        if (!$this->authHelper->checkAuth()) {
+        if (!isset($_SESSION['user_id'])) {
             header('Location: /index.php?page=login');
             exit;
         }
 
-        if (!$this->authHelper->hasPermission('tasks.view')) {
+        if (!Auth::hasPermission('tasks', 'view')) {
             $_SESSION['error'] = 'No tienes permiso para ver tareas';
             header('Location: /index.php?page=dashboard');
             exit;
@@ -107,12 +105,12 @@ class TaskController {
      * Crear nueva tarea
      */
     public function create() {
-        if (!$this->authHelper->checkAuth()) {
+        if (!isset($_SESSION['user_id'])) {
             header('Location: /index.php?page=login');
             exit;
         }
 
-        if (!$this->authHelper->hasPermission('tasks.create')) {
+        if (!Auth::hasPermission('tasks', 'create')) {
             $_SESSION['error'] = 'No tienes permiso para crear tareas';
             header('Location: /index.php?page=tasks');
             exit;
@@ -158,12 +156,12 @@ class TaskController {
      * Editar tarea
      */
     public function edit() {
-        if (!$this->authHelper->checkAuth()) {
+        if (!isset($_SESSION['user_id'])) {
             header('Location: /index.php?page=login');
             exit;
         }
 
-        if (!$this->authHelper->hasPermission('tasks.edit')) {
+        if (!Auth::hasPermission('tasks', 'edit')) {
             $_SESSION['error'] = 'No tienes permiso para editar tareas';
             header('Location: /index.php?page=tasks');
             exit;
@@ -217,12 +215,12 @@ class TaskController {
      * Completar tarea
      */
     public function complete() {
-        if (!$this->authHelper->checkAuth()) {
+        if (!isset($_SESSION['user_id'])) {
             echo json_encode(['success' => false, 'message' => 'No autenticado']);
             exit;
         }
 
-        if (!$this->authHelper->hasPermission('tasks.complete')) {
+        if (!Auth::hasPermission('tasks', 'complete')) {
             echo json_encode(['success' => false, 'message' => 'Sin permiso']);
             exit;
         }
@@ -242,12 +240,12 @@ class TaskController {
      * Eliminar tarea
      */
     public function delete() {
-        if (!$this->authHelper->checkAuth()) {
+        if (!isset($_SESSION['user_id'])) {
             header('Location: /index.php?page=login');
             exit;
         }
 
-        if (!$this->authHelper->hasPermission('tasks.delete')) {
+        if (!Auth::hasPermission('tasks', 'delete')) {
             $_SESSION['error'] = 'No tienes permiso para eliminar tareas';
             header('Location: /index.php?page=tasks');
             exit;
@@ -270,7 +268,7 @@ class TaskController {
      * Añadir comentario a tarea
      */
     public function addComment() {
-        if (!$this->authHelper->checkAuth()) {
+        if (!isset($_SESSION['user_id'])) {
             echo json_encode(['success' => false, 'message' => 'No autenticado']);
             exit;
         }

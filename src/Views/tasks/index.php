@@ -8,7 +8,7 @@ ob_start();
         <h1><i class="fas fa-tasks"></i> Gestión de Tareas</h1>
         <p class="text-muted">Organiza y da seguimiento a las tareas pendientes</p>
     </div>
-    <?php if ($authHelper->hasPermission('tasks.create')): ?>
+    <?php if (Auth::hasPermission('tasks', 'create')): ?>
     <a href="/index.php?page=tasks&action=create" class="btn btn-primary">
         <i class="fas fa-plus"></i> Nueva Tarea
     </a>
@@ -146,7 +146,7 @@ ob_start();
             <div class="empty-state">
                 <i class="fas fa-tasks fa-3x text-muted mb-3"></i>
                 <p class="text-muted">No hay tareas que coincidan con los filtros seleccionados</p>
-                <?php if ($authHelper->hasPermission('tasks.create')): ?>
+                <?php if (Auth::hasPermission('tasks', 'create')): ?>
                     <a href="/index.php?page=tasks&action=create" class="btn btn-primary mt-2">
                         <i class="fas fa-plus"></i> Crear Primera Tarea
                     </a>
@@ -174,7 +174,7 @@ ob_start();
                         ?>
                         <tr class="<?= $isOverdue ? 'table-danger' : ($isDueToday ? 'table-warning' : '') ?>">
                             <td>
-                                <?php if ($authHelper->hasPermission('tasks.complete') && $task['status'] !== 'completed'): ?>
+                                <?php if (Auth::hasPermission('tasks', 'complete') && $task['status'] !== 'completed'): ?>
                                     <button class="btn btn-sm btn-link text-success complete-task" data-id="<?= $task['id'] ?>" title="Completar">
                                         <i class="far fa-square"></i>
                                     </button>
@@ -256,13 +256,13 @@ ob_start();
                                        class="btn btn-info" title="Ver">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <?php if ($authHelper->hasPermission('tasks.edit')): ?>
+                                    <?php if (Auth::hasPermission('tasks', 'edit')): ?>
                                     <a href="/index.php?page=tasks&action=edit&id=<?= $task['id'] ?>" 
                                        class="btn btn-warning" title="Editar">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <?php endif; ?>
-                                    <?php if ($authHelper->hasPermission('tasks.delete')): ?>
+                                    <?php if (Auth::hasPermission('tasks', 'delete')): ?>
                                     <a href="/index.php?page=tasks&action=delete&id=<?= $task['id'] ?>" 
                                        class="btn btn-danger" 
                                        onclick="return confirm('¿Eliminar esta tarea?')"

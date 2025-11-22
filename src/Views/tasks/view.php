@@ -9,7 +9,7 @@ ob_start();
         <p class="text-muted"><?= htmlspecialchars($task['title']) ?></p>
     </div>
     <div class="d-flex gap-2">
-        <?php if ($authHelper->hasPermission('tasks.edit')): ?>
+        <?php if (Auth::hasPermission('tasks', 'edit')): ?>
         <a href="/index.php?page=tasks&action=edit&id=<?= $task['id'] ?>" class="btn btn-warning">
             <i class="fas fa-edit"></i> Editar
         </a>
@@ -134,17 +134,17 @@ ob_start();
             <div class="card-body">
                 <h5 class="card-title"><i class="fas fa-bolt"></i> Acciones Rápidas</h5>
                 <hr>
-                <?php if ($task['status'] !== 'completed' && $authHelper->hasPermission('tasks.complete')): ?>
+                <?php if ($task['status'] !== 'completed' && Auth::hasPermission('tasks', 'complete')): ?>
                 <button class="btn btn-success btn-block mb-2 w-100" onclick="completeTask(<?= $task['id'] ?>)">
                     <i class="fas fa-check"></i> Marcar como Completada
                 </button>
                 <?php endif; ?>
-                <?php if ($authHelper->hasPermission('tasks.edit')): ?>
+                <?php if (Auth::hasPermission('tasks', 'edit')): ?>
                 <a href="/index.php?page=tasks&action=edit&id=<?= $task['id'] ?>" class="btn btn-warning btn-block mb-2 w-100">
                     <i class="fas fa-edit"></i> Editar Tarea
                 </a>
                 <?php endif; ?>
-                <?php if ($authHelper->hasPermission('tasks.delete')): ?>
+                <?php if (Auth::hasPermission('tasks', 'delete')): ?>
                 <a href="/index.php?page=tasks&action=delete&id=<?= $task['id'] ?>" 
                    class="btn btn-danger btn-block w-100"
                    onclick="return confirm('¿Eliminar esta tarea?')">
