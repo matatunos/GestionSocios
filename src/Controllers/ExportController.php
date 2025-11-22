@@ -148,7 +148,7 @@ class ExportController {
         $query = "SELECT e.*, c.name as category_name, c.color as category_color
                   FROM expenses e
                   LEFT JOIN expense_categories c ON e.category_id = c.id
-                  ORDER BY e.date DESC";
+                  ORDER BY e.expense_date DESC";
         
         $stmt = $this->db->prepare($query);
         $stmt->execute();
