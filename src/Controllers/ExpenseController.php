@@ -61,7 +61,7 @@ class ExpenseController {
         // Handle file upload
         $expenseModel->receipt_file = null;
         if (isset($_FILES['receipt_file']) && $_FILES['receipt_file']['error'] === 0) {
-            $uploadDir = __DIR__ . '/../../uploads/receipts/';
+            $uploadDir = __DIR__ . '/../../public/uploads/receipts/';
             if (!file_exists($uploadDir)) {
                 mkdir($uploadDir, 0777, true);
             }
@@ -131,12 +131,12 @@ class ExpenseController {
         
         // Handle file upload
         if (isset($_FILES['receipt_file']) && $_FILES['receipt_file']['error'] === 0) {
-            $uploadDir = __DIR__ . '/../../uploads/receipts/';
+            $uploadDir = __DIR__ . '/../../public/uploads/receipts/';
             if (!file_exists($uploadDir)) {
                 mkdir($uploadDir, 0777, true);
             }
             
-            // Delete old file
+            // Delete old receipt file if exists
             if ($expenseModel->receipt_file && file_exists($uploadDir . $expenseModel->receipt_file)) {
                 unlink($uploadDir . $expenseModel->receipt_file);
             }
