@@ -177,6 +177,19 @@ switch ($page) {
         else if ($action === 'store') $controller->store();
         else $controller->index();
         break;
+    case 'certificates':
+        require_once __DIR__ . '/../src/Controllers/CertificateController.php';
+        $controller = new CertificateController();
+        if ($action === 'membership') $controller->membership();
+        else if ($action === 'payments') $controller->payments();
+        else if ($action === 'donations') $controller->donations();
+        else if ($action === 'download') $controller->download();
+        else {
+            $_SESSION['error'] = 'Acción no válida';
+            header('Location: index.php?page=dashboard');
+            exit;
+        }
+        break;
     case 'settings':
         $controller = new SettingsController();
         if ($action === 'updateGeneral') $controller->updateGeneral();

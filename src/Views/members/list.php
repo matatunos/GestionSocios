@@ -169,6 +169,23 @@
                                     <i class="fas fa-edit"></i> Editar
                                 </a>
                                 
+                                <div style="display: inline-block; position: relative;">
+                                    <button onclick="toggleCertMenu(<?php echo $row['id']; ?>)" class="btn btn-sm btn-info" style="background: #8b5cf6; border-color: #8b5cf6;">
+                                        <i class="fas fa-certificate"></i> Certificados <i class="fas fa-chevron-down" style="font-size: 0.7rem;"></i>
+                                    </button>
+                                    <div id="certMenu<?php echo $row['id']; ?>" class="dropdown-menu" style="display: none; position: absolute; right: 0; background: white; border: 1px solid var(--border-light); border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); z-index: 1000; min-width: 200px; margin-top: 0.25rem;">
+                                        <a href="index.php?page=certificates&action=membership&id=<?php echo $row['id']; ?>" target="_blank" class="dropdown-item" style="display: block; padding: 0.5rem 1rem; color: var(--text-base); text-decoration: none; transition: background 0.2s;">
+                                            <i class="fas fa-id-card" style="width: 20px;"></i> Certificado de Socio
+                                        </a>
+                                        <a href="index.php?page=certificates&action=payments&id=<?php echo $row['id']; ?>&year=<?php echo date('Y'); ?>" target="_blank" class="dropdown-item" style="display: block; padding: 0.5rem 1rem; color: var(--text-base); text-decoration: none; transition: background 0.2s;">
+                                            <i class="fas fa-receipt" style="width: 20px;"></i> Certificado de Pagos <?php echo date('Y'); ?>
+                                        </a>
+                                        <a href="index.php?page=certificates&action=payments&id=<?php echo $row['id']; ?>&year=<?php echo date('Y') - 1; ?>" target="_blank" class="dropdown-item" style="display: block; padding: 0.5rem 1rem; color: var(--text-base); text-decoration: none; transition: background 0.2s;">
+                                            <i class="fas fa-receipt" style="width: 20px;"></i> Certificado de Pagos <?php echo date('Y') - 1; ?>
+                                        </a>
+                                    </div>
+                                </div>
+                                
                                 <a href="index.php?page=members&action=markPaid&id=<?php echo $row['id']; ?>" 
                                    class="btn btn-sm btn-primary"
                                    onclick="return confirm('¿Marcar la cuota de <?php echo date('Y'); ?> como pagada para este socio?');">
@@ -197,9 +214,27 @@
     </div>
 </div>
 
+<style>
+.dropdown-item:hover {
+    background: var(--primary-50) !important;
+    color: var(--primary-700) !important;
+}
+</style>
+
 <script>
 function toggleExportDropdown() {
     const menu = document.getElementById('exportMenu');
+    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+}
+
+function toggleCertMenu(memberId) {
+    const menu = document.getElementById('certMenu' + memberId);
+    // Close all other cert menus first
+    document.querySelectorAll('[id^="certMenu"]').forEach(m => {
+        if (m.id !== 'certMenu' + memberId) {
+            m.style.display = 'none';
+        }
+    });
     menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
 }
 
@@ -210,6 +245,13 @@ document.addEventListener('click', function(e) {
     
     if (menu && dropdown && !dropdown.contains(e.target) && !menu.contains(e.target)) {
         menu.style.display = 'none';
+    }
+    
+    // Close certificate menus when clicking outside
+    if (!e.target.closest('[onclick^="toggleCertMenu"]') && !e.target.closest('[id^="certMenu"]')) {
+        document.querySelectorAll('[id^="certMenu"]').forEach(m => {
+            m.style.display = 'none';
+        });
     }
 });
 </script>
