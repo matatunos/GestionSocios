@@ -22,12 +22,22 @@
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
             <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">DNI/NIE</label>
+                <input type="text" name="dni" class="form-control" value="<?php echo htmlspecialchars($member->dni ?? ''); ?>" placeholder="Ej: 12345678A">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
                 <label class="form-label">Email</label>
                 <input type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($member->email); ?>">
             </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
             <div class="form-group" style="margin-bottom: 0;">
                 <label class="form-label">Teléfono</label>
                 <input type="text" name="phone" class="form-control" value="<?php echo htmlspecialchars($member->phone); ?>">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <!-- Spacer -->
             </div>
         </div>
 

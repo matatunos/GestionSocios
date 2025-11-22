@@ -29,7 +29,12 @@ class Certificate {
         $orgSettings = $this->getOrganizationSettings();
         
         // Generate PDF
-        return $this->createPDF('membership', $member, $orgSettings);
+        $pdf = $this->createPDF('membership', $member, $orgSettings);
+        
+        return [
+            'pdf' => $pdf,
+            'member' => $member
+        ];
     }
     
     /**
@@ -72,7 +77,12 @@ class Certificate {
         $orgSettings = $this->getOrganizationSettings();
         
         // Generate PDF
-        return $this->createPDF('payment', $member, $orgSettings);
+        $pdf = $this->createPDF('payment', $member, $orgSettings);
+        
+        return [
+            'pdf' => $pdf,
+            'member' => $member
+        ];
     }
     
     /**

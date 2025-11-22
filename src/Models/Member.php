@@ -124,12 +124,13 @@ class Member {
 
     public function create() {
         $query = "INSERT INTO " . $this->table_name . " 
-                  SET first_name=:first_name, last_name=:last_name, email=:email, phone=:phone, address=:address, status=:status, category_id=:category_id, photo_url=:photo_url";
+                  SET first_name=:first_name, last_name=:last_name, dni=:dni, email=:email, phone=:phone, address=:address, status=:status, category_id=:category_id, photo_url=:photo_url";
         
         $stmt = $this->conn->prepare($query);
 
         $this->first_name = htmlspecialchars(strip_tags($this->first_name));
         $this->last_name = htmlspecialchars(strip_tags($this->last_name));
+        $this->dni = !empty($this->dni) ? htmlspecialchars(strip_tags($this->dni)) : null;
         $this->email = htmlspecialchars(strip_tags($this->email));
         $this->phone = htmlspecialchars(strip_tags($this->phone));
         $this->address = htmlspecialchars(strip_tags($this->address));
@@ -138,6 +139,7 @@ class Member {
 
         $stmt->bindParam(":first_name", $this->first_name);
         $stmt->bindParam(":last_name", $this->last_name);
+        $stmt->bindParam(":dni", $this->dni);
         $stmt->bindParam(":email", $this->email);
         $stmt->bindParam(":phone", $this->phone);
         $stmt->bindParam(":address", $this->address);
@@ -162,13 +164,14 @@ class Member {
 
     public function update() {
         $query = "UPDATE " . $this->table_name . " 
-                  SET first_name=:first_name, last_name=:last_name, email=:email, phone=:phone, address=:address, status=:status, category_id=:category_id, photo_url=:photo_url, deactivated_at=:deactivated_at
+                  SET first_name=:first_name, last_name=:last_name, dni=:dni, email=:email, phone=:phone, address=:address, status=:status, category_id=:category_id, photo_url=:photo_url, deactivated_at=:deactivated_at
                   WHERE id=:id";
         
         $stmt = $this->conn->prepare($query);
 
         $this->first_name = htmlspecialchars(strip_tags($this->first_name));
         $this->last_name = htmlspecialchars(strip_tags($this->last_name));
+        $this->dni = !empty($this->dni) ? htmlspecialchars(strip_tags($this->dni)) : null;
         $this->email = htmlspecialchars(strip_tags($this->email));
         $this->phone = htmlspecialchars(strip_tags($this->phone));
         $this->address = htmlspecialchars(strip_tags($this->address));
@@ -179,6 +182,7 @@ class Member {
 
         $stmt->bindParam(":first_name", $this->first_name);
         $stmt->bindParam(":last_name", $this->last_name);
+        $stmt->bindParam(":dni", $this->dni);
         $stmt->bindParam(":email", $this->email);
         $stmt->bindParam(":phone", $this->phone);
         $stmt->bindParam(":address", $this->address);

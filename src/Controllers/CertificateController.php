@@ -14,6 +14,47 @@ class CertificateController {
     }
     
     /**
+     * Generate a safe filename from member data
+     */
+    private function generateFilename($prefix, $member, $suffix = '') {
+        $parts = [$prefix];
+        
+        // Add DNI if available
+        if (!empty($member['dni'])) {
+            $parts[] = $member['dni'];
+        }
+        
+        // Add member name (sanitized)
+        $name = trim($member['first_name'] . '_' . $member['last_name']);
+        $name = $this->sanitizeFilename($name);
+        if ($name) {
+            $parts[] = $name;
+        }
+        
+        // Add suffix if provided (like year)
+        if ($suffix) {
+            $parts[] = $suffix;
+        }
+        
+        return implode('_', $parts) . '.pdf';
+    }
+    
+    /**
+     * Sanitize string for use in filename
+     */
+    private function sanitizeFilename($string) {
+        // Convert to ASCII
+        $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
+        // Remove special characters
+        $string = preg_replace('/[^A-Za-z0-9_-]/', '_', $string);
+        // Remove multiple underscores
+        $string = preg_replace('/_+/', '_', $string);
+        // Remove leading/trailing underscores
+        $string = trim($string, '_');
+        return $string;
+    }
+    
+    /**
      * Generate membership certificate
      */
     public function membership() {
@@ -34,13 +75,17 @@ class CertificateController {
         
         // Generate certificate
         try {
-            $pdf = $this->certificateModel->generateMembershipCertificate($memberId);
+            $result = $this->certificateModel->generateMembershipCertificate($memberId);
             
-            if (!$pdf) {
+            if (!$result) {
                 $_SESSION['error'] = 'No se pudo generar el certificado: Socio no encontrado';
                 header('Location: index.php?page=members');
                 exit;
             }
+            
+            $pdf = $result['pdf'];
+            $member = $result['member'];
+            $filename = $this->generateFilename('certificado_socio', $member);
         } catch (Exception $e) {
             error_log('Certificate generation error: ' . $e->getMessage());
             $_SESSION['error'] = 'Error al generar certificado: ' . $e->getMessage();
@@ -50,7 +95,7 @@ class CertificateController {
         
         // Output PDF
         header('Content-Type: application/pdf');
-        header('Content-Disposition: inline; filename="certificado_socio_' . $memberId . '.pdf"');
+        header('Content-Disposition: inline; filename="' . $filename . '"');
         echo $pdf;
         exit;
     }
@@ -78,13 +123,17 @@ class CertificateController {
         
         // Generate certificate
         try {
-            $pdf = $this->certificateModel->generatePaymentCertificate($memberId, $year);
+            $result = $this->certificateModel->generatePaymentCertificate($memberId, $year);
             
-            if (!$pdf) {
+            if (!$result) {
                 $_SESSION['error'] = 'No se pudo generar el certificado: Socio no encontrado';
                 header('Location: index.php?page=members');
                 exit;
             }
+            
+            $pdf = $result['pdf'];
+            $member = $result['member'];
+            $filename = $this->generateFilename('certificado_pagos', $member, $year);
         } catch (Exception $e) {
             error_log('Payment certificate error: ' . $e->getMessage());
             $_SESSION['error'] = 'Error al generar certificado: ' . $e->getMessage();
@@ -94,7 +143,7 @@ class CertificateController {
         
         // Output PDF
         header('Content-Type: application/pdf');
-        header('Content-Disposition: inline; filename="certificado_pagos_' . $memberId . '_' . $year . '.pdf"');
+        header('Content-Disposition: inline; filename="' . $filename . '"');
         echo $pdf;
         exit;
     }
@@ -159,23 +208,29 @@ class CertificateController {
         }
         
         // Generate certificate based on type
-        $pdf = null;
+        $result = null;
         $filename = '';
         
         switch ($type) {
             case 'membership':
-                $pdf = $this->certificateModel->generateMembershipCertificate($id);
-                $filename = "certificado_socio_{$id}.pdf";
+                $result = $this->certificateModel->generateMembershipCertificate($id);
+                if ($result) {
+                    $filename = $this->generateFilename('certificado_socio', $result['member']);
+                }
                 break;
                 
             case 'payments':
-                $pdf = $this->certificateModel->generatePaymentCertificate($id, $year);
-                $filename = "certificado_pagos_{$id}_{$year}.pdf";
+                $result = $this->certificateModel->generatePaymentCertificate($id, $year);
+                if ($result) {
+                    $filename = $this->generateFilename('certificado_pagos', $result['member'], $year);
+                }
                 break;
                 
             case 'donations':
-                $pdf = $this->certificateModel->generateDonationCertificate($id, $year);
-                $filename = "certificado_donaciones_{$id}_{$year}.pdf";
+                $result = $this->certificateModel->generateDonationCertificate($id, $year);
+                if ($result) {
+                    $filename = "certificado_donaciones_{$id}_{$year}.pdf";
+                }
                 break;
                 
             default:
@@ -184,11 +239,13 @@ class CertificateController {
                 exit;
         }
         
-        if (!$pdf) {
+        if (!$result || !isset($result['pdf'])) {
             $_SESSION['error'] = 'No se pudo generar el certificado';
             header('Location: index.php?page=dashboard');
             exit;
         }
+        
+        $pdf = $result['pdf'];
         
         // Force download
         header('Content-Type: application/pdf');

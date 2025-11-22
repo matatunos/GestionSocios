@@ -62,6 +62,7 @@ class MemberController {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->member->first_name = $_POST['first_name'];
             $this->member->last_name = $_POST['last_name'];
+            $this->member->dni = $_POST['dni'] ?? null;
             $this->member->email = $_POST['email'];
             $this->member->phone = $_POST['phone'];
             $this->member->address = $_POST['address'];
@@ -136,6 +137,7 @@ class MemberController {
             
             $this->member->first_name = $_POST['first_name'];
             $this->member->last_name = $_POST['last_name'];
+            $this->member->dni = $_POST['dni'] ?? null;
             $this->member->email = $_POST['email'];
             $this->member->phone = $_POST['phone'];
             $this->member->address = $_POST['address'];
