@@ -1075,19 +1075,21 @@ h2 {
 /* Mobile (≤768px) */
 @media (max-width: 768px) {
     .sidebar {
-        position: fixed;
-        left: -250px;
-        width: 250px;
+        position: fixed !important;
+        left: -280px;
+        width: 280px;
         height: 100vh;
         top: 0;
         transition: left 0.3s ease;
-        z-index: 1000;
+        z-index: 1001 !important;
         background: white !important;
         box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+        overflow-y: auto;
+        overflow-x: hidden;
     }
     
     .sidebar.mobile-open {
-        left: 0;
+        left: 0 !important;
     }
     
     .sidebar span,
@@ -1144,11 +1146,6 @@ h2 {
     
     .mobile-overlay.active {
         display: block;
-    }
-    
-    /* Ensure sidebar is above overlay */
-    .sidebar {
-        z-index: 1001 !important;
     }
     
     /* Responsive tables */

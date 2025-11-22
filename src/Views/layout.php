@@ -442,8 +442,11 @@ if (isset($_SESSION['user_id'])) {
         });
 
         mobileMenuToggle.addEventListener('click', function() {
+            console.log('Menu toggle clicked');
             sidebar.classList.toggle('mobile-open');
             mobileOverlay.classList.toggle('active');
+            console.log('Sidebar classes:', sidebar.className);
+            console.log('Overlay classes:', mobileOverlay.className);
         });
 
         mobileOverlay.addEventListener('click', function() {
