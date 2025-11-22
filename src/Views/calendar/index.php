@@ -3,10 +3,6 @@ $page_title = "Calendario de Eventos";
 ob_start(); 
 ?>
 
-<link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css' rel='stylesheet' />
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.js'></script>
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/locales/es.js'></script>
-
 <div class="flex justify-between items-center mb-4">
     <h1><i class="fas fa-calendar-alt"></i> Calendario de Eventos</h1>
     <div class="btn-group">
@@ -143,9 +139,28 @@ ob_start();
 }
 </style>
 
+<!-- Load FullCalendar from CDN -->
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css' rel='stylesheet' />
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/locales/es.js'></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('FullCalendar loading...');
+    
+    // Check if FullCalendar is loaded
+    if (typeof FullCalendar === 'undefined') {
+        console.error('FullCalendar library not loaded!');
+        return;
+    }
+    
     var calendarEl = document.getElementById('calendar');
+    if (!calendarEl) {
+        console.error('Calendar element not found!');
+        return;
+    }
+    
+    console.log('Initializing FullCalendar...');
     
     var calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
@@ -197,7 +212,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
+    console.log('Rendering calendar...');
     calendar.render();
+    console.log('Calendar rendered successfully!');
     
     // Update calendar on theme change
     const observer = new MutationObserver(function(mutations) {
