@@ -194,6 +194,12 @@ h2 {
     color: var(--primary-700);
 }
 
+.btn-secondary.active {
+    background: var(--primary-600);
+    color: white;
+    border-color: var(--primary-600);
+}
+
 .btn-danger {
     background: var(--danger-500);
     color: white;

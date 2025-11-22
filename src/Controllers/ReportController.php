@@ -79,6 +79,22 @@ class ReportController {
             $reportData[$year]['total'] += (float)$row['total'];
         }
 
+        // Get member distribution by category
+        $categoryQuery = "
+            SELECT 
+                mc.name as category_name,
+                mc.color as category_color,
+                COUNT(m.id) as member_count,
+                SUM(CASE WHEN m.status = 'active' THEN 1 ELSE 0 END) as active_count
+            FROM member_categories mc
+            LEFT JOIN members m ON mc.id = m.category_id
+            GROUP BY mc.id, mc.name, mc.color
+            ORDER BY member_count DESC
+        ";
+        $categoryStmt = $this->db->prepare($categoryQuery);
+        $categoryStmt->execute();
+        $categoryDistribution = $categoryStmt->fetchAll(PDO::FETCH_ASSOC);
+
         require __DIR__ . '/../Views/reports/executive.php';
     }
     public function exportMembers() {
