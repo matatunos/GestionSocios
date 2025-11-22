@@ -98,6 +98,15 @@ h2 {
     display: none;
 }
 
+/* Mobile menu modal - hidden by default on desktop */
+.mobile-menu-modal {
+    display: none;
+}
+
+.mobile-overlay {
+    display: none;
+}
+
 .sidebar {
     width: 280px;
     background: white;
