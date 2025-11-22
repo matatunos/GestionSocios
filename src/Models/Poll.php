@@ -48,6 +48,13 @@ class Poll {
     }
     
     /**
+     * Leer todas las votaciones (alias de read)
+     */
+    public function readAll($status = 'all') {
+        return $this->read($status);
+    }
+    
+    /**
      * Leer todas las votaciones
      */
     public function read($status = 'all') {

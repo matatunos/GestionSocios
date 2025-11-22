@@ -51,42 +51,47 @@ class CalendarController {
         // API endpoint for AJAX requests
         header('Content-Type: application/json');
         
-        // FullCalendar sends start and end dates in the query
-        $start = isset($_GET['start']) ? $_GET['start'] : null;
-        $end = isset($_GET['end']) ? $_GET['end'] : null;
-        
-        $eventModel = new Event($this->db);
-        
-        // If start and end are provided, use date range
-        if ($start && $end) {
-            $stmt = $eventModel->readByDateRange($start, $end);
-        } else {
-            // Fallback to month-based query
-            $year = isset($_GET['year']) ? (int)$_GET['year'] : date('Y');
-            $month = isset($_GET['month']) ? (int)$_GET['month'] : date('n');
-            $stmt = $eventModel->readByMonth($year, $month);
+        try {
+            // FullCalendar sends start and end dates in the query
+            $start = isset($_GET['start']) ? $_GET['start'] : null;
+            $end = isset($_GET['end']) ? $_GET['end'] : null;
+            
+            $eventModel = new Event($this->db);
+            
+            // If start and end are provided, use date range
+            if ($start && $end) {
+                $stmt = $eventModel->readByDateRange($start, $end);
+            } else {
+                // Fallback to month-based query
+                $year = isset($_GET['year']) ? (int)$_GET['year'] : date('Y');
+                $month = isset($_GET['month']) ? (int)$_GET['month'] : date('n');
+                $stmt = $eventModel->readByMonth($year, $month);
+            }
+            
+            $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Format events for FullCalendar
+            $calendarEvents = [];
+            foreach ($events as $event) {
+                $calendarEvents[] = [
+                    'id' => $event['id'],
+                    'title' => $event['name'],
+                    'start' => $event['date'] . ($event['start_time'] ? 'T' . $event['start_time'] : ''),
+                    'end' => $event['date'] . ($event['end_time'] ? 'T' . $event['end_time'] : ''),
+                    'color' => $event['color'] ?? '#6366f1',
+                    'description' => $event['description'],
+                    'location' => $event['location'],
+                    'price' => $event['price'],
+                    'type' => $event['event_type'] ?? 'other',
+                    'url' => 'index.php?page=calendar&action=viewEvent&id=' . $event['id']
+                ];
+            }
+            
+            echo json_encode($calendarEvents);
+        } catch (Exception $e) {
+            error_log("Calendar API error: " . $e->getMessage());
+            echo json_encode(['error' => $e->getMessage()]);
         }
-        
-        $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        // Format events for FullCalendar
-        $calendarEvents = [];
-        foreach ($events as $event) {
-            $calendarEvents[] = [
-                'id' => $event['id'],
-                'title' => $event['name'],
-                'start' => $event['date'] . ($event['start_time'] ? 'T' . $event['start_time'] : ''),
-                'end' => $event['date'] . ($event['end_time'] ? 'T' . $event['end_time'] : ''),
-                'color' => $event['color'] ?? '#6366f1',
-                'description' => $event['description'],
-                'location' => $event['location'],
-                'price' => $event['price'],
-                'type' => $event['event_type'] ?? 'other',
-                'url' => 'index.php?page=calendar&action=viewEvent&id=' . $event['id']
-            ];
-        }
-        
-        echo json_encode($calendarEvents);
         exit;
     }
 
