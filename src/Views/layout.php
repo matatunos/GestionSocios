@@ -112,6 +112,12 @@ if (isset($_SESSION['user_id'])) {
                     </a>
                 </li>
                 <li>
+                    <a href="index.php?page=members&action=map" class="nav-link <?php echo ($page === 'members' && ($_GET['action'] ?? '') === 'map') ? 'active' : ''; ?>">
+                        <i class="fas fa-map-marked-alt"></i>
+                        <span>Mapa de Socios</span>
+                    </a>
+                </li>
+                <li>
                     <a href="index.php?page=member_categories" class="nav-link <?php echo ($page === 'member_categories') ? 'active' : ''; ?>">
                         <i class="fas fa-tags"></i>
                         <span>Categorías</span>

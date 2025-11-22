@@ -124,7 +124,7 @@ class Member {
 
     public function create() {
         $query = "INSERT INTO " . $this->table_name . " 
-                  SET first_name=:first_name, last_name=:last_name, dni=:dni, email=:email, phone=:phone, address=:address, status=:status, category_id=:category_id, photo_url=:photo_url";
+                  SET first_name=:first_name, last_name=:last_name, dni=:dni, email=:email, phone=:phone, address=:address, latitude=:latitude, longitude=:longitude, status=:status, category_id=:category_id, photo_url=:photo_url";
         
         $stmt = $this->conn->prepare($query);
 
@@ -134,6 +134,8 @@ class Member {
         $this->email = htmlspecialchars(strip_tags($this->email));
         $this->phone = htmlspecialchars(strip_tags($this->phone));
         $this->address = htmlspecialchars(strip_tags($this->address));
+        $this->latitude = !empty($this->latitude) ? floatval($this->latitude) : null;
+        $this->longitude = !empty($this->longitude) ? floatval($this->longitude) : null;
         $this->status = htmlspecialchars(strip_tags($this->status));
         $this->photo_url = htmlspecialchars(strip_tags($this->photo_url));
 
@@ -143,6 +145,8 @@ class Member {
         $stmt->bindParam(":email", $this->email);
         $stmt->bindParam(":phone", $this->phone);
         $stmt->bindParam(":address", $this->address);
+        $stmt->bindParam(":latitude", $this->latitude);
+        $stmt->bindParam(":longitude", $this->longitude);
         $stmt->bindParam(":status", $this->status);
         $stmt->bindParam(":category_id", $this->category_id, PDO::PARAM_INT);
         $stmt->bindParam(":photo_url", $this->photo_url);
@@ -164,7 +168,7 @@ class Member {
 
     public function update() {
         $query = "UPDATE " . $this->table_name . " 
-                  SET first_name=:first_name, last_name=:last_name, dni=:dni, email=:email, phone=:phone, address=:address, status=:status, category_id=:category_id, photo_url=:photo_url, deactivated_at=:deactivated_at
+                  SET first_name=:first_name, last_name=:last_name, dni=:dni, email=:email, phone=:phone, address=:address, latitude=:latitude, longitude=:longitude, status=:status, category_id=:category_id, photo_url=:photo_url, deactivated_at=:deactivated_at
                   WHERE id=:id";
         
         $stmt = $this->conn->prepare($query);
@@ -175,6 +179,8 @@ class Member {
         $this->email = htmlspecialchars(strip_tags($this->email));
         $this->phone = htmlspecialchars(strip_tags($this->phone));
         $this->address = htmlspecialchars(strip_tags($this->address));
+        $this->latitude = !empty($this->latitude) ? floatval($this->latitude) : null;
+        $this->longitude = !empty($this->longitude) ? floatval($this->longitude) : null;
         $this->status = htmlspecialchars(strip_tags($this->status));
         $this->photo_url = htmlspecialchars(strip_tags($this->photo_url));
         $this->deactivated_at = !empty($this->deactivated_at) ? htmlspecialchars(strip_tags($this->deactivated_at)) : null;
@@ -186,6 +192,8 @@ class Member {
         $stmt->bindParam(":email", $this->email);
         $stmt->bindParam(":phone", $this->phone);
         $stmt->bindParam(":address", $this->address);
+        $stmt->bindParam(":latitude", $this->latitude);
+        $stmt->bindParam(":longitude", $this->longitude);
         $stmt->bindParam(":status", $this->status);
         $stmt->bindParam(":category_id", $this->category_id, PDO::PARAM_INT);
         $stmt->bindParam(":photo_url", $this->photo_url);

@@ -43,7 +43,28 @@
 
         <div class="form-group">
             <label class="form-label">Dirección</label>
-            <textarea name="address" class="form-control" rows="3"><?php echo htmlspecialchars($member->address); ?></textarea>
+            <div style="position: relative;">
+                <textarea name="address" id="address" class="form-control" rows="3"><?php echo htmlspecialchars($member->address); ?></textarea>
+                <button type="button" id="getLocationBtn" class="btn btn-sm btn-success" 
+                        style="position: absolute; bottom: 8px; right: 8px;" 
+                        onclick="getLocation()" title="Capturar ubicación GPS">
+                    <i class="fas fa-map-marker-alt"></i> GPS
+                </button>
+            </div>
+            <div class="d-flex gap-2 align-items-center mt-2">
+                <small class="text-muted">Puedes capturar tu ubicación actual con el botón GPS</small>
+                <?php if (!empty($member->latitude) && !empty($member->longitude)): ?>
+                    <a href="https://www.google.com/maps?q=<?php echo $member->latitude; ?>,<?php echo $member->longitude; ?>" 
+                       target="_blank" class="btn btn-sm btn-info">
+                        <i class="fas fa-map-marked-alt"></i> Ver en Google Maps
+                    </a>
+                    <small class="text-muted">
+                        (<?php echo number_format($member->latitude, 6); ?>, <?php echo number_format($member->longitude, 6); ?>)
+                    </small>
+                <?php endif; ?>
+            </div>
+            <input type="hidden" name="latitude" id="latitude" value="<?php echo htmlspecialchars($member->latitude ?? ''); ?>">
+            <input type="hidden" name="longitude" id="longitude" value="<?php echo htmlspecialchars($member->longitude ?? ''); ?>">
         </div>
 
         <div class="form-group">
@@ -107,6 +128,70 @@
         </div>
     </form>
 </div>
+
+<script>
+function getLocation() {
+    const btn = document.getElementById('getLocationBtn');
+    const originalHTML = btn.innerHTML;
+    
+    if (!navigator.geolocation) {
+        alert('Tu navegador no soporta geolocalización');
+        return;
+    }
+    
+    // Show loading
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Capturando...';
+    btn.disabled = true;
+    
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            
+            document.getElementById('latitude').value = lat;
+            document.getElementById('longitude').value = lng;
+            
+            // Update button
+            btn.innerHTML = '<i class="fas fa-check"></i> ¡Ubicación capturada!';
+            btn.classList.remove('btn-success');
+            btn.classList.add('btn-primary');
+            
+            // Show coordinates
+            alert(`Ubicación capturada correctamente:\nLatitud: ${lat.toFixed(6)}\nLongitud: ${lng.toFixed(6)}\n\nGuarda el formulario para conservar la ubicación.`);
+            
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-success');
+            }, 3000);
+        },
+        function(error) {
+            btn.innerHTML = originalHTML;
+            btn.disabled = false;
+            
+            let errorMsg = 'Error al obtener ubicación';
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    errorMsg = 'Permiso de ubicación denegado. Actívalo en la configuración del navegador.';
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    errorMsg = 'Ubicación no disponible';
+                    break;
+                case error.TIMEOUT:
+                    errorMsg = 'Tiempo de espera agotado';
+                    break;
+            }
+            alert(errorMsg);
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        }
+    );
+}
+</script>
 
 <?php 
 $content = ob_get_clean(); 

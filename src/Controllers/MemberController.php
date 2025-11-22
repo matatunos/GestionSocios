@@ -66,6 +66,8 @@ class MemberController {
             $this->member->email = $_POST['email'];
             $this->member->phone = $_POST['phone'];
             $this->member->address = $_POST['address'];
+            $this->member->latitude = $_POST['latitude'] ?? null;
+            $this->member->longitude = $_POST['longitude'] ?? null;
             $this->member->status = $_POST['status'];
             $this->member->category_id = !empty($_POST['category_id']) ? $_POST['category_id'] : null;
             $this->member->photo_url = $this->handleUpload();
@@ -141,6 +143,8 @@ class MemberController {
             $this->member->email = $_POST['email'];
             $this->member->phone = $_POST['phone'];
             $this->member->address = $_POST['address'];
+            $this->member->latitude = $_POST['latitude'] ?? null;
+            $this->member->longitude = $_POST['longitude'] ?? null;
             $this->member->status = $_POST['status'];
             $this->member->category_id = !empty($_POST['category_id']) ? $_POST['category_id'] : null;
             
@@ -427,6 +431,20 @@ class MemberController {
         
         header('Location: index.php?page=members&action=imageHistory&id=' . $memberId . '&msg=restored');
         exit;
+    }
+    
+    public function map() {
+        // Get all members with geolocation data
+        $query = "SELECT id, first_name, last_name, email, phone, address, latitude, longitude, photo_url 
+                  FROM members 
+                  WHERE latitude IS NOT NULL AND longitude IS NOT NULL
+                  ORDER BY last_name, first_name";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        require __DIR__ . '/../Views/members/map.php';
     }
 }
 

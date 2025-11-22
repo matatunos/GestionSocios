@@ -1653,3 +1653,35 @@ h2 {
 .avatar-upload-btn i {
     font-size: 0.75rem;
 }
+
+/* Map and geolocation styles */
+#map {
+    z-index: 1;
+}
+
+.leaflet-popup-content {
+    margin: 10px;
+}
+
+@media (max-width: 768px) {
+    #map {
+        height: 400px !important;
+    }
+    
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    /* Make GPS button more visible on mobile */
+    #getLocationBtn {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.6rem;
+    }
+    
+    /* Improve touch targets for mobile */
+    .nav-link {
+        padding: 0.75rem 1rem;
+        min-height: 44px;
+    }
+}
