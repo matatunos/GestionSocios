@@ -1,10 +1,6 @@
-<?php
-if (!defined('ROOT_PATH')) {
-    define('ROOT_PATH', dirname(dirname(dirname(__FILE__))));
-}
+<?php ob_start(); ?>
 
-$title = 'Gestión de Documentos';
-?>
+<?php $title = 'Gestión de Documentos'; ?>
 
 <div class="page-header">
     <div>
@@ -301,3 +297,8 @@ $title = 'Gestión de Documentos';
     }
 }
 </style>
+
+<?php
+$content = ob_get_clean();
+require_once __DIR__ . '/../layout.php';
+?>

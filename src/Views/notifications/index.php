@@ -1,11 +1,6 @@
-<?php
-// Evitar acceso directo
-if (!defined('ROOT_PATH')) {
-    define('ROOT_PATH', dirname(dirname(dirname(__FILE__))));
-}
+<?php ob_start(); ?>
 
-$title = 'Notificaciones';
-?>
+<?php $title = 'Notificaciones'; ?>
 
 <div class="page-header">
     <div>
@@ -331,3 +326,8 @@ $title = 'Notificaciones';
     border-color: rgba(100, 116, 139, 0.3);
 }
 </style>
+
+<?php
+$content = ob_get_clean();
+require_once __DIR__ . '/../layout.php';
+?>

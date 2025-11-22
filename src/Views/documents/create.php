@@ -1,10 +1,6 @@
-<?php
-if (!defined('ROOT_PATH')) {
-    define('ROOT_PATH', dirname(dirname(dirname(__FILE__))));
-}
+<?php ob_start(); ?>
 
-$title = 'Subir Documento';
-?>
+<?php $title = 'Subir Documento'; ?>
 
 <div class="page-header">
     <div>
@@ -128,3 +124,8 @@ document.getElementById('file').addEventListener('change', function(e) {
     background: rgba(99, 102, 241, 0.1);
 }
 </style>
+
+<?php
+$content = ob_get_clean();
+require_once __DIR__ . '/../layout.php';
+?>
