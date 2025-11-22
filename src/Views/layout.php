@@ -228,6 +228,14 @@ if (isset($_SESSION['user_id'])) {
                     </div>
                 </div>
                 
+                <!-- Language Selector -->
+                <div class="language-selector" style="margin-bottom: 0.75rem;">
+                    <select id="languageSelect" onchange="changeLanguage(this.value)" style="width: 100%; padding: 0.5rem; border-radius: 0.5rem; border: 1px solid var(--border-light); background: var(--bg-card); color: var(--text-main); cursor: pointer;">
+                        <option value="es" <?php echo (current_lang() === 'es') ? 'selected' : ''; ?>>🇪🇸 Español</option>
+                        <option value="en" <?php echo (current_lang() === 'en') ? 'selected' : ''; ?>>🇬🇧 English</option>
+                    </select>
+                </div>
+                
                 <!-- Dark Mode Toggle -->
                 <div class="dark-mode-toggle" style="margin-bottom: 0.75rem;">
                     <label class="toggle-switch">
@@ -235,13 +243,13 @@ if (isset($_SESSION['user_id'])) {
                         <span class="toggle-slider"></span>
                         <span class="toggle-label">
                             <i class="fas fa-moon"></i>
-                            <span class="toggle-text">Modo Oscuro</span>
+                            <span class="toggle-text"><?php echo __('dark_mode'); ?></span>
                         </span>
                     </label>
                 </div>
                 
                 <a href="index.php?page=login&action=logout" class="btn btn-sm btn-danger w-full btn-logout">
-                    <i class="fas fa-sign-out-alt"></i> <span class="btn-logout-text">Cerrar Sesión</span>
+                    <i class="fas fa-sign-out-alt"></i> <span class="btn-logout-text"><?php echo __('logout'); ?></span>
                 </a>
             </div>
 
@@ -254,6 +262,11 @@ if (isset($_SESSION['user_id'])) {
     </div>
 
     <script>
+        // Language Changer
+        function changeLanguage(lang) {
+            window.location.href = 'index.php?page=language&action=change&lang=' + lang;
+        }
+        
         // Initialize Dark Mode
         if (localStorage.getItem('theme') === 'dark') {
             document.documentElement.setAttribute('data-theme', 'dark');

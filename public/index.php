@@ -8,7 +8,7 @@ spl_autoload_register(function ($class_name) {
         require $file;
     } else {
         // Fallback for classes without namespace in src/Models or src/Controllers
-        $dirs = ['Config', 'Controllers', 'Models'];
+        $dirs = ['Config', 'Controllers', 'Models', 'Helpers'];
         foreach ($dirs as $dir) {
             $file = __DIR__ . '/../src/' . $dir . '/' . $class_name . '.php';
             if (file_exists($file)) {
@@ -18,6 +18,10 @@ spl_autoload_register(function ($class_name) {
         }
     }
 });
+
+// Initialize Language System
+require_once __DIR__ . '/../src/Helpers/Lang.php';
+$lang = Lang::getInstance();
 
 // Determine page
 $page = $_GET['page'] ?? 'dashboard';
