@@ -41,6 +41,24 @@
             <?php if (!empty($member->photo_url)): ?>
                 <div class="mb-2">
                     <img src="<?php echo htmlspecialchars($member->photo_url); ?>" alt="Foto actual" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%;">
+                    <div class="flex gap-2 mt-2">
+                        <a href="<?php echo htmlspecialchars($member->photo_url); ?>" target="_blank" class="btn btn-sm btn-secondary">
+                            <i class="fas fa-eye"></i> Ver
+                        </a>
+                        <a href="<?php echo htmlspecialchars($member->photo_url); ?>" download class="btn btn-sm btn-secondary">
+                            <i class="fas fa-download"></i> Descargar
+                        </a>
+                        <?php 
+                        require_once __DIR__ . '/../../Models/MemberImageHistory.php';
+                        $database = new Database();
+                        $imageHistory = new MemberImageHistory($database->getConnection());
+                        if ($imageHistory->countByMember($member->id) > 0): 
+                        ?>
+                            <a href="index.php?page=members&action=imageHistory&id=<?php echo $member->id; ?>" class="btn btn-sm btn-primary">
+                                <i class="fas fa-history"></i> Histórico (<?php echo $imageHistory->countByMember($member->id); ?>)
+                            </a>
+                        <?php endif; ?>
+                    </div>
                 </div>
             <?php endif; ?>
             <input type="file" name="photo" class="form-control" accept="image/*">

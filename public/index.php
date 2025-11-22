@@ -77,6 +77,10 @@ switch ($page) {
         else if ($action === 'deactivate') $controller->deactivate($_GET['id']);
         else if ($action === 'delete') $controller->delete($_GET['id']);
         else if ($action === 'markPaid') $controller->markPaid($_GET['id']);
+        else if ($action === 'compareImages') $controller->compareImages();
+        else if ($action === 'selectImage') $controller->selectImage($_GET['id']);
+        else if ($action === 'imageHistory') $controller->imageHistory($_GET['id']);
+        else if ($action === 'restoreImage') $controller->restoreImage($_GET['id'], $_GET['historyId']);
         else $controller->index();
         break;
     case 'fees':
