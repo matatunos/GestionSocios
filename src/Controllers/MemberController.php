@@ -68,7 +68,7 @@ class MemberController {
             $targetPath = $uploadDir . $fileName;
             
             if (move_uploaded_file($_FILES['photo']['tmp_name'], $targetPath)) {
-                return '/uploads/members/' . $fileName;
+                return 'uploads/members/' . $fileName;
             }
         }
         return null;

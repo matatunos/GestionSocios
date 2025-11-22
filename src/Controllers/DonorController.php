@@ -55,7 +55,7 @@ class DonorController {
                     $targetPath = $uploadDir . $fileName;
 
                     if (move_uploaded_file($_FILES['logo']['tmp_name'], $targetPath)) {
-                        $logoUrl = '/uploads/donors/' . $fileName;
+                        $logoUrl = 'uploads/donors/' . $fileName;
                     }
                 }
             }
@@ -119,7 +119,7 @@ class DonorController {
                         if ($currentLogo && file_exists(__DIR__ . '/../../public' . $currentLogo)) {
                             unlink(__DIR__ . '/../../public' . $currentLogo);
                         }
-                        $logoUrl = '/uploads/donors/' . $fileName;
+                        $logoUrl = 'uploads/donors/' . $fileName;
                     }
                 }
             }
