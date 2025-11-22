@@ -21,6 +21,25 @@ class DonorImageHistory {
     public function create() {
         $query = "INSERT INTO " . $this->table_name . " 
                   (donor_id, image_url, is_current, uploaded_at, replaced_at) 
+                  VALUES (:donor_id, :image_url, :is_current, :uploaded_at, :replaced_at)";
+        
+        $stmt = $this->conn->prepare($query);
+
+        $this->donor_id = htmlspecialchars(strip_tags($this->donor_id));
+        $this->image_url = htmlspecialchars(strip_tags($this->image_url));
+        
+        // Convert is_current to integer (0 or 1)
+        $is_current_int = $this->is_current ? 1 : 0;
+
+        $stmt->bindParam(":donor_id", $this->donor_id);
+        $stmt->bindParam(":image_url", $this->image_url);
+        $stmt->bindParam(":is_current", $is_current_int, PDO::PARAM_INT);
+        $stmt->bindParam(":uploaded_at", $this->uploaded_at);
+        $stmt->bindParam(":replaced_at", $this->replaced_at);
+
+        if ($stmt->execute()) {
+            return true;
+        }
         return false;
     }
 
