@@ -139,36 +139,31 @@ ob_start();
 }
 </style>
 
-<!-- Load FullCalendar from CDN -->
-<link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css' rel='stylesheet' />
+<!-- Load FullCalendar from CDN (v5) -->
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.css' rel='stylesheet' />
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/main.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.5/locales/es.js'></script>
 
 <script>
-// Load FullCalendar scripts and initialize calendar
+// Initialize calendar after page loads
 (function() {
-    console.log('Loading FullCalendar scripts...');
+    console.log('Waiting for DOM and FullCalendar...');
     
-    // Load main script
-    var script1 = document.createElement('script');
-    script1.src = 'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.js';
-    script1.onload = function() {
-        console.log('FullCalendar main.js loaded');
-        
-        // Load locale script
-        var script2 = document.createElement('script');
-        script2.src = 'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/locales/es.js';
-        script2.onload = function() {
-            console.log('FullCalendar es.js loaded');
-            initCalendar();
-        };
-        script2.onerror = function() {
-            console.error('Failed to load FullCalendar locale');
-        };
-        document.head.appendChild(script2);
-    };
-    script1.onerror = function() {
-        console.error('Failed to load FullCalendar main script');
-    };
-    document.head.appendChild(script1);
+    function waitForFullCalendar() {
+        if (typeof FullCalendar === 'undefined') {
+            console.log('FullCalendar not loaded yet, waiting...');
+            setTimeout(waitForFullCalendar, 100);
+            return;
+        }
+        console.log('FullCalendar is ready!');
+        initCalendar();
+    }
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', waitForFullCalendar);
+    } else {
+        waitForFullCalendar();
+    }
     
     function initCalendar() {
         console.log('Initializing FullCalendar...');
