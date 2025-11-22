@@ -71,7 +71,8 @@ class ExportController {
      */
     public function exportMembersPDF() {
         $memberModel = new Member($this->db);
-        $members = $memberModel->read();
+        $stmt = $memberModel->readAll();
+        $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         // Generar HTML para PDF
         $html = $this->generateMembersPDFHTML($members);
