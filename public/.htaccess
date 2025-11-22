@@ -5,6 +5,10 @@
     RewriteEngine On
     RewriteBase /
     
+    # Allow direct access to static files
+    RewriteCond %{REQUEST_URI} \.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot|pdf)$ [NC]
+    RewriteRule ^ - [L]
+    
     # Redirect to index.php for non-existent files (except error pages)
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
