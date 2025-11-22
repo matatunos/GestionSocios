@@ -122,12 +122,13 @@
 }
 
 .alert-info {
-    background: #dbeafe;
-    color: #1e40af;
+    background: #3b82f6;
+    color: white;
     padding: 1rem 1.5rem;
     border-radius: 8px;
     margin-bottom: 2rem;
-    border-left: 4px solid #3b82f6;
+    border-left: 4px solid #1d4ed8;
+    font-size: 1.125rem;
 }
 
 .alert-info i {
