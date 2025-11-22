@@ -429,6 +429,8 @@ if (isset($_SESSION['user_id'])) {
         // Show mobile menu button on mobile devices
         if (window.innerWidth <= 768) {
             mobileMenuToggle.style.display = 'flex';
+            // Ensure sidebar starts hidden on mobile
+            sidebar.style.left = '-280px';
         }
 
         window.addEventListener('resize', function() {
@@ -442,16 +444,27 @@ if (isset($_SESSION['user_id'])) {
         });
 
         mobileMenuToggle.addEventListener('click', function() {
-            console.log('Menu toggle clicked');
-            sidebar.classList.toggle('mobile-open');
-            mobileOverlay.classList.toggle('active');
-            console.log('Sidebar classes:', sidebar.className);
-            console.log('Overlay classes:', mobileOverlay.className);
+            const isOpen = sidebar.classList.contains('mobile-open');
+            
+            if (isOpen) {
+                // Close menu
+                sidebar.classList.remove('mobile-open');
+                mobileOverlay.classList.remove('active');
+                sidebar.style.left = '-280px';
+            } else {
+                // Open menu
+                sidebar.classList.add('mobile-open');
+                mobileOverlay.classList.add('active');
+                sidebar.style.left = '0';
+                sidebar.style.visibility = 'visible';
+                sidebar.style.opacity = '1';
+            }
         });
 
         mobileOverlay.addEventListener('click', function() {
             sidebar.classList.remove('mobile-open');
             mobileOverlay.classList.remove('active');
+            sidebar.style.left = '-280px';
         });
 
         // Notifications System
