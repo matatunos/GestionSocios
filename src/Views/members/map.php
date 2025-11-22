@@ -6,6 +6,18 @@
 </div>
 
 <div class="card">
+    <div class="mb-3" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <button type="button" class="btn btn-primary" id="filterAll" onclick="filterMap('all')">
+            <i class="fas fa-globe"></i> Todos
+        </button>
+        <button type="button" class="btn btn-outline-primary" id="filterMembers" onclick="filterMap('members')">
+            <i class="fas fa-users"></i> Solo Socios
+        </button>
+        <button type="button" class="btn btn-outline-primary" id="filterDonors" onclick="filterMap('donors')">
+            <i class="fas fa-hand-holding-heart"></i> Solo Donantes
+        </button>
+    </div>
+    
     <div id="map" style="width: 100%; height: 600px; border-radius: 8px;"></div>
     
     <div class="mt-3">
@@ -134,8 +146,12 @@ const donorIcon = L.icon({
 const members = <?php echo json_encode($members); ?>;
 const donors = <?php echo json_encode($donors ?? []); ?>;
 
+// Separate arrays for member and donor markers
+const memberMarkers = [];
+const donorMarkers = [];
+const allMarkers = [];
+
 // Add markers for each member (blue)
-const markers = [];
 members.forEach(function(member) {
     const lat = parseFloat(member.latitude);
     const lng = parseFloat(member.longitude);
@@ -164,7 +180,9 @@ members.forEach(function(member) {
         `;
         
         marker.bindPopup(popupContent);
-        markers.push({marker: marker, lat: lat, lng: lng});
+        const markerData = {marker: marker, lat: lat, lng: lng, type: 'member'};
+        memberMarkers.push(markerData);
+        allMarkers.push(markerData);
     }
 });
 
@@ -198,14 +216,62 @@ donors.forEach(function(donor) {
         `;
         
         marker.bindPopup(popupContent);
-        markers.push({marker: marker, lat: lat, lng: lng});
+        const markerData = {marker: marker, lat: lat, lng: lng, type: 'donor'};
+        donorMarkers.push(markerData);
+        allMarkers.push(markerData);
     }
 });
 
 // Adjust map bounds to show all markers
-if (markers.length > 0) {
-    const group = new L.featureGroup(markers.map(m => m.marker));
+if (allMarkers.length > 0) {
+    const group = new L.featureGroup(allMarkers.map(m => m.marker));
     map.fitBounds(group.getBounds().pad(0.1));
+}
+
+// Function to filter map markers
+let currentFilter = 'all';
+
+function filterMap(filterType) {
+    currentFilter = filterType;
+    
+    // Update button styles
+    document.getElementById('filterAll').className = filterType === 'all' ? 'btn btn-primary' : 'btn btn-outline-primary';
+    document.getElementById('filterMembers').className = filterType === 'members' ? 'btn btn-primary' : 'btn btn-outline-primary';
+    document.getElementById('filterDonors').className = filterType === 'donors' ? 'btn btn-primary' : 'btn btn-outline-primary';
+    
+    let visibleMarkers = [];
+    
+    if (filterType === 'all') {
+        // Show all markers
+        memberMarkers.forEach(m => {
+            map.addLayer(m.marker);
+            visibleMarkers.push(m);
+        });
+        donorMarkers.forEach(m => {
+            map.addLayer(m.marker);
+            visibleMarkers.push(m);
+        });
+    } else if (filterType === 'members') {
+        // Show only members
+        memberMarkers.forEach(m => {
+            map.addLayer(m.marker);
+            visibleMarkers.push(m);
+        });
+        donorMarkers.forEach(m => map.removeLayer(m.marker));
+    } else if (filterType === 'donors') {
+        // Show only donors
+        donorMarkers.forEach(m => {
+            map.addLayer(m.marker);
+            visibleMarkers.push(m);
+        });
+        memberMarkers.forEach(m => map.removeLayer(m.marker));
+    }
+    
+    // Adjust map bounds to show visible markers
+    if (visibleMarkers.length > 0) {
+        const group = new L.featureGroup(visibleMarkers.map(m => m.marker));
+        map.fitBounds(group.getBounds().pad(0.1));
+    }
 }
 
 // Function to focus on a specific location
@@ -213,7 +279,7 @@ function focusLocation(lat, lng) {
     map.setView([lat, lng], 16);
     
     // Find and open the marker's popup
-    markers.forEach(function(m) {
+    allMarkers.forEach(function(m) {
         if (m.lat === lat && m.lng === lng) {
             m.marker.openPopup();
         }
