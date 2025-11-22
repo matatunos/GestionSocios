@@ -1,13 +1,3 @@
-<?php ob_start(); ?>
-
-<div class="mb-4">
-    <div class="flex justify-between items-center">
-        <h1><i class="fas fa-chart-bar"></i> Informe Ejecutivo de Ingresos</h1>
-        <button onclick="window.print()" class="btn btn-primary no-print">
-            <i class="fas fa-download"></i> Descargar PDF
-        </button>
-    </div>
-</div>
 
 <?php
 // Calculate summary statistics

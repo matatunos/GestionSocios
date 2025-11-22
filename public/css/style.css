@@ -64,32 +64,9 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* Layout */
-.app-container {
-    display: flex;
-    min-height: 100vh;
-}
-
-.sidebar {
-    width: 280px;
-    background: var(--bg-glass);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-right: 1px solid var(--border-light);
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    height: 100%;
-    z-index: 10;
-}
-
-.main-content {
-    flex: 1;
-    margin-left: 280px;
-    padding: 2.5rem;
-    background: linear-gradient(to bottom right, #f8fafc, #f1f5f9);
-    min-height: 100vh;
+padding: 2.5rem;
+background: linear-gradient(to bottom right, #f8fafc, #f1f5f9);
+min-height: 100vh;
 }
 
 /* Typography */
@@ -115,26 +92,8 @@ h2 {
     margin-bottom: 1rem;
 }
 
-p {
-    color: var(--text-muted);
-    line-height: 1.6;
-}
-
-/* Components */
-.card {
-    background: var(--bg-card);
-    backdrop-filter: blur(8px);
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
-    padding: 2rem;
-    margin-bottom: 2rem;
-    transition: var(--transition);
-}
-
-.card:hover {
-    box-shadow: var(--shadow-lg);
-    transform: translateY(-2px);
+box-shadow: var(--shadow-lg);
+transform: translateY(-2px);
 }
 
 .btn {
@@ -460,20 +419,6 @@ p {
     color: #f1f5f9;
 }
 
-[data-theme="dark"] .btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.05);
-}
-
-/* Collapsible Sidebar */
-.sidebar {
-    transition: width 0.3s ease, transform 0.3s ease;
-}
-
-.sidebar.collapsed {
-    width: 80px;
-}
-
-.sidebar.collapsed .nav-brand span,
 .sidebar.collapsed .nav-link span,
 .sidebar.collapsed .user-info,
 .sidebar.collapsed .btn-logout-text {

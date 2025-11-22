@@ -114,13 +114,16 @@
                     </tr>
                 <?php else: ?>
                     <?php 
-                    $typeIcons = [
-                        'fee' => 'fa-receipt',
-                        'event' => 'fa-calendar-alt',
-                        'donation' => 'fa-hand-holding-heart'
+                    $typeConfig = [
+                        'payment' => ['icon' => 'fa-receipt', 'color' => 'var(--primary-600)'],
+                        'donation' => ['icon' => 'fa-hand-holding-heart', 'color' => 'var(--secondary-600)'],
+                        'book_ad' => ['icon' => 'fa-book-open', 'color' => 'var(--warning-600)'],
+                        'deactivation' => ['icon' => 'fa-user-times', 'color' => 'var(--danger-600)']
                     ];
+                    
                     foreach ($recentActivity as $activity): 
-                        $icon = $typeIcons[$activity['payment_type']] ?? 'fa-money-bill';
+                        $config = $typeConfig[$activity['type']] ?? ['icon' => 'fa-circle', 'color' => 'var(--text-muted)'];
+                        $isDeactivation = $activity['type'] === 'deactivation';
                     ?>
                         <tr>
                             <td style="font-size: 0.875rem; color: var(--text-muted);">
@@ -130,11 +133,18 @@
                                 <?= htmlspecialchars($activity['first_name'] . ' ' . $activity['last_name']) ?>
                             </td>
                             <td>
-                                <i class="fas <?= $icon ?>" style="margin-right: 0.5rem; color: var(--primary-600);"></i>
-                                <?= htmlspecialchars($activity['concept']) ?>
+                                <i class="fas <?= $config['icon'] ?>" style="margin-right: 0.5rem; color: <?= $config['color'] ?>;"></i>
+                                <?= htmlspecialchars($activity['description']) ?>
+                                <?php if ($activity['subtype']): ?>
+                                    <span class="text-xs text-muted">(<?= htmlspecialchars($activity['subtype']) ?>)</span>
+                                <?php endif; ?>
                             </td>
-                            <td style="text-align: right; font-weight: 600; color: var(--secondary-600);">
-                                <?= number_format($activity['amount'], 2) ?> €
+                            <td style="text-align: right; font-weight: 600; color: <?= $isDeactivation ? 'var(--text-muted)' : 'var(--secondary-600)' ?>;">
+                                <?php if (!$isDeactivation): ?>
+                                    <?= number_format($activity['amount'], 2) ?> €
+                                <?php else: ?>
+                                    -
+                                <?php endif; ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>

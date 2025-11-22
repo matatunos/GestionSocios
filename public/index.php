@@ -137,6 +137,9 @@ switch ($page) {
         require_once __DIR__ . '/../src/Controllers/ReportController.php';
         $controller = new ReportController();
         if ($action === 'executive') $controller->executiveReport();
+        else if ($action === 'export_members') $controller->exportMembers();
+        else if ($action === 'export_donors') $controller->exportDonors();
+        else if ($action === 'export_movements') $controller->exportMovements();
         else $controller->executiveReport();
         break;
     case 'ad_prices':

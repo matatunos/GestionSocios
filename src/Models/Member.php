@@ -9,10 +9,8 @@ class Member {
     public $last_name;
     public $email;
     public $phone;
-    public $address;
-    public $status;
-    public $photo_url;
     public $created_at;
+    public $deactivated_at;
 
     public function __construct($db) {
         $this->conn = $db;
@@ -41,6 +39,7 @@ class Member {
             $this->status = $row['status'];
             $this->photo_url = $row['photo_url'];
             $this->created_at = $row['created_at'];
+            $this->deactivated_at = $row['deactivated_at'] ?? null;
             return true;
         }
         return false;
@@ -76,7 +75,7 @@ class Member {
 
     public function update() {
         $query = "UPDATE " . $this->table_name . " 
-                  SET first_name=:first_name, last_name=:last_name, email=:email, phone=:phone, address=:address, status=:status, photo_url=:photo_url
+                  SET first_name=:first_name, last_name=:last_name, email=:email, phone=:phone, address=:address, status=:status, photo_url=:photo_url, deactivated_at=:deactivated_at
                   WHERE id=:id";
         
         $stmt = $this->conn->prepare($query);
@@ -88,6 +87,7 @@ class Member {
         $this->address = htmlspecialchars(strip_tags($this->address));
         $this->status = htmlspecialchars(strip_tags($this->status));
         $this->photo_url = htmlspecialchars(strip_tags($this->photo_url));
+        $this->deactivated_at = !empty($this->deactivated_at) ? htmlspecialchars(strip_tags($this->deactivated_at)) : null;
         $this->id = htmlspecialchars(strip_tags($this->id));
 
         $stmt->bindParam(":first_name", $this->first_name);
@@ -97,6 +97,7 @@ class Member {
         $stmt->bindParam(":address", $this->address);
         $stmt->bindParam(":status", $this->status);
         $stmt->bindParam(":photo_url", $this->photo_url);
+        $stmt->bindParam(":deactivated_at", $this->deactivated_at);
         $stmt->bindParam(":id", $this->id);
 
         if ($stmt->execute()) {

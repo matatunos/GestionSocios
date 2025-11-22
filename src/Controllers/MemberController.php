@@ -128,6 +128,8 @@ class MemberController {
         $this->member->id = $id;
         if ($this->member->readOne()) {
             $this->member->status = 'inactive';
+            $this->member->deactivated_at = date('Y-m-d H:i:s');
+            
             if ($this->member->update()) {
                 header('Location: index.php?page=members&msg=deactivated');
                 exit;

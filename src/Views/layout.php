@@ -1,4 +1,8 @@
 <?php
+// Ensure page and action variables are available
+$page = $page ?? $_GET['page'] ?? 'dashboard';
+$action = $action ?? $_GET['action'] ?? 'index';
+
 // Fetch association name for layout
 if (!isset($associationName)) {
     $associationName = 'Asociación';
@@ -26,39 +30,6 @@ if (!isset($associationName)) {
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Using FontAwesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
-    <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-toggle" onclick="toggleSidebar()">
-                <i class="fas fa-chevron-left"></i>
-            </div>
-
-            <a href="index.php" class="nav-brand">
-                <i class="fas fa-users-rectangle"></i>
-                <span><?php echo htmlspecialchars($associationName); ?></span>
-            </a>
-            
-            <ul class="nav-menu">
-                <li>
-                    <a href="index.php?page=dashboard" class="nav-link <?php echo ($page === 'dashboard') ? 'active' : ''; ?>">
-                        <i class="fas fa-chart-pie"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="index.php?page=members" class="nav-link <?php echo ($page === 'members') ? 'active' : ''; ?>">
-                        <i class="fas fa-users"></i>
-                        <span>Socios</span>
-                    </a>
-                </li>
-                <!-- Fees link removed and moved to Settings -->
-                <li>
-                    <a href="index.php?page=payments" class="nav-link <?php echo ($page === 'payments') ? 'active' : ''; ?>">
-                        <i class="fas fa-money-bill-wave"></i>
-                        <span>Pagos</span>
                     </a>
                 </li>
                 <li>

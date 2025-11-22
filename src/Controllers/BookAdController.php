@@ -36,6 +36,8 @@ class BookAdController {
     public function create() {
         $this->checkAdmin();
         
+        $year = $_GET['year'] ?? date('Y');
+
         // Get donors for the dropdown
         require_once __DIR__ . '/../Models/Donor.php';
         $donorModel = new Donor($this->db);
@@ -44,8 +46,7 @@ class BookAdController {
         // Get ad prices for current year
         require_once __DIR__ . '/../Models/AdPrice.php';
         $adPriceModel = new AdPrice($this->db);
-        $currentYear = date('Y');
-        $adPrices = $adPriceModel->getPricesByYear($currentYear);
+        $adPrices = $adPriceModel->getPricesByYear($year);
         
         require __DIR__ . '/../Views/book/create_ad.php';
     }
@@ -54,7 +55,7 @@ class BookAdController {
         $this->checkAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->bookAd->donor_id = $_POST['donor_id'];
-            $this->bookAd->year = $_POST['year'];
+            $this->bookAd->year = !empty($_POST['year']) ? $_POST['year'] : date('Y');
             $this->bookAd->ad_type = $_POST['ad_type'];
             $this->bookAd->amount = $_POST['amount'];
             $this->bookAd->status = $_POST['status'];
