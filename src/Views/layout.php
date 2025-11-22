@@ -59,6 +59,12 @@ if (!isset($associationName)) {
                     </a>
                 </li>
                 <li>
+                    <a href="index.php?page=member_categories" class="nav-link <?php echo ($page === 'member_categories') ? 'active' : ''; ?>">
+                        <i class="fas fa-tags"></i>
+                        <span>Categorías</span>
+                    </a>
+                </li>
+                <li>
                     <a href="index.php?page=events" class="nav-link <?php echo ($page === 'events') ? 'active' : ''; ?>">
                         <i class="fas fa-calendar-alt"></i>
                         <span>Eventos</span>
