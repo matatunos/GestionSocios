@@ -238,6 +238,43 @@ h2 {
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
+/* Filter Form */
+.filter-form {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border-light);
+}
+
+.filter-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1.5fr 1.5fr 1fr;
+    gap: 1rem;
+    align-items: end;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+@media (max-width: 1200px) {
+    .filter-row {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .filter-actions {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 768px) {
+    .filter-row {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Tables */
 .table-container {
     overflow-x: auto;
@@ -278,12 +315,14 @@ h2 {
 
 /* Badges */
 .badge {
+    display: inline-block;
     padding: 0.25rem 0.75rem;
     border-radius: var(--radius-full);
     font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.025em;
+    white-space: nowrap;
 }
 
 .badge-active,
@@ -294,10 +333,8 @@ h2 {
 
 .badge-inactive,
 .badge-pending {
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    background-color: #fee2e2;
+    color: #991b1b;
 }
 
 .nav-link {

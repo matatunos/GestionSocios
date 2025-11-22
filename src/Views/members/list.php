@@ -21,18 +21,73 @@
     </div>
 <?php endif; ?>
 
-<div class="filter-tabs" style="margin-bottom: 1.5rem;">
-    <a href="index.php?page=members&filter=all" 
-       class="filter-tab <?php echo (!isset($_GET['filter']) || $_GET['filter'] === 'all') ? 'active' : ''; ?>">
-        <i class="fas fa-users"></i> Todos
-    </a>
-    <a href="index.php?page=members&filter=current" 
-       class="filter-tab <?php echo ($_GET['filter'] ?? '') === 'current' ? 'active' : ''; ?>">
-        <i class="fas fa-check-circle"></i> Al Corriente
-    </a>
-    <a href="index.php?page=members&filter=delinquent" 
-       class="filter-tab <?php echo ($_GET['filter'] ?? '') === 'delinquent' ? 'active' : ''; ?>">
-        <i class="fas fa-exclamation-triangle"></i> Pendientes de pago
+<!-- Advanced Filters -->
+<div class="card" style="margin-bottom: 1.5rem;">
+    <form method="GET" action="index.php" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; align-items: end;">
+        <input type="hidden" name="page" value="members">
+        
+        <div class="form-group" style="margin: 0;">
+            <label class="form-label" style="font-size: 0.875rem;">Buscar</label>
+            <input type="text" name="search" class="form-control" placeholder="Nombre, email, teléfono..." value="<?php echo htmlspecialchars($_GET['search'] ?? ''); ?>">
+        </div>
+        
+        <div class="form-group" style="margin: 0;">
+            <label class="form-label" style="font-size: 0.875rem;">Estado</label>
+            <select name="status" class="form-control">
+                <option value="">Todos</option>
+                <option value="active" <?php echo ($_GET['status'] ?? '') === 'active' ? 'selected' : ''; ?>>Activos</option>
+                <option value="inactive" <?php echo ($_GET['status'] ?? '') === 'inactive' ? 'selected' : ''; ?>>Inactivos</option>
+            </select>
+        </div>
+        
+        <div class="form-group" style="margin: 0;">
+            <label class="form-label" style="font-size: 0.875rem;">Categoría</label>
+            <select name="category_id" class="form-control">
+                <option value="">Todas</option>
+                <?php foreach ($categories as $cat): ?>
+                    <option value="<?php echo $cat['id']; ?>" <?php echo ($_GET['category_id'] ?? '') == $cat['id'] ? 'selected' : ''; ?>>
+                        <?php echo htmlspecialchars($cat['name']); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        
+        <div class="form-group" style="margin: 0;">
+            <label class="form-label" style="font-size: 0.875rem;">Estado de Pago</label>
+            <select name="payment_status" class="form-control">
+                <option value="">Todos</option>
+                <option value="current" <?php echo ($_GET['payment_status'] ?? '') === 'current' ? 'selected' : ''; ?>>Al Corriente</option>
+                <option value="delinquent" <?php echo ($_GET['payment_status'] ?? '') === 'delinquent' ? 'selected' : ''; ?>>Pendientes</option>
+            </select>
+        </div>
+        
+        <div class="form-group" style="margin: 0;">
+            <label class="form-label" style="font-size: 0.875rem;">Año Alta (desde)</label>
+            <input type="number" name="year_from" class="form-control" min="2000" max="<?php echo date('Y'); ?>" placeholder="Ej: 2020" value="<?php echo htmlspecialchars($_GET['year_from'] ?? ''); ?>">
+        </div>
+        
+        <div style="display: flex; gap: 0.5rem; align-items: end;">
+            <button type="submit" class="btn btn-primary" style="flex: 1;">
+                <i class="fas fa-filter"></i> Filtrar
+            </button>
+            <a href="index.php?page=members" class="btn btn-secondary">
+                <i class="fas fa-times"></i>
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- Results Summary -->
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding: 0.75rem; background: var(--bg-body); border-radius: var(--radius-md);">
+    <div style="font-size: 0.875rem; color: var(--text-muted);">
+        <i class="fas fa-users"></i> 
+        <strong><?php echo count($members); ?></strong> socio(s) encontrado(s)
+        <?php if (!empty(array_filter($_GET, fn($v, $k) => $k !== 'page' && !empty($v), ARRAY_FILTER_USE_BOTH))): ?>
+            <span style="color: var(--primary-600);">(filtrado)</span>
+        <?php endif; ?>
+    </div>
+    <a href="index.php?page=members&action=create" class="btn btn-primary btn-sm">
+        <i class="fas fa-plus"></i> Nuevo Socio
     </a>
 </div>
 
@@ -50,6 +105,7 @@
                 <tr>
                     <th>Socio</th>
                     <th>Contacto</th>
+                    <th>Categoría</th>
                     <th>Estado</th>
                     <th style="text-align: right;">Acciones</th>
                 </tr>
@@ -57,7 +113,7 @@
             <tbody>
                 <?php if (empty($members)): ?>
                     <tr>
-                        <td colspan="4" style="text-align: center; padding: 2rem; color: var(--text-muted);">No hay socios registrados.</td>
+                        <td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-muted);">No hay socios registrados.</td>
                     </tr>
                 <?php else: ?>
                     <?php foreach ($members as $row): ?>
@@ -81,6 +137,15 @@
                                 <div style="font-size: 0.875rem; margin-top: 0.25rem;">
                                     <i class="fas fa-phone" style="color: var(--text-light); width: 20px;"></i> <?php echo htmlspecialchars($row['phone']); ?>
                                 </div>
+                            </td>
+                            <td>
+                                <?php if (!empty($row['category_name'])): ?>
+                                    <span class="badge" style="background-color: <?php echo htmlspecialchars($row['category_color'] ?? '#6b7280'); ?>; color: white;">
+                                        <?php echo htmlspecialchars($row['category_name']); ?>
+                                    </span>
+                                <?php else: ?>
+                                    <span style="color: var(--text-muted); font-size: 0.875rem;">Sin categoría</span>
+                                <?php endif; ?>
                             </td>
                             <td>
                                 <span class="badge <?php echo $row['status'] === 'active' ? 'badge-active' : 'badge-inactive'; ?>">

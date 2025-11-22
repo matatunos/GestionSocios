@@ -20,17 +20,30 @@ class MemberController {
     }
 
     public function index() {
-        $filter = $_GET['filter'] ?? 'all';
+        // Build filters from GET parameters
+        $filters = [
+            'status' => $_GET['status'] ?? '',
+            'payment_status' => $_GET['payment_status'] ?? '',
+            'category_id' => $_GET['category_id'] ?? '',
+            'search' => $_GET['search'] ?? '',
+            'year_from' => $_GET['year_from'] ?? '',
+            'year_to' => $_GET['year_to'] ?? ''
+        ];
         
-        if ($filter === 'current') {
-            $stmt = $this->member->readByPaymentStatus('current');
-        } elseif ($filter === 'delinquent') {
-            $stmt = $this->member->readByPaymentStatus('delinquent');
-        } else {
-            $stmt = $this->member->readAll();
+        // Legacy filter support
+        $legacyFilter = $_GET['filter'] ?? 'all';
+        if ($legacyFilter === 'current') {
+            $filters['payment_status'] = 'current';
+        } elseif ($legacyFilter === 'delinquent') {
+            $filters['payment_status'] = 'delinquent';
         }
         
-        $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $members = $this->member->readFiltered($filters);
+        
+        // Get categories for filter dropdown
+        $categoryModel = new MemberCategory($this->db);
+        $categories = $categoryModel->readAll();
+        
         require __DIR__ . '/../Views/members/list.php';
     }
 

@@ -20,10 +20,83 @@ class Member {
     }
 
     public function readAll() {
-        $query = "SELECT * FROM " . $this->table_name . " ORDER BY last_name ASC, first_name ASC";
+        $query = "SELECT m.*, mc.name as category_name, mc.color as category_color 
+                  FROM " . $this->table_name . " m
+                  LEFT JOIN member_categories mc ON m.category_id = mc.id
+                  ORDER BY m.last_name ASC, m.first_name ASC";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt;
+    }
+    
+    public function readFiltered($filters = []) {
+        $query = "SELECT m.*, mc.name as category_name, mc.color as category_color
+                  FROM " . $this->table_name . " m
+                  LEFT JOIN member_categories mc ON m.category_id = mc.id
+                  WHERE 1=1";
+        
+        $params = [];
+        
+        // Filter by status (active/inactive)
+        if (!empty($filters['status'])) {
+            $query .= " AND m.status = :status";
+            $params[':status'] = $filters['status'];
+        }
+        
+        // Filter by category
+        if (!empty($filters['category_id'])) {
+            $query .= " AND m.category_id = :category_id";
+            $params[':category_id'] = $filters['category_id'];
+        }
+        
+        // Search by name, email, phone
+        if (!empty($filters['search'])) {
+            $query .= " AND (CONCAT(m.first_name, ' ', m.last_name) LIKE :search 
+                          OR m.email LIKE :search 
+                          OR m.phone LIKE :search)";
+            $params[':search'] = '%' . $filters['search'] . '%';
+        }
+        
+        // Filter by registration year
+        if (!empty($filters['year_from'])) {
+            $query .= " AND YEAR(m.created_at) >= :year_from";
+            $params[':year_from'] = $filters['year_from'];
+        }
+        
+        if (!empty($filters['year_to'])) {
+            $query .= " AND YEAR(m.created_at) <= :year_to";
+            $params[':year_to'] = $filters['year_to'];
+        }
+        
+        // Filter by payment status (requires checking payments table)
+        if (!empty($filters['payment_status'])) {
+            $currentYear = date('Y');
+            
+            if ($filters['payment_status'] === 'current') {
+                $query .= " AND EXISTS (
+                    SELECT 1 FROM payments p 
+                    WHERE p.member_id = m.id 
+                    AND p.year = $currentYear
+                )";
+            } elseif ($filters['payment_status'] === 'delinquent') {
+                $query .= " AND NOT EXISTS (
+                    SELECT 1 FROM payments p 
+                    WHERE p.member_id = m.id 
+                    AND p.year = $currentYear
+                ) AND m.status = 'active'";
+            }
+        }
+        
+        $query .= " ORDER BY m.last_name ASC, m.first_name ASC";
+        
+        $stmt = $this->conn->prepare($query);
+        
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function readOne() {
