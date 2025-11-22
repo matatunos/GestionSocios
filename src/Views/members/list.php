@@ -93,9 +93,24 @@
 
 <div class="flex justify-between items-center mb-4">
     <h1>Listado de Socios</h1>
-    <a href="index.php?page=members&action=create" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Nuevo Socio
-    </a>
+    <div class="btn-group">
+        <div class="dropdown" style="display: inline-block; position: relative; margin-right: 0.5rem;">
+            <button class="btn btn-secondary dropdown-toggle" id="exportDropdown" onclick="toggleExportDropdown()">
+                <i class="fas fa-download"></i> Exportar
+            </button>
+            <div class="dropdown-menu" id="exportMenu" style="display: none;">
+                <a href="index.php?page=export&action=members_excel" class="dropdown-item">
+                    <i class="fas fa-file-excel"></i> Excel (CSV)
+                </a>
+                <a href="index.php?page=export&action=members_pdf" class="dropdown-item" target="_blank">
+                    <i class="fas fa-file-pdf"></i> PDF (Imprimir)
+                </a>
+            </div>
+        </div>
+        <a href="index.php?page=members&action=create" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Nuevo Socio
+        </a>
+    </div>
 </div>
 
 <div class="card" style="padding: 0; overflow: hidden;">
@@ -184,6 +199,23 @@
         </table>
     </div>
 </div>
+
+<script>
+function toggleExportDropdown() {
+    const menu = document.getElementById('exportMenu');
+    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+    const dropdown = document.getElementById('exportDropdown');
+    const menu = document.getElementById('exportMenu');
+    
+    if (menu && dropdown && !dropdown.contains(e.target) && !menu.contains(e.target)) {
+        menu.style.display = 'none';
+    }
+});
+</script>
 
 <?php 
 $content = ob_get_clean(); 

@@ -2,9 +2,14 @@
 
 <div class="flex justify-between items-center mb-4">
     <h1>Control de Pagos</h1>
-    <a href="index.php?page=payments&action=create" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Registrar Pago
-    </a>
+    <div class="btn-group">
+        <a href="index.php?page=export&action=payments_excel" class="btn btn-secondary">
+            <i class="fas fa-download"></i> Exportar Excel
+        </a>
+        <a href="index.php?page=payments&action=create" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Registrar Pago
+        </a>
+    </div>
 </div>
 
 <div class="card" style="padding: 0; overflow: hidden;">

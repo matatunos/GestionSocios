@@ -2,9 +2,14 @@
 
 <div class="flex justify-between items-center mb-4">
     <h1>Donaciones del Año <?= htmlspecialchars($year) ?></h1>
-    <a href="index.php?page=donations&action=create" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Añadir Donación
-    </a>
+    <div class="btn-group">
+        <a href="index.php?page=export&action=donations_excel" class="btn btn-secondary">
+            <i class="fas fa-download"></i> Exportar Excel
+        </a>
+        <a href="index.php?page=donations&action=create" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Añadir Donación
+        </a>
+    </div>
 </div>
 
 <div class="card" style="padding: 0; overflow: hidden;">

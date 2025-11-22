@@ -195,6 +195,16 @@ switch ($page) {
         $controller = new SearchController();
         $controller->search();
         break;
+    case 'export':
+        $controller = new ExportController($db);
+        if ($action === 'members_excel') $controller->exportMembersExcel();
+        else if ($action === 'members_pdf') $controller->exportMembersPDF();
+        else if ($action === 'donations_excel') $controller->exportDonationsExcel();
+        else if ($action === 'expenses_excel') $controller->exportExpensesExcel();
+        else if ($action === 'events_excel') $controller->exportEventsExcel();
+        else if ($action === 'payments_excel') $controller->exportPaymentsExcel();
+        else header('Location: index.php?page=dashboard');
+        break;
     case 'ad_prices':
         require_once __DIR__ . '/../src/Controllers/AdPriceController.php';
         $controller = new AdPriceController();

@@ -62,9 +62,14 @@
         </h1>
         <p style="color: var(--text-muted);">Control de gastos y egresos de la asociación</p>
     </div>
-    <a href="index.php?page=expenses&action=create" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Nuevo Gasto
-    </a>
+    <div class="btn-group">
+        <a href="index.php?page=export&action=expenses_excel" class="btn btn-secondary">
+            <i class="fas fa-download"></i> Exportar Excel
+        </a>
+        <a href="index.php?page=expenses&action=create" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Nuevo Gasto
+        </a>
+    </div>
 </div>
 
 <?php if (isset($_SESSION['success'])): ?>

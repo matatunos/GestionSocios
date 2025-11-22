@@ -9,9 +9,14 @@ ob_start();
 
 <div class="flex justify-between items-center mb-4">
     <h1><i class="fas fa-calendar-alt"></i> Calendario de Eventos</h1>
-    <a href="index.php?page=events&action=create" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Nuevo Evento
-    </a>
+    <div class="btn-group">
+        <a href="index.php?page=export&action=events_excel" class="btn btn-secondary">
+            <i class="fas fa-download"></i> Exportar Excel
+        </a>
+        <a href="index.php?page=events&action=create" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Nuevo Evento
+        </a>
+    </div>
 </div>
 
 <!-- Calendar Card -->
