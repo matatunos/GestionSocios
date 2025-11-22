@@ -29,7 +29,33 @@ if (!isset($associationName)) {
     <title>Gestión <?php echo htmlspecialchars($associationName); ?></title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Using FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="nav-brand">
+                    <i class="fas fa-users-cog"></i>
+                    <span>Gestión</span>
+                </div>
+                <button class="sidebar-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+            
+            <ul class="nav-menu">
+                <li>
+                    <a href="index.php?page=dashboard" class="nav-link <?php echo ($page === 'dashboard') ? 'active' : ''; ?>">
+                        <i class="fas fa-home"></i>
+                        <span>Panel</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="index.php?page=members" class="nav-link <?php echo ($page === 'members') ? 'active' : ''; ?>">
+                        <i class="fas fa-users"></i>
+                        <span>Socios</span>
                     </a>
                 </li>
                 <li>
