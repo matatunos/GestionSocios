@@ -110,9 +110,6 @@
             <button class="tab-btn" onclick="openTab(event, 'ad_prices')">
                 <i class="fas fa-tags"></i> Precios Anuncios
             </button>
-            <button class="tab-btn" onclick="openTab(event, 'appearance')">
-                <i class="fas fa-palette"></i> Apariencia
-            </button>
             <button class="tab-btn" onclick="openTab(event, 'database')">
                 <i class="fas fa-database"></i> Base de Datos
             </button>
@@ -278,23 +275,6 @@
                             <?php endforeach; ?>
                         </tbody>
                     </table>
-                </div>
-            </div>
-        </div>
-
-            <!-- Appearance Tab -->
-            <div id="appearance" class="tab-content" style="display: none;">
-                <h2 class="section-title">Apariencia y Tema</h2>
-                <div class="card" style="max-width: 600px; margin: 0;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <h3 style="font-size: 1rem; margin-bottom: 0.25rem;">Modo Oscuro</h3>
-                        <p style="font-size: 0.875rem; margin: 0;">Activar tema oscuro para la interfaz</p>
-                    </div>
-                    <label class="switch">
-                        <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
-                        <span class="slider round"></span>
-                    </label>
                 </div>
             </div>
         </div>

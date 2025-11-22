@@ -107,6 +107,19 @@ if (!isset($associationName)) {
                     <i class="fas fa-user-circle" style="margin-right: 0.5rem;"></i>
                     <?php echo htmlspecialchars($_SESSION['username'] ?? 'Usuario'); ?>
                 </div>
+                
+                <!-- Dark Mode Toggle -->
+                <div class="dark-mode-toggle" style="margin-bottom: 0.75rem;">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="darkModeToggle">
+                        <span class="toggle-slider"></span>
+                        <span class="toggle-label">
+                            <i class="fas fa-moon"></i>
+                            <span class="toggle-text">Modo Oscuro</span>
+                        </span>
+                    </label>
+                </div>
+                
                 <a href="index.php?page=login&action=logout" class="btn btn-sm btn-danger w-full btn-logout">
                     <i class="fas fa-sign-out-alt"></i> <span class="btn-logout-text">Cerrar Sesión</span>
                 </a>
@@ -124,7 +137,19 @@ if (!isset($associationName)) {
         // Initialize Dark Mode
         if (localStorage.getItem('theme') === 'dark') {
             document.documentElement.setAttribute('data-theme', 'dark');
+            document.getElementById('darkModeToggle').checked = true;
         }
+
+        // Dark Mode Toggle
+        document.getElementById('darkModeToggle').addEventListener('change', function() {
+            if (this.checked) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+            }
+        });
 
         // Initialize Sidebar State
         if (localStorage.getItem('sidebarCollapsed') === 'true') {
