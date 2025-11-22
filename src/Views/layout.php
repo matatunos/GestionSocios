@@ -166,6 +166,12 @@ if (isset($_SESSION['user_id'])) {
                     </a>
                 </li>
                 <li>
+                    <a href="index.php?page=analytics" class="nav-link <?php echo ($page === 'analytics') ? 'active' : ''; ?>">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Estadísticas</span>
+                    </a>
+                </li>
+                <li>
                     <a href="index.php?page=notifications" class="nav-link <?php echo ($page === 'notifications') ? 'active' : ''; ?>">
                         <i class="fas fa-bell"></i>
                         <span>Notificaciones</span>

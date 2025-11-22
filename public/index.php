@@ -190,6 +190,12 @@ switch ($page) {
             exit;
         }
         break;
+    case 'analytics':
+        require_once __DIR__ . '/../src/Controllers/AnalyticsController.php';
+        $controller = new AnalyticsController();
+        if ($action === 'getData') $controller->getData();
+        else $controller->index();
+        break;
     case 'settings':
         $controller = new SettingsController();
         if ($action === 'updateGeneral') $controller->updateGeneral();
