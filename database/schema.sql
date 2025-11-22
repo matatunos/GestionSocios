@@ -1,8 +1,10 @@
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE,
-    password_hash VARCHAR(255) NOT NULL,
-    role ENUM('admin', 'readonly') DEFAULT 'readonly',
+    email VARCHAR(255) NOT NULL UNIQUE,
+    name VARCHAR(200) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('admin', 'member') DEFAULT 'member',
+    active TINYINT(1) NOT NULL DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -101,6 +103,6 @@ CREATE TABLE IF NOT EXISTS settings (
 INSERT INTO settings (setting_key, setting_value) VALUES ('association_name', 'Mi Asociación') ON DUPLICATE KEY UPDATE setting_key=setting_key;
 
 -- Insert default admin user (password: admin123)
-INSERT INTO users (username, password_hash, role) VALUES 
-('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin')
+INSERT INTO users (email, name, password, role, active) VALUES 
+('admin@admin.com', 'Administrador', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 1)
 ON DUPLICATE KEY UPDATE id=id;

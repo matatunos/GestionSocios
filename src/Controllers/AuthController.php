@@ -20,9 +20,10 @@ class AuthController {
             $password = $_POST['password'] ?? '';
 
             if ($this->user->findByUsername($username)) {
-                if (password_verify($password, $this->user->password_hash)) {
+                if (password_verify($password, $this->user->password)) {
                     $_SESSION['user_id'] = $this->user->id;
-                    $_SESSION['username'] = $this->user->username;
+                    $_SESSION['username'] = $this->user->name;
+                    $_SESSION['email'] = $this->user->email;
                     $_SESSION['role'] = $this->user->role;
                     header('Location: index.php?page=dashboard');
                     exit;

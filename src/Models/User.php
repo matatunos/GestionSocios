@@ -5,26 +5,32 @@ class User {
     private $table_name = "users";
 
     public $id;
-    public $username;
-    public $password_hash;
+    public $email;
+    public $name;
+    public $password;
     public $role;
+    public $active;
 
     public function __construct($db) {
         $this->conn = $db;
     }
 
     public function findByUsername($username) {
-        $query = "SELECT id, username, password_hash, role FROM " . $this->table_name . " WHERE username = ? LIMIT 0,1";
+        // Buscar por email o name para compatibilidad
+        $query = "SELECT id, email, name, password, role, active FROM " . $this->table_name . " WHERE email = ? OR name = ? LIMIT 0,1";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $username);
+        $stmt->bindParam(2, $username);
         $stmt->execute();
 
         if ($stmt->rowCount() > 0) {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             $this->id = $row['id'];
-            $this->username = $row['username'];
-            $this->password_hash = $row['password_hash'];
+            $this->email = $row['email'];
+            $this->name = $row['name'];
+            $this->password = $row['password'];
             $this->role = $row['role'];
+            $this->active = $row['active'];
             return true;
         }
         return false;
