@@ -5,7 +5,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // Include database connection
-require_once __DIR__ . '/../src/Config/Config.php';
+require_once __DIR__ . '/../src/Config/config.php';
 require_once __DIR__ . '/../src/Config/Database.php';
 
 try {
