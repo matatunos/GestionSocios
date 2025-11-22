@@ -3,6 +3,9 @@
 
 USE asociacion_db;
 
+-- Desactivar verificación de claves foráneas temporalmente
+SET FOREIGN_KEY_CHECKS = 0;
+
 -- Crear tabla temporal con la nueva estructura
 CREATE TABLE IF NOT EXISTS users_new (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -29,6 +32,9 @@ FROM users;
 -- Renombrar tablas
 DROP TABLE users;
 RENAME TABLE users_new TO users;
+
+-- Reactivar verificación de claves foráneas
+SET FOREIGN_KEY_CHECKS = 1;
 
 -- Insertar usuario admin por defecto si no existe
 INSERT INTO users (email, name, password, role, active) VALUES 
