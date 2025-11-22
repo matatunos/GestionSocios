@@ -32,6 +32,14 @@ if (!isset($associationName)) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle" style="display: none;">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Mobile Overlay -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    
     <div class="app-container">
         <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
@@ -249,6 +257,36 @@ if (!isset($associationName)) {
             if (!document.getElementById('globalSearch').contains(e.target)) {
                 searchResults.style.display = 'none';
             }
+        });
+
+        // Mobile Menu
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+        const sidebar = document.getElementById('sidebar');
+
+        // Show mobile menu button on mobile devices
+        if (window.innerWidth <= 768) {
+            mobileMenuToggle.style.display = 'flex';
+        }
+
+        window.addEventListener('resize', function() {
+            if (window.innerWidth <= 768) {
+                mobileMenuToggle.style.display = 'flex';
+            } else {
+                mobileMenuToggle.style.display = 'none';
+                sidebar.classList.remove('mobile-open');
+                mobileOverlay.classList.remove('active');
+            }
+        });
+
+        mobileMenuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('mobile-open');
+            mobileOverlay.classList.toggle('active');
+        });
+
+        mobileOverlay.addEventListener('click', function() {
+            sidebar.classList.remove('mobile-open');
+            mobileOverlay.classList.remove('active');
         });
     </script>
 </body>
