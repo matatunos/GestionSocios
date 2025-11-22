@@ -242,6 +242,16 @@ switch ($page) {
         else if ($action === 'delete') $controller->delete();
         else $controller->index();
         break;
+    case 'messages':
+        $controller = new MessageController($db);
+        if ($action === 'create') $controller->create();
+        else if ($action === 'store') $controller->store();
+        else if ($action === 'view') $controller->view();
+        else if ($action === 'send') $controller->send();
+        else if ($action === 'poll') $controller->poll();
+        else if ($action === 'startDirect') $controller->startDirect();
+        else $controller->index();
+        break;
     default:
         echo "404 Not Found";
         break;

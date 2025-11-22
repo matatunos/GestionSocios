@@ -161,6 +161,21 @@ if (isset($_SESSION['user_id'])) {
                     </a>
                 </li>
                 <li>
+                    <a href="index.php?page=messages" class="nav-link <?php echo ($page === 'messages') ? 'active' : ''; ?>">
+                        <i class="fas fa-comments"></i>
+                        <span>Mensajes</span>
+                        <?php
+                        if (isset($_SESSION['user_id'])) {
+                            require_once __DIR__ . '/../Models/Message.php';
+                            $msgModel = new Message($GLOBALS['db'] ?? (new Database())->getConnection());
+                            $unreadMessages = $msgModel->getUnreadCount($_SESSION['user_id']);
+                            if ($unreadMessages > 0):
+                        ?>
+                            <span class="nav-badge"><?php echo $unreadMessages; ?></span>
+                        <?php endif; } ?>
+                    </a>
+                </li>
+                <li>
                     <a href="index.php?page=book" class="nav-link <?php echo ($page === 'book') ? 'active' : ''; ?>">
                         <i class="fas fa-book-open"></i>
                         <span>Libro Fiestas</span>
