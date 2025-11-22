@@ -228,6 +228,7 @@ ob_start();
             <thead>
                 <tr>
                     <th>Donante/Negocio</th>
+                    <th>Año</th>
                     <th>Contacto</th>
                     <th>Tipo Anuncio</th>
                     <th style="text-align: right;">Importe</th>
@@ -239,6 +240,11 @@ ob_start();
                     <tr>
                         <td style="font-weight: 500;">
                             <?php echo htmlspecialchars($ad['donor_name']); ?>
+                        </td>
+                        <td>
+                            <span class="badge badge-secondary" style="font-size: 0.875rem;">
+                                <?php echo $ad['fee_year'] ?? $ad['book_year']; ?>
+                            </span>
                         </td>
                         <td style="font-size: 0.875rem;">
                             <?php if (!empty($ad['donor_email'])): ?>

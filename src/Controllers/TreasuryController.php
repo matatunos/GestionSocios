@@ -97,12 +97,11 @@ class TreasuryController {
         $stmt->execute();
         $membersPending = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
         
-        // Count pending book ad payments
+        // Count pending book ad payments (all years)
         $query = "SELECT COUNT(*) as total
                   FROM payments
-                  WHERE payment_type = 'book_ad' AND status = 'pending' AND fee_year = :year";
+                  WHERE payment_type = 'book_ad' AND status = 'pending'";
         $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':year', $year);
         $stmt->execute();
         $bookAdsPending = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
         
@@ -122,12 +121,11 @@ class TreasuryController {
         $stmt->execute();
         $membersPending = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
         
-        // Add book_ad pending payments
+        // Add book_ad pending payments (all years, not just current year)
         $query = "SELECT COALESCE(SUM(amount), 0) as total
                   FROM payments
-                  WHERE payment_type = 'book_ad' AND status = 'pending' AND fee_year = :year";
+                  WHERE payment_type = 'book_ad' AND status = 'pending'";
         $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':year', $year);
         $stmt->execute();
         $bookAdPending = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
         
@@ -195,18 +193,16 @@ class TreasuryController {
     }
     
     private function getPendingBookAds($year) {
-        $query = "SELECT p.id, p.amount, p.concept, p.created_at,
-                         ba.id as book_ad_id, ba.ad_type,
+        $query = "SELECT p.id, p.amount, p.concept, p.created_at, p.fee_year,
+                         ba.id as book_ad_id, ba.ad_type, ba.year as book_year,
                          d.name as donor_name, d.email as donor_email, d.phone as donor_phone
                   FROM payments p
                   INNER JOIN book_ads ba ON p.book_ad_id = ba.id
                   INNER JOIN donors d ON ba.donor_id = d.id
                   WHERE p.payment_type = 'book_ad' 
                     AND p.status = 'pending'
-                    AND p.fee_year = :year
-                  ORDER BY p.created_at DESC";
+                  ORDER BY p.fee_year DESC, p.created_at DESC";
         $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':year', $year);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
