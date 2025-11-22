@@ -25,37 +25,40 @@
 
 .tabs-nav {
     display: flex;
-    border-bottom: 2px solid #e5e7eb;
-    background: #f9fafb;
+    justify-content: center;
+    gap: 1rem;
+    border-bottom: 3px solid #e5e7eb;
+    padding-bottom: 0;
+    background: white;
 }
 
 .tab-btn {
-    flex: 1;
-    padding: 1.25rem 1.5rem;
     background: none;
     border: none;
-    border-bottom: 3px solid transparent;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 0.95rem;
+    padding: 1.25rem 2rem;
+    font-size: 1.125rem;
+    font-weight: 700;
     color: #6b7280;
+    cursor: pointer;
+    position: relative;
     transition: all 0.3s ease;
-    text-align: center;
+    border-bottom: 4px solid transparent;
+    margin-bottom: -3px;
 }
 
 .tab-btn:hover {
     color: var(--primary-color);
-    background: white;
+    background: #f9fafb;
 }
 
 .tab-btn.active {
     color: var(--primary-color);
     border-bottom-color: var(--primary-color);
-    background: white;
 }
 
 .tab-btn i {
-    margin-right: 0.5rem;
+    margin-right: 0.75rem;
+    font-size: 1.25rem;
 }
 
 .tab-content-wrapper {
