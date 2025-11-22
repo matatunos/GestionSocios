@@ -71,21 +71,60 @@ class ExportController {
      * Exportar listado de socios a PDF
      */
     public function exportMembersPDF() {
-        $memberModel = new Member($this->db);
-        $stmt = $memberModel->readAll();
-        $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        // Generar HTML para PDF
-        $html = $this->generateMembersPDFHTML($members);
-        
-        // Configurar headers para PDF
-        header('Content-Type: application/pdf');
-        header('Content-Disposition: attachment; filename="socios_' . date('Y-m-d') . '.pdf"');
-        
-        // Usar wkhtmltopdf o generar HTML que se puede imprimir a PDF desde el navegador
-        // Por ahora, generamos un HTML imprimible
-        echo $html;
-        exit;
+        try {
+            $memberModel = new Member($this->db);
+            $stmt = $memberModel->readAll();
+            $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Load Composer autoload
+            $autoloadPath = __DIR__ . '/../../vendor/autoload.php';
+            if (!file_exists($autoloadPath)) {
+                throw new Exception('Composer autoload no encontrado. Ejecute: composer install');
+            }
+            require_once $autoloadPath;
+            
+            if (!class_exists('TCPDF')) {
+                throw new Exception('TCPDF no está instalado. Ejecute: composer require tecnickcom/tcpdf');
+            }
+            
+            // Create PDF
+            $pdf = new TCPDF('L', 'mm', 'A4', true, 'UTF-8', false);
+            
+            // Set document information
+            $pdf->SetCreator('Sistema de Gestión');
+            $pdf->SetAuthor('Asociación');
+            $pdf->SetTitle('Listado de Socios - ' . date('d/m/Y'));
+            
+            // Remove default header/footer
+            $pdf->setPrintHeader(false);
+            $pdf->setPrintFooter(false);
+            
+            // Set margins
+            $pdf->SetMargins(10, 10, 10);
+            $pdf->SetAutoPageBreak(true, 10);
+            
+            // Add page
+            $pdf->AddPage();
+            
+            // Set font
+            $pdf->SetFont('helvetica', '', 9);
+            
+            // Generate HTML
+            $html = $this->generateMembersPDFHTML($members);
+            
+            // Write HTML
+            $pdf->writeHTML($html, true, false, true, false, '');
+            
+            // Output PDF
+            $pdf->Output('socios_' . date('Y-m-d') . '.pdf', 'D');
+            exit;
+            
+        } catch (Exception $e) {
+            error_log('Export PDF error: ' . $e->getMessage());
+            $_SESSION['error'] = 'Error al generar PDF: ' . $e->getMessage();
+            header('Location: index.php?page=members');
+            exit;
+        }
     }
     
     /**
@@ -295,125 +334,52 @@ class ExportController {
     }
     
     /**
-     * Generar HTML para PDF de socios (imprimible)
+     * Generar HTML para PDF de socios (TCPDF compatible)
      */
     private function generateMembersPDFHTML($members) {
-        ob_start();
-        ?>
-        <!DOCTYPE html>
-        <html lang="es">
-        <head>
-            <meta charset="UTF-8">
-            <title>Listado de Socios - <?php echo date('d/m/Y'); ?></title>
-            <style>
-                @page { margin: 1.5cm; }
-                body {
-                    font-family: Arial, sans-serif;
-                    font-size: 10pt;
-                    color: #333;
-                }
-                h1 {
-                    text-align: center;
-                    color: #6366f1;
-                    margin-bottom: 0.5cm;
-                }
-                .header-info {
-                    text-align: center;
-                    color: #64748b;
-                    margin-bottom: 1cm;
-                }
-                table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    margin-top: 0.5cm;
-                }
-                thead {
-                    background: #f1f5f9;
-                }
-                th {
-                    padding: 8px;
-                    text-align: left;
-                    border-bottom: 2px solid #e2e8f0;
-                    font-weight: 700;
-                }
-                td {
-                    padding: 6px 8px;
-                    border-bottom: 1px solid #e2e8f0;
-                }
-                tr:nth-child(even) {
-                    background: #f8fafc;
-                }
-                .status-active {
-                    color: #059669;
-                    font-weight: 600;
-                }
-                .status-inactive {
-                    color: #dc2626;
-                }
-                .footer {
-                    position: fixed;
-                    bottom: 0;
-                    width: 100%;
-                    text-align: center;
-                    font-size: 8pt;
-                    color: #94a3b8;
-                    margin-top: 1cm;
-                }
-                @media print {
-                    body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-                    .page-break { page-break-before: always; }
-                }
-            </style>
-        </head>
-        <body>
-            <h1>Listado de Socios</h1>
-            <div class="header-info">
-                Generado el <?php echo date('d/m/Y H:i'); ?> | Total: <?php echo count($members); ?> socios
-            </div>
+        $html = '<style>
+            h1 { text-align: center; color: #4f46e5; font-size: 18px; margin-bottom: 10px; }
+            .header-info { text-align: center; color: #64748b; font-size: 10px; margin-bottom: 15px; }
+            table { width: 100%; border-collapse: collapse; font-size: 8px; }
+            th { background-color: #f1f5f9; padding: 6px 4px; text-align: left; border: 1px solid #e2e8f0; font-weight: bold; }
+            td { padding: 5px 4px; border: 1px solid #e2e8f0; }
+            tr:nth-child(even) { background-color: #f8fafc; }
+            .status-active { color: #059669; font-weight: bold; }
+            .status-inactive { color: #dc2626; }
+        </style>';
+        
+        $html .= '<h1>Listado de Socios</h1>';
+        $html .= '<div class="header-info">Generado el ' . date('d/m/Y H:i') . ' | Total: ' . count($members) . ' socios</div>';
+        
+        $html .= '<table>
+            <thead>
+                <tr>
+                    <th style="width: 8%;">Nº</th>
+                    <th style="width: 27%;">Nombre Completo</th>
+                    <th style="width: 25%;">Email</th>
+                    <th style="width: 15%;">Teléfono</th>
+                    <th style="width: 15%;">Categoría</th>
+                    <th style="width: 10%;">Estado</th>
+                </tr>
+            </thead>
+            <tbody>';
+        
+        foreach ($members as $member) {
+            $statusClass = ($member['status'] === 'active') ? 'status-active' : 'status-inactive';
+            $statusText = ($member['status'] === 'active') ? 'Activo' : 'Inactivo';
             
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nº</th>
-                        <th>Nombre Completo</th>
-                        <th>Email</th>
-                        <th>Teléfono</th>
-                        <th>Categoría</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($members as $member): ?>
-                    <tr>
-                        <td><?php echo htmlspecialchars($member['member_number']); ?></td>
-                        <td><?php echo htmlspecialchars($member['first_name'] . ' ' . $member['last_name']); ?></td>
-                        <td><?php echo htmlspecialchars($member['email']); ?></td>
-                        <td><?php echo htmlspecialchars($member['phone']); ?></td>
-                        <td><?php echo htmlspecialchars($member['category_name'] ?? 'Sin categoría'); ?></td>
-                        <td class="<?php echo $member['active'] ? 'status-active' : 'status-inactive'; ?>">
-                            <?php echo $member['active'] ? 'Activo' : 'Inactivo'; ?>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-            
-            <div class="footer">
-                Sistema de Gestión de Asociaciones - Página <span class="page-number"></span>
-            </div>
-            
-            <script>
-                // Add page numbers
-                window.onload = function() {
-                    var pageNumbers = document.querySelectorAll('.page-number');
-                    pageNumbers.forEach(function(el) {
-                        el.textContent = '1';
-                    });
-                };
-            </script>
-        </body>
-        </html>
-        <?php
-        return ob_get_clean();
+            $html .= '<tr>
+                <td>' . htmlspecialchars($member['member_number']) . '</td>
+                <td>' . htmlspecialchars($member['first_name'] . ' ' . $member['last_name']) . '</td>
+                <td>' . htmlspecialchars($member['email']) . '</td>
+                <td>' . htmlspecialchars($member['phone']) . '</td>
+                <td>' . htmlspecialchars($member['category_name'] ?? 'Sin categoría') . '</td>
+                <td class="' . $statusClass . '">' . $statusText . '</td>
+            </tr>';
+        }
+        
+        $html .= '</tbody></table>';
+        
+        return $html;
     }
 }
