@@ -157,6 +157,16 @@ switch ($page) {
         else if ($action === 'deleteAttendance') $controller->deleteAttendance();
         else $controller->index();
         break;
+    case 'notifications':
+        $controller = new NotificationsController($db);
+        if ($action === 'getRecent') $controller->getRecent();
+        else if ($action === 'markAsRead') $controller->markAsRead();
+        else if ($action === 'markAllAsRead') $controller->markAllAsRead();
+        else if ($action === 'delete') $controller->delete();
+        else if ($action === 'create') $controller->create();
+        else if ($action === 'store') $controller->store();
+        else $controller->index();
+        break;
     case 'settings':
         $controller = new SettingsController();
         if ($action === 'updateGeneral') $controller->updateGeneral();

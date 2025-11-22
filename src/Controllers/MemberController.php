@@ -64,6 +64,20 @@ class MemberController {
             $this->member->photo_url = $this->handleUpload();
 
             if ($this->member->create()) {
+                // Enviar notificación de bienvenida al nuevo socio
+                try {
+                    require_once __DIR__ . '/../Helpers/NotificationHelper.php';
+                    $member_name = $this->member->first_name . ' ' . $this->member->last_name;
+                    NotificationHelper::sendWelcomeNotification(
+                        $this->db, 
+                        $this->member->id, 
+                        $member_name
+                    );
+                } catch (Exception $e) {
+                    // No fallar si la notificación no se puede enviar
+                    error_log("Error sending welcome notification: " . $e->getMessage());
+                }
+                
                 header('Location: index.php?page=members');
             } else {
                 $error = "Error creating member.";

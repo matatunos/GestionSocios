@@ -20,6 +20,21 @@ if (!isset($associationName)) {
         // Table doesn't exist or other error, keep default
     }
 }
+
+// Fetch unread notifications count
+$unreadNotifications = 0;
+if (isset($_SESSION['user_id'])) {
+    try {
+        $db = (new Database())->getConnection();
+        if ($db) {
+            require_once __DIR__ . '/../Models/Notification.php';
+            $notificationModel = new Notification($db);
+            $unreadNotifications = $notificationModel->countUnread($_SESSION['user_id']);
+        }
+    } catch (Exception $e) {
+        // Table doesn't exist or other error, keep default
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -125,6 +140,15 @@ if (!isset($associationName)) {
                     </a>
                 </li>
                 <li>
+                    <a href="index.php?page=notifications" class="nav-link <?php echo ($page === 'notifications') ? 'active' : ''; ?>">
+                        <i class="fas fa-bell"></i>
+                        <span>Notificaciones</span>
+                        <?php if (isset($unreadNotifications) && $unreadNotifications > 0): ?>
+                            <span class="nav-badge"><?php echo $unreadNotifications; ?></span>
+                        <?php endif; ?>
+                    </a>
+                </li>
+                <li>
                     <a href="index.php?page=book" class="nav-link <?php echo ($page === 'book') ? 'active' : ''; ?>">
                         <i class="fas fa-book-open"></i>
                         <span>Libro Fiestas</span>
@@ -148,6 +172,33 @@ if (!isset($associationName)) {
                 <div class="user-info" style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 0.5rem;">
                     <i class="fas fa-user-circle" style="margin-right: 0.5rem;"></i>
                     <?php echo htmlspecialchars($_SESSION['username'] ?? 'Usuario'); ?>
+                </div>
+                
+                <!-- Notifications Bell -->
+                <div class="notifications-bell" style="margin-bottom: 0.75rem;">
+                    <button class="btn-notification" id="notificationsButton" onclick="toggleNotifications(event)">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-text">Notificaciones</span>
+                        <?php if ($unreadNotifications > 0): ?>
+                            <span class="notification-badge" id="notificationBadge"><?php echo $unreadNotifications; ?></span>
+                        <?php endif; ?>
+                    </button>
+                    
+                    <!-- Dropdown -->
+                    <div class="notifications-dropdown" id="notificationsDropdown" style="display: none;">
+                        <div class="notifications-header">
+                            <h3>Notificaciones</h3>
+                            <button onclick="markAllAsRead()" class="btn-link-small">Marcar todas</button>
+                        </div>
+                        <div class="notifications-list" id="notificationsList">
+                            <div class="notification-loading">
+                                <i class="fas fa-spinner fa-spin"></i> Cargando...
+                            </div>
+                        </div>
+                        <div class="notifications-footer">
+                            <a href="index.php?page=notifications" class="btn-link">Ver todas <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- Dark Mode Toggle -->
@@ -300,6 +351,156 @@ if (!isset($associationName)) {
             sidebar.classList.remove('mobile-open');
             mobileOverlay.classList.remove('active');
         });
+
+        // Notifications System
+        let notificationsLoaded = false;
+
+        function toggleNotifications(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('notificationsDropdown');
+            
+            if (dropdown.style.display === 'none') {
+                dropdown.style.display = 'block';
+                
+                // Load notifications if not loaded yet
+                if (!notificationsLoaded) {
+                    loadNotifications();
+                }
+            } else {
+                dropdown.style.display = 'none';
+            }
+        }
+
+        function loadNotifications() {
+            fetch('index.php?page=notifications&action=getRecent')
+                .then(response => response.json())
+                .then(data => {
+                    displayNotifications(data.notifications);
+                    updateBadge(data.unread_count);
+                    notificationsLoaded = true;
+                })
+                .catch(error => {
+                    console.error('Error loading notifications:', error);
+                    document.getElementById('notificationsList').innerHTML = 
+                        '<div class="notification-error">Error al cargar notificaciones</div>';
+                });
+        }
+
+        function displayNotifications(notifications) {
+            const list = document.getElementById('notificationsList');
+            
+            if (notifications.length === 0) {
+                list.innerHTML = '<div class="notification-empty"><i class="fas fa-check-circle"></i><br>No hay notificaciones nuevas</div>';
+                return;
+            }
+
+            let html = '';
+            notifications.forEach(notif => {
+                const typeIcons = {
+                    'payment_reminder': 'fa-money-bill-wave',
+                    'event_reminder': 'fa-calendar-alt',
+                    'announcement': 'fa-bullhorn',
+                    'system': 'fa-cog',
+                    'welcome': 'fa-hand-wave'
+                };
+                const icon = typeIcons[notif.type] || 'fa-bell';
+                const link = notif.link || '#';
+                
+                html += `
+                    <div class="notification-item ${notif.is_read ? 'read' : 'unread'}" onclick="handleNotificationClick(${notif.id}, '${link}')">
+                        <div class="notification-icon">
+                            <i class="fas ${icon}"></i>
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-title">${notif.title}</div>
+                            <div class="notification-message">${notif.message}</div>
+                            <div class="notification-time">${formatTime(notif.created_at)}</div>
+                        </div>
+                        ${!notif.is_read ? '<span class="notification-dot"></span>' : ''}
+                    </div>
+                `;
+            });
+
+            list.innerHTML = html;
+        }
+
+        function handleNotificationClick(id, link) {
+            // Mark as read via AJAX
+            fetch('index.php?page=notifications&action=markAsRead', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: `id=${id}`
+            });
+
+            // Navigate if there's a link
+            if (link && link !== '#') {
+                window.location.href = link;
+            }
+        }
+
+        function markAllAsRead() {
+            fetch('index.php?page=notifications&action=markAllAsRead', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            }).then(() => {
+                location.reload();
+            });
+        }
+
+        function updateBadge(count) {
+            const badge = document.getElementById('notificationBadge');
+            if (count > 0) {
+                if (badge) {
+                    badge.textContent = count;
+                } else {
+                    const button = document.getElementById('notificationsButton');
+                    const newBadge = document.createElement('span');
+                    newBadge.className = 'notification-badge';
+                    newBadge.id = 'notificationBadge';
+                    newBadge.textContent = count;
+                    button.appendChild(newBadge);
+                }
+            } else {
+                if (badge) {
+                    badge.remove();
+                }
+            }
+        }
+
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = Math.floor((now - date) / 1000); // seconds
+
+            if (diff < 60) return 'Hace un momento';
+            if (diff < 3600) return `Hace ${Math.floor(diff / 60)} min`;
+            if (diff < 86400) return `Hace ${Math.floor(diff / 3600)} h`;
+            if (diff < 604800) return `Hace ${Math.floor(diff / 86400)} días`;
+            
+            return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('notificationsDropdown');
+            const button = document.getElementById('notificationsButton');
+            
+            if (dropdown && !dropdown.contains(e.target) && !button.contains(e.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+
+        // Auto-refresh notifications every 2 minutes
+        setInterval(function() {
+            if (notificationsLoaded) {
+                loadNotifications();
+            }
+        }, 120000);
     </script>
 </body>
 </html>
