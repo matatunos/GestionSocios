@@ -1,23 +1,125 @@
 <?php ob_start(); ?>
 
-<div class="flex justify-between items-center mb-4">
-    <h1>Configuración</h1>
-</div>
+<style>
+.settings-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
 
-<div class="card" style="padding: 0; overflow: hidden;">
-    <div style="display: flex; border-bottom: 1px solid var(--border-light);">
-        <button class="tab-btn active" onclick="openTab(event, 'general')">General</button>
-        <button class="tab-btn" onclick="openTab(event, 'fees')">Cuotas</button>
-        <button class="tab-btn" onclick="openTab(event, 'ad_prices')">Precios Anuncios</button>
-        <button class="tab-btn" onclick="openTab(event, 'appearance')">Apariencia</button>
-        <button class="tab-btn" onclick="openTab(event, 'database')">Base de Datos</button>
+.settings-header {
+    margin-bottom: 2rem;
+}
+
+.settings-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.tabs-container {
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+}
+
+.tabs-nav {
+    display: flex;
+    border-bottom: 2px solid #e5e7eb;
+    background: #f9fafb;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 1.25rem 1.5rem;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #6b7280;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.tab-btn:hover {
+    color: var(--primary-color);
+    background: white;
+}
+
+.tab-btn.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+    background: white;
+}
+
+.tab-btn i {
+    margin-right: 0.5rem;
+}
+
+.tab-content-wrapper {
+    padding: 2rem;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+}
+
+.settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2rem;
+}
+
+@media (max-width: 768px) {
+    .settings-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .tabs-nav {
+        overflow-x: auto;
+    }
+    
+    .tab-btn {
+        flex: 0 0 auto;
+        white-space: nowrap;
+    }
+}
+</style>
+
+<div class="settings-container">
+    <div class="settings-header">
+        <h1><i class="fas fa-cog"></i> Configuración</h1>
     </div>
 
-    <div class="p-6">
-        <!-- General Tab -->
-        <div id="general" class="tab-content" style="display: block;">
-            <h2 class="text-lg font-semibold mb-4">Configuración General</h2>
-            <form action="index.php?page=settings&action=updateGeneral" method="POST" style="max-width: 500px;">
+    <div class="tabs-container">
+        <div class="tabs-nav">
+            <button class="tab-btn active" onclick="openTab(event, 'general')">
+                <i class="fas fa-building"></i> General
+            </button>
+            <button class="tab-btn" onclick="openTab(event, 'fees')">
+                <i class="fas fa-euro-sign"></i> Cuotas
+            </button>
+            <button class="tab-btn" onclick="openTab(event, 'ad_prices')">
+                <i class="fas fa-tags"></i> Precios Anuncios
+            </button>
+            <button class="tab-btn" onclick="openTab(event, 'appearance')">
+                <i class="fas fa-palette"></i> Apariencia
+            </button>
+            <button class="tab-btn" onclick="openTab(event, 'database')">
+                <i class="fas fa-database"></i> Base de Datos
+            </button>
+        </div>
+
+        <div class="tab-content-wrapper">
+            <!-- General Tab -->
+            <div id="general" class="tab-content" style="display: block;">
+                <h2 class="section-title">Configuración General</h2>
+                <form action="index.php?page=settings&action=updateGeneral" method="POST" style="max-width: 600px;">
                 <div class="form-group">
                     <label class="form-label">Nombre de la Asociación</label>
                     <input type="text" name="association_name" class="form-control" value="<?php echo htmlspecialchars($settings['association_name'] ?? 'Mi Asociación'); ?>" required>
@@ -27,11 +129,11 @@
             </form>
         </div>
 
-        <!-- Ad Prices Tab -->
-        <div id="ad_prices" class="tab-content" style="display: none;">
-            <h2 class="text-lg font-semibold mb-4">Precios de Anuncios (Libro de Fiestas)</h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Ad Prices Tab -->
+            <div id="ad_prices" class="tab-content" style="display: none;">
+                <h2 class="section-title">Precios de Anuncios (Libro de Fiestas)</h2>
+                
+                <div class="settings-grid">
                 <!-- Form to Update Prices -->
                 <div class="card">
                     <h3 class="text-md font-semibold mb-4">Actualizar Precios</h3>
@@ -125,11 +227,11 @@
             </div>
         </div>
 
-        <!-- Member Fees Tab -->
-        <div id="fees" class="tab-content" style="display: none;">
-            <h2 class="text-lg font-semibold mb-4">Cuotas de Socios</h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Member Fees Tab -->
+            <div id="fees" class="tab-content" style="display: none;">
+                <h2 class="section-title">Cuotas de Socios</h2>
+                
+                <div class="settings-grid">
                 <!-- Define New Fee -->
                 <div class="card">
                     <h3 class="text-md font-semibold mb-4">Definir Nueva Cuota</h3>
@@ -177,11 +279,11 @@
             </div>
         </div>
 
-        <!-- Appearance Tab -->
-        <div id="appearance" class="tab-content" style="display: none;">
-            <h2 class="text-lg font-semibold mb-4">Apariencia y Tema</h2>
-            <div class="card" style="max-width: 500px; margin: 0;">
-                <div class="flex justify-between items-center">
+            <!-- Appearance Tab -->
+            <div id="appearance" class="tab-content" style="display: none;">
+                <h2 class="section-title">Apariencia y Tema</h2>
+                <div class="card" style="max-width: 600px; margin: 0;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
                         <h3 style="font-size: 1rem; margin-bottom: 0.25rem;">Modo Oscuro</h3>
                         <p style="font-size: 0.875rem; margin: 0;">Activar tema oscuro para la interfaz</p>
@@ -194,13 +296,13 @@
             </div>
         </div>
 
-        <!-- Database Tab -->
-        <div id="database" class="tab-content" style="display: none;">
-            <h2 class="text-lg font-semibold mb-4">Configuración de Base de Datos</h2>
+            <!-- Database Tab -->
+            <div id="database" class="tab-content" style="display: none;">
+                <h2 class="section-title">Configuración de Base de Datos</h2>
             <div class="alert alert-warning" style="background: #fffbeb; color: #92400e; padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem;">
                 <i class="fas fa-exclamation-triangle"></i> <strong>Cuidado:</strong> Cambiar estos valores puede dejar la aplicación inoperativa. Asegúrese de que los nuevos datos son correctos.
             </div>
-            <form action="index.php?page=settings&action=updateDatabase" method="POST" style="max-width: 500px;">
+                <form action="index.php?page=settings&action=updateDatabase" method="POST" style="max-width: 600px;">
                 <div class="form-group">
                     <label class="form-label">Host</label>
                     <input type="text" name="db_host" class="form-control" value="<?php echo htmlspecialchars($dbConfig['host']); ?>" required>
@@ -218,29 +320,14 @@
                     <input type="password" name="db_pass" class="form-control" placeholder="Dejar en blanco para no cambiar (si se muestra vacío)">
                     <small>Por seguridad, la contraseña actual no se muestra.</small>
                 </div>
-                <button type="submit" class="btn btn-danger">Actualizar Conexión</button>
-            </form>
+                    <button type="submit" class="btn btn-danger">Actualizar Conexión</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
 
 <style>
-.tab-btn {
-    padding: 1rem 1.5rem;
-    background: none;
-    border: none;
-    border-bottom: 2px solid transparent;
-    cursor: pointer;
-    font-weight: 500;
-    color: var(--text-light);
-}
-.tab-btn:hover {
-    color: var(--primary-600);
-}
-.tab-btn.active {
-    color: var(--primary-600);
-    border-bottom-color: var(--primary-600);
-}
 
 /* Switch Toggle Styles */
 .switch {
