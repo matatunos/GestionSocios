@@ -483,6 +483,13 @@ if (isset($_SESSION['user_id'])) {
         if (window.innerWidth <= 768) {
             mobileMenuToggle.style.display = 'flex';
             sidebar.style.display = 'none';
+        } else {
+            // On desktop, remove inline styles to let CSS handle it
+            sidebar.style.display = '';
+            sidebar.style.width = '';
+            // Ensure mobile menu is closed
+            mobileMenuModal.classList.remove('active');
+            mobileOverlay.classList.remove('active');
         }
 
         window.addEventListener('resize', function() {
@@ -491,7 +498,9 @@ if (isset($_SESSION['user_id'])) {
                 sidebar.style.display = 'none';
             } else {
                 mobileMenuToggle.style.display = 'none';
-                sidebar.style.display = 'flex';
+                // Remove inline styles to let CSS handle responsive behavior
+                sidebar.style.display = '';
+                sidebar.style.width = '';
                 mobileMenuModal.classList.remove('active');
                 mobileOverlay.classList.remove('active');
             }
