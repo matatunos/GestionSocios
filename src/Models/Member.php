@@ -9,6 +9,9 @@ class Member {
     public $last_name;
     public $email;
     public $phone;
+    public $address;
+    public $status;
+    public $photo_url;
     public $created_at;
     public $deactivated_at;
 
