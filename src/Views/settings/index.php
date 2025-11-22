@@ -102,10 +102,7 @@
 
     <div class="tabs-container">
         <div class="tabs-nav">
-            <button class="tab-btn <?= ($_GET['tab'] ?? 'general') === 'general' ? 'active' : '' ?>" onclick="openTab(event, 'general')">
-                <i class="fas fa-cog"></i> General
-            </button>
-            <button class="tab-btn <?= ($_GET['tab'] ?? '') === 'organization' ? 'active' : '' ?>" onclick="openTab(event, 'organization')">
+            <button class="tab-btn <?= ($_GET['tab'] ?? 'organization') === 'organization' ? 'active' : '' ?>" onclick="openTab(event, 'organization')">
                 <i class="fas fa-building"></i> Organización
             </button>
             <button class="tab-btn <?= ($_GET['tab'] ?? '') === 'fees' ? 'active' : '' ?>" onclick="openTab(event, 'fees')">
@@ -120,21 +117,9 @@
         </div>
 
         <div class="tab-content-wrapper">
-            <!-- General Tab -->
-            <div id="general" class="tab-content" style="display: <?= ($_GET['tab'] ?? 'general') === 'general' ? 'block' : 'none' ?>;">
-                <h2 class="section-title">Configuración General</h2>
-                <form action="index.php?page=settings&action=updateGeneral" method="POST" style="max-width: 600px;">
-                <div class="form-group">
-                    <label class="form-label">Nombre de la Asociación</label>
-                    <input type="text" name="association_name" class="form-control" value="<?php echo htmlspecialchars($settings['association_name'] ?? 'Mi Asociación'); ?>" required>
-                    <small style="color: var(--text-muted);">Este nombre aparecerá en la pantalla de inicio de sesión y en la barra lateral.</small>
-                </div>
-                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-            </form>
-        </div>
 
             <!-- Organization Tab -->
-            <div id="organization" class="tab-content" style="display: <?= ($_GET['tab'] ?? '') === 'organization' ? 'block' : 'none' ?>;">
+            <div id="organization" class="tab-content" style="display: <?= ($_GET['tab'] ?? 'organization') === 'organization' ? 'block' : 'none' ?>;">
                 <h2 class="section-title">Configuración de la Organización</h2>
                 
                 <?php if (isset($_SESSION['success'])): ?>
