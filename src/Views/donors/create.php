@@ -45,7 +45,7 @@
             <label for="logo">Logo / Imagen (para Libro de Fiestas)</label>
             <input type="file" id="logo" name="logo" class="form-control" accept="image/jpeg,image/png,image/gif,image/webp">
             <small style="color: var(--text-muted); display: block; margin-top: 0.5rem;">
-                Formatos aceptados: JPG, PNG, GIF, WebP. Tamaño máximo: 2MB
+                Formatos aceptados: JPG, PNG, GIF, WebP.
             </small>
         </div>
 

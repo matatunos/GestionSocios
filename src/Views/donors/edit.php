@@ -61,7 +61,7 @@
             <?php endif; ?>
             <input type="file" id="logo" name="logo" class="form-control" accept="image/jpeg,image/png,image/gif,image/webp">
             <small style="color: var(--text-muted); display: block; margin-top: 0.5rem;">
-                Formatos aceptados: JPG, PNG, GIF, WebP. Tamaño máximo: 2MB
+                Formatos aceptados: JPG, PNG, GIF, WebP.
                 <?php if ($donor->logo_url): ?>
                     <br>Deja vacío para mantener el logo actual.
                 <?php endif; ?>

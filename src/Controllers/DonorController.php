@@ -46,12 +46,10 @@ class DonorController {
                 }
                 
                 $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-                $maxSize = 2 * 1024 * 1024; // 2MB
-
+                
                 $fileType = $_FILES['logo']['type'];
-                $fileSize = $_FILES['logo']['size'];
 
-                if (in_array($fileType, $allowedTypes) && $fileSize <= $maxSize) {
+                if (in_array($fileType, $allowedTypes)) {
                     $extension = pathinfo($_FILES['logo']['name'], PATHINFO_EXTENSION);
                     $fileName = 'donor_' . time() . '_' . uniqid() . '.' . $extension;
                     $targetPath = $uploadDir . $fileName;
@@ -108,12 +106,10 @@ class DonorController {
                 }
 
                 $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-                $maxSize = 2 * 1024 * 1024; // 2MB
-
+                
                 $fileType = $_FILES['logo']['type'];
-                $fileSize = $_FILES['logo']['size'];
 
-                if (in_array($fileType, $allowedTypes) && $fileSize <= $maxSize) {
+                if (in_array($fileType, $allowedTypes)) {
                     $extension = pathinfo($_FILES['logo']['name'], PATHINFO_EXTENSION);
                     $fileName = 'donor_' . time() . '_' . uniqid() . '.' . $extension;
                     $targetPath = $uploadDir . $fileName;
