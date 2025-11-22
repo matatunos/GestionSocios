@@ -93,6 +93,11 @@ h2 {
     min-height: 100vh;
 }
 
+/* Mobile menu toggle - hidden by default */
+.mobile-menu-toggle {
+    display: none;
+}
+
 .sidebar {
     width: 280px;
     background: white;

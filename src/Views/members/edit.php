@@ -51,16 +51,28 @@
                     <i class="fas fa-map-marker-alt"></i> GPS
                 </button>
             </div>
-            <div class="d-flex gap-2 align-items-center mt-2">
-                <small class="text-muted">Puedes capturar tu ubicación actual con el botón GPS</small>
+            <div class="mt-2">
+                <small class="text-muted">
+                    Puedes capturar tu ubicación actual con el botón GPS.
+                    <br><strong>Nota:</strong> La geolocalización requiere HTTPS. Si no funciona, introduce las coordenadas manualmente.
+                </small>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem;">
+                    <input type="text" id="latitudeDisplay" class="form-control form-control-sm" 
+                           placeholder="Latitud (ej: 40.416775)"
+                           value="<?php echo !empty($member->latitude) ? number_format($member->latitude, 6, '.', '') : ''; ?>"
+                           onchange="document.getElementById('latitude').value = this.value">
+                    <input type="text" id="longitudeDisplay" class="form-control form-control-sm" 
+                           placeholder="Longitud (ej: -3.703790)"
+                           value="<?php echo !empty($member->longitude) ? number_format($member->longitude, 6, '.', '') : ''; ?>"
+                           onchange="document.getElementById('longitude').value = this.value">
+                </div>
                 <?php if (!empty($member->latitude) && !empty($member->longitude)): ?>
-                    <a href="https://www.google.com/maps?q=<?php echo $member->latitude; ?>,<?php echo $member->longitude; ?>" 
-                       target="_blank" class="btn btn-sm btn-info">
-                        <i class="fas fa-map-marked-alt"></i> Ver en Google Maps
-                    </a>
-                    <small class="text-muted">
-                        (<?php echo number_format($member->latitude, 6); ?>, <?php echo number_format($member->longitude, 6); ?>)
-                    </small>
+                    <div class="mt-2">
+                        <a href="https://www.google.com/maps?q=<?php echo $member->latitude; ?>,<?php echo $member->longitude; ?>" 
+                           target="_blank" class="btn btn-sm btn-info">
+                            <i class="fas fa-map-marked-alt"></i> Ver en Google Maps
+                        </a>
+                    </div>
                 <?php endif; ?>
             </div>
             <input type="hidden" name="latitude" id="latitude" value="<?php echo htmlspecialchars($member->latitude ?? ''); ?>">
@@ -150,6 +162,8 @@ function getLocation() {
             
             document.getElementById('latitude').value = lat;
             document.getElementById('longitude').value = lng;
+            document.getElementById('latitudeDisplay').value = lat.toFixed(6);
+            document.getElementById('longitudeDisplay').value = lng.toFixed(6);
             
             // Update button
             btn.innerHTML = '<i class="fas fa-check"></i> ¡Ubicación capturada!';

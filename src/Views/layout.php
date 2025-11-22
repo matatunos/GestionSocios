@@ -48,7 +48,7 @@ if (isset($_SESSION['user_id'])) {
 </head>
 <body>
     <!-- Mobile Menu Toggle -->
-    <button class="mobile-menu-toggle" id="mobileMenuToggle" style="display: none;">
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">
         <i class="fas fa-bars"></i>
     </button>
     

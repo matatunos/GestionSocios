@@ -51,7 +51,16 @@
                     <i class="fas fa-map-marker-alt"></i> GPS
                 </button>
             </div>
-            <small class="text-muted">Puedes capturar tu ubicación actual con el botón GPS</small>
+            <small class="text-muted">
+                Puedes capturar tu ubicación actual con el botón GPS.
+                <br><strong>Nota:</strong> La geolocalización requiere HTTPS. Si no funciona, puedes introducir las coordenadas manualmente.
+            </small>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem;">
+                <input type="text" id="latitudeDisplay" class="form-control form-control-sm" placeholder="Latitud (ej: 40.416775)" 
+                       onchange="document.getElementById('latitude').value = this.value">
+                <input type="text" id="longitudeDisplay" class="form-control form-control-sm" placeholder="Longitud (ej: -3.703790)"
+                       onchange="document.getElementById('longitude').value = this.value">
+            </div>
             <input type="hidden" name="latitude" id="latitude">
             <input type="hidden" name="longitude" id="longitude">
         </div>
@@ -114,6 +123,8 @@ function getLocation() {
             
             document.getElementById('latitude').value = lat;
             document.getElementById('longitude').value = lng;
+            document.getElementById('latitudeDisplay').value = lat.toFixed(6);
+            document.getElementById('longitudeDisplay').value = lng.toFixed(6);
             
             // Update button
             btn.innerHTML = '<i class="fas fa-check"></i> ¡Ubicación capturada!';
