@@ -102,31 +102,25 @@ class DonorController {
             // Handle logo upload
             $logoUrl = $currentLogo; // Keep current logo by default
             
-            // Debug to file
-            $debugLog = __DIR__ . '/../../public/donor_update_debug.txt';
-            $debugContent = "=== DONOR UPDATE DEBUG - " . date('Y-m-d H:i:s') . " ===\n";
-            $debugContent .= "Donor ID: " . $id . "\n";
-            $debugContent .= "Current Logo: " . ($currentLogo ?? 'NULL') . "\n";
-            $debugContent .= "Current Logo is truthy: " . ($currentLogo ? 'YES' : 'NO') . "\n";
-            $debugContent .= "Has uploaded file: " . (isset($_FILES['logo']) ? 'YES' : 'NO') . "\n";
-            if (isset($_FILES['logo'])) {
-                $debugContent .= "Upload error code: " . $_FILES['logo']['error'] . " (0 = OK)\n";
-                $debugContent .= "File type: " . ($_FILES['logo']['type'] ?? 'UNKNOWN') . "\n";
-                $debugContent .= "File name: " . ($_FILES['logo']['name'] ?? 'UNKNOWN') . "\n";
-                $debugContent .= "File size: " . ($_FILES['logo']['size'] ?? 0) . " bytes\n";
+            // Check for upload errors first
+            if (isset($_FILES['logo']) && $_FILES['logo']['error'] !== UPLOAD_ERR_OK && $_FILES['logo']['error'] !== UPLOAD_ERR_NO_FILE) {
+                $uploadErrors = [
+                    UPLOAD_ERR_INI_SIZE => 'El archivo es demasiado grande. Tamaño máximo permitido: ' . ini_get('upload_max_filesize'),
+                    UPLOAD_ERR_FORM_SIZE => 'El archivo excede el tamaño máximo permitido por el formulario',
+                    UPLOAD_ERR_PARTIAL => 'El archivo solo se subió parcialmente',
+                    UPLOAD_ERR_NO_TMP_DIR => 'Falta la carpeta temporal en el servidor',
+                    UPLOAD_ERR_CANT_WRITE => 'Error al escribir el archivo en el disco',
+                    UPLOAD_ERR_EXTENSION => 'Una extensión de PHP detuvo la subida del archivo'
+                ];
+                
+                $error = $uploadErrors[$_FILES['logo']['error']] ?? 'Error desconocido al subir el archivo';
+                $donor = $this->donor;
+                require __DIR__ . '/../Views/donors/edit.php';
+                return;
             }
-            $debugContent .= "\nCondition checks:\n";
-            $debugContent .= "isset(\$_FILES['logo']): " . (isset($_FILES['logo']) ? 'TRUE' : 'FALSE') . "\n";
-            $debugContent .= "\$_FILES['logo']['error'] === UPLOAD_ERR_OK: " . (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK ? 'TRUE' : 'FALSE') . "\n";
-            $debugContent .= "\$currentLogo truthy: " . ($currentLogo ? 'TRUE' : 'FALSE') . "\n";
-            $debugContent .= "ALL CONDITIONS MET: " . (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK && $currentLogo ? 'YES - ENTERING COMPARISON' : 'NO - NOT ENTERING COMPARISON') . "\n";
-            $debugContent .= "\n";
-            file_put_contents($debugLog, $debugContent);
             
             // Check if a new logo is being uploaded and there's already a current logo
             if (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK && $currentLogo) {
-                $debugContent .= "✓ ENTERED COMPARISON FLOW\n";
-                file_put_contents($debugLog, $debugContent);
                 
                 // Save the new image temporarily and redirect to comparison
                 $uploadDir = __DIR__ . '/../../public/uploads/donors/temp/';
@@ -143,11 +137,6 @@ class DonorController {
                     $tempPath = $uploadDir . $tempFileName;
 
                     if (move_uploaded_file($_FILES['logo']['tmp_name'], $tempPath)) {
-                        $debugContent .= "✓ Temp file created: " . $tempPath . "\n";
-                        $debugContent .= "✓ Storing data in session\n";
-                        $debugContent .= "✓ Redirecting to compareImages\n";
-                        file_put_contents($debugLog, $debugContent);
-                        
                         // Store data in session for comparison
                         $_SESSION['image_comparison'] = [
                             'donor_id' => $id,
@@ -165,18 +154,9 @@ class DonorController {
                         // Redirect to comparison view
                         header('Location: index.php?page=donors&action=compareImages');
                         exit;
-                    } else {
-                        $debugContent .= "✗ Failed to move uploaded file\n";
-                        file_put_contents($debugLog, $debugContent);
                     }
-                } else {
-                    $debugContent .= "✗ File type not allowed: " . $fileType . "\n";
-                    $debugContent .= "Allowed: " . implode(', ', $allowedTypes) . "\n";
-                    file_put_contents($debugLog, $debugContent);
                 }
             } elseif (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
-                $debugContent .= "→ NORMAL UPLOAD FLOW (no existing logo)\n";
-                file_put_contents($debugLog, $debugContent);
                 $uploadDir = __DIR__ . '/../../public/uploads/donors/';
                 if (!is_dir($uploadDir)) {
                     mkdir($uploadDir, 0777, true);
