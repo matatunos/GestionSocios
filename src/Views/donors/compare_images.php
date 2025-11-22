@@ -156,21 +156,21 @@
                     <img src="<?php echo htmlspecialchars($_SESSION['image_comparison']['old_image']); ?>" 
                          alt="Imagen actual">
                 </div>
-                <button type="button" class="btn-choice btn-keep-old" onclick="selectChoice('old')">
-                    <i class="fas fa-check-circle"></i> Mantener Esta
+                <button type="button" class="btn-choice btn-keep-old" onclick="selectChoice('old')" style="width: 100%; font-size: 1.25rem; padding: 1.25rem;">
+                    <i class="fas fa-check-circle"></i> MANTENER ESTA IMAGEN
                 </button>
             </div>
 
             <div class="image-option" data-choice="new">
-                <div class="image-label">
+                <div class="image-label" style="color: var(--primary-color);">
                     <i class="fas fa-sparkles"></i> Nueva Imagen
                 </div>
-                <div class="image-preview">
+                <div class="image-preview" style="border: 2px solid var(--primary-color);">
                     <img src="<?php echo htmlspecialchars($_SESSION['image_comparison']['new_image_temp']); ?>" 
                          alt="Nueva imagen">
                 </div>
-                <button type="button" class="btn-choice btn-use-new" onclick="selectChoice('new')">
-                    <i class="fas fa-arrow-right"></i> Usar Esta
+                <button type="button" class="btn-choice btn-use-new" onclick="selectChoice('new')" style="width: 100%; font-size: 1.25rem; padding: 1.25rem;">
+                    <i class="fas fa-check-double"></i> USAR ESTA NUEVA IMAGEN
                 </button>
             </div>
         </div>
