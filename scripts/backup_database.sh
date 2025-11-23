@@ -1,0 +1,154 @@
+#!/bin/bash
+
+###############################################################################
+# Automatic Database Backup Script for GestionSocios
+# Author: GitHub Copilot
+# Description: Creates compressed MySQL dumps with timestamp and rotation
+###############################################################################
+
+# Get database credentials from config.php
+CONFIG_FILE="/opt/GestionSocios/src/Config/config.php"
+
+if [ ! -f "$CONFIG_FILE" ]; then
+    echo "ERROR: Config file not found at $CONFIG_FILE"
+    exit 1
+fi
+
+# Extract database credentials from config.php
+DB_HOST=$(grep "define('DB_HOST'" "$CONFIG_FILE" | sed "s/.*'\(.*\)'.*/\1/")
+DB_USER=$(grep "define('DB_USER'" "$CONFIG_FILE" | sed "s/.*'\(.*\)'.*/\1/")
+DB_PASS=$(grep "define('DB_PASS'" "$CONFIG_FILE" | sed "s/.*'\(.*\)'.*/\1/")
+DB_NAME=$(grep "define('DB_NAME'" "$CONFIG_FILE" | sed "s/.*'\(.*\)'.*/\1/")
+
+# Backup settings
+BACKUP_DIR="/opt/GestionSocios/backups"
+RETENTION_DAYS=30  # Keep backups for 30 days
+MAX_BACKUPS=60     # Maximum number of backups to keep
+
+# Timestamp
+TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+BACKUP_FILE="${BACKUP_DIR}/backup_${DB_NAME}_${TIMESTAMP}.sql.gz"
+
+# Log file
+LOG_FILE="${BACKUP_DIR}/backup.log"
+
+# Create backup directory if it doesn't exist
+mkdir -p "$BACKUP_DIR"
+
+# Function to log messages
+log_message() {
+    echo "[$(date +"%Y-%m-%d %H:%M:%S")] $1" | tee -a "$LOG_FILE"
+}
+
+# Function to send notification (optional - requires mail configured)
+send_notification() {
+    local subject="$1"
+    local message="$2"
+    
+    # Uncomment if you have mail configured
+    # echo "$message" | mail -s "$subject" admin@example.com
+    
+    log_message "Notification: $subject - $message"
+}
+
+###############################################################################
+# Main backup process
+###############################################################################
+
+log_message "=========================================="
+log_message "Starting database backup..."
+log_message "Database: $DB_NAME"
+log_message "Host: $DB_HOST"
+
+# Check if mysqldump is available
+if ! command -v mysqldump &> /dev/null; then
+    log_message "ERROR: mysqldump command not found!"
+    send_notification "Backup Failed" "mysqldump command not found on server"
+    exit 1
+fi
+
+# Perform backup
+log_message "Creating backup file: $BACKUP_FILE"
+
+# Run mysqldump and capture exit code
+mysqldump -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" \
+    --single-transaction \
+    --routines \
+    --triggers \
+    --events \
+    --add-drop-database \
+    --databases "$DB_NAME" 2>&1 | gzip > "$BACKUP_FILE"
+
+# Check if mysqldump succeeded by checking pipe status
+if [ ${PIPESTATUS[0]} -eq 0 ]; then
+    # Backup successful
+    BACKUP_SIZE=$(du -h "$BACKUP_FILE" | cut -f1)
+    
+    # Verify backup is not empty (should be at least 1KB)
+    BACKUP_SIZE_BYTES=$(stat -f%z "$BACKUP_FILE" 2>/dev/null || stat -c%s "$BACKUP_FILE" 2>/dev/null)
+    
+    if [ "$BACKUP_SIZE_BYTES" -lt 1024 ]; then
+        log_message "ERROR: Backup file is too small ($BACKUP_SIZE_BYTES bytes). Backup likely failed."
+        send_notification "Backup Failed" "Backup file is suspiciously small"
+        rm -f "$BACKUP_FILE"
+        exit 1
+    fi
+    
+    log_message "SUCCESS: Backup completed successfully"
+    log_message "Backup size: $BACKUP_SIZE"
+    
+    # Verify backup integrity
+    if gzip -t "$BACKUP_FILE" 2>/dev/null; then
+        log_message "Backup integrity verified"
+    else
+        log_message "WARNING: Backup file may be corrupted!"
+        send_notification "Backup Warning" "Backup created but integrity check failed"
+    fi
+    
+else
+    # Backup failed
+    log_message "ERROR: Backup failed!"
+    send_notification "Backup Failed" "Database backup failed for $DB_NAME"
+    
+    # Remove partial backup file if exists
+    [ -f "$BACKUP_FILE" ] && rm -f "$BACKUP_FILE"
+    exit 1
+fi
+
+###############################################################################
+# Backup rotation and cleanup
+###############################################################################
+
+log_message "Running backup rotation..."
+
+# Delete backups older than retention period
+log_message "Deleting backups older than $RETENTION_DAYS days..."
+find "$BACKUP_DIR" -name "backup_*.sql.gz" -type f -mtime +$RETENTION_DAYS -delete
+
+# Keep only the most recent MAX_BACKUPS
+BACKUP_COUNT=$(find "$BACKUP_DIR" -name "backup_*.sql.gz" -type f | wc -l)
+
+if [ "$BACKUP_COUNT" -gt "$MAX_BACKUPS" ]; then
+    log_message "Maximum backup count ($MAX_BACKUPS) exceeded, removing oldest backups..."
+    EXCESS=$((BACKUP_COUNT - MAX_BACKUPS))
+    
+    find "$BACKUP_DIR" -name "backup_*.sql.gz" -type f -printf '%T+ %p\n' | \
+        sort | \
+        head -n "$EXCESS" | \
+        cut -d' ' -f2- | \
+        xargs rm -f
+    
+    log_message "Removed $EXCESS old backup(s)"
+fi
+
+# Display current backup statistics
+CURRENT_COUNT=$(find "$BACKUP_DIR" -name "backup_*.sql.gz" -type f | wc -l)
+TOTAL_SIZE=$(du -sh "$BACKUP_DIR" | cut -f1)
+
+log_message "Current backup statistics:"
+log_message "  - Number of backups: $CURRENT_COUNT"
+log_message "  - Total backup size: $TOTAL_SIZE"
+log_message "Backup process completed successfully!"
+log_message "=========================================="
+
+exit 0
