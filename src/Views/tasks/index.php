@@ -16,54 +16,40 @@ ob_start();
 </div>
 
 <!-- Estadísticas -->
-<div class="stats-grid">
-    <div class="stat-card stat-primary">
-        <div class="stat-icon">
-            <i class="fas fa-tasks"></i>
-        </div>
-        <div class="stat-details">
-            <div class="stat-value"><?= $stats['total'] ?? 0 ?></div>
-            <div class="stat-label">Total Tareas</div>
+<div class="stats-grid mb-4" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem;">
+    <div class="stat-card stat-primary flex items-center gap-3">
+        <div class="stat-icon" style="font-size:2rem;"><i class="fas fa-tasks"></i></div>
+        <div>
+            <div class="stat-value" style="font-size:1.5rem; font-weight:700; color:var(--primary-600);"><?= $stats['total'] ?? 0 ?></div>
+            <div class="stat-label text-muted">Total Tareas</div>
         </div>
     </div>
-    
-    <div class="stat-card stat-warning">
-        <div class="stat-icon">
-            <i class="fas fa-clock"></i>
-        </div>
-        <div class="stat-details">
-            <div class="stat-value"><?= $stats['pending'] ?? 0 ?></div>
-            <div class="stat-label">Pendientes</div>
+    <div class="stat-card stat-warning flex items-center gap-3">
+        <div class="stat-icon" style="font-size:2rem;"><i class="fas fa-clock"></i></div>
+        <div>
+            <div class="stat-value" style="font-size:1.5rem; font-weight:700; color:#f59e0b;"><?= $stats['pending'] ?? 0 ?></div>
+            <div class="stat-label text-muted">Pendientes</div>
         </div>
     </div>
-    
-    <div class="stat-card stat-info">
-        <div class="stat-icon">
-            <i class="fas fa-spinner"></i>
-        </div>
-        <div class="stat-details">
-            <div class="stat-value"><?= $stats['in_progress'] ?? 0 ?></div>
-            <div class="stat-label">En Progreso</div>
+    <div class="stat-card stat-info flex items-center gap-3">
+        <div class="stat-icon" style="font-size:2rem;"><i class="fas fa-spinner"></i></div>
+        <div>
+            <div class="stat-value" style="font-size:1.5rem; font-weight:700; color:#3b82f6;"><?= $stats['in_progress'] ?? 0 ?></div>
+            <div class="stat-label text-muted">En Progreso</div>
         </div>
     </div>
-    
-    <div class="stat-card stat-danger">
-        <div class="stat-icon">
-            <i class="fas fa-exclamation-triangle"></i>
-        </div>
-        <div class="stat-details">
-            <div class="stat-value"><?= $stats['overdue'] ?? 0 ?></div>
-            <div class="stat-label">Vencidas</div>
+    <div class="stat-card stat-danger flex items-center gap-3">
+        <div class="stat-icon" style="font-size:2rem;"><i class="fas fa-exclamation-triangle"></i></div>
+        <div>
+            <div class="stat-value" style="font-size:1.5rem; font-weight:700; color:var(--danger-500);"><?= $stats['overdue'] ?? 0 ?></div>
+            <div class="stat-label text-muted">Vencidas</div>
         </div>
     </div>
-    
-    <div class="stat-card stat-success">
-        <div class="stat-icon">
-            <i class="fas fa-check-circle"></i>
-        </div>
-        <div class="stat-details">
-            <div class="stat-value"><?= $stats['completed'] ?? 0 ?></div>
-            <div class="stat-label">Completadas</div>
+    <div class="stat-card stat-success flex items-center gap-3">
+        <div class="stat-icon" style="font-size:2rem;"><i class="fas fa-check-circle"></i></div>
+        <div>
+            <div class="stat-value" style="font-size:1.5rem; font-weight:700; color:var(--secondary-500);"><?= $stats['completed'] ?? 0 ?></div>
+            <div class="stat-label text-muted">Completadas</div>
         </div>
     </div>
 </div>
@@ -73,64 +59,51 @@ ob_start();
     <div class="card-body">
         <form method="GET" action="/index.php" class="filter-form">
             <input type="hidden" name="page" value="tasks">
-            
-            <div class="filter-group">
-                <label>Filtros rápidos:</label>
-                <div class="btn-group">
-                    <a href="/index.php?page=tasks" class="btn btn-sm btn-outline-secondary <?= !isset($_GET['filter']) ? 'active' : '' ?>">
-                        Todas
-                    </a>
-                    <a href="/index.php?page=tasks&filter=mytasks" class="btn btn-sm btn-outline-secondary <?= ($_GET['filter'] ?? '') === 'mytasks' ? 'active' : '' ?>">
-                        Mis Tareas
-                    </a>
-                    <a href="/index.php?page=tasks&filter=today" class="btn btn-sm btn-outline-secondary <?= ($_GET['filter'] ?? '') === 'today' ? 'active' : '' ?>">
-                        Hoy
-                    </a>
-                    <a href="/index.php?page=tasks&filter=overdue" class="btn btn-sm btn-outline-danger <?= ($_GET['filter'] ?? '') === 'overdue' ? 'active' : '' ?>">
-                        Vencidas
-                    </a>
+            <div class="filter-group mb-2">
+                <label class="form-label mb-2">Filtros rápidos:</label>
+                <div class="btn-group" style="gap:0.5rem;">
+                    <a href="/index.php?page=tasks" class="btn btn-sm btn-outline-secondary <?= !isset($_GET['filter']) ? 'active' : '' ?>">Todas</a>
+                    <a href="/index.php?page=tasks&filter=mytasks" class="btn btn-sm btn-outline-secondary <?= ($_GET['filter'] ?? '') === 'mytasks' ? 'active' : '' ?>">Mis Tareas</a>
+                    <a href="/index.php?page=tasks&filter=today" class="btn btn-sm btn-outline-secondary <?= ($_GET['filter'] ?? '') === 'today' ? 'active' : '' ?>">Hoy</a>
+                    <a href="/index.php?page=tasks&filter=overdue" class="btn btn-sm btn-outline-danger <?= ($_GET['filter'] ?? '') === 'overdue' ? 'active' : '' ?>">Vencidas</a>
                 </div>
             </div>
-            
-            <div class="row g-3 mt-2">
+            <div class="row g-3 mt-2 align-items-end">
                 <div class="col-md-3">
+                    <label class="form-label">Estado</label>
                     <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
-                        <option value="">Estado: Todos</option>
+                        <option value="">Todos</option>
                         <option value="pending" <?= ($_GET['status'] ?? '') === 'pending' ? 'selected' : '' ?>>Pendiente</option>
                         <option value="in_progress" <?= ($_GET['status'] ?? '') === 'in_progress' ? 'selected' : '' ?>>En Progreso</option>
                         <option value="completed" <?= ($_GET['status'] ?? '') === 'completed' ? 'selected' : '' ?>>Completada</option>
                         <option value="cancelled" <?= ($_GET['status'] ?? '') === 'cancelled' ? 'selected' : '' ?>>Cancelada</option>
                     </select>
                 </div>
-                
                 <div class="col-md-3">
+                    <label class="form-label">Prioridad</label>
                     <select name="priority" class="form-select form-select-sm" onchange="this.form.submit()">
-                        <option value="">Prioridad: Todas</option>
+                        <option value="">Todas</option>
                         <option value="urgent" <?= ($_GET['priority'] ?? '') === 'urgent' ? 'selected' : '' ?>>Urgente</option>
                         <option value="high" <?= ($_GET['priority'] ?? '') === 'high' ? 'selected' : '' ?>>Alta</option>
                         <option value="medium" <?= ($_GET['priority'] ?? '') === 'medium' ? 'selected' : '' ?>>Media</option>
                         <option value="low" <?= ($_GET['priority'] ?? '') === 'low' ? 'selected' : '' ?>>Baja</option>
                     </select>
                 </div>
-                
                 <div class="col-md-3">
+                    <label class="form-label">Categoría</label>
                     <select name="category_id" class="form-select form-select-sm" onchange="this.form.submit()">
-                        <option value="">Categoría: Todas</option>
+                        <option value="">Todas</option>
                         <?php foreach ($categories as $category): ?>
-                            <option value="<?= $category['id'] ?>" <?= ($_GET['category_id'] ?? '') == $category['id'] ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($category['name']) ?>
-                            </option>
+                            <option value="<?= $category['id'] ?>" <?= ($_GET['category_id'] ?? '') == $category['id'] ? 'selected' : '' ?>><?= htmlspecialchars($category['name']) ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
-                
                 <div class="col-md-3">
+                    <label class="form-label">Asignado a</label>
                     <select name="assigned_to" class="form-select form-select-sm" onchange="this.form.submit()">
-                        <option value="">Asignado a: Todos</option>
+                        <option value="">Todos</option>
                         <?php foreach ($users as $user): ?>
-                            <option value="<?= $user['id'] ?>" <?= ($_GET['assigned_to'] ?? '') == $user['id'] ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($user['name']) ?>
-                            </option>
+                            <option value="<?= $user['id'] ?>" <?= ($_GET['assigned_to'] ?? '') == $user['id'] ? 'selected' : '' ?>><?= htmlspecialchars($user['name']) ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>

@@ -473,48 +473,32 @@ if (isset($_SESSION['user_id'])) {
         const sidebar = document.getElementById('sidebar');
 
         // Show mobile menu button on mobile devices
-        if (window.innerWidth <= 768) {
-            mobileMenuToggle.style.display = 'flex';
-            sidebar.style.display = 'none';
-        } else {
-            // On desktop, remove inline styles to let CSS handle it
-            sidebar.style.display = '';
-            sidebar.style.width = '';
-            // Ensure mobile menu is closed
-            mobileMenuModal.classList.remove('active');
-            mobileOverlay.classList.remove('active');
-        }
+        // Sidebar always visible
+        mobileMenuToggle.style.display = 'none';
+        sidebar.style.display = '';
+        sidebar.style.width = '';
+        mobileMenuModal.classList.remove('active');
+        mobileOverlay.classList.remove('active');
 
         window.addEventListener('resize', function() {
-            if (window.innerWidth <= 768) {
-                mobileMenuToggle.style.display = 'flex';
-                sidebar.style.display = 'none';
-            } else {
-                mobileMenuToggle.style.display = 'none';
-                // Remove inline styles to let CSS handle responsive behavior
-                sidebar.style.display = '';
-                sidebar.style.width = '';
-                mobileMenuModal.classList.remove('active');
-                mobileOverlay.classList.remove('active');
-            }
+            // Sidebar always visible on resize
+            mobileMenuToggle.style.display = 'none';
+            sidebar.style.display = '';
+            sidebar.style.width = '';
+            mobileMenuModal.classList.remove('active');
+            mobileOverlay.classList.remove('active');
         });
 
         mobileMenuToggle.addEventListener('click', function() {
-            mobileMenuModal.classList.add('active');
-            mobileOverlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
+            // Mobile menu toggle disabled (sidebar always visible)
         });
 
         mobileMenuClose.addEventListener('click', function() {
-            mobileMenuModal.classList.remove('active');
-            mobileOverlay.classList.remove('active');
-            document.body.style.overflow = '';
+            // Mobile menu close disabled (sidebar always visible)
         });
 
         mobileOverlay.addEventListener('click', function() {
-            mobileMenuModal.classList.remove('active');
-            mobileOverlay.classList.remove('active');
-            document.body.style.overflow = '';
+            // Mobile overlay click disabled (sidebar always visible)
         });
 
         // Notifications System
