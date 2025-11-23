@@ -139,30 +139,30 @@
                             <h3 class="h5 mb-3"><i class="fas fa-info-circle"></i> Información General</h3>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Nombre Completo</label>
-                                    <input type="text" name="org_name" class="form-control" 
+                                    <label class="form-label" for="org_name">Nombre Completo</label>
+                                    <input type="text" name="org_name" id="org_name" class="form-control" 
                                            value="<?= htmlspecialchars($generalSettings['org_name']['value'] ?? '') ?>">
                                 </div>
                                 <div class="col-md-3 mb-3">
-                                    <label class="form-label">Siglas</label>
-                                    <input type="text" name="org_short_name" class="form-control" 
+                                    <label class="form-label" for="org_short_name">Siglas</label>
+                                    <input type="text" name="org_short_name" id="org_short_name" class="form-control" 
                                            value="<?= htmlspecialchars($generalSettings['org_short_name']['value'] ?? '') ?>">
                                 </div>
                                 <div class="col-md-3 mb-3">
-                                    <label class="form-label">Año Fundación</label>
-                                    <input type="number" name="org_founded_year" class="form-control" 
+                                    <label class="form-label" for="org_founded_year">Año Fundación</label>
+                                    <input type="number" name="org_founded_year" id="org_founded_year" class="form-control" 
                                            value="<?= htmlspecialchars($generalSettings['org_founded_year']['value'] ?? '') ?>">
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">CIF/NIF</label>
-                                    <input type="text" name="org_cif" class="form-control" 
+                                    <label class="form-label" for="org_cif">CIF/NIF</label>
+                                    <input type="text" name="org_cif" id="org_cif" class="form-control" 
                                            value="<?= htmlspecialchars($generalSettings['org_cif']['value'] ?? '') ?>">
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Nº Registro Oficial</label>
-                                    <input type="text" name="org_registry_number" class="form-control" 
+                                    <label class="form-label" for="org_registry_number">Nº Registro Oficial</label>
+                                    <input type="text" name="org_registry_number" id="org_registry_number" class="form-control" 
                                            value="<?= htmlspecialchars($generalSettings['org_registry_number']['value'] ?? '') ?>">
                                 </div>
                             </div>
@@ -175,40 +175,40 @@
                             <h3 class="h5 mb-3"><i class="fas fa-address-card"></i> Datos de Contacto</h3>
                             <div class="row">
                                 <div class="col-md-8 mb-3">
-                                    <label class="form-label">Dirección</label>
-                                    <input type="text" name="org_address" class="form-control" 
+                                    <label class="form-label" for="org_address">Dirección</label>
+                                    <input type="text" name="org_address" id="org_address" class="form-control" 
                                            value="<?= htmlspecialchars($contactSettings['org_address']['value'] ?? '') ?>">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label">Ciudad</label>
-                                    <input type="text" name="org_city" class="form-control" 
+                                    <label class="form-label" for="org_city">Ciudad</label>
+                                    <input type="text" name="org_city" id="org_city" class="form-control" 
                                            value="<?= htmlspecialchars($contactSettings['org_city']['value'] ?? '') ?>">
                                 </div>
                                 <div class="col-md-3 mb-3">
-                                    <label class="form-label">Provincia</label>
-                                    <input type="text" name="org_province" class="form-control" 
+                                    <label class="form-label" for="org_province">Provincia</label>
+                                    <input type="text" name="org_province" id="org_province" class="form-control" 
                                            value="<?= htmlspecialchars($contactSettings['org_province']['value'] ?? '') ?>">
                                 </div>
                                 <div class="col-md-3 mb-3">
-                                    <label class="form-label">País</label>
-                                    <input type="text" name="org_country" class="form-control" 
+                                    <label class="form-label" for="org_country">País</label>
+                                    <input type="text" name="org_country" id="org_country" class="form-control" 
                                            value="<?= htmlspecialchars($contactSettings['org_country']['value'] ?? '') ?>">
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label">Teléfono</label>
-                                    <input type="text" name="org_phone" class="form-control" 
+                                    <label class="form-label" for="org_phone">Teléfono</label>
+                                    <input type="text" name="org_phone" id="org_phone" class="form-control" 
                                            value="<?= htmlspecialchars($contactSettings['org_phone']['value'] ?? '') ?>">
                                 </div>
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label">Email</label>
-                                    <input type="email" name="org_email" class="form-control" 
+                                    <label class="form-label" for="org_email">Email</label>
+                                    <input type="email" name="org_email" id="org_email" class="form-control" 
                                            value="<?= htmlspecialchars($contactSettings['org_email']['value'] ?? '') ?>">
                                 </div>
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label">Sitio Web</label>
-                                    <input type="url" name="org_website" class="form-control" 
+                                    <label class="form-label" for="org_website">Sitio Web</label>
+                                    <input type="url" name="org_website" id="org_website" class="form-control" 
                                            value="<?= htmlspecialchars($contactSettings['org_website']['value'] ?? '') ?>">
                                 </div>
                             </div>
@@ -243,18 +243,18 @@
                             
                             <div class="row">
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label">Ancho del Logo (px)</label>
-                                    <input type="number" name="org_logo_width" class="form-control" 
+                                    <label class="form-label" for="org_logo_width">Ancho del Logo (px)</label>
+                                    <input type="number" name="org_logo_width" id="org_logo_width" class="form-control" 
                                            value="<?= htmlspecialchars($brandingSettings['org_logo_width']['value'] ?? 180) ?>">
                                 </div>
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label">Color Primario</label>
-                                    <input type="color" name="org_primary_color" class="form-control" 
+                                    <label class="form-label" for="org_primary_color">Color Primario</label>
+                                    <input type="color" name="org_primary_color" id="org_primary_color" class="form-control" 
                                            value="<?= htmlspecialchars($brandingSettings['org_primary_color']['value'] ?? '#6366f1') ?>">
                                 </div>
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label">Color Secundario</label>
-                                    <input type="color" name="org_secondary_color" class="form-control" 
+                                    <label class="form-label" for="org_secondary_color">Color Secundario</label>
+                                    <input type="color" name="org_secondary_color" id="org_secondary_color" class="form-control" 
                                            value="<?= htmlspecialchars($brandingSettings['org_secondary_color']['value'] ?? '#8b5cf6') ?>">
                                 </div>
                             </div>
@@ -267,24 +267,24 @@
                             <h3 class="h5 mb-3"><i class="fas fa-user-tie"></i> Representantes Legales</h3>
                             <div class="row">
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label">Presidente/a</label>
-                                    <input type="text" name="org_president_name" class="form-control" 
+                                    <label class="form-label" for="org_president_name">Presidente/a</label>
+                                    <input type="text" name="org_president_name" id="org_president_name" class="form-control" 
                                            value="<?= htmlspecialchars($legalSettings['org_president_name']['value'] ?? '') ?>">
                                 </div>
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label">Secretario/a</label>
-                                    <input type="text" name="org_secretary_name" class="form-control" 
+                                    <label class="form-label" for="org_secretary_name">Secretario/a</label>
+                                    <input type="text" name="org_secretary_name" id="org_secretary_name" class="form-control" 
                                            value="<?= htmlspecialchars($legalSettings['org_secretary_name']['value'] ?? '') ?>">
                                 </div>
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label">Tesorero/a</label>
-                                    <input type="text" name="org_treasurer_name" class="form-control" 
+                                    <label class="form-label" for="org_treasurer_name">Tesorero/a</label>
+                                    <input type="text" name="org_treasurer_name" id="org_treasurer_name" class="form-control" 
                                            value="<?= htmlspecialchars($legalSettings['org_treasurer_name']['value'] ?? '') ?>">
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Texto Legal (para documentos)</label>
-                                <textarea name="org_legal_text" class="form-control" rows="3"><?= htmlspecialchars($legalSettings['org_legal_text']['value'] ?? '') ?></textarea>
+                                <label class="form-label" for="org_legal_text">Texto Legal (para documentos)</label>
+                                <textarea name="org_legal_text" id="org_legal_text" class="form-control" rows="3"><?= htmlspecialchars($legalSettings['org_legal_text']['value'] ?? '') ?></textarea>
                             </div>
                         </div>
                     </div>
