@@ -306,24 +306,24 @@
                         <h3 class="text-md font-semibold mb-4">Actualizar Precios</h3>
                         <form action="index.php?page=ad_prices&action=store" method="POST">
                             <div class="form-group">
-                                <label class="form-label">Año</label>
-                                <input type="number" name="year" class="form-control" value="<?php echo date('Y'); ?>" required>
+                                <label class="form-label" for="price_year">Año</label>
+                                <input type="number" name="year" id="price_year" class="form-control" value="<?php echo date('Y'); ?>" required>
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Media Página (€)</label>
-                                <input type="number" step="0.01" name="price_media" class="form-control" placeholder="0.00">
+                                <label class="form-label" for="price_media">Media Página (€)</label>
+                                <input type="number" step="0.01" name="price_media" id="price_media" class="form-control" placeholder="0.00">
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Página Completa (€)</label>
-                                <input type="number" step="0.01" name="price_full" class="form-control" placeholder="0.00">
+                                <label class="form-label" for="price_full">Página Completa (€)</label>
+                                <input type="number" step="0.01" name="price_full" id="price_full" class="form-control" placeholder="0.00">
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Portada (€)</label>
-                                <input type="number" step="0.01" name="price_cover" class="form-control" placeholder="0.00">
+                                <label class="form-label" for="price_cover">Portada (€)</label>
+                                <input type="number" step="0.01" name="price_cover" id="price_cover" class="form-control" placeholder="0.00">
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Contraportada (€)</label>
-                                <input type="number" step="0.01" name="price_back_cover" class="form-control" placeholder="0.00">
+                                <label class="form-label" for="price_back_cover">Contraportada (€)</label>
+                                <input type="number" step="0.01" name="price_back_cover" id="price_back_cover" class="form-control" placeholder="0.00">
                             </div>
                             <button type="submit" class="btn btn-primary w-full">Guardar Precios</button>
                         </form>
@@ -409,11 +409,13 @@
                         <h3 class="text-md font-semibold mb-4">Definir Nueva Cuota</h3>
                         <form action="index.php?page=fees&action=store" method="POST">
                             <div class="form-group">
-                                <label class="form-label">Año</label>
-                                <input type="number" name="year" class="form-control" value="<?php echo date('Y'); ?>" required>
+                                <label class="form-label" for="fee_year">Año</label>
+                                <input type="number" name="year" id="fee_year" class="form-control" value="<?php echo date('Y'); ?>" required>
                             </div>
-                            <label class="form-label">Importe (€)</label>
-                            <input type="number" step="0.01" name="amount" class="form-control" required>
+                            <div class="form-group">
+                                <label class="form-label" for="fee_amount">Importe (€)</label>
+                                <input type="number" step="0.01" name="amount" id="fee_amount" class="form-control" required>
+                            </div>
                             <button type="submit" class="btn btn-primary w-full">
                                 <i class="fas fa-save"></i> Guardar Cuota
                             </button>
@@ -460,20 +462,20 @@
                 </div>
                 <form action="index.php?page=settings&action=updateDatabase" method="POST" style="max-width: 600px;">
                     <div class="form-group">
-                        <label class="form-label">Host</label>
-                        <input type="text" name="db_host" class="form-control" value="<?php echo htmlspecialchars($dbConfig['host'] ?? ''); ?>" required>
+                        <label class="form-label" for="db_host">Host</label>
+                        <input type="text" name="db_host" id="db_host" class="form-control" value="<?php echo htmlspecialchars($dbConfig['host'] ?? ''); ?>" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Nombre de la Base de Datos</label>
-                        <input type="text" name="db_name" class="form-control" value="<?php echo htmlspecialchars($dbConfig['name'] ?? ''); ?>" required>
+                        <label class="form-label" for="db_name">Nombre de la Base de Datos</label>
+                        <input type="text" name="db_name" id="db_name" class="form-control" value="<?php echo htmlspecialchars($dbConfig['name'] ?? ''); ?>" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Usuario</label>
-                        <input type="text" name="db_user" class="form-control" value="<?php echo htmlspecialchars($dbConfig['user'] ?? ''); ?>" required>
+                        <label class="form-label" for="db_user">Usuario</label>
+                        <input type="text" name="db_user" id="db_user" class="form-control" value="<?php echo htmlspecialchars($dbConfig['user'] ?? ''); ?>" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Contraseña</label>
-                        <input type="password" name="db_pass" class="form-control" placeholder="Dejar en blanco para no cambiar (si se muestra vacío)">
+                        <label class="form-label" for="db_pass">Contraseña</label>
+                        <input type="password" name="db_pass" id="db_pass" class="form-control" placeholder="Dejar en blanco para no cambiar (si se muestra vacío)">
                         <small>Por seguridad, la contraseña actual no se muestra.</small>
                     </div>
                     <button type="submit" class="btn btn-danger">Actualizar Conexión</button>
@@ -502,14 +504,14 @@
                         <i class="fas fa-key"></i> Cambiar Contraseña
                     </h3>
                     <div class="form-group">
-                        <label class="form-label">
+                        <label class="form-label" for="current_password">
                             <i class="fas fa-lock"></i> Contraseña Actual
                         </label>
-                        <input type="password" name="current_password" class="form-control" required 
+                        <input type="password" name="current_password" id="current_password" class="form-control" required 
                                placeholder="Introduce tu contraseña actual">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">
+                        <label class="form-label" for="new_password">
                             <i class="fas fa-lock"></i> Nueva Contraseña
                         </label>
                         <input type="password" name="new_password" id="new_password" class="form-control" required 
@@ -519,7 +521,7 @@
                         </small>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">
+                        <label class="form-label" for="confirm_password">
                             <i class="fas fa-lock"></i> Confirmar Nueva Contraseña
                         </label>
                         <input type="password" name="confirm_password" id="confirm_password" class="form-control" required 
