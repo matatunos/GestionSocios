@@ -300,176 +300,182 @@
             <!-- Ad Prices Tab -->
             <div id="ad_prices" class="tab-content" style="display: none;">
                 <h2 class="section-title">Precios de Anuncios (Libro de Fiestas)</h2>
-                
                 <div class="settings-grid">
-                <!-- Form to Update Prices -->
-                <div class="card">
-                    <h3 class="text-md font-semibold mb-4">Actualizar Precios</h3>
-                    <form action="index.php?page=ad_prices&action=store" method="POST">
-                        <div class="form-group">
-                            <label class="form-label">Año</label>
-                            <input type="number" name="year" class="form-control" value="<?php echo date('Y'); ?>" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Media Página (€)</label>
-                            <input type="number" step="0.01" name="price_media" class="form-control" placeholder="0.00">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Página Completa (€)</label>
-                            <input type="number" step="0.01" name="price_full" class="form-control" placeholder="0.00">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Portada (€)</label>
-                            <input type="number" step="0.01" name="price_cover" class="form-control" placeholder="0.00">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Contraportada (€)</label>
-                            <input type="number" step="0.01" name="price_back_cover" class="form-control" placeholder="0.00">
-                        </div>
-                        <button type="submit" class="btn btn-primary w-full">Guardar Precios</button>
-                    </form>
-                </div>
-
-                <!-- Current Prices Display -->
-                <div>
-                    <div class="card mb-4">
-                        <h3 class="text-md font-semibold mb-2">Precios <?php echo $currentYear; ?></h3>
-                        <table class="table w-full">
-                            <thead>
-                                <tr>
-                                    <th>Tipo</th>
-                                    <th class="text-right">Precio</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Media Página</td>
-                                    <td class="text-right"><?php echo number_format($adPrices['media'] ?? 0, 2); ?> €</td>
-                                </tr>
-                                <tr>
-                                    <td>Página Completa</td>
-                                    <td class="text-right"><?php echo number_format($adPrices['full'] ?? 0, 2); ?> €</td>
-                                </tr>
-                                <tr>
-                                    <td>Portada</td>
-                                    <td class="text-right"><?php echo number_format($adPrices['cover'] ?? 0, 2); ?> €</td>
-                                </tr>
-                                <tr>
-                                    <td>Contraportada</td>
-                                    <td class="text-right"><?php echo number_format($adPrices['back_cover'] ?? 0, 2); ?> €</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
+                    <!-- Form to Update Prices -->
                     <div class="card">
-                        <h3 class="text-md font-semibold mb-2">Precios <?php echo $currentYear + 1; ?></h3>
-                        <table class="table w-full">
-                            <thead>
-                                <tr>
-                                    <th>Tipo</th>
-                                    <th class="text-right">Precio</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Media Página</td>
-                                    <td class="text-right"><?php echo number_format($nextYearPrices['media'] ?? 0, 2); ?> €</td>
-                                </tr>
-                                <tr>
-                                    <td>Página Completa</td>
-                                    <td class="text-right"><?php echo number_format($nextYearPrices['full'] ?? 0, 2); ?> €</td>
-                                </tr>
-                                <tr>
-                                    <td>Portada</td>
-                                    <td class="text-right"><?php echo number_format($nextYearPrices['cover'] ?? 0, 2); ?> €</td>
-                                </tr>
-                                <tr>
-                                    <td>Contraportada</td>
-                                    <td class="text-right"><?php echo number_format($nextYearPrices['back_cover'] ?? 0, 2); ?> €</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <h3 class="text-md font-semibold mb-4">Actualizar Precios</h3>
+                        <form action="index.php?page=ad_prices&action=store" method="POST">
+                            <div class="form-group">
+                                <label class="form-label">Año</label>
+                                <input type="number" name="year" class="form-control" value="<?php echo date('Y'); ?>" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Media Página (€)</label>
+                                <input type="number" step="0.01" name="price_media" class="form-control" placeholder="0.00">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Página Completa (€)</label>
+                                <input type="number" step="0.01" name="price_full" class="form-control" placeholder="0.00">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Portada (€)</label>
+                                <input type="number" step="0.01" name="price_cover" class="form-control" placeholder="0.00">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Contraportada (€)</label>
+                                <input type="number" step="0.01" name="price_back_cover" class="form-control" placeholder="0.00">
+                            </div>
+                            <button type="submit" class="btn btn-primary w-full">Guardar Precios</button>
+                        </form>
+                    </div>
+                    <!-- Current Prices Display -->
+                    <div>
+                        <div class="card mb-4">
+                            <h3 class="text-md font-semibold mb-2">Precios <?php echo isset($currentYear) ? $currentYear : date('Y'); ?></h3>
+                            <?php if (empty($adPrices)): ?>
+                                <div class="alert alert-info">No hay precios definidos para este año.</div>
+                            <?php else: ?>
+                            <table class="table w-full">
+                                <thead>
+                                    <tr>
+                                        <th>Tipo</th>
+                                        <th class="text-right">Precio</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Media Página</td>
+                                        <td class="text-right"><?php echo number_format($adPrices['media'] ?? 0, 2); ?> €</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Página Completa</td>
+                                        <td class="text-right"><?php echo number_format($adPrices['full'] ?? 0, 2); ?> €</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Portada</td>
+                                        <td class="text-right"><?php echo number_format($adPrices['cover'] ?? 0, 2); ?> €</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Contraportada</td>
+                                        <td class="text-right"><?php echo number_format($adPrices['back_cover'] ?? 0, 2); ?> €</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <?php endif; ?>
+                        </div>
+                        <div class="card">
+                            <h3 class="text-md font-semibold mb-2">Precios <?php echo isset($currentYear) ? $currentYear + 1 : date('Y') + 1; ?></h3>
+                            <?php if (empty($nextYearPrices)): ?>
+                                <div class="alert alert-info">No hay precios definidos para el próximo año.</div>
+                            <?php else: ?>
+                            <table class="table w-full">
+                                <thead>
+                                    <tr>
+                                        <th>Tipo</th>
+                                        <th class="text-right">Precio</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Media Página</td>
+                                        <td class="text-right"><?php echo number_format($nextYearPrices['media'] ?? 0, 2); ?> €</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Página Completa</td>
+                                        <td class="text-right"><?php echo number_format($nextYearPrices['full'] ?? 0, 2); ?> €</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Portada</td>
+                                        <td class="text-right"><?php echo number_format($nextYearPrices['cover'] ?? 0, 2); ?> €</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Contraportada</td>
+                                        <td class="text-right"><?php echo number_format($nextYearPrices['back_cover'] ?? 0, 2); ?> €</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
             <!-- Member Fees Tab -->
             <div id="fees" class="tab-content" style="display: none;">
                 <h2 class="section-title">Cuotas de Socios</h2>
-                
                 <div class="settings-grid">
-                <!-- Define New Fee -->
-                <div class="card">
-                    <h3 class="text-md font-semibold mb-4">Definir Nueva Cuota</h3>
-                    <form action="index.php?page=fees&action=store" method="POST">
-                        <div class="form-group">
-                            <label class="form-label">Año</label>
-                            <input type="number" name="year" class="form-control" value="<?php echo date('Y'); ?>" required>
-                        </div>
+                    <!-- Define New Fee -->
+                    <div class="card">
+                        <h3 class="text-md font-semibold mb-4">Definir Nueva Cuota</h3>
+                        <form action="index.php?page=fees&action=store" method="POST">
+                            <div class="form-group">
+                                <label class="form-label">Año</label>
+                                <input type="number" name="year" class="form-control" value="<?php echo date('Y'); ?>" required>
+                            </div>
                             <label class="form-label">Importe (€)</label>
                             <input type="number" step="0.01" name="amount" class="form-control" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-full">
-                            <i class="fas fa-save"></i> Guardar Cuota
-                        </button>
-                    </form>
-                </div>
-
-                <!-- List Fees -->
-                <div class="card">
-                    <h3 class="text-md font-semibold mb-4">Cuotas Definidas</h3>
-                    <table class="table w-full">
-                        <thead>
-                            <tr>
-                                <th>Año</th>
-                                <th>Importe</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($fees as $fee): ?>
+                            <button type="submit" class="btn btn-primary w-full">
+                                <i class="fas fa-save"></i> Guardar Cuota
+                            </button>
+                        </form>
+                    </div>
+                    <!-- List Fees -->
+                    <div class="card">
+                        <h3 class="text-md font-semibold mb-4">Cuotas Definidas</h3>
+                        <?php if (empty($fees)): ?>
+                            <div class="alert alert-info">No hay cuotas definidas.</div>
+                        <?php else: ?>
+                        <table class="table w-full">
+                            <thead>
                                 <tr>
-                                    <td style="font-weight: 600;"><?php echo $fee['year']; ?></td>
-                                    <td><?php echo number_format($fee['amount'], 2); ?> €</td>
-                                    <td>
-                                        <a href="index.php?page=fees&action=generate&year=<?php echo $fee['year']; ?>" class="btn btn-sm btn-secondary" onclick="return confirm('¿Generar pagos pendientes para todos los socios activos para el año <?php echo $fee['year']; ?>?');">
-                                            <i class="fas fa-file-invoice-dollar"></i> Generar Pagos
-                                        </a>
-                                    </td>
+                                    <th>Año</th>
+                                    <th>Importe</th>
+                                    <th>Acciones</th>
                                 </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($fees as $fee): ?>
+                                    <tr>
+                                        <td style="font-weight: 600;"><?php echo $fee['year']; ?></td>
+                                        <td><?php echo number_format($fee['amount'], 2); ?> €</td>
+                                        <td>
+                                            <a href="index.php?page=fees&action=generate&year=<?php echo $fee['year']; ?>" class="btn btn-sm btn-secondary" onclick="return confirm('¿Generar pagos pendientes para todos los socios activos para el año <?php echo $fee['year']; ?>?');">
+                                                <i class="fas fa-file-invoice-dollar"></i> Generar Pagos
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
-        </div>
 
             <!-- Database Tab -->
             <div id="database" class="tab-content" style="display: none;">
                 <h2 class="section-title">Configuración de Base de Datos</h2>
-            <div class="alert alert-warning" style="background: #fffbeb; color: #92400e; padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem;">
-                <i class="fas fa-exclamation-triangle"></i> <strong>Cuidado:</strong> Cambiar estos valores puede dejar la aplicación inoperativa. Asegúrese de que los nuevos datos son correctos.
-            </div>
+                <div class="alert alert-warning" style="background: #fffbeb; color: #92400e; padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem;">
+                    <i class="fas fa-exclamation-triangle"></i> <strong>Cuidado:</strong> Cambiar estos valores puede dejar la aplicación inoperativa. Asegúrese de que los nuevos datos son correctos.
+                </div>
                 <form action="index.php?page=settings&action=updateDatabase" method="POST" style="max-width: 600px;">
-                <div class="form-group">
-                    <label class="form-label">Host</label>
-                    <input type="text" name="db_host" class="form-control" value="<?php echo htmlspecialchars($dbConfig['host']); ?>" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Nombre de la Base de Datos</label>
-                    <input type="text" name="db_name" class="form-control" value="<?php echo htmlspecialchars($dbConfig['name']); ?>" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Usuario</label>
-                    <input type="text" name="db_user" class="form-control" value="<?php echo htmlspecialchars($dbConfig['user']); ?>" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Contraseña</label>
-                    <input type="password" name="db_pass" class="form-control" placeholder="Dejar en blanco para no cambiar (si se muestra vacío)">
-                    <small>Por seguridad, la contraseña actual no se muestra.</small>
-                </div>
+                    <div class="form-group">
+                        <label class="form-label">Host</label>
+                        <input type="text" name="db_host" class="form-control" value="<?php echo htmlspecialchars($dbConfig['host'] ?? ''); ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nombre de la Base de Datos</label>
+                        <input type="text" name="db_name" class="form-control" value="<?php echo htmlspecialchars($dbConfig['name'] ?? ''); ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Usuario</label>
+                        <input type="text" name="db_user" class="form-control" value="<?php echo htmlspecialchars($dbConfig['user'] ?? ''); ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Contraseña</label>
+                        <input type="password" name="db_pass" class="form-control" placeholder="Dejar en blanco para no cambiar (si se muestra vacío)">
+                        <small>Por seguridad, la contraseña actual no se muestra.</small>
+                    </div>
                     <button type="submit" class="btn btn-danger">Actualizar Conexión</button>
                 </form>
             </div>
@@ -479,26 +485,22 @@
                 <h2 style="margin-bottom: 2rem; color: var(--text-color);">
                     <i class="fas fa-shield-alt" style="color: var(--primary-600);"></i> Seguridad
                 </h2>
-
                 <?php if (isset($_SESSION['password_success'])): ?>
                     <div class="alert alert-success" style="margin-bottom: 1.5rem;">
                         <i class="fas fa-check-circle"></i> <?= $_SESSION['password_success'] ?>
                     </div>
                     <?php unset($_SESSION['password_success']); ?>
                 <?php endif; ?>
-
                 <?php if (isset($_SESSION['password_error'])): ?>
                     <div class="alert alert-danger" style="margin-bottom: 1.5rem;">
                         <i class="fas fa-exclamation-circle"></i> <?= $_SESSION['password_error'] ?>
                     </div>
                     <?php unset($_SESSION['password_error']); ?>
                 <?php endif; ?>
-
                 <form method="POST" action="index.php?page=settings&action=changePassword" class="card" style="max-width: 600px;">
                     <h3 style="margin-bottom: 1.5rem; color: var(--text-color);">
                         <i class="fas fa-key"></i> Cambiar Contraseña
                     </h3>
-
                     <div class="form-group">
                         <label class="form-label">
                             <i class="fas fa-lock"></i> Contraseña Actual
@@ -506,7 +508,6 @@
                         <input type="password" name="current_password" class="form-control" required 
                                placeholder="Introduce tu contraseña actual">
                     </div>
-
                     <div class="form-group">
                         <label class="form-label">
                             <i class="fas fa-lock"></i> Nueva Contraseña
@@ -517,7 +518,6 @@
                             Mínimo 6 caracteres. Se recomienda usar una combinación de letras, números y símbolos.
                         </small>
                     </div>
-
                     <div class="form-group">
                         <label class="form-label">
                             <i class="fas fa-lock"></i> Confirmar Nueva Contraseña
@@ -525,7 +525,6 @@
                         <input type="password" name="confirm_password" id="confirm_password" class="form-control" required 
                                placeholder="Repite la nueva contraseña" minlength="6">
                     </div>
-
                     <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-save"></i> Cambiar Contraseña
