@@ -32,28 +32,35 @@ class SettingsController {
         if (defined('DB_HOST')) $dbConfig['host'] = DB_HOST;
         if (defined('DB_NAME')) $dbConfig['name'] = DB_NAME;
         if (defined('DB_USER')) $dbConfig['user'] = DB_USER;
-        
+        // Ensure all config keys exist
+        $dbConfig = array_merge(['host'=>'','name'=>'','user'=>''], $dbConfig);
         // Fetch Organization Settings
         require_once __DIR__ . '/../Models/OrganizationSettings.php';
         $orgSettings = new OrganizationSettings($this->db);
-        $generalSettings = $orgSettings->getByCategory('general');
-        $contactSettings = $orgSettings->getByCategory('contact');
-        $brandingSettings = $orgSettings->getByCategory('branding');
-        $legalSettings = $orgSettings->getByCategory('legal');
-        
+        $generalSettings = $orgSettings->getByCategory('general') ?: [];
+        $contactSettings = $orgSettings->getByCategory('contact') ?: [];
+        $brandingSettings = $orgSettings->getByCategory('branding') ?: [];
+        $legalSettings = $orgSettings->getByCategory('legal') ?: [];
         // Fetch Ad Prices
         require_once __DIR__ . '/AdPriceController.php';
         $adPriceController = new AdPriceController();
         $currentYear = date('Y');
-        $adPrices = $adPriceController->getPrices($currentYear);
-        $nextYearPrices = $adPriceController->getPrices($currentYear + 1);
-
+        $adPrices = $adPriceController->getPrices($currentYear) ?: [];
+        $nextYearPrices = $adPriceController->getPrices($currentYear + 1) ?: [];
         // Fetch Annual Fees
         require_once __DIR__ . '/../Models/Fee.php';
         $feeModel = new Fee($this->db);
         $feesStmt = $feeModel->readAll();
-        $fees = $feesStmt->fetchAll(PDO::FETCH_ASSOC);
-
+        $fees = $feesStmt ? $feesStmt->fetchAll(PDO::FETCH_ASSOC) : [];
+        // Ensure variables are always set
+        if (!isset($adPrices) || !is_array($adPrices)) $adPrices = [];
+        if (!isset($nextYearPrices) || !is_array($nextYearPrices)) $nextYearPrices = [];
+        if (!isset($fees) || !is_array($fees)) $fees = [];
+        if (!isset($dbConfig) || !is_array($dbConfig)) $dbConfig = ['host'=>'','name'=>'','user'=>''];
+        if (!isset($generalSettings) || !is_array($generalSettings)) $generalSettings = [];
+        if (!isset($contactSettings) || !is_array($contactSettings)) $contactSettings = [];
+        if (!isset($brandingSettings) || !is_array($brandingSettings)) $brandingSettings = [];
+        if (!isset($legalSettings) || !is_array($legalSettings)) $legalSettings = [];
         // Do not expose password
         require __DIR__ . '/../Views/settings/index.php';
     }
