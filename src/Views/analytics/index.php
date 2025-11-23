@@ -151,10 +151,10 @@ const membersGrowthCtx = document.getElementById('membersGrowthChart').getContex
 new Chart(membersGrowthCtx, {
     type: 'line',
     data: {
-        labels: <?= json_encode(array_column($totalMembers, 'year')) ?>,
+        labels: <?= json_encode(array_column($totalMembers ?? [], 'year')) ?>,
         datasets: [{
             label: 'Total de Socios',
-            data: <?= json_encode(array_column($totalMembers, 'total_members')) ?>,
+            data: <?= json_encode(array_column($totalMembers ?? [], 'total_members')) ?>,
             borderColor: chartColors.primary,
             backgroundColor: chartColors.primary + '20',
             fill: true,
