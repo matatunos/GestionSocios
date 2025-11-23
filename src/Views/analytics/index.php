@@ -2,13 +2,11 @@
 
 <div class="page-header">
     <h1><i class="fas fa-chart-line"></i> Estadísticas Avanzadas</h1>
-    <div>
-        <select id="yearFilter" class="form-control" style="width: 150px;" onchange="changeYears(this.value)">
-            <option value="3" <?= $selectedYears == 3 ? 'selected' : '' ?>>Últimos 3 años</option>
-            <option value="5" <?= $selectedYears == 5 ? 'selected' : '' ?>>Últimos 5 años</option>
-            <option value="10" <?= $selectedYears == 10 ? 'selected' : '' ?>>Últimos 10 años</option>
-        </select>
-    </div>
+    <select id="yearFilter" class="form-control year-filter" onchange="changeYears(this.value)">
+        <option value="3" <?= $selectedYears == 3 ? 'selected' : '' ?>>Últimos 3 años</option>
+        <option value="5" <?= $selectedYears == 5 ? 'selected' : '' ?>>Últimos 5 años</option>
+        <option value="10" <?= $selectedYears == 10 ? 'selected' : '' ?>>Últimos 10 años</option>
+    </select>
 </div>
 
 <div class="analytics-grid">
@@ -71,58 +69,58 @@
 </div>
 
 <!-- Charts Grid -->
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+<div class="analytics-grid" style="grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));">
     <!-- Members Growth Chart -->
     <div class="card">
-        <h3 style="margin-bottom: 1.5rem;"><i class="fas fa-users"></i> Evolución de Socios</h3>
-        <canvas id="membersGrowthChart" style="max-height: 300px;"></canvas>
+        <h3 class="card-header"><i class="fas fa-users"></i> Evolución de Socios</h3>
+        <canvas id="membersGrowthChart" class="chart-canvas"></canvas>
     </div>
 
     <!-- Income vs Expenses Chart -->
     <div class="card">
-        <h3 style="margin-bottom: 1.5rem;"><i class="fas fa-balance-scale"></i> Ingresos vs Gastos</h3>
-        <canvas id="incomeExpensesChart" style="max-height: 300px;"></canvas>
+        <h3 class="card-header"><i class="fas fa-balance-scale"></i> Ingresos vs Gastos</h3>
+        <canvas id="incomeExpensesChart" class="chart-canvas"></canvas>
     </div>
 </div>
 
 <!-- Monthly Trend -->
-<div class="card" style="margin-bottom: 2rem;">
-    <h3 style="margin-bottom: 1.5rem;"><i class="fas fa-chart-area"></i> Tendencia Mensual <?= date('Y') ?></h3>
-    <canvas id="monthlyTrendChart" style="max-height: 300px;"></canvas>
+<div class="card">
+    <h3 class="card-header"><i class="fas fa-chart-area"></i> Tendencia Mensual <?= date('Y') ?></h3>
+    <canvas id="monthlyTrendChart" class="chart-canvas"></canvas>
 </div>
 
 <!-- Additional Charts -->
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+<div class="analytics-grid" style="grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));">
     <!-- Categories Distribution -->
     <div class="card">
-        <h3 style="margin-bottom: 1.5rem;"><i class="fas fa-tags"></i> Distribución por Categorías</h3>
-        <canvas id="categoriesChart" style="max-height: 300px;"></canvas>
+        <h3 class="card-header"><i class="fas fa-tags"></i> Distribución por Categorías</h3>
+        <canvas id="categoriesChart" class="chart-canvas"></canvas>
     </div>
 
     <!-- Retention Rate -->
     <div class="card">
-        <h3 style="margin-bottom: 1.5rem;"><i class="fas fa-user-check"></i> Tasa de Retención</h3>
-        <canvas id="retentionChart" style="max-height: 300px;"></canvas>
+        <h3 class="card-header"><i class="fas fa-user-check"></i> Tasa de Retención</h3>
+        <canvas id="retentionChart" class="chart-canvas"></canvas>
     </div>
 
     <!-- Payment Types -->
     <div class="card">
-        <h3 style="margin-bottom: 1.5rem;"><i class="fas fa-credit-card"></i> Tipos de Pago <?= date('Y') ?></h3>
-        <canvas id="paymentTypesChart" style="max-height: 300px;"></canvas>
+        <h3 class="card-header"><i class="fas fa-credit-card"></i> Tipos de Pago <?= date('Y') ?></h3>
+        <canvas id="paymentTypesChart" class="chart-canvas"></canvas>
     </div>
 
     <!-- Prediction -->
     <?php if ($prediction): ?>
-    <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-        <h3 style="margin-bottom: 1.5rem; color: white;"><i class="fas fa-crystal-ball"></i> Predicción <?= $prediction['year'] ?></h3>
-        <div style="text-align: center; padding: 2rem 0;">
-            <div style="font-size: 3rem; font-weight: 700; margin-bottom: 0.5rem;">
+    <div class="card prediction-card">
+        <h3 class="card-header"><i class="fas fa-crystal-ball"></i> Predicción <?= $prediction['year'] ?></h3>
+        <div class="prediction-content">
+            <div class="prediction-value">
                 <?= number_format($prediction['predicted_income'], 0) ?>€
             </div>
-            <div style="opacity: 0.9; font-size: 1rem;">Ingresos Estimados</div>
-            <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.3);">
-                <div style="font-size: 0.875rem; opacity: 0.9;">Tasa de crecimiento histórico</div>
-                <div style="font-size: 1.5rem; font-weight: 600; margin-top: 0.25rem;">
+            <div class="prediction-label">Ingresos Estimados</div>
+            <div class="prediction-growth">
+                <div class="prediction-growth-label">Tasa de crecimiento histórico</div>
+                <div class="prediction-growth-value">
                     <?= $prediction['growth_rate'] > 0 ? '+' : '' ?><?= $prediction['growth_rate'] ?>%
                 </div>
             </div>
