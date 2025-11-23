@@ -322,7 +322,5 @@ function changeYears(years) {
 }
 </script>
 
-<?php 
-$content = ob_get_clean(); 
-require __DIR__ . '/../layout.php'; 
-?>
+
+<?php $content = ob_get_clean(); require __DIR__ . '/../layout.php'; ?>
