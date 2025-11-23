@@ -602,47 +602,51 @@ input:checked + .slider:before {
 
 <script>
 function openTab(evt, tabName) {
-    var i, tabcontent, tablinks;
-    tabcontent = document.getElementsByClassName("tab-content");
-    for (i = 0; i < tabcontent.length; i++) {
+    var tabcontent = document.getElementsByClassName("tab-content");
+    var tablinks = document.getElementsByClassName("tab-btn");
+    // Oculta todas las pestañas
+    for (var i = 0; i < tabcontent.length; i++) {
         tabcontent[i].style.display = "none";
     }
-    tablinks = document.getElementsByClassName("tab-btn");
-    for (i = 0; i < tablinks.length; i++) {
+    // Quita la clase activa de todos los botones
+    for (var i = 0; i < tablinks.length; i++) {
         tablinks[i].className = tablinks[i].className.replace(" active", "");
     }
-    document.getElementById(tabName).style.display = "block";
+    // Muestra la pestaña seleccionada
+    var activeTab = document.getElementById(tabName);
+    if (activeTab) {
+        activeTab.style.display = "block";
+    }
     evt.currentTarget.className += " active";
-    // Update URL parameter for tab
+    // Actualiza la URL
     if (history.pushState) {
         var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?page=settings&tab=' + tabName;
         history.pushState({path:newurl},'',newurl);
     }
 }
 
-// Show correct tab on page load
-    document.addEventListener('DOMContentLoaded', function() {
-        var tab = (new URLSearchParams(window.location.search)).get('tab') || 'organization';
-        var tabcontent = document.getElementsByClassName("tab-content");
-        for (var i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none";
+// Mostrar la pestaña correcta al cargar la página
+window.addEventListener('DOMContentLoaded', function() {
+    var tab = (new URLSearchParams(window.location.search)).get('tab') || 'organization';
+    var tabcontent = document.getElementsByClassName("tab-content");
+    var tablinks = document.getElementsByClassName("tab-btn");
+    // Oculta todas las pestañas
+    for (var i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    // Muestra la pestaña activa
+    var activeTab = document.getElementById(tab);
+    if (activeTab) {
+        activeTab.style.display = "block";
+    }
+    // Marca el botón activo
+    for (var i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+        if (tablinks[i].getAttribute('onclick') && tablinks[i].getAttribute('onclick').includes(tab)) {
+            tablinks[i].className += " active";
         }
-        var activeTab = document.getElementById(tab);
-        if (activeTab) {
-            activeTab.style.display = "block";
-            var tablinks = document.getElementsByClassName("tab-btn");
-            for (var i = 0; i < tablinks.length; i++) {
-                tablinks[i].className = tablinks[i].className.replace(" active", "");
-            }
-            var btn = Array.from(tablinks).find(b => b.textContent.toLowerCase().includes(tab.replace('_', '')));
-            if (btn) btn.className += " active";
-        }
-        // Dark mode logic
-        const currentTheme = localStorage.getItem('theme');
-        if (currentTheme === 'dark') {
-            document.getElementById('darkModeToggle').checked = true;
-        }
-    });
+    }
+});
 </script>
 <noscript>
 <style>
