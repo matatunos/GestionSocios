@@ -79,6 +79,9 @@
     gap: 2rem;
 }
 
+.tab-content { display: none; }
+.tab-content.active-tab { display: block; }
+
 @media (max-width: 768px) {
     .settings-grid {
         grid-template-columns: 1fr;
@@ -122,7 +125,7 @@
         <div class="tab-content-wrapper">
 
             <!-- Organization Tab -->
-            <div id="organization" class="tab-content" style="display: none;">
+            <div id="organization" class="tab-content active-tab">
                 <h2 class="section-title">Configuración de la Organización</h2>
                 
                 <?php if (isset($_SESSION['success'])): ?>
@@ -298,7 +301,7 @@
             </div>
 
             <!-- Ad Prices Tab -->
-            <div id="ad_prices" class="tab-content" style="display: none;">
+            <div id="ad_prices" class="tab-content">
                 <h2 class="section-title">Precios de Anuncios (Libro de Fiestas)</h2>
                 <div class="settings-grid">
                     <!-- Form to Update Prices -->
@@ -401,7 +404,7 @@
             </div>
 
             <!-- Member Fees Tab -->
-            <div id="fees" class="tab-content" style="display: none;">
+            <div id="fees" class="tab-content">
                 <h2 class="section-title">Cuotas de Socios</h2>
                 <div class="settings-grid">
                     <!-- Define New Fee -->
@@ -455,7 +458,7 @@
             </div>
 
             <!-- Database Tab -->
-            <div id="database" class="tab-content" style="display: none;">
+            <div id="database" class="tab-content">
                 <h2 class="section-title">Configuración de Base de Datos</h2>
                 <div class="alert alert-warning" style="background: #fffbeb; color: #92400e; padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem;">
                     <i class="fas fa-exclamation-triangle"></i> <strong>Cuidado:</strong> Cambiar estos valores puede dejar la aplicación inoperativa. Asegúrese de que los nuevos datos son correctos.
@@ -483,7 +486,7 @@
             </div>
 
             <!-- Security Tab -->
-            <div id="security" class="tab-content" style="display: none;">
+            <div id="security" class="tab-content">
                 <h2 style="margin-bottom: 2rem; color: var(--text-color);">
                     <i class="fas fa-shield-alt" style="color: var(--primary-600);"></i> Seguridad
                 </h2>
@@ -606,42 +609,33 @@ input:checked + .slider:before {
 function openTab(evt, tabName) {
     var tabcontent = document.getElementsByClassName("tab-content");
     var tablinks = document.getElementsByClassName("tab-btn");
-    // Oculta todas las pestañas
     for (var i = 0; i < tabcontent.length; i++) {
-        tabcontent[i].style.display = "none";
+        tabcontent[i].classList.remove("active-tab");
     }
-    // Quita la clase activa de todos los botones
     for (var i = 0; i < tablinks.length; i++) {
         tablinks[i].className = tablinks[i].className.replace(" active", "");
     }
-    // Muestra la pestaña seleccionada
     var activeTab = document.getElementById(tabName);
     if (activeTab) {
-        activeTab.style.display = "block";
+        activeTab.classList.add("active-tab");
     }
     evt.currentTarget.className += " active";
-    // Actualiza la URL
     if (history.pushState) {
         var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?page=settings&tab=' + tabName;
         history.pushState({path:newurl},'',newurl);
     }
 }
-
-// Mostrar la pestaña correcta al cargar la página
 window.addEventListener('DOMContentLoaded', function() {
     var tab = (new URLSearchParams(window.location.search)).get('tab') || 'organization';
     var tabcontent = document.getElementsByClassName("tab-content");
     var tablinks = document.getElementsByClassName("tab-btn");
-    // Oculta todas las pestañas
     for (var i = 0; i < tabcontent.length; i++) {
-        tabcontent[i].style.display = "none";
+        tabcontent[i].classList.remove("active-tab");
     }
-    // Muestra la pestaña activa
     var activeTab = document.getElementById(tab);
     if (activeTab) {
-        activeTab.style.display = "block";
+        activeTab.classList.add("active-tab");
     }
-    // Marca el botón activo
     for (var i = 0; i < tablinks.length; i++) {
         tablinks[i].className = tablinks[i].className.replace(" active", "");
         if (tablinks[i].getAttribute('onclick') && tablinks[i].getAttribute('onclick').includes(tab)) {
