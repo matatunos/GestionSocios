@@ -134,7 +134,6 @@
 .mobile-overlay {
     display: none !important;
 }
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 /* Mejoras visuales para Analytics */
 .analytics-grid {
@@ -223,7 +222,6 @@
     background: var(--danger-500);
     color: #fff;
 }
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
     /* Modern Color Palette */
