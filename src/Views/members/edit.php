@@ -43,40 +43,7 @@
 
         <div class="form-group">
             <label class="form-label">Dirección</label>
-            <div style="position: relative;">
-                <textarea name="address" id="address" class="form-control" rows="3"><?php echo htmlspecialchars($member->address); ?></textarea>
-                <button type="button" id="getLocationBtn" class="btn btn-sm btn-success" 
-                        style="position: absolute; bottom: 8px; right: 8px;" 
-                        onclick="getLocation()" title="Capturar ubicación GPS">
-                    <i class="fas fa-map-marker-alt"></i> GPS
-                </button>
-            </div>
-            <div class="mt-2">
-                <small class="text-muted">
-                    Puedes capturar tu ubicación actual con el botón GPS.
-                    <br><strong>Nota:</strong> La geolocalización requiere HTTPS. Si no funciona, introduce las coordenadas manualmente.
-                </small>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem;">
-                    <input type="text" id="latitudeDisplay" class="form-control form-control-sm" 
-                           placeholder="Latitud (ej: 40.416775)"
-                           value="<?php echo !empty($member->latitude) ? number_format($member->latitude, 6, '.', '') : ''; ?>"
-                           onchange="document.getElementById('latitude').value = this.value">
-                    <input type="text" id="longitudeDisplay" class="form-control form-control-sm" 
-                           placeholder="Longitud (ej: -3.703790)"
-                           value="<?php echo !empty($member->longitude) ? number_format($member->longitude, 6, '.', '') : ''; ?>"
-                           onchange="document.getElementById('longitude').value = this.value">
-                </div>
-                <?php if (!empty($member->latitude) && !empty($member->longitude)): ?>
-                    <div class="mt-2">
-                        <a href="https://www.google.com/maps?q=<?php echo $member->latitude; ?>,<?php echo $member->longitude; ?>" 
-                           target="_blank" class="btn btn-sm btn-info">
-                            <i class="fas fa-map-marked-alt"></i> Ver en Google Maps
-                        </a>
-                    </div>
-                <?php endif; ?>
-            </div>
-            <input type="hidden" name="latitude" id="latitude" value="<?php echo htmlspecialchars($member->latitude ?? ''); ?>">
-            <input type="hidden" name="longitude" id="longitude" value="<?php echo htmlspecialchars($member->longitude ?? ''); ?>">
+            <textarea name="address" id="address" class="form-control" rows="3"><?php echo htmlspecialchars($member->address); ?></textarea>
         </div>
 
         <div class="form-group">
@@ -175,39 +142,3 @@ function getLocation() {
             
             setTimeout(() => {
                 btn.innerHTML = originalHTML;
-                btn.disabled = false;
-                btn.classList.remove('btn-primary');
-                btn.classList.add('btn-success');
-            }, 3000);
-        },
-        function(error) {
-            btn.innerHTML = originalHTML;
-            btn.disabled = false;
-            
-            let errorMsg = 'Error al obtener ubicación';
-            switch(error.code) {
-                case error.PERMISSION_DENIED:
-                    errorMsg = 'Permiso de ubicación denegado. Actívalo en la configuración del navegador.';
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    errorMsg = 'Ubicación no disponible';
-                    break;
-                case error.TIMEOUT:
-                    errorMsg = 'Tiempo de espera agotado';
-                    break;
-            }
-            alert(errorMsg);
-        },
-        {
-            enableHighAccuracy: true,
-            timeout: 10000,
-            maximumAge: 0
-        }
-    );
-}
-</script>
-
-<?php 
-$content = ob_get_clean(); 
-require __DIR__ . '/../layout.php'; 
-?>

@@ -66,8 +66,6 @@ class MemberController {
             $this->member->email = $_POST['email'];
             $this->member->phone = $_POST['phone'];
             $this->member->address = $_POST['address'];
-            $this->member->latitude = $_POST['latitude'] ?? null;
-            $this->member->longitude = $_POST['longitude'] ?? null;
             $this->member->status = $_POST['status'];
             $this->member->category_id = !empty($_POST['category_id']) ? $_POST['category_id'] : null;
             $this->member->photo_url = $this->handleUpload();
@@ -433,28 +431,6 @@ class MemberController {
         exit;
     }
     
-    public function map() {
-        // Get all members with geolocation data
-        $query = "SELECT id, first_name, last_name, email, phone, address, latitude, longitude, photo_url 
-                  FROM members 
-                  WHERE latitude IS NOT NULL AND longitude IS NOT NULL
-                  ORDER BY last_name, first_name";
-        
-        $stmt = $this->db->prepare($query);
-        $stmt->execute();
-        $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        // Get all donors with geolocation data
-        $donorQuery = "SELECT id, name, contact_person, phone, email, address, latitude, longitude, logo_url 
-                       FROM donors 
-                       WHERE latitude IS NOT NULL AND longitude IS NOT NULL
-                       ORDER BY name";
-        
-        $donorStmt = $this->db->prepare($donorQuery);
-        $donorStmt->execute();
-        $donors = $donorStmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        require __DIR__ . '/../Views/members/map.php';
-    }
+    // ... Funcionalidad de mapa y GPS eliminada ...
 }
 

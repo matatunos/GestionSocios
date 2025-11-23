@@ -124,7 +124,7 @@ class Member {
 
     public function create() {
         $query = "INSERT INTO " . $this->table_name . " 
-                  SET first_name=:first_name, last_name=:last_name, dni=:dni, email=:email, phone=:phone, address=:address, latitude=:latitude, longitude=:longitude, status=:status, category_id=:category_id, photo_url=:photo_url";
+                  SET first_name=:first_name, last_name=:last_name, dni=:dni, email=:email, phone=:phone, address=:address, status=:status, category_id=:category_id, photo_url=:photo_url";
         
         $stmt = $this->conn->prepare($query);
 
@@ -134,8 +134,6 @@ class Member {
         $this->email = htmlspecialchars(strip_tags($this->email));
         $this->phone = htmlspecialchars(strip_tags($this->phone));
         $this->address = htmlspecialchars(strip_tags($this->address));
-        $this->latitude = !empty($this->latitude) ? floatval($this->latitude) : null;
-        $this->longitude = !empty($this->longitude) ? floatval($this->longitude) : null;
         $this->status = htmlspecialchars(strip_tags($this->status));
         $this->photo_url = htmlspecialchars(strip_tags($this->photo_url));
 

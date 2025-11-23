@@ -43,84 +43,10 @@
 
         <div class="form-group">
             <label class="form-label">Dirección</label>
-            <div style="position: relative;">
-                <textarea name="address" id="address" class="form-control" rows="3"></textarea>
-                <button type="button" id="getLocationBtn" class="btn btn-sm btn-success" 
-                        style="position: absolute; bottom: 8px; right: 8px;" 
-                        onclick="getLocation()" title="Capturar ubicación GPS">
-                    <i class="fas fa-map-marker-alt"></i> GPS
-                </button>
-            </div>
-            <small class="text-muted">
-                Puedes capturar tu ubicación actual con el botón GPS.
-                <br><strong>Nota:</strong> La geolocalización requiere HTTPS. Si no funciona, puedes introducir las coordenadas manualmente.
-            </small>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem;">
-                <input type="text" id="latitudeDisplay" class="form-control form-control-sm" placeholder="Latitud (ej: 40.416775)" 
-                       onchange="document.getElementById('latitude').value = this.value">
-                <input type="text" id="longitudeDisplay" class="form-control form-control-sm" placeholder="Longitud (ej: -3.703790)"
-                       onchange="document.getElementById('longitude').value = this.value">
-            </div>
-            <input type="hidden" name="latitude" id="latitude">
-            <input type="hidden" name="longitude" id="longitude">
+            <textarea name="address" id="address" class="form-control" rows="3"></textarea>
         </div>
 
-        <div class="form-group">
-            <label class="form-label">Foto de Perfil</label>
-            <input type="file" name="photo" class="form-control" accept="image/*">
-        </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
-            <div class="form-group" style="margin-bottom: 0;">
-                <label class="form-label">Categoría</label>
-                <select name="category_id" class="form-control">
-                    <option value="">Sin categoría</option>
-                    <?php if (isset($categories) && is_array($categories)): ?>
-                        <?php foreach ($categories as $category): ?>
-                            <option value="<?php echo $category['id']; ?>">
-                                <?php echo htmlspecialchars($category['name']); ?>
-                                (<?php echo number_format($category['default_fee'], 2); ?>€)
-                            </option>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </select>
-            </div>
-            <div class="form-group" style="margin-bottom: 0;">
-                <label class="form-label">Estado</label>
-                <select name="status" class="form-control">
-                    <option value="active">Activo</option>
-                    <option value="inactive">Inactivo</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="text-right mt-4">
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-save"></i> Guardar Socio
-            </button>
-        </div>
-    </form>
-</div>
-
-<script>
-function getLocation() {
-    const btn = document.getElementById('getLocationBtn');
-    const originalHTML = btn.innerHTML;
-    
-    if (!navigator.geolocation) {
-        alert('Tu navegador no soporta geolocalización');
-        return;
-    }
-    
-    // Show loading
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Capturando...';
-    btn.disabled = true;
-    
-    navigator.geolocation.getCurrentPosition(
-        function(position) {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
-            
             document.getElementById('latitude').value = lat;
             document.getElementById('longitude').value = lng;
             document.getElementById('latitudeDisplay').value = lat.toFixed(6);
