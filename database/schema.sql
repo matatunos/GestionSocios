@@ -1,3 +1,11 @@
+
+CREATE TABLE IF NOT EXISTS documents (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    file_url VARCHAR(255) NOT NULL,
+    downloads INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 -- Usuario admin por defecto (clave: admin)
 INSERT INTO users (email, name, password, role, active, status) VALUES ('admin@admin.com', 'Administrador', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 1, 'active') ON DUPLICATE KEY UPDATE id=id;
 CREATE TABLE IF NOT EXISTS users (

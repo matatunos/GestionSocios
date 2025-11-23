@@ -1,5 +1,4 @@
-<?php
-// Ensure page and action variables are available
+<?php // Ensure page and action variables are available
 $page = $page ?? $_GET['page'] ?? 'dashboard';
 $action = $action ?? $_GET['action'] ?? 'index';
 
