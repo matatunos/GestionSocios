@@ -1,3 +1,49 @@
+/* Mejoras visuales para Analytics */
+.analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.analytics-section-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--primary-600);
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+}
+
+.card {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-md);
+    transition: var(--transition);
+    border: 1px solid var(--border-light);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.card-header {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+.card-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-600);
+}
+.card-icon {
+    background: var(--primary-50);
+    color: var(--primary-700);
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    font-size: 1.5rem;
+    align-self: flex-end;
+}
 /* Analytics custom styles */
 .page-header {
     margin-bottom: 2rem;

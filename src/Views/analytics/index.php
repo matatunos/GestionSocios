@@ -2,7 +2,7 @@
 
 <div class="page-header">
     <h1><i class="fas fa-chart-line"></i> Estadísticas Avanzadas</h1>
-    <div style="display: flex; gap: 0.5rem;">
+    <div>
         <select id="yearFilter" class="form-control" style="width: 150px;" onchange="changeYears(this.value)">
             <option value="3" <?= $selectedYears == 3 ? 'selected' : '' ?>>Últimos 3 años</option>
             <option value="5" <?= $selectedYears == 5 ? 'selected' : '' ?>>Últimos 5 años</option>
@@ -11,22 +11,13 @@
     </div>
 </div>
 
-<!-- Comparative Summary -->
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+<div class="analytics-grid">
     <!-- New Members -->
     <div class="card">
-        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
-            <div>
-                <div style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 0.25rem;">Nuevos Socios</div>
-                <div style="font-size: 2rem; font-weight: 700; color: var(--primary-600);">
-                    <?= number_format($summary['members']['current']) ?>
-                </div>
-            </div>
-            <div style="background: var(--primary-50); color: var(--primary-700); padding: 0.5rem; border-radius: 0.5rem;">
-                <i class="fas fa-user-plus" style="font-size: 1.5rem;"></i>
-            </div>
-        </div>
-        <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem;">
+        <div class="card-header">Nuevos Socios</div>
+        <div class="card-value"><?= number_format($summary['members']['current']) ?></div>
+        <div class="card-icon"><i class="fas fa-user-plus"></i></div>
+        <div>
             <span class="badge <?= $summary['members']['change'] >= 0 ? 'badge-active' : 'badge-inactive' ?>">
                 <i class="fas fa-arrow-<?= $summary['members']['change'] >= 0 ? 'up' : 'down' ?>"></i>
                 <?= abs($summary['members']['change']) ?>%
@@ -37,18 +28,10 @@
 
     <!-- Income -->
     <div class="card">
-        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
-            <div>
-                <div style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 0.25rem;">Ingresos <?= date('Y') ?></div>
-                <div style="font-size: 2rem; font-weight: 700; color: var(--success-600);">
-                    <?= number_format($summary['income']['current'], 2) ?>€
-                </div>
-            </div>
-            <div style="background: var(--success-50); color: var(--success-700); padding: 0.5rem; border-radius: 0.5rem;">
-                <i class="fas fa-euro-sign" style="font-size: 1.5rem;"></i>
-            </div>
-        </div>
-        <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem;">
+        <div class="card-header">Ingresos <?= date('Y') ?></div>
+        <div class="card-value"><?= number_format($summary['income']['current'], 2) ?>€</div>
+        <div class="card-icon"><i class="fas fa-euro-sign"></i></div>
+        <div>
             <span class="badge <?= $summary['income']['change'] >= 0 ? 'badge-active' : 'badge-inactive' ?>">
                 <i class="fas fa-arrow-<?= $summary['income']['change'] >= 0 ? 'up' : 'down' ?>"></i>
                 <?= abs($summary['income']['change']) ?>%
@@ -59,18 +42,10 @@
 
     <!-- Expenses -->
     <div class="card">
-        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
-            <div>
-                <div style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 0.25rem;">Gastos <?= date('Y') ?></div>
-                <div style="font-size: 2rem; font-weight: 700; color: var(--danger-600);">
-                    <?= number_format($summary['expenses']['current'], 2) ?>€
-                </div>
-            </div>
-            <div style="background: var(--danger-50); color: var(--danger-700); padding: 0.5rem; border-radius: 0.5rem;">
-                <i class="fas fa-receipt" style="font-size: 1.5rem;"></i>
-            </div>
-        </div>
-        <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem;">
+        <div class="card-header">Gastos <?= date('Y') ?></div>
+        <div class="card-value"><?= number_format($summary['expenses']['current'], 2) ?>€</div>
+        <div class="card-icon"><i class="fas fa-receipt"></i></div>
+        <div>
             <span class="badge <?= $summary['expenses']['change'] <= 0 ? 'badge-active' : 'badge-inactive' ?>">
                 <i class="fas fa-arrow-<?= $summary['expenses']['change'] >= 0 ? 'up' : 'down' ?>"></i>
                 <?= abs($summary['expenses']['change']) ?>%
@@ -81,18 +56,10 @@
 
     <!-- Donations -->
     <div class="card">
-        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
-            <div>
-                <div style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 0.25rem;">Donaciones <?= date('Y') ?></div>
-                <div style="font-size: 2rem; font-weight: 700; color: var(--warning-600);">
-                    <?= number_format($summary['donations']['current'], 2) ?>€
-                </div>
-            </div>
-            <div style="background: var(--warning-50); color: var(--warning-700); padding: 0.5rem; border-radius: 0.5rem;">
-                <i class="fas fa-hand-holding-heart" style="font-size: 1.5rem;"></i>
-            </div>
-        </div>
-        <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem;">
+        <div class="card-header">Donaciones <?= date('Y') ?></div>
+        <div class="card-value"><?= number_format($summary['donations']['current'], 2) ?>€</div>
+        <div class="card-icon"><i class="fas fa-hand-holding-heart"></i></div>
+        <div>
             <span class="badge <?= $summary['donations']['change'] >= 0 ? 'badge-active' : 'badge-inactive' ?>">
                 <i class="fas fa-arrow-<?= $summary['donations']['change'] >= 0 ? 'up' : 'down' ?>"></i>
                 <?= abs($summary['donations']['change']) ?>%
@@ -100,6 +67,7 @@
             <span style="color: var(--text-muted);">vs. año anterior</span>
         </div>
     </div>
+<!-- Fin resumen comparativo -->
 </div>
 
 <!-- Charts Grid -->
