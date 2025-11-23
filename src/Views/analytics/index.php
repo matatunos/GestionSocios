@@ -1,3 +1,18 @@
+<?php
+$incomeByYear = $incomeByYear ?? [];
+$expensesByYear = $expensesByYear ?? [];
+$monthlyTrend = $monthlyTrend ?? [];
+$categoriesDistribution = $categoriesDistribution ?? [];
+$retentionRate = $retentionRate ?? [];
+$paymentTypes = $paymentTypes ?? [];
+$summary = $summary ?? [
+    'members' => ['current' => 0, 'change' => 0],
+    'income' => ['current' => 0, 'change' => 0],
+    'expenses' => ['current' => 0, 'change' => 0],
+    'donations' => ['current' => 0, 'change' => 0]
+];
+$prediction = $prediction ?? null;
+?>
 <?php ob_start(); ?>
 
 <div class="page-header">
