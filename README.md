@@ -92,14 +92,32 @@ php-zip (para exportaciones)
 
 ## 🛠️ Instalación
 
-### 1. Clonar el Repositorio
+### Método Rápido (Recomendado para v1.0+)
+
+#### 1. Clonar el Repositorio
 
 ```bash
 git clone https://github.com/matatunos/GestionSocios.git
 cd GestionSocios
 ```
 
-### 2. Configurar Servidor Web Apache
+#### 2. Instalar Base de Datos
+
+```bash
+cd database
+chmod +x install_v1.0.sh
+./install_v1.0.sh
+```
+
+El script te pedirá:
+- Nombre de la base de datos (default: `asociacion_db`)
+- Usuario MySQL (default: `root`)
+- Contraseña MySQL
+- Host MySQL (default: `localhost`)
+
+**¡Importante!** Este script instala TODO el schema v1.0 de una vez. **NO necesitas ejecutar migraciones adicionales**.
+
+#### 3. Configurar Servidor Web Apache
 
 #### En Linux:
 ```bash
@@ -170,16 +188,44 @@ FLUSH PRIVILEGES;
 EXIT;
 ```
 
-### 4. Instalación Automática Web
+### 4. Configurar Aplicación
 
-1. Abrir navegador y acceder a `http://gestion-socios.local` (o tu URL configurada)
-2. El sistema detectará que no está instalado y redirigirá al instalador
-3. Introducir datos de conexión:
-   - **Host**: `localhost` (o IP del servidor MySQL)
-   - **Usuario**: `gestion_user`
-   - **Contraseña**: (la configurada anteriormente)
-   - **Base de Datos**: `asociacion_db`
-4. El instalador creará todas las tablas y datos iniciales
+Edita `src/Config/config.php` con tus credenciales de base de datos:
+
+```php
+<?php
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'asociacion_db');
+define('DB_USER', 'gestion_user');
+define('DB_PASS', 'tu_password_segura');
+?>
+```
+
+### 5. Acceder al Sistema
+
+1. Abrir navegador: `http://gestion-socios.local`
+2. **Usuario**: `admin`
+3. **Contraseña**: `admin123`
+
+**⚠️ IMPORTANTE**: Cambia la contraseña por defecto inmediatamente desde **Configuración → Seguridad**.
+
+---
+
+### 📦 Instalación Antigua (Solo para versiones < 1.0)
+
+<details>
+<summary>Ver instrucciones de migración desde versiones anteriores</summary>
+
+Si vienes de una instalación anterior a v1.0, **NO uses `schema_v1.0.sql`**. En su lugar:
+
+```bash
+cd database
+./apply_all_migrations.sh
+```
+
+Este script aplicará las migraciones incrementales una por una.
+
+</details>
 
 ### 5. Aplicar Migraciones (Opcional - si ya existe BD)
 
