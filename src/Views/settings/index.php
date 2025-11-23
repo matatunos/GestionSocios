@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-<h2>Configuración</h2>
-<ul>
-    <li><a href="admin_users.php">Gestionar administradores</a></li>
-    <!-- Otros enlaces de configuración aquí -->
-</ul>
-=======
 <?php ob_start(); ?>
 
 <style>
@@ -129,7 +122,7 @@
         <div class="tab-content-wrapper">
 
             <!-- Organization Tab -->
-            <div id="organization" class="tab-content" style="display: <?= ($_GET['tab'] ?? 'organization') === 'organization' ? 'block' : 'none' ?>;">
+            <div id="organization" class="tab-content" style="display: none;">
                 <h2 class="section-title">Configuración de la Organización</h2>
                 
                 <?php if (isset($_SESSION['success'])): ?>
@@ -621,31 +614,45 @@ function openTab(evt, tabName) {
     }
     document.getElementById(tabName).style.display = "block";
     evt.currentTarget.className += " active";
-}
-
-// Dark Mode Logic
-function toggleDarkMode() {
-    const isChecked = document.getElementById('darkModeToggle').checked;
-    if (isChecked) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        localStorage.setItem('theme', 'dark');
-    } else {
-        document.documentElement.removeAttribute('data-theme');
-        localStorage.setItem('theme', 'light');
+    // Update URL parameter for tab
+    if (history.pushState) {
+        var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?page=settings&tab=' + tabName;
+        history.pushState({path:newurl},'',newurl);
     }
 }
 
-// Set initial state
-document.addEventListener('DOMContentLoaded', function() {
-    const currentTheme = localStorage.getItem('theme');
-    if (currentTheme === 'dark') {
-        document.getElementById('darkModeToggle').checked = true;
-    }
-});
+// Show correct tab on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        var tab = (new URLSearchParams(window.location.search)).get('tab') || 'organization';
+        var tabcontent = document.getElementsByClassName("tab-content");
+        for (var i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        var activeTab = document.getElementById(tab);
+        if (activeTab) {
+            activeTab.style.display = "block";
+            var tablinks = document.getElementsByClassName("tab-btn");
+            for (var i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            var btn = Array.from(tablinks).find(b => b.textContent.toLowerCase().includes(tab.replace('_', '')));
+            if (btn) btn.className += " active";
+        }
+        // Dark mode logic
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme === 'dark') {
+            document.getElementById('darkModeToggle').checked = true;
+        }
+    });
 </script>
+<noscript>
+<style>
+    .tab-content { display: block !important; }
+</style>
+<div class="alert alert-warning">La navegación por pestañas requiere JavaScript. Todas las secciones se muestran abajo.</div>
+</noscript>
 
 <?php 
 $content = ob_get_clean(); 
 require __DIR__ . '/../layout.php'; 
 ?>
->>>>>>> dcf3087b678504451cdcb8fbac6d2adc0d452109
