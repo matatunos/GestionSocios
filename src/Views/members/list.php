@@ -304,12 +304,6 @@
 </div>
 <?php endif; ?>
 
-<style>
-.dropdown-item:hover {
-    background: var(--primary-50) !important;
-    color: var(--primary-700) !important;
-}
-</style>
 
 <script>
 function toggleExportDropdown() {

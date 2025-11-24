@@ -1,3 +1,129 @@
+/* Filtros y formularios */
+.card-filter {
+    margin-bottom: 1.5rem;
+}
+.filter-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    align-items: end;
+}
+.form-group {
+    margin: 0;
+}
+.form-label {
+    font-size: 0.875rem;
+}
+.filter-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: end;
+}
+.filter-btn {
+    flex: 1;
+}
+
+/* Resumen de resultados */
+.results-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: var(--bg-body);
+    border-radius: var(--radius-md);
+}
+.results-summary-text {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+.results-summary-filter {
+    color: var(--primary-600);
+}
+
+/* Dropdown exportación */
+.export-dropdown {
+    display: inline-block;
+    position: relative;
+    margin-right: 0.5rem;
+}
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    background: white;
+    border: 1px solid var(--border-light);
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    z-index: 1000;
+    min-width: 200px;
+    margin-top: 0.25rem;
+}
+.dropdown-item {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: var(--text-base);
+    text-decoration: none;
+    transition: background 0.2s;
+}
+.dropdown-item:hover {
+    background: var(--primary-50) !important;
+    color: var(--primary-700) !important;
+}
+
+/* Tarjeta tabla */
+.card-table {
+    padding: 0;
+    overflow: hidden;
+}
+.table-container {
+    border: none;
+    border-radius: 0;
+}
+
+/* Celda principal socio */
+.member-main {
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.member-photo-fallback {
+    width: 40px;
+    height: 40px;
+    background: var(--primary-100);
+    color: var(--primary-700);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.member-id {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+.member-contact {
+    font-size: 0.875rem;
+}
+.member-contact-phone {
+    margin-top: 0.25rem;
+}
+.member-contact-icon {
+    color: var(--text-light);
+    width: 20px;
+}
+.member-category-none {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+.no-members {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-muted);
+}
+.member-cert-menu {
+    /* hereda de .dropdown-menu */
+}
 /* Estilos unificados para listados de socios y donantes */
 .table {
     width: 100%;
