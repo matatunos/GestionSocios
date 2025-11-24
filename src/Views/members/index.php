@@ -52,15 +52,19 @@ $events = $eventModel->readActive()->fetchAll(PDO::FETCH_ASSOC);
             <?php endif; ?>
         </td>
         <td style="text-align: right;">
-            <a href="index.php?page=members&action=logo&id=<?= $member['id'] ?>" class="btn btn-sm btn-warning" title="Ver logo">
-                <i class="fas fa-image"></i>
-            </a>
+            <?php if (!empty($member['logo_url'])): ?>
+                <a href="/<?= htmlspecialchars($member['logo_url']) ?>" target="_blank" class="btn btn-sm btn-warning" title="Ver Logo">
+                    <i class="fas fa-image"></i>
+                </a>
+            <?php endif; ?>
             <a href="index.php?page=members&action=edit&id=<?= $member['id'] ?>" class="btn btn-sm btn-warning" title="Editar">
                 <i class="fas fa-edit"></i>
             </a>
-            <a href="index.php?page=members&action=geolocate&id=<?= $member['id'] ?>" class="btn btn-sm btn-warning" title="Geolocalizar">
-                <i class="fas fa-map-marker-alt"></i>
-            </a>
+            <?php if (!empty($member['latitude']) && !empty($member['longitude'])): ?>
+                <a href="index.php?page=map#member-<?= $member['id'] ?>" class="btn btn-sm btn-warning" title="Ver en mapa">
+                    <i class="fas fa-map-marker-alt"></i>
+                </a>
+            <?php endif; ?>
             <button type="button" class="btn btn-sm btn-success" disabled title="Estado">
                 <i class="fas fa-check-circle"></i> AL DÍA 2025
             </button>
