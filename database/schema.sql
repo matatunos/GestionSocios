@@ -1,3 +1,11 @@
+-- Tabla expense_categories
+CREATE TABLE IF NOT EXISTS expense_categories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    color VARCHAR(30),
+    is_active TINYINT(1) DEFAULT 1
+);
 -- Tabla expenses
 CREATE TABLE IF NOT EXISTS expenses (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -13,14 +21,6 @@ CREATE TABLE IF NOT EXISTS expenses (
     created_by INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (category_id) REFERENCES expense_categories(id) ON DELETE SET NULL
-);
--- Tabla expense_categories
-CREATE TABLE IF NOT EXISTS expense_categories (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    description TEXT,
-    color VARCHAR(30),
-    is_active TINYINT(1) DEFAULT 1
 );
 -- Tabla roles
 CREATE TABLE IF NOT EXISTS roles (
