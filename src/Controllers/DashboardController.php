@@ -159,6 +159,8 @@ class DashboardController {
         $categoryDistStmt->execute();
         $categoryDistribution = $categoryDistStmt->fetchAll(PDO::FETCH_ASSOC);
 
+        global $db;
+        $db = $this->db;
         require __DIR__ . '/../Views/dashboard.php';
     }
 
