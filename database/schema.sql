@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS organization_settings (
     id INT AUTO_INCREMENT PRIMARY KEY,
     category VARCHAR(100) NOT NULL,
+    description TEXT,
     setting_key VARCHAR(100) NOT NULL,
     setting_value TEXT,
     setting_type VARCHAR(50) DEFAULT NULL,
@@ -22,6 +23,7 @@ CREATE TABLE IF NOT EXISTS tasks (
     description TEXT,
     assigned_to INT DEFAULT NULL,
     category_id INT DEFAULT NULL,
+    created_by INT DEFAULT NULL,
     status ENUM('pending','in_progress','completed') DEFAULT 'pending',
     due_date DATE DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
