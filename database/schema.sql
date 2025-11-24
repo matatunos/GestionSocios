@@ -1,3 +1,17 @@
+-- Tabla para control de asistencia a eventos
+CREATE TABLE IF NOT EXISTS event_attendance (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    event_id INT NOT NULL,
+    member_id INT DEFAULT NULL,
+    donor_id INT DEFAULT NULL,
+    attended TINYINT(1) DEFAULT 0,
+    attended_at DATETIME DEFAULT NULL,
+    registered_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    notes TEXT,
+    FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
+    FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE SET NULL,
+    FOREIGN KEY (donor_id) REFERENCES donors(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 -- Historial de imágenes de donantes
 CREATE TABLE IF NOT EXISTS donor_image_history (
     id INT AUTO_INCREMENT PRIMARY KEY,
