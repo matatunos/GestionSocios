@@ -268,4 +268,13 @@ class Member {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row['total'] ?? 0;
     }
+
+    public function readActive() {
+        $query = "SELECT * FROM " . $this->table_name . " 
+                  WHERE status = 'active' 
+                  ORDER BY last_name ASC, first_name ASC";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
