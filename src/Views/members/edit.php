@@ -13,7 +13,12 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label class="form-label">Fecha de alta</label>
-                    <input type="text" class="form-control" value="<?php echo date('d/m/Y', strtotime($member->created_at)); ?>" readonly>
+                    <div style="position: relative; display: flex; align-items: center;">
+                        <input type="date" name="created_at" id="created_at" class="form-control" value="<?php echo date('Y-m-d', strtotime($member->created_at)); ?>">
+                        <button type="button" onclick="document.getElementById('created_at').focus();" style="background: none; border: none; position: absolute; right: 10px; cursor: pointer;">
+                            <i class="fas fa-calendar-alt" style="font-size: 1.2rem; color: #555;"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
