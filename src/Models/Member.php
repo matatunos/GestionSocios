@@ -77,13 +77,13 @@ class Member {
                 $query .= " AND EXISTS (
                     SELECT 1 FROM payments p 
                     WHERE p.member_id = m.id 
-                    AND p.year = $currentYear
+                    AND p.fee_year = $currentYear
                 )";
             } elseif ($filters['payment_status'] === 'delinquent') {
                 $query .= " AND NOT EXISTS (
                     SELECT 1 FROM payments p 
                     WHERE p.member_id = m.id 
-                    AND p.year = $currentYear
+                    AND p.fee_year = $currentYear
                 ) AND m.status = 'active'";
             }
         }
