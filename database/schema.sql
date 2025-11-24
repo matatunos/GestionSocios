@@ -13,10 +13,12 @@ CREATE TABLE IF NOT EXISTS members (
     email VARCHAR(150),
     phone VARCHAR(20),
     address TEXT,
+    category_id INT DEFAULT NULL,
     status ENUM('active', 'inactive') DEFAULT 'active',
     photo_url VARCHAR(255) DEFAULT NULL,
     deactivated_at DATETIME DEFAULT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (category_id) REFERENCES member_categories(id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS notifications (
