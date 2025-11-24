@@ -1173,34 +1173,7 @@
    ============================================ */
 
 /* Tablet (≤1024px) */
-@media (max-width: 1024px) {
-    .sidebar {
-        width: 70px;
-    }
 
-    .sidebar span,
-    .sidebar-footer .user-info,
-    .sidebar-footer .toggle-text,
-    .search-shortcut,
-    .global-search {
-        display: none !important;
-    }
-
-    .nav-link {
-        justify-content: center;
-        padding: 0.875rem;
-    }
-
-    .nav-link i {
-        margin: 0;
-        font-size: 1.25rem;
-    }
-
-    .main-content {
-        margin-left: 70px;
-        padding: 1.5rem;
-    }
-}
 
 /* Mobile (≤768px) */
 @media (max-width: 768px) {
