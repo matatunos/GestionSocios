@@ -5,7 +5,8 @@ CREATE TABLE IF NOT EXISTS expense_categories (
     description TEXT,
     color VARCHAR(30),
     is_active TINYINT(1) DEFAULT 1
-);
+)
+ENGINE=InnoDB;
 -- Tabla expenses
 CREATE TABLE IF NOT EXISTS expenses (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -21,7 +22,8 @@ CREATE TABLE IF NOT EXISTS expenses (
     created_by INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (category_id) REFERENCES expense_categories(id) ON DELETE SET NULL
-);
+)
+ENGINE=InnoDB;
 -- Tabla roles
 CREATE TABLE IF NOT EXISTS roles (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -30,8 +32,10 @@ CREATE TABLE IF NOT EXISTS roles (
     description TEXT,
     is_active TINYINT(1) DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_documents_uploaded_by FOREIGN KEY (uploaded_by) REFERENCES users(id) ON DELETE SET NULL
+)
+ENGINE=InnoDB;
 -- Tabla polls
 CREATE TABLE IF NOT EXISTS polls (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -45,14 +49,16 @@ CREATE TABLE IF NOT EXISTS polls (
     is_anonymous TINYINT(1) DEFAULT 1,
     results_visible TINYINT(1) DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+)
+ENGINE=InnoDB;
 CREATE TABLE IF NOT EXISTS member_categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     description TEXT,
     color VARCHAR(30) DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+)
+ENGINE=InnoDB;
 -- ...existing code...
 CREATE TABLE IF NOT EXISTS members (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -69,8 +75,10 @@ CREATE TABLE IF NOT EXISTS members (
     photo_url VARCHAR(255) DEFAULT NULL,
     deactivated_at DATETIME DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (category_id) REFERENCES member_categories(id) ON DELETE SET NULL
-);
+    FOREIGN KEY (category_id) REFERENCES member_categories(id) ON DELETE SET NULL,
+    UNIQUE KEY unique_email (email)
+)
+ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS notifications (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -79,7 +87,8 @@ CREATE TABLE IF NOT EXISTS notifications (
     is_read TINYINT(1) DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE
-);
+)
+ENGINE=InnoDB;
 -- payments table moved to after members and events
 
 CREATE TABLE IF NOT EXISTS documents (
@@ -96,7 +105,8 @@ CREATE TABLE IF NOT EXISTS documents (
     downloads INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+)
+ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -106,7 +116,8 @@ CREATE TABLE IF NOT EXISTS users (
     role ENUM('admin', 'member') DEFAULT 'member',
     active TINYINT(1) DEFAULT 1,
     status ENUM('active', 'inactive') DEFAULT 'active'
-);
+)
+ENGINE=InnoDB;
 -- Usuario admin por defecto (clave: admin)
 INSERT INTO users (email, name, password, role, active, status) VALUES ('admin@admin.com', 'Administrador', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 1, 'active') ON DUPLICATE KEY UPDATE id=id;
 
@@ -131,7 +142,7 @@ CREATE TABLE IF NOT EXISTS events (
     max_attendees INT DEFAULT NULL,
     requires_registration TINYINT(1) DEFAULT 0,
     registration_deadline DATE DEFAULT NULL,
-    is_active BOOLEAN DEFAULT TRUE,
+    is_active TINYINT(1) DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -179,24 +190,12 @@ CREATE TABLE IF NOT EXISTS payments (
     CONSTRAINT fk_payments_book_ad FOREIGN KEY (book_ad_id) REFERENCES book_ads(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS donors (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(150) NOT NULL,
-    contact_person VARCHAR(100),
-    phone VARCHAR(20),
-    email VARCHAR(150),
-    address TEXT,
-    latitude DECIMAL(9,6) DEFAULT NULL,
-    longitude DECIMAL(9,6) DEFAULT NULL,
-    logo_url VARCHAR(255) DEFAULT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
 
 CREATE TABLE IF NOT EXISTS donations (
     id INT AUTO_INCREMENT PRIMARY KEY,
     donor_id INT NOT NULL,
     amount DECIMAL(10,2) NOT NULL,
-    type ENUM('media','full','cover') NOT NULL,
+    type ENUM('media','full','cover','back_cover') NOT NULL,
     year YEAR NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (donor_id) REFERENCES donors(id) ON DELETE CASCADE
