@@ -1,20 +1,21 @@
 <?php
 
 class ReportController {
-        public function executiveReport() {
-            $this->checkAdmin();
-            require_once __DIR__ . '/../Models/Event.php';
-            require_once __DIR__ . '/../Models/EventAttendance.php';
-            $eventModel = new Event($this->db);
-            $stmt = $eventModel->readAll();
-            $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            $attendanceModel = new EventAttendance($this->db);
-            foreach ($events as &$event) {
-                $event['stats'] = $attendanceModel->getStatsByEvent($event['id']);
-            }
-            $db = $this->db;
-            include __DIR__ . '/../Views/reports/events_attendance.php';
+    public function executiveReport() {
+        $this->checkAdmin();
+        require_once __DIR__ . '/../Models/Event.php';
+        require_once __DIR__ . '/../Models/EventAttendance.php';
+        $eventModel = new Event($this->db);
+        $stmt = $eventModel->readAll();
+        $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $attendanceModel = new EventAttendance($this->db);
+        foreach ($events as &$event) {
+            $event['stats'] = $attendanceModel->getStatsByEvent($event['id']);
         }
+        // Solo HTML, sin cabeceras ni salida previa
+        $db = $this->db;
+        include __DIR__ . '/../Views/reports/events_attendance.php';
+    }
     private $db;
 
     public function __construct() {
