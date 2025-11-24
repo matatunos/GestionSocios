@@ -58,6 +58,7 @@
             <label class="form-label" style="font-size: 0.875rem;">Categoría</label>
             <select name="category_id" class="form-control">
                 <option value="">Todas</option>
+                <option value="0" <?php echo ($_GET['category_id'] ?? '') == '0' ? 'selected' : ''; ?>>Sin categoría</option>
                 <?php foreach ($categories as $cat): ?>
                     <option value="<?php echo $cat['id']; ?>" <?php echo ($_GET['category_id'] ?? '') == $cat['id'] ? 'selected' : ''; ?>>
                         <?php echo htmlspecialchars($cat['name']); ?>
