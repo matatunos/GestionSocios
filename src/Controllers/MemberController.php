@@ -30,6 +30,11 @@ class MemberController {
             'year_to' => $_GET['year_to'] ?? ''
         ];
         
+        // Pagination
+        $limit = 20;
+        $page = isset($_GET['p']) ? max(1, intval($_GET['p'])) : 1;
+        $offset = ($page - 1) * $limit;
+        
         // Legacy filter support
         $legacyFilter = $_GET['filter'] ?? 'all';
         if ($legacyFilter === 'current') {
@@ -38,7 +43,9 @@ class MemberController {
             $filters['payment_status'] = 'delinquent';
         }
         
-        $members = $this->member->readFiltered($filters);
+        $members = $this->member->readFiltered($filters, $limit, $offset);
+        $totalRecords = $this->member->countFiltered($filters);
+        $totalPages = ceil($totalRecords / $limit);
         
         // Get categories for filter dropdown
         $categoryModel = new MemberCategory($this->db);

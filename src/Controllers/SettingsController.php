@@ -52,6 +52,12 @@ class SettingsController {
         $feeModel = new Fee($this->db);
         $feesStmt = $feeModel->readAll();
         $fees = $feesStmt ? $feesStmt->fetchAll(PDO::FETCH_ASSOC) : [];
+
+        // Fetch Member Categories
+        require_once __DIR__ . '/../Models/MemberCategory.php';
+        $categoryModel = new MemberCategory($this->db);
+        $categories = $categoryModel->readAll();
+        $statistics = MemberCategory::getStatistics($this->db);
         // Ensure variables are always set
         if (!isset($adPrices) || !is_array($adPrices)) $adPrices = [];
         if (!isset($nextYearPrices) || !is_array($nextYearPrices)) $nextYearPrices = [];

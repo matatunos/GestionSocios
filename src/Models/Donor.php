@@ -40,11 +40,30 @@ class Donor {
         return false;
     }
 
-    public function readAll() {
+    public function readAll($limit = null, $offset = null) {
         $query = "SELECT * FROM " . $this->table_name . " ORDER BY name ASC";
+        
+        if ($limit !== null && $offset !== null) {
+            $query .= " LIMIT :offset, :limit";
+        }
+        
         $stmt = $this->conn->prepare($query);
+        
+        if ($limit !== null && $offset !== null) {
+            $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+            $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        }
+        
         $stmt->execute();
         return $stmt;
+    }
+
+    public function countAll() {
+        $query = "SELECT COUNT(*) as total FROM " . $this->table_name;
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row['total'];
     }
 
     public function readOne() {

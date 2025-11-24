@@ -30,7 +30,7 @@ class Member {
         return $stmt;
     }
     
-    public function readFiltered($filters = []) {
+    public function readFiltered($filters = [], $limit = null, $offset = null) {
         $query = "SELECT m.*, mc.name as category_name, mc.color as category_color
                   FROM " . $this->table_name . " m
                   LEFT JOIN member_categories mc ON m.category_id = mc.id
@@ -90,6 +90,83 @@ class Member {
         
         $query .= " ORDER BY m.last_name ASC, m.first_name ASC";
         
+        if ($limit !== null && $offset !== null) {
+            $query .= " LIMIT :offset, :limit";
+        }
+        
+        $stmt = $this->conn->prepare($query);
+        
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        
+        if ($limit !== null && $offset !== null) {
+            $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+            $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        }
+        
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function countFiltered($filters = []) {
+        $query = "SELECT COUNT(DISTINCT m.id) as total
+                  FROM " . $this->table_name . " m
+                  LEFT JOIN member_categories mc ON m.category_id = mc.id
+                  WHERE 1=1";
+        
+        $params = [];
+        
+        // Filter by status (active/inactive)
+        if (!empty($filters['status'])) {
+            $query .= " AND m.status = :status";
+            $params[':status'] = $filters['status'];
+        }
+        
+        // Filter by category
+        if (!empty($filters['category_id'])) {
+            $query .= " AND m.category_id = :category_id";
+            $params[':category_id'] = $filters['category_id'];
+        }
+        
+        // Search by name, email, phone
+        if (!empty($filters['search'])) {
+            $query .= " AND (CONCAT(m.first_name, ' ', m.last_name) LIKE :search 
+                          OR m.email LIKE :search 
+                          OR m.phone LIKE :search)";
+            $params[':search'] = '%' . $filters['search'] . '%';
+        }
+        
+        // Filter by registration year
+        if (!empty($filters['year_from'])) {
+            $query .= " AND YEAR(m.created_at) >= :year_from";
+            $params[':year_from'] = $filters['year_from'];
+        }
+        
+        if (!empty($filters['year_to'])) {
+            $query .= " AND YEAR(m.created_at) <= :year_to";
+            $params[':year_to'] = $filters['year_to'];
+        }
+        
+        // Filter by payment status
+        if (!empty($filters['payment_status'])) {
+            $currentYear = date('Y');
+            
+            if ($filters['payment_status'] === 'current') {
+                $query .= " AND EXISTS (
+                    SELECT 1 FROM payments p 
+                    WHERE p.member_id = m.id 
+                    AND p.fee_year = $currentYear
+                )";
+            } elseif ($filters['payment_status'] === 'delinquent') {
+                $query .= " AND NOT EXISTS (
+                    SELECT 1 FROM payments p 
+                    WHERE p.member_id = m.id 
+                    AND p.fee_year = $currentYear
+                ) AND m.status = 'active'";
+            }
+        }
+        
         $stmt = $this->conn->prepare($query);
         
         foreach ($params as $key => $value) {
@@ -97,7 +174,8 @@ class Member {
         }
         
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row['total'];
     }
 
     public function readOne() {

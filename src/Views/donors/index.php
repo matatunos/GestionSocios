@@ -84,7 +84,53 @@
             </tbody>
         </table>
     </div>
+    </div>
 </div>
+
+<!-- Pagination -->
+<?php if (isset($totalPages) && $totalPages > 1): ?>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+    <div style="font-size: 0.875rem; color: var(--text-muted);">
+        Mostrando <?php echo ($offset + 1); ?> - <?php echo min($offset + $limit, $totalRecords); ?> de <?php echo $totalRecords; ?> registros
+    </div>
+    <div style="display: flex; gap: 0.5rem;">
+        <?php if ($page > 1): ?>
+            <a href="index.php?<?php echo http_build_query(array_merge($_GET, ['p' => $page - 1])); ?>" class="btn btn-sm btn-secondary">
+                <i class="fas fa-chevron-left"></i> Anterior
+            </a>
+        <?php endif; ?>
+        
+        <div style="display: flex; gap: 0.25rem;">
+            <?php 
+            $startPage = max(1, $page - 2);
+            $endPage = min($totalPages, $page + 2);
+            
+            if ($startPage > 1) {
+                echo '<span style="padding: 0.25rem 0.5rem;">...</span>';
+            }
+            
+            for ($i = $startPage; $i <= $endPage; $i++): ?>
+                <a href="index.php?<?php echo http_build_query(array_merge($_GET, ['p' => $i])); ?>" 
+                   class="btn btn-sm <?php echo $i === $page ? 'btn-primary' : 'btn-secondary'; ?>"
+                   style="<?php echo $i === $page ? '' : 'background: white;'; ?>">
+                    <?php echo $i; ?>
+                </a>
+            <?php endfor; 
+            
+            if ($endPage < $totalPages) {
+                echo '<span style="padding: 0.25rem 0.5rem;">...</span>';
+            }
+            ?>
+        </div>
+
+        <?php if ($page < $totalPages): ?>
+            <a href="index.php?<?php echo http_build_query(array_merge($_GET, ['p' => $page + 1])); ?>" class="btn btn-sm btn-secondary">
+                Siguiente <i class="fas fa-chevron-right"></i>
+            </a>
+        <?php endif; ?>
+    </div>
+</div>
+<?php endif; ?>
 
 <style>
 .dropdown-item:hover {

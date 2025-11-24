@@ -20,8 +20,16 @@ class DonorController {
     }
 
     public function index() {
-        $stmt = $this->donor->readAll();
+        // Pagination
+        $limit = 20;
+        $page = isset($_GET['p']) ? max(1, intval($_GET['p'])) : 1;
+        $offset = ($page - 1) * $limit;
+        
+        $stmt = $this->donor->readAll($limit, $offset);
         $donors = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $totalRecords = $this->donor->countAll();
+        $totalPages = ceil($totalRecords / $limit);
+        
         require __DIR__ . '/../Views/donors/index.php';
     }
 
