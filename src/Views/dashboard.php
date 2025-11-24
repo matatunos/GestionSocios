@@ -237,7 +237,13 @@
 </div>
 
 <!-- Event Payments Widget -->
-<?php include __DIR__ . '/dashboard/widgets/events_payments.php'; ?>
+<div class="card" style="margin-bottom:2rem;">
+    <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;">
+        <i class="fas fa-calendar-alt" style="margin-right: 0.5rem; color: var(--primary-600);"></i>
+        Pagos de Participantes en Eventos
+    </h2>
+    <?php include __DIR__ . '/dashboard/widgets/events_payments.php'; ?>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
