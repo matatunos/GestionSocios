@@ -81,10 +81,13 @@ INSERT INTO members (first_name, last_name, dni, email, phone, address, category
 ('Ana', 'García', '87654321B', 'ana.garcia@example.com', '600654321', 'Calle Menor 2', 2, 'active', '2023-03-10'),
 ('Luis', 'Martín', '11223344C', 'luis.martin@example.com', '600987654', 'Avenida Central 3', 1, 'inactive', '2021-07-20');
 
--- Gastos
 INSERT INTO expenses (category_id, description, amount, expense_date, payment_method, invoice_number, provider, created_by) VALUES
 (1, 'Compra de material oficina', 120.50, '2023-02-10', 'transferencia', 'FAC001', 'Papelería S.A.', 1),
 (2, 'Pago alquiler local', 800.00, '2023-02-01', 'domiciliación', 'FAC002', 'Inmobiliaria SL', 2);
+-- Categorías de gastos
+INSERT INTO expense_categories (conversation_id, name, description, color, is_active) VALUES
+(1, 'Material Oficina', 'Gastos de material de oficina', '#e67e22', 1),
+(2, 'Alquiler', 'Pago de alquiler del local', '#9b59b6', 1);
 
 -- Tareas
 INSERT INTO tasks (title, description, assigned_to, status, due_date, category_id, created_by, priority) VALUES
