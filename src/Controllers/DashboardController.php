@@ -18,8 +18,31 @@ class DashboardController {
 
         $yearlyIncome = $payment->getYearlyIncome();
         $incomeByType = $payment->getIncomeByType();
-        $pendingPayments = $payment->getPendingCount();
         $activeMembers = $member->getActiveCount();
+
+        // Cobros pendientes: active members without payment for current year + pending book ad payments
+        $currentYear = date('Y');
+        // Count active members without payment for current year
+        $stmt = $this->db->prepare(
+            "SELECT COUNT(*) as total FROM members m
+             WHERE m.status = 'active'
+             AND NOT EXISTS (
+                 SELECT 1 FROM payments p 
+                 WHERE p.member_id = m.id AND p.fee_year = :year AND p.status = 'paid'
+             )"
+        );
+        $stmt->bindParam(':year', $currentYear);
+        $stmt->execute();
+        $membersPending = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+
+        // Count pending book ad payments (all years)
+        $stmt = $this->db->prepare(
+            "SELECT COUNT(*) as total FROM payments WHERE payment_type = 'book_ad' AND status = 'pending'"
+        );
+        $stmt->execute();
+        $bookAdsPending = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+
+        $pendingCobros = $membersPending + $bookAdsPending;
 
         // 1. Recent Payments
         $paymentsStmt = $this->db->prepare(

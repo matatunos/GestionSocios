@@ -37,9 +37,9 @@
     <div class="card">
         <div class="flex items-center justify-between">
             <div>
-                <h3 style="margin: 0; font-size: 0.875rem; color: var(--text-muted); text-transform: uppercase;">Pagos Pendientes</h3>
+                <h3 style="margin: 0; font-size: 0.875rem; color: var(--text-muted); text-transform: uppercase;">Cobros Pendientes</h3>
                 <p style="font-size: 2rem; font-weight: 700; margin: 0.5rem 0 0; color: var(--danger-600);">
-                    <?php echo $pendingPayments; ?>
+                    <?php echo isset($pendingCobros) ? $pendingCobros : 0; ?>
                 </p>
             </div>
             <div style="background: #fee2e2; padding: 1rem; border-radius: 50%;">
