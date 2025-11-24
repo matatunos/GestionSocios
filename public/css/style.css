@@ -122,8 +122,9 @@
 
 .sidebar {
     width: 280px;
-    background: white;
+    background: #fff !important;
     border-right: 1px solid var(--border-light);
+    border: 2px solid red !important;
     display: flex;
     flex-direction: column;
     transition: width 0.3s ease, transform 0.3s ease;
