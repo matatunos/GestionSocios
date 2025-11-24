@@ -108,6 +108,40 @@
                                onchange="document.getElementById('longitude').value = this.value">
                     </div>
                 </div>
+                <div class="mt-2">
+                    <button type="button" class="btn btn-sm btn-secondary" id="reverseGeoBtn" style="margin-top: 4px;">
+                        <i class="fas fa-search-location"></i> Obtener dirección por coordenadas
+                    </button>
+                </div>
+                <script>
+                document.getElementById('reverseGeoBtn').addEventListener('click', function() {
+                    var lat = document.getElementById('latitudeDisplay').value;
+                    var lng = document.getElementById('longitudeDisplay').value;
+                    if (!lat || !lng) {
+                        alert('Introduce latitud y longitud válidas.');
+                        return;
+                    }
+                    fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + encodeURIComponent(lat) + '&lon=' + encodeURIComponent(lng))
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data && data.address) {
+                                var address = '';
+                                if (data.address.road) address += data.address.road + ', ';
+                                if (data.address.house_number) address += data.address.house_number + ', ';
+                                if (data.address.postcode) address += data.address.postcode + ', ';
+                                if (data.address.city) address += data.address.city + ', ';
+                                if (data.address.town) address += data.address.town + ', ';
+                                if (data.address.village) address += data.address.village + ', ';
+                                if (data.address.state) address += data.address.state + ', ';
+                                if (data.address.country) address += data.address.country;
+                                document.getElementById('address').value = address.trim().replace(/, $/, '');
+                            } else {
+                                alert('No se pudo obtener la dirección.');
+                            }
+                        })
+                        .catch(() => alert('Error al consultar el servicio de geolocalización.'));
+                });
+                </script>
                 <?php if (!empty($member->latitude) && !empty($member->longitude)): ?>
                     <div class="mt-2">
                         <a href="https://www.google.com/maps?q=<?php echo $member->latitude; ?>,<?php echo $member->longitude; ?>" 
