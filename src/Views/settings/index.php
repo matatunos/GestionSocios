@@ -158,8 +158,6 @@
                 <label for="tab-database" class="tab-btn"><i class="fas fa-database"></i> Base de Datos</label>
                 <label for="tab-security" class="tab-btn"><i class="fas fa-shield-alt"></i> Seguridad</label>
             </div>
-            <div class="tab-content-wrapper">
-
             <!-- Organization Tab -->
             <div id="organization" class="tab-content">
                 <h2 class="section-title">Configuración de la Organización</h2>
