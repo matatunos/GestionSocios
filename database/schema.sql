@@ -113,12 +113,12 @@ CREATE TABLE IF NOT EXISTS documents (
     file_size INT DEFAULT 0,
     file_type VARCHAR(50),
     category VARCHAR(50),
-    uploaded_by INT DEFAULT NULL,
+    uploaded_user_id INT DEFAULT NULL,
     is_public TINYINT(1) DEFAULT 1,
     downloads INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT fk_documents_uploaded_by FOREIGN KEY (uploaded_by) REFERENCES users(id) ON DELETE SET NULL
+    CONSTRAINT fk_documents_uploaded_user FOREIGN KEY (uploaded_user_id) REFERENCES users(id) ON DELETE SET NULL
 )
 ENGINE=InnoDB;
 
