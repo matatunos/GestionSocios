@@ -1,3 +1,4 @@
+-- payments table moved to after members and events
 CREATE TABLE IF NOT EXISTS payments (
     id INT AUTO_INCREMENT PRIMARY KEY,
     member_id INT NOT NULL,
