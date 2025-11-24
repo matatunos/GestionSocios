@@ -619,26 +619,18 @@ input:checked + .slider:before {
 </style>
 
 <script>
-function openTab(evt, tabName) {
-    var tabcontent = document.getElementsByClassName("tab-content");
-    var tablinks = document.getElementsByClassName("tab-btn");
-    for (var i = 0; i < tabcontent.length; i++) {
-        tabcontent[i].classList.remove("active-tab");
-    }
-    for (var i = 0; i < tablinks.length; i++) {
-        tablinks[i].className = tablinks[i].className.replace(" active", "");
-    }
-    var activeTab = document.getElementById(tabName);
-    if (activeTab) {
-        activeTab.classList.add("active-tab");
-    } else if (tabcontent.length > 0) {
-        tabcontent[0].classList.add("active-tab"); // fallback: muestra la primera pestaña
-    } else {
-        for (var i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].classList.add("active-tab"); // fallback: muestra todas si no hay ninguna
-        }
-    }
-    evt.currentTarget.className += " active";
+function switchTab(tabName) {
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active-tab');
+    });
+    // Remove active class from all tab buttons
+    document.querySelectorAll('.tab-btn').forEach(button => {
+        button.classList.remove('active');
+    });
+    // Show selected tab
+    document.getElementById(tabName).classList.add('active-tab');
+    document.getElementById('tab-' + tabName).classList.add('active');
     if (history.pushState) {
         var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?page=settings&tab=' + tabName;
         history.pushState({path:newurl},'',newurl);
@@ -646,27 +638,21 @@ function openTab(evt, tabName) {
 }
 window.addEventListener('DOMContentLoaded', function() {
     var tab = (new URLSearchParams(window.location.search)).get('tab') || 'organization';
-    var tabcontent = document.getElementsByClassName("tab-content");
-    var tablinks = document.getElementsByClassName("tab-btn");
-    for (var i = 0; i < tabcontent.length; i++) {
-        tabcontent[i].classList.remove("active-tab");
-    }
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active-tab');
+    });
     var activeTab = document.getElementById(tab);
     if (activeTab) {
-        activeTab.classList.add("active-tab");
-    } else if (tabcontent.length > 0) {
-        tabcontent[0].classList.add("active-tab"); // fallback: muestra la primera pestaña
+        activeTab.classList.add('active-tab');
     } else {
-        for (var i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].classList.add("active-tab"); // fallback: muestra todas si no hay ninguna
-        }
+        document.querySelectorAll('.tab-content')[0].classList.add('active-tab');
     }
-    for (var i = 0; i < tablinks.length; i++) {
-        tablinks[i].className = tablinks[i].className.replace(" active", "");
-        if (tablinks[i].getAttribute('onclick') && tablinks[i].getAttribute('onclick').includes(tab)) {
-            tablinks[i].className += " active";
+    document.querySelectorAll('.tab-btn').forEach(button => {
+        button.classList.remove('active');
+        if (button.id === 'tab-' + tab) {
+            button.classList.add('active');
         }
-    }
+    });
 });
 </script>
 <noscript>
