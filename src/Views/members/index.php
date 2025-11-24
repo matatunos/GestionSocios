@@ -63,9 +63,6 @@ $events = $eventModel->readActive()->fetchAll(PDO::FETCH_ASSOC);
                                     <i class="fas fa-map-marker-alt"></i>
                                 </a>
                             <?php endif; ?>
-                            <a href="index.php?page=members&action=edit&id=<?= $member['id'] ?>" class="btn btn-sm btn-warning">
-                                <i class="fas fa-edit" title="Editar"></i>
-                            </a>
                             <div style="display: inline-block; position: relative;">
                                 <button onclick="toggleMemberCertMenu(<?= $member['id'] ?>)" class="btn btn-sm btn-info" style="background: #8b5cf6; border-color: #8b5cf6;">
                                     <i class="fas fa-certificate" title="Certificados"></i> <i class="fas fa-chevron-down" style="font-size: 0.7rem;"></i>
@@ -79,6 +76,9 @@ $events = $eventModel->readActive()->fetchAll(PDO::FETCH_ASSOC);
                                     </a>
                                 </div>
                             </div>
+                            <a href="index.php?page=members&action=edit&id=<?= $member['id'] ?>" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit" title="Editar"></i>
+                            </a>
                             <a href="index.php?page=members&action=delete&id=<?= $member['id'] ?>" class="btn btn-sm btn-danger" title="Eliminar" onclick="return confirm('¿Seguro que quieres eliminar este socio?');">
                                 <i class="fas fa-trash"></i>
                             </a>
