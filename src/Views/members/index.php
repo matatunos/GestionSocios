@@ -15,7 +15,7 @@ $events = $eventModel->readActive()->fetchAll(PDO::FETCH_ASSOC);
 <style>
     .member-actions {
         display: flex;
-        gap: 0.5em;
+        gap: 0.25rem;
         align-items: center;
     }
     .member-actions .btn {
@@ -23,6 +23,8 @@ $events = $eventModel->readActive()->fetchAll(PDO::FETCH_ASSOC);
         padding: 0.25em 0.5em;
         font-size: 1em;
         min-width: 32px;
+        border-radius: 0.375rem;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.04);
     }
 </style>
 <form method="get" style="margin-bottom:20px;">
@@ -49,23 +51,23 @@ $events = $eventModel->readActive()->fetchAll(PDO::FETCH_ASSOC);
             <em>Selecciona evento</em>
             <?php endif; ?>
         </td>
-        <td>
+        <td style="text-align: right;">
             <div class="member-actions">
-                    <a href="index.php?page=members&action=edit&id=<?= $member['id'] ?>" class="btn btn-sm btn-warning" title="Editar">
-                        <i class="fas fa-edit"></i>
-                    </a>
-                    <a href="index.php?page=members&action=geolocate&id=<?= $member['id'] ?>" class="btn btn-sm btn-warning" title="Geolocalizar">
-                        <i class="fas fa-map-marker-alt"></i>
-                    </a>
-                    <a href="index.php?page=members&action=logo&id=<?= $member['id'] ?>" class="btn btn-sm btn-warning" title="Ver logo">
-                        <i class="fas fa-image"></i>
-                    </a>
-                    <button type="button" class="btn btn-sm btn-success" disabled title="Estado">
-                        <i class="fas fa-check-circle"></i> AL DÍA 2025
-                    </button>
-                    <a href="index.php?page=members&action=delete&id=<?= $member['id'] ?>" class="btn btn-sm btn-danger" title="Eliminar" onclick="return confirm('¿Seguro que quieres eliminar este socio?');">
-                        <i class="fas fa-trash"></i>
-                    </a>
+                <a href="index.php?page=members&action=edit&id=<?= $member['id'] ?>" class="btn btn-sm btn-warning" title="Editar">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <a href="index.php?page=members&action=logo&id=<?= $member['id'] ?>" class="btn btn-sm btn-warning" title="Ver logo">
+                    <i class="fas fa-image"></i>
+                </a>
+                <a href="index.php?page=members&action=geolocate&id=<?= $member['id'] ?>" class="btn btn-sm btn-warning" title="Geolocalizar">
+                    <i class="fas fa-map-marker-alt"></i>
+                </a>
+                <button type="button" class="btn btn-sm btn-success" disabled title="Estado">
+                    <i class="fas fa-check-circle"></i> AL DÍA 2025
+                </button>
+                <a href="index.php?page=members&action=delete&id=<?= $member['id'] ?>" class="btn btn-sm btn-danger" title="Eliminar" onclick="return confirm('¿Seguro que quieres eliminar este socio?');">
+                    <i class="fas fa-trash"></i>
+                </a>
             </div>
         </td>
     </tr>
