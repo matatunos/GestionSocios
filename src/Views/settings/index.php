@@ -1,3 +1,21 @@
+.tab-content { display: none; }
+input[name="tab-control"] { display: none; }
+#tab-organization:checked ~ .tabs-nav label[for="tab-organization"],
+#tab-fees:checked ~ .tabs-nav label[for="tab-fees"],
+#tab-ad_prices:checked ~ .tabs-nav label[for="tab-ad_prices"],
+#tab-database:checked ~ .tabs-nav label[for="tab-database"],
+#tab-security:checked ~ .tabs-nav label[for="tab-security"] {
+    background: var(--primary-100, #e0e7ff);
+    color: var(--primary-700, #3730a3);
+    font-weight: bold;
+}
+#tab-organization:checked ~ .tab-content-wrapper #organization,
+#tab-fees:checked ~ .tab-content-wrapper #fees,
+#tab-ad_prices:checked ~ .tab-content-wrapper #ad_prices,
+#tab-database:checked ~ .tab-content-wrapper #database,
+#tab-security:checked ~ .tab-content-wrapper #security {
+    display: block;
+}
 <?php ob_start(); ?>
 
 <style>
@@ -104,24 +122,18 @@
     </div>
 
     <div class="tabs-container">
+        <input type="radio" id="tab-organization" name="tab-control" checked>
+        <input type="radio" id="tab-fees" name="tab-control">
+        <input type="radio" id="tab-ad_prices" name="tab-control">
+        <input type="radio" id="tab-database" name="tab-control">
+        <input type="radio" id="tab-security" name="tab-control">
         <div class="tabs-nav">
-            <button class="tab-btn <?= ($_GET['tab'] ?? 'organization') === 'organization' ? 'active' : '' ?>" onclick="openTab(event, 'organization')">
-                <i class="fas fa-building"></i> Organización
-            </button>
-            <button class="tab-btn <?= ($_GET['tab'] ?? '') === 'fees' ? 'active' : '' ?>" onclick="openTab(event, 'fees')">
-                <i class="fas fa-euro-sign"></i> Cuotas
-            </button>
-            <button class="tab-btn <?= ($_GET['tab'] ?? '') === 'ad_prices' ? 'active' : '' ?>" onclick="openTab(event, 'ad_prices')">
-                <i class="fas fa-tags"></i> Precios Anuncios
-            </button>
-            <button class="tab-btn <?= ($_GET['tab'] ?? '') === 'database' ? 'active' : '' ?>" onclick="openTab(event, 'database')">
-                <i class="fas fa-database"></i> Base de Datos
-            </button>
-            <button class="tab-btn <?= ($_GET['tab'] ?? '') === 'security' ? 'active' : '' ?>" onclick="openTab(event, 'security')">
-                <i class="fas fa-shield-alt"></i> Seguridad
-            </button>
+            <label for="tab-organization" class="tab-btn"><i class="fas fa-building"></i> Organización</label>
+            <label for="tab-fees" class="tab-btn"><i class="fas fa-euro-sign"></i> Cuotas</label>
+            <label for="tab-ad_prices" class="tab-btn"><i class="fas fa-tags"></i> Precios Anuncios</label>
+            <label for="tab-database" class="tab-btn"><i class="fas fa-database"></i> Base de Datos</label>
+            <label for="tab-security" class="tab-btn"><i class="fas fa-shield-alt"></i> Seguridad</label>
         </div>
-
         <div class="tab-content-wrapper">
 
             <!-- Organization Tab -->
