@@ -12,6 +12,14 @@
         <div class="row mb-3">
             <div class="col-md-6">
                 <div class="form-group">
+                    <label class="form-label">Fecha de alta</label>
+                    <input type="text" class="form-control" value="<?php echo date('d/m/Y', strtotime($member->created_at)); ?>" readonly>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="form-group">
                     <label class="form-label">Nombre</label>
                     <input type="text" name="first_name" class="form-control" value="<?php echo htmlspecialchars($member->first_name); ?>" required>
                 </div>
