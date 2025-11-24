@@ -192,3 +192,12 @@ INSERT INTO donors (name, contact_person, phone, email, address, created_at) VAL
 ('Panadería La Espiga', 'Carmen Ruiz', '600777888', 'panaderia.espiga@email.com', 'Calle del Pan 3', NOW()),
 ('Talleres Mecánicos Sanz', 'Roberto Sanz', '600999000', 'talleres.sanz@email.com', 'Polígono Industrial Nave 7', NOW());
 
+-- Tareas adicionales (2025-2026)
+INSERT INTO tasks (title, description, assigned_to, status, due_date, category_id, created_by, priority) VALUES
+('Cierre contable 2025', 'Preparar balance y cuenta de resultados del año', 1, 'pending', '2025-12-31', 1, 1, 3),
+('Planificación eventos 2026', 'Definir calendario de actividades para el próximo año', 2, 'in_progress', '2025-12-15', 2, 1, 2),
+('Renovación seguros', 'Revisar y renovar pólizas de seguro del local', 1, 'pending', '2026-01-20', 1, 1, 3),
+('Asamblea General Ordinaria', 'Preparar documentación y convocatoria', 1, 'pending', '2026-03-15', 1, 1, 3),
+('Campaña de captación', 'Diseñar campaña de primavera para nuevos socios', 2, 'pending', '2026-04-01', 2, 1, 2),
+('Revisión inventario', 'Actualizar inventario de material y equipamiento', 2, 'pending', '2026-06-30', 1, 1, 1);
+
