@@ -44,7 +44,7 @@ class MemberCategoryController {
             $_SESSION['error'] = 'Error al crear la categoría';
         }
         
-        header('Location: index.php?page=member_categories');
+        header('Location: index.php?page=settings');
         exit;
     }
     
@@ -57,7 +57,7 @@ class MemberCategoryController {
         
         if (!$categoryModel->readOne()) {
             $_SESSION['error'] = 'Categoría no encontrada';
-            header('Location: index.php?page=member_categories');
+            header('Location: index.php?page=settings');
             exit;
         }
         
@@ -87,7 +87,7 @@ class MemberCategoryController {
             $_SESSION['error'] = 'Error al actualizar la categoría';
         }
         
-        header('Location: index.php?page=member_categories');
+        header('Location: index.php?page=settings');
         exit;
     }
     
@@ -111,7 +111,7 @@ class MemberCategoryController {
             }
         }
         
-        header('Location: index.php?page=member_categories');
+        header('Location: index.php?page=settings');
         exit;
     }
 }
