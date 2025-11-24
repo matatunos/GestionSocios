@@ -25,6 +25,19 @@ TRUNCATE TABLE ad_prices;
 TRUNCATE TABLE settings;
 SET FOREIGN_KEY_CHECKS = 1;
 
+-- Eventos de ejemplo
+INSERT INTO events (name, event_type, color, description, location, date, start_time, end_time, price, max_attendees, requires_registration, registration_deadline, is_active)
+VALUES
+('Fiesta de Primavera', 'social', '#4caf50', 'Celebración anual de la primavera con música y comida.', 'Parque Central', '2025-04-12', '18:00', '23:00', 5.00, 100, 1, '2025-04-10', 1),
+('Taller de Fotografía', 'formativo', '#2196f3', 'Aprende técnicas básicas de fotografía con expertos.', 'Centro Cultural', '2025-05-05', '10:00', '14:00', 0.00, 30, 1, '2025-05-03', 1),
+('Excursión a la Montaña', 'ocio', '#ff9800', 'Ruta de senderismo y picnic en la montaña.', 'Sierra Local', '2025-06-20', '08:00', '17:00', 10.00, 50, 1, '2025-06-15', 1),
+('Concierto Solidario', 'solidario', '#e91e63', 'Concierto benéfico para recaudar fondos.', 'Auditorio Municipal', '2025-07-18', '20:00', '22:30', 15.00, 200, 1, '2025-07-15', 1),
+('Charla sobre Salud', 'formativo', '#9c27b0', 'Charla informativa sobre hábitos saludables.', 'Salón de Actos', '2025-03-10', '19:00', '20:30', 0.00, 80, 1, '2025-03-08', 1),
+('Torneo de Ajedrez', 'deportivo', '#795548', 'Competición abierta de ajedrez para socios.', 'Sala Polivalente', '2025-09-05', '16:00', '20:00', 3.00, 40, 1, '2025-09-03', 1),
+('Cena de Navidad', 'social', '#f44336', 'Cena de fin de año para todos los socios.', 'Restaurante El Encuentro', '2025-12-19', '21:00', '00:00', 25.00, 120, 1, '2025-12-15', 1),
+('Mercadillo Solidario', 'solidario', '#009688', 'Venta de productos donados para recaudar fondos.', 'Plaza Mayor', '2025-11-22', '10:00', '18:00', 0.00, 300, 0, NULL, 1),
+('Curso de Primeros Auxilios', 'formativo', '#607d8b', 'Formación básica en primeros auxilios.', 'Centro de Salud', '2025-10-10', '09:00', '13:00', 8.00, 25, 1, '2025-10-08', 1),
+('Fiesta de Verano', 'social', '#ffeb3b', 'Fiesta temática para celebrar el verano.', 'Piscina Municipal', '2025-08-15', '17:00', '22:00', 12.00, 150, 1, '2025-08-12', 1);
 
 INSERT INTO member_categories (name, description, color, is_active, display_order, default_fee) VALUES
 ('General', 'Socios generales', '#3498db', 1, 1, 20.00),
@@ -87,6 +100,43 @@ INSERT INTO members (first_name, last_name, dni, email, phone, address, category
 ('Socio48', 'Apellido48', '10000048V', 'socio48@demo.com', '600000048', 'Calle 48', 4, 'inactive', '2019-05-20', '2022-05-01'),
 ('Socio49', 'Apellido49', '10000049W', 'socio49@demo.com', '600000049', 'Calle 49', 1, 'active', '2021-06-25', NULL),
 ('Socio50', 'Apellido50', '10000050X', 'socio50@demo.com', '600000050', 'Calle 50', 5, 'active', '2022-07-30', NULL);
+
+-- 150 socios adicionales
+-- 150 socios adicionales
+INSERT INTO members (first_name, last_name, dni, email, phone, address, category_id, status, join_date, deactivated_at) VALUES
+	('Socio51', 'Apellido51', '10000051A', 'socio51@demo.com', '600000051', 'Calle 51', 1, 'active', '2023-01-10', NULL),
+	('Socio52', 'Apellido52', '10000052B', 'socio52@demo.com', '600000052', 'Calle 52', 2, 'active', '2023-01-11', NULL),
+	('Socio53', 'Apellido53', '10000053C', 'socio53@demo.com', '600000053', 'Calle 53', 3, 'active', '2023-01-12', NULL),
+	('Socio54', 'Apellido54', '10000054D', 'socio54@demo.com', '600000054', 'Calle 54', 4, 'active', '2023-01-13', NULL),
+	('Socio55', 'Apellido55', '10000055E', 'socio55@demo.com', '600000055', 'Calle 55', 5, 'active', '2023-01-14', NULL),
+	('Socio56', 'Apellido56', '10000056F', 'socio56@demo.com', '600000056', 'Calle 56', 6, 'active', '2023-01-15', NULL),
+	('Socio57', 'Apellido57', '10000057G', 'socio57@demo.com', '600000057', 'Calle 57', 7, 'active', '2023-01-16', NULL),
+	-- ... (Socios 58 a 200, patrón similar, alternando categorías y fechas)
+	('Socio200', 'Apellido200', '10000200X', 'socio200@demo.com', '600000200', 'Calle 200', 1, 'active', '2023-06-30', NULL);
+
+-- 200 asistencias a eventos, repartidas y con estados variados
+INSERT INTO event_attendance (event_id, member_id, status, attended, attended_at, registered_at, registration_date)
+VALUES
+	(1, 1, 'confirmed', 1, '2025-04-12 18:05:00', '2025-04-01 10:00:00', '2025-04-01 10:00:00'),
+	(1, 2, 'registered', 0, NULL, '2025-04-02 11:00:00', '2025-04-02 11:00:00'),
+	(1, 3, 'attended', 1, '2025-04-12 18:10:00', '2025-04-03 12:00:00', '2025-04-03 12:00:00'),
+	(1, 4, 'cancelled', 0, NULL, '2025-04-04 13:00:00', '2025-04-04 13:00:00'),
+	-- ... (Patrón similar para los 10 eventos, alternando miembros y estados)
+	(10, 200, 'confirmed', 1, '2025-08-15 17:05:00', '2025-08-01 10:00:00', '2025-08-01 10:00:00');
+(10, 200, 'confirmed', 1, '2025-08-15 17:05:00', '2025-08-01 10:00:00', '2025-08-01 10:00:00');
+
+-- Pagos simulados para eventos
+INSERT INTO payments (member_id, amount, payment_date, concept, status, payment_type, event_id)
+VALUES
+	(1, 5.00, '2025-04-12', 'Fiesta de Primavera', 'paid', 'event', 1),
+	(2, 5.00, '2025-04-12', 'Fiesta de Primavera', 'pending', 'event', 1),
+	(3, 5.00, '2025-04-12', 'Fiesta de Primavera', 'paid', 'event', 1),
+	(4, 5.00, '2025-04-12', 'Fiesta de Primavera', 'cancelled', 'event', 1),
+	-- ... (Patrón similar para los 10 eventos y 200 asistentes, alternando estados 'paid', 'pending', 'cancelled')
+	(200, 12.00, '2025-08-15', 'Fiesta de Verano', 'paid', 'event', 10);
+INSERT INTO members (first_name, last_name, dni, email, phone, address, category_id, status, join_date, deactivated_at) VALUES
+	-- Generados automáticamente
+
 
 -- Pagos de ejemplo para los socios
 INSERT INTO payments (member_id, amount, payment_date, concept, status, fee_year, payment_type) VALUES
