@@ -172,20 +172,19 @@ class DashboardController {
     }
 
     public function markEventPaymentPaid() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['payment_id'])) {
-            require_once __DIR__ . '/../Models/EventPayment.php';
-            $paymentModel = new EventPayment($this->db);
-            $payment_id = $_POST['payment_id'];
-            $event_id = $_POST['event_id'] ?? null;
-            $stmt = $this->db->prepare("UPDATE event_payments SET status = 'paid', payment_date = NOW() WHERE id = :id");
-            $stmt->bindParam(':id', $payment_id);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['attendance_id'])) {
+            $attendance_id = $_POST['attendance_id'];
+            $method = $_POST['method'] ?? null;
+            $payment_date = $_POST['payment_date'] ?? null;
+            $stmt = $this->db->prepare("UPDATE event_attendance SET status = 'confirmed'" .
+                ($method ? ", notes = CONCAT(IFNULL(notes,''), ' Método: $method.')" : "") .
+                ($payment_date ? ", attended_at = :payment_date" : "") .
+                " WHERE id = :id");
+            $stmt->bindParam(':id', $attendance_id);
+            if ($payment_date) $stmt->bindParam(':payment_date', $payment_date);
             $stmt->execute();
             $_SESSION['success'] = "Pago registrado correctamente.";
-            if ($event_id) {
-                header('Location: index.php?page=dashboard');
-            } else {
-                header('Location: index.php?page=dashboard');
-            }
+            header('Location: index.php?page=dashboard');
             exit;
         } else {
             $_SESSION['error'] = "No se pudo registrar el pago.";
