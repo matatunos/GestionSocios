@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS member_categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     description TEXT,
+    color VARCHAR(30) DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 -- ...existing code...
