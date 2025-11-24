@@ -162,7 +162,7 @@ CREATE TABLE IF NOT EXISTS payments (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE,
     FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE SET NULL,
-    FOREIGN KEY (book_ad_id) REFERENCES book_ads(id) ON DELETE CASCADE
+    CONSTRAINT fk_payments_book_ad FOREIGN KEY (book_ad_id) REFERENCES book_ads(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS donors (
