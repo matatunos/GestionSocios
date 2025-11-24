@@ -54,7 +54,7 @@ $events = $eventModel->readActive()->fetchAll(PDO::FETCH_ASSOC);
                     <a href="index.php?page=members&action=edit&id=<?= $member['id'] ?>" class="btn btn-sm btn-warning" title="Editar">
                         <i class="fas fa-edit"></i>
                     </a>
-                    <a href="index.php?page=members&action=geolocate&id=<?= $member['id'] ?>" class="btn btn-sm btn-primary" title="Geolocalizar">
+                    <a href="index.php?page=members&action=geolocate&id=<?= $member['id'] ?>" class="btn btn-sm btn-warning" title="Geolocalizar">
                         <i class="fas fa-map-marker-alt"></i>
                     </a>
                     <a href="index.php?page=members&action=logo&id=<?= $member['id'] ?>" class="btn btn-sm btn-warning" title="Ver logo">
