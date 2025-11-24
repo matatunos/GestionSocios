@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS organization_settings (
     category VARCHAR(100) NOT NULL,
     setting_key VARCHAR(100) NOT NULL,
     setting_value TEXT,
+    setting_type VARCHAR(50) DEFAULT NULL,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 CREATE TABLE IF NOT EXISTS task_categories (
@@ -20,6 +21,7 @@ CREATE TABLE IF NOT EXISTS tasks (
     title VARCHAR(255) NOT NULL,
     description TEXT,
     assigned_to INT DEFAULT NULL,
+    category_id INT DEFAULT NULL,
     status ENUM('pending','in_progress','completed') DEFAULT 'pending',
     due_date DATE DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -117,6 +119,7 @@ CREATE TABLE IF NOT EXISTS messages (
     receiver_id INT NOT NULL,
     subject VARCHAR(255),
     body TEXT,
+    message TEXT,
     is_read TINYINT(1) DEFAULT 0,
     sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE,
