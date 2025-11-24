@@ -57,33 +57,33 @@ if (isset($_SESSION['user_id'])) {
     <div class="mobile-overlay" id="mobileOverlay"></div>
     
     <!-- Mobile Menu Modal -->
-    <div class="mobile-menu-modal" id="mobileMenuModal">
-        <div class="mobile-menu-header">
-            <h3>Menú</h3>
-            <button class="mobile-menu-close" id="mobileMenuClose">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="mobile-menu-content">
-            <a href="index.php?page=dashboard" class="mobile-menu-item">
-                <i class="fas fa-home"></i> Panel
-            </a>
-            <a href="index.php?page=members" class="mobile-menu-item">
-                <i class="fas fa-users"></i> Socios
-            </a>
-            <a href="index.php?page=member_categories" class="mobile-menu-item">
-                <i class="fas fa-tags"></i> Categorías
-            </a>
-            <a href="index.php?page=events" class="mobile-menu-item">
-                <i class="fas fa-calendar-alt"></i> Eventos
-            </a>
-            <a href="index.php?page=donors" class="mobile-menu-item">
-                <i class="fas fa-address-book"></i> Donantes
-            </a>
-            <a href="index.php?page=donations" class="mobile-menu-item">
-                <i class="fas fa-hand-holding-heart"></i> Donaciones
-            </a>
-            <a href="index.php?page=expenses" class="mobile-menu-item">
+                <li class="nav-group">
+                    <a href="#" class="nav-link <?php echo ($page === 'dashboard' || $page === 'treasury') ? 'active' : ''; ?>">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                        <i class="fas fa-chevron-down" style="margin-left:0.5em;font-size:0.8em;"></i>
+                    </a>
+                    <ul class="nav-submenu">
+                        <li>
+                            <a href="index.php?page=dashboard" class="nav-link <?php echo ($page === 'dashboard') ? 'active' : ''; ?>">
+                                <i class="fas fa-chart-pie"></i>
+                                <span>General</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="index.php?page=treasury" class="nav-link <?php echo ($page === 'treasury') ? 'active' : ''; ?>">
+                                <i class="fas fa-coins"></i>
+                                <span>Tesorería</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="index.php?page=reports&action=dashboard_events" class="nav-link <?php echo ($page === 'reports' && $action === 'dashboard_events') ? 'active' : ''; ?>">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Eventos</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 <i class="fas fa-receipt"></i> Gastos
             </a>
             <a href="index.php?page=treasury" class="mobile-menu-item">

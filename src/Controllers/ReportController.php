@@ -1,6 +1,11 @@
 <?php
 
 class ReportController {
+        public function eventsDashboard() {
+            $this->checkAdmin();
+            $db = $this->db;
+            include __DIR__ . '/../Views/reports/events_dashboard.php';
+        }
     public function executiveReport() {
         $this->checkAdmin();
         require_once __DIR__ . '/../Models/Event.php';
@@ -36,19 +41,6 @@ class ReportController {
         require_once __DIR__ . '/../Models/EventAttendance.php';
         $eventModel = new Event($this->db);
         $stmt = $eventModel->readAll();
-        $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $attendanceModel = new EventAttendance($this->db);
-        foreach ($events as &$event) {
-            $event['stats'] = $attendanceModel->getStatsByEvent($event['id']);
-        }
-        include __DIR__ . '/../Views/reports/events_attendance.php';
-    }
-
-    public function exportMembers() {
-        $this->checkAdmin();
-        require_once __DIR__ . '/../Models/Member.php';
-        $member = new Member($this->db);
-        $stmt = $member->readAll();
         header('Content-Type: text/csv');
         header('Content-Disposition: attachment; filename="socios_' . date('Y-m-d') . '.csv"');
         $output = fopen('php://output', 'w');

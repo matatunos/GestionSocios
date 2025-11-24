@@ -233,11 +233,11 @@ switch ($page) {
     case 'reports':
         require_once __DIR__ . '/../src/Controllers/ReportController.php';
         $controller = new ReportController();
-        if ($action === 'executive') $controller->executiveReport();
+        if ($action === 'dashboard_events') $controller->eventsDashboard();
         else if ($action === 'export_members') $controller->exportMembers();
         else if ($action === 'export_donors') $controller->exportDonors();
         else if ($action === 'export_movements') $controller->exportMovements();
-        else $controller->executiveReport();
+        else $controller->eventsDashboard();
         break;
     case 'search':
         $controller = new SearchController();
