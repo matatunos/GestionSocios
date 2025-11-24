@@ -61,6 +61,18 @@ CREATE TABLE IF NOT EXISTS member_categories (
 )
 ENGINE=InnoDB;
 -- Tabla messages
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    name VARCHAR(200) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('admin', 'member') DEFAULT 'member',
+    active TINYINT(1) DEFAULT 1,
+    status ENUM('active', 'inactive') DEFAULT 'active'
+) ENGINE=InnoDB;
+-- Usuario admin por defecto (clave: admin)
+INSERT INTO users (email, name, password, role, active, status) VALUES ('admin@admin.com', 'Administrador', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 1, 'active') ON DUPLICATE KEY UPDATE id=id;
+
 CREATE TABLE IF NOT EXISTS messages (
     id INT AUTO_INCREMENT PRIMARY KEY,
     sender_id INT NOT NULL,
