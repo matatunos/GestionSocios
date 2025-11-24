@@ -1,12 +1,12 @@
 
 <?php ob_start(); ?>
-<?php $content = ob_get_clean(); include __DIR__ . '/../layout.php'; ?>
 
 <div class="mb-4">
     <a href="index.php?page=members" class="btn btn-sm btn-secondary mb-4">
         <i class="fas fa-arrow-left"></i> Volver al listado
     </a>
     <h1>Editar Socio</h1>
+<?php $content = ob_get_clean(); ?>
 </div>
 
 <div class="card" style="max-width: 800px;">
@@ -51,6 +51,7 @@
         <div class="form-group">
             <label class="form-label">Foto de Perfil</label>
             <?php if (!empty($member->photo_url)): ?>
+<?php include __DIR__ . '/../layout.php'; ?>
                 <div class="mb-2">
                     <img src="/<?php echo htmlspecialchars($member->photo_url); ?>" alt="Foto actual" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%;">
                     <div class="flex gap-2 mt-2">
