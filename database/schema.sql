@@ -91,6 +91,19 @@ CREATE TABLE IF NOT EXISTS notifications (
 ENGINE=InnoDB;
 -- payments table moved to after members and events
 
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    name VARCHAR(200) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('admin', 'member') DEFAULT 'member',
+    active TINYINT(1) DEFAULT 1,
+    status ENUM('active', 'inactive') DEFAULT 'active'
+)
+ENGINE=InnoDB;
+-- Usuario admin por defecto (clave: admin)
+INSERT INTO users (email, name, password, role, active, status) VALUES ('admin@admin.com', 'Administrador', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 1, 'active') ON DUPLICATE KEY UPDATE id=id;
+
 CREATE TABLE IF NOT EXISTS documents (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
@@ -108,20 +121,6 @@ CREATE TABLE IF NOT EXISTS documents (
     CONSTRAINT fk_documents_uploaded_by FOREIGN KEY (uploaded_by) REFERENCES users(id) ON DELETE SET NULL
 )
 ENGINE=InnoDB;
-
-CREATE TABLE IF NOT EXISTS users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    name VARCHAR(200) NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    role ENUM('admin', 'member') DEFAULT 'member',
-    active TINYINT(1) DEFAULT 1,
-    status ENUM('active', 'inactive') DEFAULT 'active'
-)
-ENGINE=InnoDB;
--- Usuario admin por defecto (clave: admin)
-INSERT INTO users (email, name, password, role, active, status) VALUES ('admin@admin.com', 'Administrador', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 1, 'active') ON DUPLICATE KEY UPDATE id=id;
-
 
 CREATE TABLE IF NOT EXISTS annual_fees (
     year INT PRIMARY KEY,
