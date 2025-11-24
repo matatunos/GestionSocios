@@ -59,7 +59,7 @@
                                 <form method="POST" action="index.php?page=events&action=updateAttendanceStatus&id=<?= $event->id ?>&member_id=<?= $p['member']['id'] ?>" style="display:inline;">
                                     <input type="hidden" name="status" value="registered">
                                     <button type="submit" class="btn btn-sm" style="background:#fff;color:#f59e42;border:1px solid #f59e42;">
-                                        <i class="fas fa-user"></i> No registrado
+                                        <i class="fas fa-user"></i> Registrar
                                     </button>
                                 </form>
                             <?php else: ?>
