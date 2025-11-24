@@ -160,18 +160,18 @@ if (isset($_SESSION['user_id'])) {
                     </a>
                 </li>
                 <li>
+                    <a href="index.php?page=donors" class="nav-link <?php echo ($page === 'donors') ? 'active' : ''; ?>">
+                        <i class="fas fa-address-book"></i>
+                        <span>Donantes</span>
+                    </a>
+                </li>
+                <li>
                 </li>
 
                 <li>
                     <a href="index.php?page=events" class="nav-link <?php echo ($page === 'events') ? 'active' : ''; ?>">
                         <i class="fas fa-calendar-alt"></i>
                         <span>Eventos</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="index.php?page=donors" class="nav-link <?php echo ($page === 'donors') ? 'active' : ''; ?>">
-                        <i class="fas fa-address-book"></i>
-                        <span>Donantes</span>
                     </a>
                 </li>
                 <li>
