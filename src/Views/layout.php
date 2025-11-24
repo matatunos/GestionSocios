@@ -275,7 +275,11 @@ if (isset($_SESSION['user_id'])) {
 
         <!-- Main Content -->
         <main class="main-content">
-            <?php echo $content; ?>
+            <?php
+            if (isset($view) && $view === 'events_dashboard') {
+                include __DIR__ . '/reports/events_dashboard.php';
+            }
+            ?>
         </main>
     </div>
 
