@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS tasks (
     assigned_to INT DEFAULT NULL,
     category_id INT DEFAULT NULL,
     created_by INT DEFAULT NULL,
+    priority INT DEFAULT 0,
     status ENUM('pending','in_progress','completed') DEFAULT 'pending',
     due_date DATE DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
