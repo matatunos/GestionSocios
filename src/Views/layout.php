@@ -208,12 +208,6 @@ if (isset($_SESSION['user_id'])) {
                     </a>
                 </li>
                 <li>
-                    <a href="index.php?page=treasury" class="nav-link <?php echo ($page === 'treasury') ? 'active' : ''; ?>">
-                        <i class="fas fa-coins"></i>
-                        <span>Tesorería</span>
-                    </a>
-                </li>
-                <li>
                     <a href="index.php?page=calendar" class="nav-link <?php echo ($page === 'calendar') ? 'active' : ''; ?>">
                         <i class="fas fa-calendar-alt"></i>
                         <span>Calendario</span>
