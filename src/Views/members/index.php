@@ -12,6 +12,19 @@ $eventModel = new Event($db);
 $events = $eventModel->readActive()->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <h2>Socios activos</h2>
+<style>
+    .member-actions {
+        display: flex;
+        gap: 0.5em;
+        align-items: center;
+    }
+    .member-actions .btn {
+        white-space: nowrap;
+        padding: 0.25em 0.5em;
+        font-size: 1em;
+        min-width: 32px;
+    }
+</style>
 <form method="get" style="margin-bottom:20px;">
     <label for="event_id">Selecciona evento:</label>
     <select name="event_id" id="event_id" onchange="this.form.submit()">
@@ -29,15 +42,19 @@ $events = $eventModel->readActive()->fetchAll(PDO::FETCH_ASSOC);
         <td><?= htmlspecialchars($member['first_name'] . ' ' . $member['last_name']) ?></td>
         <td>
             <?php if ($eventId): ?>
-            <a href="../vouchers/show.php?event_id=<?= $eventId ?>&member_id=<?= $member['id'] ?>" target="_blank">Ver QR</a>
+            <a href="../vouchers/show.php?event_id=<?= $eventId ?>&member_id=<?= $member['id'] ?>" target="_blank" class="btn btn-sm btn-warning">
+                <i class="fas fa-qrcode" title="Ver QR"></i>
+            </a>
             <?php else: ?>
             <em>Selecciona evento</em>
             <?php endif; ?>
         </td>
         <td>
-            <a href="index.php?page=members&action=edit&id=<?= $member['id'] ?>" class="btn btn-sm btn-warning">
-                <i class="fas fa-edit" title="Editar"></i>
-            </a>
+            <div class="member-actions">
+                <a href="index.php?page=members&action=edit&id=<?= $member['id'] ?>" class="btn btn-sm btn-warning">
+                    <i class="fas fa-edit" title="Editar"></i>
+                </a>
+            </div>
         </td>
     </tr>
     <?php endforeach; ?>
