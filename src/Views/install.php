@@ -115,6 +115,14 @@ if (file_exists($configFile)) {
             <button type="submit" class="btn btn-primary w-full" style="margin-top: 1.5rem;">
                 Instalar y Configurar <i class="fas fa-rocket" style="margin-left: 0.5rem;"></i>
             </button>
+
+            <div class="form-group" style="margin-top:1.5rem;">
+                <label>
+                    <input type="checkbox" name="import_sample_data" value="1" <?php echo isset($_POST['import_sample_data']) ? 'checked' : ''; ?>>
+                    Importar datos de ejemplo (socios, gastos, tareas...)
+                </label>
+                <small style="color:#888;display:block;margin-top:0.5rem;">Si marcas esta opción, se añadirán datos de prueba automáticamente tras la instalación.</small>
+            </div>
         </form>
     </div>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
