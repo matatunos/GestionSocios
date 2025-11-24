@@ -31,13 +31,16 @@ class EventController {
         // Get all active members
         $stmt = $this->member->readAll();
         $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        // Build participants array with payment info
+        // Build participants array with payment and attendance info
         $participants = [];
         foreach ($members as $m) {
             $payStmt = $this->db->prepare("SELECT id, status FROM payments WHERE member_id = ? AND event_id = ? AND payment_type = 'event'");
             $payStmt->execute([$m['id'], $id]);
             $pay = $payStmt->fetch(PDO::FETCH_ASSOC);
-            $participants[] = ['member' => $m, 'payment' => $pay];
+            $attStmt = $this->db->prepare("SELECT status FROM event_attendance WHERE member_id = ? AND event_id = ?");
+            $attStmt->execute([$m['id'], $id]);
+            $attendance = $attStmt->fetch(PDO::FETCH_ASSOC);
+            $participants[] = ['member' => $m, 'payment' => $pay, 'attendance' => $attendance];
         }
         require __DIR__ . '/../Views/events/show.php';
     }
