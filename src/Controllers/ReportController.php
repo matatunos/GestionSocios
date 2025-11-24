@@ -4,9 +4,7 @@ class ReportController {
         public function eventsDashboard() {
         $this->checkAdmin();
         $db = $this->db;
-        ob_start();
-        include __DIR__ . '/../Views/reports/events_dashboard.php';
-        $content = ob_get_clean();
+        $view = 'events_dashboard';
         include __DIR__ . '/../Views/layout.php';
         }
     public function executiveReport() {
