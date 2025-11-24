@@ -120,11 +120,11 @@ new Chart(document.getElementById('chartProximos'), {
 });
 </script>
 <style>
-.dashboard { padding:2rem; }
-.kpi-row { display:flex; gap:2rem; margin-bottom:2rem; }
-.kpi-card { background:#f3f4f6; border-radius:8px; padding:1rem 2rem; box-shadow:0 2px 8px #0001; display:flex; flex-direction:column; align-items:center; }
-.kpi-label { font-size:1rem; color:#555; }
-.kpi-value { font-size:2rem; font-weight:700; color:#2563eb; }
-.filter-row { margin-bottom:2rem; }
-.chart-row { display:flex; gap:2rem; }
+.dashboard { padding:2rem; background: #fff; color: #222; }
+.dashboard .kpi-row { display:flex; gap:2rem; margin-bottom:2rem; }
+.dashboard .kpi-card { background:#f3f4f6; border-radius:8px; padding:1rem 2rem; box-shadow:0 2px 8px #0001; display:flex; flex-direction:column; align-items:center; }
+.dashboard .kpi-label { font-size:1rem; color:#555; }
+.dashboard .kpi-value { font-size:2rem; font-weight:700; color:#2563eb; }
+.dashboard .filter-row { margin-bottom:2rem; }
+.dashboard .chart-row { display:flex; gap:2rem; }
 </style>
