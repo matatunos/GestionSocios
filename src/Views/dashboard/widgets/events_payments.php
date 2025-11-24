@@ -2,10 +2,11 @@
 require_once __DIR__ . '/../../../Models/EventPayment.php';
 $events = $db->query("SELECT id, name, date FROM events WHERE date >= CURDATE() ORDER BY date ASC")->fetchAll(PDO::FETCH_ASSOC);
 foreach ($events as $event) {
-    echo "<h4>{$event['name']} (" . date('d/m/Y', strtotime($event['date'])) . ")</h4>";
+    echo "<div class='card' style='margin-bottom:1.5rem;'>";
+    echo "<h4 style='font-size:1.1rem;font-weight:600;margin-bottom:1rem;'><i class='fas fa-calendar-alt' style='margin-right:0.5rem;color:var(--primary-600);'></i>{$event['name']} (" . date('d/m/Y', strtotime($event['date'])) . ")</h4>";
     $payments = (new EventPayment($db))->getPaymentsByEvent($event['id']);
     if ($payments) {
-        echo "<table class='table'><thead><tr><th>Socio</th><th>Importe</th><th>Estado</th><th>Acción</th></tr></thead><tbody>";
+        echo "<div class='table-responsive'><table class='table'><thead><tr><th>Socio</th><th>Importe</th><th>Estado</th><th>Acción</th></tr></thead><tbody>";
         foreach ($payments as $p) {
             $estado = $p['status'] === 'paid' ? 'Pagado' : 'Pendiente';
             echo "<tr>
@@ -27,9 +28,10 @@ foreach ($events as $event) {
             }
             echo "</tr>";
         }
-        echo "</tbody></table>";
+        echo "</tbody></table></div>";
     } else {
-        echo "<p>No hay pagos registrados para este evento.</p>";
+        echo "<p style='color:var(--text-muted);'>No hay pagos registrados para este evento.</p>";
     }
+    echo "</div>";
 }
 ?>
