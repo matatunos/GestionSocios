@@ -1,3 +1,13 @@
+CREATE TABLE IF NOT EXISTS tasks (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    assigned_to INT DEFAULT NULL,
+    status ENUM('pending','in_progress','completed') DEFAULT 'pending',
+    due_date DATE DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
 -- Tabla expense_categories
 CREATE TABLE IF NOT EXISTS expense_categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -99,6 +109,7 @@ CREATE TABLE IF NOT EXISTS conversation_participants (
     id INT AUTO_INCREMENT PRIMARY KEY,
     conversation_id INT NOT NULL,
     user_id INT NOT NULL,
+    member_id INT DEFAULT NULL,
     joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
@@ -107,6 +118,7 @@ CREATE TABLE IF NOT EXISTS conversation_participants (
 CREATE TABLE IF NOT EXISTS members (
     id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(100) NOT NULL,
+    join_date DATE DEFAULT NULL,
     last_name VARCHAR(100) NOT NULL,
     dni VARCHAR(20),
     email VARCHAR(150),
@@ -129,6 +141,7 @@ CREATE TABLE IF NOT EXISTS notifications (
     member_id INT NOT NULL,
     message TEXT NOT NULL,
     is_read TINYINT(1) DEFAULT 0,
+    type VARCHAR(50) DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE
 )
