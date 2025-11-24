@@ -150,7 +150,7 @@
                                     <img src="/<?php echo htmlspecialchars($row['photo_url']); ?>" alt="Foto" style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%;">
                                 <?php else: ?>
                                     <div style="width: 40px; height: 40px; background: var(--primary-100); color: var(--primary-700); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                        <i class="fas fa-user"></i>
+                                        <i class="fas fa-image"></i>
                                     </div>
                                 <?php endif; ?>
                                 <div>
@@ -200,10 +200,10 @@
                                             <i class="fas fa-id-card" style="width: 20px;"></i> Certificado de Socio
                                         </a>
                                         <a href="index.php?page=certificates&action=payments&id=<?php echo $row['id']; ?>&year=<?php echo date('Y'); ?>" target="_blank" class="dropdown-item" style="display: block; padding: 0.5rem 1rem; color: var(--text-base); text-decoration: none; transition: background 0.2s;">
-                                            <i class="fas fa-receipt" style="width: 20px;"></i> Certificado de Pagos <?php echo date('Y'); ?>
+                                            <i class="fas fa-hand-holding-heart" style="width: 20px;"></i> Certificado de Pagos <?php echo date('Y'); ?>
                                         </a>
                                         <a href="index.php?page=certificates&action=payments&id=<?php echo $row['id']; ?>&year=<?php echo date('Y') - 1; ?>" target="_blank" class="dropdown-item" style="display: block; padding: 0.5rem 1rem; color: var(--text-base); text-decoration: none; transition: background 0.2s;">
-                                            <i class="fas fa-receipt" style="width: 20px;"></i> Certificado de Pagos <?php echo date('Y') - 1; ?>
+                                            <i class="fas fa-hand-holding-heart" style="width: 20px;"></i> Certificado de Pagos <?php echo date('Y') - 1; ?>
                                         </a>
                                     </div>
                                 </div>
