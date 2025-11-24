@@ -1,21 +1,3 @@
-.tab-content { display: none; }
-input[name="tab-control"] { display: none; }
-#tab-organization:checked ~ .tabs-nav label[for="tab-organization"],
-#tab-fees:checked ~ .tabs-nav label[for="tab-fees"],
-#tab-ad_prices:checked ~ .tabs-nav label[for="tab-ad_prices"],
-#tab-database:checked ~ .tabs-nav label[for="tab-database"],
-#tab-security:checked ~ .tabs-nav label[for="tab-security"] {
-    background: var(--primary-100, #e0e7ff);
-    color: var(--primary-700, #3730a3);
-    font-weight: bold;
-}
-#tab-organization:checked ~ .tab-content-wrapper #organization,
-#tab-fees:checked ~ .tab-content-wrapper #fees,
-#tab-ad_prices:checked ~ .tab-content-wrapper #ad_prices,
-#tab-database:checked ~ .tab-content-wrapper #database,
-#tab-security:checked ~ .tab-content-wrapper #security {
-    display: block;
-}
 <?php ob_start(); ?>
 
 <style>
