@@ -125,7 +125,7 @@
         <div class="tab-content-wrapper">
 
             <!-- Organization Tab -->
-            <div id="organization" class="tab-content active-tab">
+            <div id="organization" class="tab-content">
                 <h2 class="section-title">Configuración de la Organización</h2>
                 
                 <?php if (isset($_SESSION['success'])): ?>
