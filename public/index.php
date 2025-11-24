@@ -34,11 +34,22 @@ if (!file_exists(__DIR__ . '/../src/Config/config.php')) {
     if ($page !== 'install') {
         require_once __DIR__ . '/../src/Config/Database.php';
         $dbTest = new Database();
-        if ($dbTest->getConnection() === null) {
+        $conn = $dbTest->getConnection();
+        if ($conn === null) {
             $page = 'db_error';
         } else {
-            // Initialize $db for controllers
-            $db = $dbTest->getConnection();
+            // Check if main tables exist (users)
+            try {
+                $result = $conn->query("SHOW TABLES LIKE 'users'");
+                if ($result->rowCount() === 0) {
+                    $page = 'install';
+                } else {
+                    // Initialize $db for controllers
+                    $db = $conn;
+                }
+            } catch (Exception $e) {
+                $page = 'install';
+            }
         }
     }
 }
