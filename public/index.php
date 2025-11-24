@@ -154,6 +154,8 @@ switch ($page) {
         else if ($action === 'store') $controller->store();
         else if ($action === 'edit') $controller->edit();
         else if ($action === 'update') $controller->update();
+        else if ($action === 'updateFee') $controller->updateFee();
+        else if ($action === 'deleteFee') $controller->deleteFee();
         else if ($action === 'delete') $controller->delete();
         else $controller->index();
         break;
