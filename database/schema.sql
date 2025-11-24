@@ -1,3 +1,11 @@
+CREATE TABLE IF NOT EXISTS notifications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    member_id INT NOT NULL,
+    message TEXT NOT NULL,
+    is_read TINYINT(1) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE
+);
 -- payments table moved to after members and events
 
 CREATE TABLE IF NOT EXISTS documents (
