@@ -154,6 +154,7 @@
                                     </div>
                                 <?php endif; ?>
                                 <div>
+                                    <span style="font-size: 0.85rem; color: var(--text-muted);">#<?php echo $row['id']; ?></span><br>
                                     <?php echo htmlspecialchars($row['first_name'] . ' ' . $row['last_name']); ?>
                                 </div>
                             </td>
