@@ -161,11 +161,25 @@ class EventController {
             header("Location: index.php?page=events&action=show&id=$eventId");
             exit;
         }
-        $stmt = $this->db->prepare("UPDATE event_attendance SET status = :status WHERE event_id = :event_id AND member_id = :member_id");
-        $stmt->bindParam(':status', $status);
-        $stmt->bindParam(':event_id', $eventId);
-        $stmt->bindParam(':member_id', $memberId);
-        $stmt->execute();
+        // Check if attendance exists
+        $checkStmt = $this->db->prepare("SELECT id FROM event_attendance WHERE event_id = :event_id AND member_id = :member_id");
+        $checkStmt->bindParam(':event_id', $eventId);
+        $checkStmt->bindParam(':member_id', $memberId);
+        $checkStmt->execute();
+        $existing = $checkStmt->fetch(PDO::FETCH_ASSOC);
+        if ($existing) {
+            $stmt = $this->db->prepare("UPDATE event_attendance SET status = :status WHERE event_id = :event_id AND member_id = :member_id");
+            $stmt->bindParam(':status', $status);
+            $stmt->bindParam(':event_id', $eventId);
+            $stmt->bindParam(':member_id', $memberId);
+            $stmt->execute();
+        } else {
+            $stmt = $this->db->prepare("INSERT INTO event_attendance (event_id, member_id, status, registration_date) VALUES (:event_id, :member_id, :status, NOW())");
+            $stmt->bindParam(':event_id', $eventId);
+            $stmt->bindParam(':member_id', $memberId);
+            $stmt->bindParam(':status', $status);
+            $stmt->execute();
+        }
         $_SESSION['success'] = "Estado actualizado correctamente.";
         header("Location: index.php?page=events&action=show&id=$eventId");
         exit;

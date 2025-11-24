@@ -69,16 +69,18 @@
                             <?php endif; ?>
                         </td>
                         <td style="text-align: right;">
-                            <?php if (!$paid): ?>
-                                <a href="index.php?page=events&action=markPaid&id=<?= $event->id ?>&member_id=<?= $p['member']['id'] ?>" 
-                                   class="btn btn-sm btn-primary"
-                                   onclick="return confirm('¿Marcar como pagado para este socio?');">
-                                    <i class="fas fa-check"></i> Marcar como Pagado
-                                </a>
-                            <?php else: ?>
-                                <span style="color: var(--text-muted); font-size: 0.875rem;">
-                                    <i class="fas fa-check-circle"></i> Pagado
-                                </span>
+                            <?php if ($attendanceStatus === 'registered'): ?>
+                                <?php if (!$paid): ?>
+                                    <a href="index.php?page=events&action=markPaid&id=<?= $event->id ?>&member_id=<?= $p['member']['id'] ?>" 
+                                       class="btn btn-sm btn-primary"
+                                       onclick="return confirm('¿Marcar como pagado para este socio?');">
+                                        <i class="fas fa-check"></i> Marcar como Pagado
+                                    </a>
+                                <?php else: ?>
+                                    <span style="color: var(--text-muted); font-size: 0.875rem;">
+                                        <i class="fas fa-check-circle"></i> Pagado
+                                    </span>
+                                <?php endif; ?>
                             <?php endif; ?>
                         </td>
                     </tr>
