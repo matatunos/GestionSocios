@@ -56,18 +56,24 @@ $ingresosTotales = array_sum(array_map(function($e) use ($attendanceModel) {
     <div class="chart-row">
         <canvas id="chartAsistencia" height="120"></canvas>
         <canvas id="chartIngresos" height="120"></canvas>
+        <canvas id="chartOcupacion" height="120"></canvas>
+        <canvas id="chartProximos" height="120"></canvas>
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 // Datos para gráficos
-const eventos = <?= json_encode($events) ?>;
+const eventos = <?= json_encode(array_values($filteredEvents)) ?>;
 const labels = eventos.map(e => e.name);
-const asistencia = eventos.map(e => {
-    const stats = <?= json_encode(array_map(function($e) use ($attendanceModel) { return $attendanceModel->getStatsByEvent($e['id']); }, $events)) ?>;
-    return stats[labels.indexOf(e.name)].confirmed ?? 0;
+const statsArr = <?= json_encode(array_map(function($e) use ($attendanceModel) { return $attendanceModel->getStatsByEvent($e['id']); }, array_values($filteredEvents))) ?>;
+const asistencia = statsArr.map(s => s.confirmed ?? 0);
+const ingresos = eventos.map((e, i) => (e.price ?? 0) * (statsArr[i].confirmed ?? 0));
+const ocupacion = eventos.map((e, i) => {
+    const max = e.max_attendees ?? 0;
+    const total = (statsArr[i].registered ?? 0) + (statsArr[i].confirmed ?? 0) + (statsArr[i].attended ?? 0) + (statsArr[i].cancelled ?? 0);
+    return max ? Math.round((total / max) * 100) : 0;
 });
-const ingresos = eventos.map(e => (e.price ?? 0) * (<?= json_encode(array_map(function($e) use ($attendanceModel) { $s = $attendanceModel->getStatsByEvent($e['id']); return $s['confirmed'] ?? 0; }, $events)) ?>)[labels.indexOf(e.name)]);
+const proximos = eventos.map(e => (new Date(e.date) > new Date()) ? 1 : 0);
 new Chart(document.getElementById('chartAsistencia'), {
     type: 'bar',
     data: { labels, datasets: [{ label: 'Confirmados', data: asistencia, backgroundColor: '#22c55e' }] },
@@ -76,6 +82,16 @@ new Chart(document.getElementById('chartAsistencia'), {
 new Chart(document.getElementById('chartIngresos'), {
     type: 'bar',
     data: { labels, datasets: [{ label: 'Ingresos (€)', data: ingresos, backgroundColor: '#2563eb' }] },
+    options: { responsive: true, plugins: { legend: { display: false } } }
+});
+new Chart(document.getElementById('chartOcupacion'), {
+    type: 'bar',
+    data: { labels, datasets: [{ label: '% Ocupación', data: ocupacion, backgroundColor: '#f59e42' }] },
+    options: { responsive: true, plugins: { legend: { display: false } } }
+});
+new Chart(document.getElementById('chartProximos'), {
+    type: 'bar',
+    data: { labels, datasets: [{ label: 'Próximos eventos', data: proximos, backgroundColor: '#6366f1' }] },
     options: { responsive: true, plugins: { legend: { display: false } } }
 });
 </script>
