@@ -1,4 +1,8 @@
 <?php
+// Aseguramos que $db esté definido correctamente
+if (!isset($db) && isset($this) && property_exists($this, 'db')) {
+    $db = $this->db;
+}
 require_once __DIR__ . '/../../Models/Event.php';
 require_once __DIR__ . '/../../Models/EventAttendance.php';
 
@@ -7,7 +11,6 @@ $stmt = $eventModel->readAll();
 $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $attendanceModel = new EventAttendance($db);
-
 ?>
 <div class="card" style="margin-bottom:2rem;">
     <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;">
