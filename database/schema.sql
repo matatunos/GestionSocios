@@ -1,3 +1,9 @@
+-- Tabla para estados de asistencia a eventos
+CREATE TABLE IF NOT EXISTS event_attendance_status (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    status_key VARCHAR(32) NOT NULL UNIQUE,
+    status_name VARCHAR(64) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 siCREATE TABLE IF NOT EXISTS event_attendance (
     id INT AUTO_INCREMENT PRIMARY KEY,
     event_id INT NOT NULL,
