@@ -52,7 +52,7 @@ class MemberCategoryController {
             $_SESSION['error'] = 'Error al crear la categoría';
         }
         
-        header('Location: index.php?page=settings');
+        header('Location: index.php?page=settings#members');
         exit;
     }
     
@@ -65,7 +65,7 @@ class MemberCategoryController {
         
         if (!$categoryModel->readOne()) {
             $_SESSION['error'] = 'Categoría no encontrada';
-            header('Location: index.php?page=settings');
+            header('Location: index.php?page=settings#members');
             exit;
         }
         
@@ -107,14 +107,14 @@ class MemberCategoryController {
             $_SESSION['error'] = 'Error al actualizar la categoría';
         }
         
-        header('Location: index.php?page=settings');
+        header('Location: index.php?page=settings#members');
         exit;
     }
     
     // Add or update fee for a specific year
     public function updateFee() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: index.php?page=settings');
+            header('Location: index.php?page=settings#members');
             exit;
         }
         
@@ -184,7 +184,7 @@ class MemberCategoryController {
             }
         }
         
-        header('Location: index.php?page=settings');
+        header('Location: index.php?page=settings#members');
         exit;
     }
 }
