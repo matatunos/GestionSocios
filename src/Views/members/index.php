@@ -11,33 +11,30 @@ require_once __DIR__ . '/../../Models/Event.php';
 $eventModel = new Event($db);
 $events = $eventModel->readActive()->fetchAll(PDO::FETCH_ASSOC);
 ?>
-<h2>Socios activos</h2>
-<style>
-    .member-actions {
-        display: flex;
-        gap: 0.25rem;
-        align-items: center;
-    }
-    .member-actions .btn {
-        white-space: nowrap;
-        padding: 0.25em 0.5em;
-        font-size: 1em;
-        min-width: 32px;
-        border-radius: 0.375rem;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-    }
-</style>
-<form method="get" style="margin-bottom:20px;">
-    <label for="event_id">Selecciona evento:</label>
-    <select name="event_id" id="event_id" onchange="this.form.submit()">
-        <option value="">-- Elige --</option>
-        <?php foreach ($events as $ev): ?>
-        <option value="<?= $ev['id'] ?>" <?= ($eventId == $ev['id']) ? 'selected' : '' ?>><?= htmlspecialchars($ev['name']) ?> (<?= $ev['date'] ?>)</option>
-        <?php endforeach; ?>
-    </select>
-</form>
-<table border="1" cellpadding="6">
-    <tr><th>ID</th><th>Nombre</th><th>QR Vale Evento</th><th>Acciones</th></tr>
+<div class="flex justify-between items-center mb-4">
+    <h1>Listado de Socios</h1>
+    <form method="get" style="margin-bottom:0;">
+        <label for="event_id">Selecciona evento:</label>
+        <select name="event_id" id="event_id" onchange="this.form.submit()">
+            <option value="">-- Elige --</option>
+            <?php foreach ($events as $ev): ?>
+            <option value="<?= $ev['id'] ?>" <?= ($eventId == $ev['id']) ? 'selected' : '' ?>><?= htmlspecialchars($ev['name']) ?> (<?= $ev['date'] ?>)</option>
+            <?php endforeach; ?>
+        </select>
+    </form>
+</div>
+<div class="card" style="padding: 0; overflow: hidden;">
+    <div class="table-container" style="border: none; border-radius: 0;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>QR Vale Evento</th>
+                    <th style="text-align: right;">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
     <?php foreach ($members as $member): ?>
     <tr>
         <td><?= $member['id'] ?></td>
