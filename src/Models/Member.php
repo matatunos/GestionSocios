@@ -54,9 +54,13 @@ class Member {
         }
         
         // Filter by category
-        if (!empty($filters['category_id'])) {
-            $query .= " AND m.category_id = :category_id";
-            $params[':category_id'] = $filters['category_id'];
+        if (isset($filters['category_id'])) {
+            if ($filters['category_id'] === '0' || $filters['category_id'] === 0) {
+                $query .= " AND m.category_id IS NULL";
+            } elseif (!empty($filters['category_id'])) {
+                $query .= " AND m.category_id = :category_id";
+                $params[':category_id'] = $filters['category_id'];
+            }
         }
         
         // Search by name, email, phone
