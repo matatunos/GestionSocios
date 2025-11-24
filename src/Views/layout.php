@@ -265,9 +265,13 @@ if (isset($_SESSION['user_id'])) {
                     </a>
                 </li>
                 <li>
-                    <a href="index.php?page=reports&action=executive" class="nav-link <?php echo ($page === 'reports') ? 'active' : ''; ?>">
+                    <a href="index.php?page=reports&action=executive" class="nav-link <?php echo ($page === 'reports' && ($action === 'executive' || !isset($action))) ? 'active' : ''; ?>">
                         <i class="fas fa-chart-bar"></i>
-                        <span>Informes</span>
+                        <span>Informes generales</span>
+                    </a>
+                    <a href="index.php?page=reports&action=eventsAttendance" class="nav-link <?php echo ($page === 'reports' && $action === 'eventsAttendance') ? 'active' : ''; ?>">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Informe de eventos</span>
                     </a>
                 </li>
                 <li>

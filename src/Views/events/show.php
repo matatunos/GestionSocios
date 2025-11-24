@@ -50,13 +50,19 @@
                             </span>
                         </td>
                         <td>
-                            <form method="POST" action="index.php?page=events&action=updateAttendanceStatus&id=<?= $event->id ?>&member_id=<?= $p['member']['id'] ?>" style="display:inline;">
-                                <select name="status" class="form-control" style="width:auto;display:inline-block;" onchange="this.form.submit()">
-                                    <option value="registered" <?= ($p['payment'] && $p['payment']['status'] === 'registered') ? 'selected' : '' ?>>Registrado</option>
-                                    <option value="attended" <?= ($p['payment'] && $p['payment']['status'] === 'attended') ? 'selected' : '' ?>>Asistió</option>
-                                    <option value="cancelled" <?= ($p['payment'] && $p['payment']['status'] === 'cancelled') ? 'selected' : '' ?>>Cancelado</option>
-                                </select>
-                            </form>
+                            <?php
+                            $attendanceStatus = $p['attendance']['status'] ?? 'pending';
+                            ?>
+                            <?php if ($attendanceStatus !== 'registered'): ?>
+                                <form method="POST" action="index.php?page=events&action=updateAttendanceStatus&id=<?= $event->id ?>&member_id=<?= $p['member']['id'] ?>" style="display:inline;">
+                                    <input type="hidden" name="status" value="registered">
+                                    <button type="submit" class="btn btn-sm btn-success">
+                                        <i class="fas fa-user-check"></i> Marcar como registrado
+                                    </button>
+                                </form>
+                            <?php else: ?>
+                                <span class="badge badge-active">Registrado</span>
+                            <?php endif; ?>
                         </td>
                         <td style="text-align: right;">
                             <?php if (!$paid): ?>

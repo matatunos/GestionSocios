@@ -4,34 +4,17 @@ $events = $db->query("SELECT id, name, date FROM events WHERE date >= CURDATE() 
 foreach ($events as $event) {
     echo "<div class='card' style='margin-bottom:1.5rem;'>";
     echo "<h4 style='font-size:1.1rem;font-weight:600;margin-bottom:1rem;'><i class='fas fa-calendar-alt' style='margin-right:0.5rem;color:var(--primary-600);'></i>{$event['name']} (" . date('d/m/Y', strtotime($event['date'])) . ")</h4>";
-    $payments = (new EventPayment($db))->getPaymentsByEvent($event['id']);
-    if ($payments) {
-        echo "<div class='table-responsive'><table class='table'><thead><tr><th>Socio</th><th>Importe</th><th>Estado</th><th>Acción</th></tr></thead><tbody>";
-        foreach ($payments as $p) {
-            $estado = $p['status'] === 'paid' ? 'Pagado' : 'Pendiente';
+    // Solo asistentes pendientes de pago
+    $pendingStmt = $db->prepare("SELECT ea.id, m.first_name, m.last_name, ea.status FROM event_attendance ea INNER JOIN members m ON ea.member_id = m.id WHERE ea.event_id = :event_id AND ea.status = 'registered'");
+    $pendingStmt->bindParam(':event_id', $event['id']);
+    $pendingStmt->execute();
+    $pending = $pendingStmt->fetchAll(PDO::FETCH_ASSOC);
+    if ($pending) {
+        echo "<div class='table-responsive'><table class='table'><thead><tr><th>Socio</th><th>Estado</th><th>Acción</th></tr></thead><tbody>";
+        foreach ($pending as $p) {
             echo "<tr>
                     <td>{$p['first_name']} {$p['last_name']}</td>
-                    <td>" . number_format($p['amount'], 2) . " €</td>
-                    <td>{$estado}</td>";
-            if ($p['status'] === 'pending') {
-                echo "<td>
-                    <form method='POST' action='index.php?page=dashboard&action=markEventPaymentPaid' style='display:inline;'>
-                        <input type='hidden' name='payment_id' value='{$p['id']}'>
-                        <input type='hidden' name='event_id' value='{$event['id']}'>
-                        <input type='text' name='method' placeholder='Método' style='width:90px;margin-right:4px;'>
-                        <input type='date' name='payment_date' style='width:120px;margin-right:4px;'>
-                        <button type='submit' class='btn btn-sm btn-success'>Registrar pago</button>
-                    </form>
-                </td>";
-            } else {
-                echo "<td><span class='badge badge-success'>Pagado</span></td>";
-            }
-            echo "</tr>";
-        }
-        echo "</tbody></table></div>";
-    } else {
-        echo "<p style='color:var(--text-muted);'>No hay pagos registrados para este evento.</p>";
-    }
-    echo "</div>";
-}
-?>
+                    <td>Pendiente de pago</td>
+                    <td>
+                        <form method='POST' action='index.php?page=dashboard&action=markEventPaymentPaid' style='display:inline;'>
+                            <input type='hidden' name='attendance_id' value='{$p['id']}'>

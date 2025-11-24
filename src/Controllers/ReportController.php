@@ -1,6 +1,19 @@
 <?php
 
 class ReportController {
+        public function eventsAttendance() {
+            $this->checkAdmin();
+            require_once __DIR__ . '/../Models/Event.php';
+            require_once __DIR__ . '/../Models/EventAttendance.php';
+            $eventModel = new Event($this->db);
+            $stmt = $eventModel->readAll();
+            $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $attendanceModel = new EventAttendance($this->db);
+            foreach ($events as &$event) {
+                $event['stats'] = $attendanceModel->getStatsByEvent($event['id']);
+            }
+            include __DIR__ . '/../Views/reports/events_attendance.php';
+        }
     private $db;
 
     public function __construct() {
@@ -11,91 +24,10 @@ class ReportController {
     private function checkAdmin() {
         if (($_SESSION['role'] ?? '') !== 'admin') {
             header('Location: index.php?page=dashboard');
-            exit;
-        }
-    }
-
-    public function executiveReport() {
-        $this->checkAdmin();
-        
-        // Get income data by year and type
-        $incomeQuery = "
-            SELECT 
-                YEAR(payment_date) as year,
-                payment_type,
-                COUNT(*) as count,
-                SUM(amount) as total
-            FROM payments
-            WHERE status = 'paid'
-            GROUP BY YEAR(payment_date), payment_type
-            ORDER BY year DESC, payment_type
-        ";
-        $incomeStmt = $this->db->prepare($incomeQuery);
-        $incomeStmt->execute();
-        $incomeData = $incomeStmt->fetchAll(PDO::FETCH_ASSOC);
-
-        // Get total income per year
-        $yearlyQuery = "
-            SELECT 
-                YEAR(payment_date) as year,
-                SUM(amount) as total,
-                COUNT(*) as payment_count
-            FROM payments
-            WHERE status = 'paid'
-            GROUP BY YEAR(payment_date)
-            ORDER BY year DESC
-        ";
-        $yearlyStmt = $this->db->prepare($yearlyQuery);
-        $yearlyStmt->execute();
-        $yearlyTotals = $yearlyStmt->fetchAll(PDO::FETCH_ASSOC);
-
-        // Get member count per year (members created each year)
-        $membersQuery = "
-            SELECT 
-                YEAR(created_at) as year,
-                COUNT(*) as member_count
-            FROM members
-            GROUP BY YEAR(created_at)
-            ORDER BY year DESC
-        ";
-        $membersStmt = $this->db->prepare($membersQuery);
-        $membersStmt->execute();
-        $membersByYear = $membersStmt->fetchAll(PDO::FETCH_ASSOC);
-
-        // Organize data by year
-        $reportData = [];
-        foreach ($incomeData as $row) {
-            $year = $row['year'];
-            if (!isset($reportData[$year])) {
-                $reportData[$year] = [
-                    'year' => $year,
-                    'fee' => 0,
-                    'event' => 0,
-                    'donation' => 0,
-                    'total' => 0
-                ];
             }
-            $reportData[$year][$row['payment_type']] = (float)$row['total'];
-            $reportData[$year]['total'] += (float)$row['total'];
         }
 
-        // Get member distribution by category
-        $categoryQuery = "
-            SELECT 
-                mc.name as category_name,
-                mc.color as category_color,
-                COUNT(m.id) as member_count,
-                SUM(CASE WHEN m.status = 'active' THEN 1 ELSE 0 END) as active_count
-            FROM member_categories mc
-            LEFT JOIN members m ON mc.id = m.category_id
-            GROUP BY mc.id, mc.name, mc.color
-            ORDER BY member_count DESC
-        ";
-        $categoryStmt = $this->db->prepare($categoryQuery);
-        $categoryStmt->execute();
-        $categoryDistribution = $categoryStmt->fetchAll(PDO::FETCH_ASSOC);
-
-        require __DIR__ . '/../Views/reports/executive.php';
+        // ...existing code...
     }
     public function exportMembers() {
         $this->checkAdmin();
