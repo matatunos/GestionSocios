@@ -158,7 +158,8 @@ CREATE TABLE IF NOT EXISTS conversation_participants (
     user_id INT NOT NULL,
     member_id INT DEFAULT NULL,
     joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    last_read_at DATETIME DEFAULT NULL,
+    last_read_at DATETIME DEFAULT NULL
+) ENGINE=InnoDB;
 -- Pagos de participantes en eventos
 CREATE TABLE IF NOT EXISTS event_payments (
     id INT AUTO_INCREMENT PRIMARY KEY,
