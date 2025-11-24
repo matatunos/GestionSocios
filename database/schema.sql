@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS expense_categories (
 -- Tabla expenses
 CREATE TABLE IF NOT EXISTS expenses (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    category_id INT NOT NULL,
+    category_id INT DEFAULT NULL,
     description TEXT,
     amount DECIMAL(10,2) NOT NULL,
     expense_date DATE NOT NULL,
