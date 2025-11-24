@@ -1,6 +1,4 @@
-<?php
-// Dashboard de Eventos con KPIs, filtros y gráficos avanzados
-ob_start();
+
 
 if (!isset($db) && isset($this) && property_exists($this, 'db')) {
     $db = $this->db;
