@@ -1,14 +1,13 @@
--- Tabla para control de asistencia a eventos
 CREATE TABLE IF NOT EXISTS event_attendance (
     id INT AUTO_INCREMENT PRIMARY KEY,
     event_id INT NOT NULL,
     member_id INT DEFAULT NULL,
     donor_id INT DEFAULT NULL,
-    status ENUM('registered','attended','cancelled') DEFAULT 'registered',
+    status ENUM('registered','confirmed','attended','cancelled') DEFAULT 'registered',
     attended TINYINT(1) DEFAULT 0,
     attended_at DATETIME DEFAULT NULL,
     registered_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    notes TEXT,
+    registration_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
     FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE SET NULL,
     FOREIGN KEY (donor_id) REFERENCES donors(id) ON DELETE SET NULL
