@@ -163,9 +163,15 @@ INSERT INTO organization_settings (category, setting_key, setting_value, setting
 ('legal', 'org_legal_text', 'Texto legal de ejemplo para documentos oficiales.', 'text', 'Texto legal');
 
 -- Ad Prices (Precios de anuncios)
-INSERT INTO ad_prices (year, media, full, cover, back_cover) VALUES
-(2025, 50.00, 90.00, 150.00, 120.00),
-(2026, 55.00, 95.00, 160.00, 130.00);
+INSERT INTO ad_prices (year, type, amount) VALUES
+(2025, 'media', 50.00),
+(2025, 'full', 90.00),
+(2025, 'cover', 150.00),
+(2025, 'back_cover', 120.00),
+(2026, 'media', 55.00),
+(2026, 'full', 95.00),
+(2026, 'cover', 160.00),
+(2026, 'back_cover', 130.00);
 
 -- Annual Fees (Cuotas de socios)
 INSERT INTO annual_fees (year, amount) VALUES
