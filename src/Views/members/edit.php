@@ -15,9 +15,27 @@
                     <label class="form-label">Fecha de alta</label>
                     <div style="position: relative; display: flex; align-items: center;">
                         <input type="date" name="created_at" id="created_at" class="form-control" value="<?php echo date('Y-m-d', strtotime($member->created_at)); ?>">
-                        <button type="button" onclick="document.getElementById('created_at').focus();" style="background: none; border: none; position: absolute; right: 10px; cursor: pointer;">
+                        <button type="button" id="calendarBtn" style="background: none; border: none; position: absolute; right: 10px; cursor: pointer;">
                             <i class="fas fa-calendar-alt" style="font-size: 1.2rem; color: #555;"></i>
                         </button>
+                        <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            var btn = document.getElementById('calendarBtn');
+                            var input = document.getElementById('created_at');
+                            btn.addEventListener('click', function(e) {
+                                input.focus();
+                                // Intenta abrir el selector de fecha si el navegador lo soporta
+                                if (typeof input.showPicker === 'function') {
+                                    input.showPicker();
+                                } else {
+                                    // Para navegadores que no soportan showPicker, simula el click
+                                    var evt = document.createEvent('MouseEvents');
+                                    evt.initEvent('click', true, true);
+                                    input.dispatchEvent(evt);
+                                }
+                            });
+                        });
+                        </script>
                     </div>
                 </div>
             </div>
