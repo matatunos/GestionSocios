@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS task_categories (
     color VARCHAR(30) DEFAULT NULL,
     icon VARCHAR(100) DEFAULT NULL,
     description TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 -- poll_options table moved after polls for FK integrity
 -- document_permissions table moved after documents for FK integrity
