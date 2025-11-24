@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS members (
     address TEXT,
     status ENUM('active', 'inactive') DEFAULT 'active',
     photo_url VARCHAR(255) DEFAULT NULL,
+    deactivated_at DATETIME DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
