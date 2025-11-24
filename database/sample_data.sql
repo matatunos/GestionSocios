@@ -138,7 +138,42 @@ INSERT INTO users (email, name, password, role, active, status) VALUES
 ('admin@admin.com', 'Administrador', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 1, 'active'),
 ('usuario@demo.com', 'Usuario Demo', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'member', 1, 'active');
 
--- Ejemplo de organización
+
+-- Organización: General, Contacto, Branding, Legal
 INSERT INTO organization_settings (category, setting_key, setting_value, setting_type, description) VALUES
-('General', 'nombre', 'Asociación Demo', 'string', 'Nombre de la organización'),
-('General', 'email', 'info@demo.org', 'string', 'Email de contacto');
+('general', 'org_name', 'Asociación Demo', 'string', 'Nombre completo de la organización'),
+('general', 'org_short_name', 'ASODEMO', 'string', 'Siglas'),
+('general', 'org_founded_year', '1995', 'int', 'Año de fundación'),
+('general', 'org_cif', 'A12345678', 'string', 'CIF/NIF'),
+('general', 'org_registry_number', 'REG-2025-001', 'string', 'Nº Registro Oficial'),
+('contact', 'org_address', 'Calle Mayor 1', 'string', 'Dirección'),
+('contact', 'org_city', 'Ciudad Demo', 'string', 'Ciudad'),
+('contact', 'org_province', 'Provincia Demo', 'string', 'Provincia'),
+('contact', 'org_country', 'España', 'string', 'País'),
+('contact', 'org_phone', '600123456', 'string', 'Teléfono'),
+('contact', 'org_email', 'info@demo.org', 'string', 'Email'),
+('contact', 'org_website', 'https://demo.org', 'string', 'Sitio Web'),
+('branding', 'org_logo', '', 'string', 'Logo'),
+('branding', 'org_logo_width', '180', 'int', 'Ancho del logo'),
+('branding', 'org_primary_color', '#6366f1', 'string', 'Color primario'),
+('branding', 'org_secondary_color', '#8b5cf6', 'string', 'Color secundario'),
+('legal', 'org_president_name', 'Juan Pérez', 'string', 'Presidente/a'),
+('legal', 'org_secretary_name', 'Ana García', 'string', 'Secretario/a'),
+('legal', 'org_treasurer_name', 'Luis Martín', 'string', 'Tesorero/a'),
+('legal', 'org_legal_text', 'Texto legal de ejemplo para documentos oficiales.', 'text', 'Texto legal');
+
+-- Ad Prices (Precios de anuncios)
+INSERT INTO ad_prices (year, media, full, cover, back_cover) VALUES
+(2025, 50.00, 90.00, 150.00, 120.00),
+(2026, 55.00, 95.00, 160.00, 130.00);
+
+-- Annual Fees (Cuotas de socios)
+INSERT INTO annual_fees (year, amount) VALUES
+(2025, 20.00),
+(2026, 22.00);
+
+-- Settings table (for app config)
+INSERT INTO settings (setting_key, setting_value) VALUES
+('site_name', 'GestionSocios Demo'),
+('site_email', 'info@demo.org'),
+('maintenance_mode', '0');
