@@ -1,11 +1,4 @@
-CREATE TABLE IF NOT EXISTS poll_options (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    poll_id INT NOT NULL,
-    option_text VARCHAR(255) NOT NULL,
-    votes INT DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (poll_id) REFERENCES polls(id) ON DELETE CASCADE
-) ENGINE=InnoDB;
+-- poll_options table moved after polls for FK integrity
 CREATE TABLE IF NOT EXISTS document_permissions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     document_id INT NOT NULL,
