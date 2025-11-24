@@ -199,6 +199,8 @@
                                     <label class="form-label" for="org_address">Dirección</label>
                                     <input type="text" name="org_address" id="org_address" class="form-control" 
                                            value="<?= htmlspecialchars($contactSettings['org_address']['value'] ?? '') ?>">
+                                </div>
+                            </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label" for="org_city">Ciudad</label>
