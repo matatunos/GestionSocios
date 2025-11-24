@@ -1,7 +1,7 @@
 -- Tabla expense_categories
 CREATE TABLE IF NOT EXISTS expense_categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    conversation_id INT DEFAULT NULL,
+    conversation_id INT NOT NULL UNIQUE,
     name VARCHAR(100) NOT NULL,
     description TEXT,
     color VARCHAR(30),
