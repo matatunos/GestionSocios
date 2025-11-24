@@ -48,21 +48,6 @@ CREATE TABLE IF NOT EXISTS expense_categories (
 ) ENGINE=InnoDB;
 
 -- Tabla para asistencias a eventos
-CREATE TABLE IF NOT EXISTS event_attendance (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    event_id INT NOT NULL,
-    member_id INT NOT NULL,
-    status ENUM('registered','confirmed','attended','cancelled') NOT NULL,
-    attended TINYINT(1) DEFAULT 0,
-    attended_at DATETIME DEFAULT NULL,
-    registered_at DATETIME DEFAULT NULL,
-    registration_date DATETIME DEFAULT NULL,
-    notes TEXT DEFAULT NULL,
-    FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
-    FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE,
-    INDEX idx_event_id (event_id),
-    INDEX idx_member_id (member_id)
-) ENGINE=InnoDB;
     name VARCHAR(100) NOT NULL,
     description TEXT,
     color VARCHAR(30),
@@ -104,6 +89,23 @@ CREATE TABLE IF NOT EXISTS polls (
     description TEXT,
     created_by INT NOT NULL,
     start_date DATE,
+
+-- Tabla para asistencias a eventos
+CREATE TABLE IF NOT EXISTS event_attendance (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    event_id INT NOT NULL,
+    member_id INT NOT NULL,
+    status ENUM('registered','confirmed','attended','cancelled') NOT NULL,
+    attended TINYINT(1) DEFAULT 0,
+    attended_at DATETIME DEFAULT NULL,
+    registered_at DATETIME DEFAULT NULL,
+    registration_date DATETIME DEFAULT NULL,
+    notes TEXT DEFAULT NULL,
+    FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
+    FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE,
+    INDEX idx_event_id (event_id),
+    INDEX idx_member_id (member_id)
+) ENGINE=InnoDB;
     end_date DATE,
     is_active TINYINT(1) DEFAULT 1,
     allow_multiple_choices TINYINT(1) DEFAULT 0,
