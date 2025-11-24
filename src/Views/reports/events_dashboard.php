@@ -130,12 +130,24 @@ new Chart(document.getElementById('chartProximos'), {
     color: #222;
     border-radius: 12px;
     box-shadow: 0 2px 16px #0001;
-    max-width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
 }
 .dashboard-filters { margin-bottom:2rem; }
-.dashboard-kpis .kpi-row { display:flex; gap:2rem; margin-bottom:2rem; }
-.dashboard-kpis .kpi-card { background:#f3f4f6; border-radius:8px; padding:1rem 2rem; box-shadow:0 2px 8px #0001; display:flex; flex-direction:column; align-items:center; }
+.dashboard-kpis .kpi-row { display:flex; gap:2rem; margin-bottom:2rem; flex-wrap: wrap; }
+.dashboard-kpis .kpi-card { background:#f3f4f6; border-radius:8px; padding:1rem 2rem; box-shadow:0 2px 8px #0001; display:flex; flex-direction:column; align-items:center; min-width:180px; }
 .dashboard-kpis .kpi-label { font-size:1rem; color:#555; }
 .dashboard-kpis .kpi-value { font-size:2rem; font-weight:700; color:#2563eb; }
-.dashboard-charts .chart-row { display:flex; gap:2rem; }
+.dashboard-charts { width: 100%; overflow-x: auto; }
+.dashboard-charts .chart-row { display:flex; gap:2rem; flex-wrap: wrap; justify-content: center; }
+.dashboard-charts canvas {
+    max-width: 240px;
+    width: 100%;
+    height: 180px !important;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px #0001;
+}
 </style>
