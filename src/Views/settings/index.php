@@ -120,21 +120,21 @@ input[name="tab-control"] { display: none; }
     <div class="settings-header">
         <h1><i class="fas fa-cog"></i> Configuración</h1>
     </div>
-
     <div class="tabs-container">
-        <input type="radio" id="tab-organization" name="tab-control" checked>
-        <input type="radio" id="tab-fees" name="tab-control">
-        <input type="radio" id="tab-ad_prices" name="tab-control">
-        <input type="radio" id="tab-database" name="tab-control">
-        <input type="radio" id="tab-security" name="tab-control">
-        <div class="tabs-nav">
-            <label for="tab-organization" class="tab-btn"><i class="fas fa-building"></i> Organización</label>
-            <label for="tab-fees" class="tab-btn"><i class="fas fa-euro-sign"></i> Cuotas</label>
-            <label for="tab-ad_prices" class="tab-btn"><i class="fas fa-tags"></i> Precios Anuncios</label>
-            <label for="tab-database" class="tab-btn"><i class="fas fa-database"></i> Base de Datos</label>
-            <label for="tab-security" class="tab-btn"><i class="fas fa-shield-alt"></i> Seguridad</label>
-        </div>
-        <div class="tab-content-wrapper">
+        <div class="tabs-system">
+            <input type="radio" id="tab-organization" name="tab-control" checked>
+            <input type="radio" id="tab-fees" name="tab-control">
+            <input type="radio" id="tab-ad_prices" name="tab-control">
+            <input type="radio" id="tab-database" name="tab-control">
+            <input type="radio" id="tab-security" name="tab-control">
+            <div class="tabs-nav">
+                <label for="tab-organization" class="tab-btn"><i class="fas fa-building"></i> Organización</label>
+                <label for="tab-fees" class="tab-btn"><i class="fas fa-euro-sign"></i> Cuotas</label>
+                <label for="tab-ad_prices" class="tab-btn"><i class="fas fa-tags"></i> Precios Anuncios</label>
+                <label for="tab-database" class="tab-btn"><i class="fas fa-database"></i> Base de Datos</label>
+                <label for="tab-security" class="tab-btn"><i class="fas fa-shield-alt"></i> Seguridad</label>
+            </div>
+            <div class="tab-content-wrapper">
 
             <!-- Organization Tab -->
             <div id="organization" class="tab-content">
