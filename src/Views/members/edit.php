@@ -1,6 +1,5 @@
 
 <?php ob_start(); ?>
-// ...all your HTML and PHP for the edit member page...
 <?php $content = ob_get_clean(); include __DIR__ . '/../layout.php'; ?>
 
 <div class="mb-4">
