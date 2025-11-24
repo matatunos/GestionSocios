@@ -618,6 +618,12 @@ function openTab(evt, tabName) {
     var activeTab = document.getElementById(tabName);
     if (activeTab) {
         activeTab.classList.add("active-tab");
+    } else if (tabcontent.length > 0) {
+        tabcontent[0].classList.add("active-tab"); // fallback: muestra la primera pestaña
+    } else {
+        for (var i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].classList.add("active-tab"); // fallback: muestra todas si no hay ninguna
+        }
     }
     evt.currentTarget.className += " active";
     if (history.pushState) {
@@ -635,6 +641,12 @@ window.addEventListener('DOMContentLoaded', function() {
     var activeTab = document.getElementById(tab);
     if (activeTab) {
         activeTab.classList.add("active-tab");
+    } else if (tabcontent.length > 0) {
+        tabcontent[0].classList.add("active-tab"); // fallback: muestra la primera pestaña
+    } else {
+        for (var i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].classList.add("active-tab"); // fallback: muestra todas si no hay ninguna
+        }
     }
     for (var i = 0; i < tablinks.length; i++) {
         tablinks[i].className = tablinks[i].className.replace(" active", "");
