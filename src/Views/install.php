@@ -52,20 +52,20 @@
             <div class="step-title">1. Base de Datos</div>
             <div class="form-group">
                 <label class="form-label">Host</label>
-                <input type="text" name="host" class="form-control" placeholder="localhost" value="<?php echo $_POST['host'] ?? 'localhost'; ?>" required>
+                <input type="text" name="host" class="form-control" placeholder="localhost" value="<?php echo $_POST['host'] ?? $configDefaults['host']; ?>" required>
             </div>
             <div class="form-group">
                 <label class="form-label">Nombre de la Base de Datos</label>
-                <input type="text" name="db_name" class="form-control" placeholder="asociacion_db" value="<?php echo $_POST['db_name'] ?? 'asociacion_db'; ?>" required>
+                <input type="text" name="db_name" class="form-control" placeholder="asociacion_db" value="<?php echo $_POST['db_name'] ?? $configDefaults['db_name']; ?>" required>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                 <div class="form-group">
                     <label class="form-label">Usuario DB</label>
-                    <input type="text" name="username" class="form-control" placeholder="root" value="<?php echo $_POST['username'] ?? 'root'; ?>" required>
+                    <input type="text" name="username" class="form-control" placeholder="root" value="<?php echo $_POST['username'] ?? $configDefaults['username']; ?>" required>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Contraseña DB</label>
-                    <input type="password" name="password" class="form-control" value="<?php echo $_POST['password'] ?? ''; ?>">
+                    <input type="password" name="password" class="form-control" value="<?php echo $_POST['password'] ?? $configDefaults['password']; ?>">
                 </div>
             </div>
 
@@ -87,3 +87,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </body>
 </html>
+
+<?php
+// Cargar datos de config.php si existe
+$configDefaults = [
+    'host' => 'localhost',
+    'db_name' => 'asociacion_db',
+    'username' => 'root',
+    'password' => '',
+];
+$configFile = __DIR__ . '/../Config/config.php';
+if (file_exists($configFile)) {
+    include $configFile;
+    $configDefaults['host'] = defined('DB_HOST') ? DB_HOST : $configDefaults['host'];
+    $configDefaults['db_name'] = defined('DB_NAME') ? DB_NAME : $configDefaults['db_name'];
+    $configDefaults['username'] = defined('DB_USER') ? DB_USER : $configDefaults['username'];
+    $configDefaults['password'] = defined('DB_PASS') ? DB_PASS : $configDefaults['password'];
+}
+?>
