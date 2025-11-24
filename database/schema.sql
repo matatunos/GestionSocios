@@ -58,16 +58,19 @@ CREATE TABLE IF NOT EXISTS member_categories (
     is_active TINYINT(1) DEFAULT 1,
     display_order INT DEFAULT 0,
     default_fee DECIMAL(10,2) DEFAULT 0.00,
-    -- Tabla conversation_participants
-    CREATE TABLE IF NOT EXISTS conversation_participants (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        conversation_id INT NOT NULL,
-        user_id INT NOT NULL,
-        joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (conversation_id) REFERENCES messages(id) ON DELETE CASCADE,
-        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-    ) ENGINE=InnoDB;
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+ENGINE=InnoDB;
+
+-- Tabla conversation_participants
+CREATE TABLE IF NOT EXISTS conversation_participants (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    conversation_id INT NOT NULL,
+    user_id INT NOT NULL,
+    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (conversation_id) REFERENCES messages(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
 )
 ENGINE=InnoDB;
 -- Tabla messages
