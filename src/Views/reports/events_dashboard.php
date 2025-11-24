@@ -1,4 +1,6 @@
 
+<?php ob_start(); ?>
+
 
 if (!isset($db) && isset($this) && property_exists($this, 'db')) {
     $db = $this->db;
