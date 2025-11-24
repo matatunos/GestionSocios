@@ -152,6 +152,9 @@ class MemberController {
             $this->member->longitude = $_POST['longitude'] ?? null;
             $this->member->status = $_POST['status'];
             $this->member->category_id = !empty($_POST['category_id']) ? $_POST['category_id'] : null;
+            if (!empty($_POST['created_at'])) {
+                $this->member->created_at = $_POST['created_at'];
+            }
             
             // Handle photo upload
             $photoUrl = $currentPhoto; // Keep current photo by default

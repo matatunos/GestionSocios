@@ -259,8 +259,8 @@ class Member {
 
     public function update() {
         $query = "UPDATE " . $this->table_name . " 
-                  SET first_name=:first_name, last_name=:last_name, dni=:dni, email=:email, phone=:phone, address=:address, latitude=:latitude, longitude=:longitude, status=:status, category_id=:category_id, photo_url=:photo_url, deactivated_at=:deactivated_at
-                  WHERE id=:id";
+              SET first_name=:first_name, last_name=:last_name, dni=:dni, email=:email, phone=:phone, address=:address, latitude=:latitude, longitude=:longitude, status=:status, category_id=:category_id, photo_url=:photo_url, deactivated_at=:deactivated_at, created_at=:created_at
+              WHERE id=:id";
         
         $stmt = $this->conn->prepare($query);
 
@@ -276,6 +276,7 @@ class Member {
         $this->photo_url = htmlspecialchars(strip_tags($this->photo_url));
         $this->deactivated_at = !empty($this->deactivated_at) ? htmlspecialchars(strip_tags($this->deactivated_at)) : null;
         $this->id = htmlspecialchars(strip_tags($this->id));
+        $this->created_at = !empty($this->created_at) ? $this->created_at : date('Y-m-d');
 
         $stmt->bindParam(":first_name", $this->first_name);
         $stmt->bindParam(":last_name", $this->last_name);
@@ -289,6 +290,7 @@ class Member {
         $stmt->bindParam(":category_id", $this->category_id, PDO::PARAM_INT);
         $stmt->bindParam(":photo_url", $this->photo_url);
         $stmt->bindParam(":deactivated_at", $this->deactivated_at);
+        $stmt->bindParam(":created_at", $this->created_at);
         $stmt->bindParam(":id", $this->id);
 
         if ($stmt->execute()) {
