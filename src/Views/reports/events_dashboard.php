@@ -45,15 +45,7 @@ $ingresosTotales = array_sum(array_map(function($e) use ($attendanceModel) {
         <canvas id="chartIngresos" height="120"></canvas>
         <canvas id="chartOcupacion" height="120"></canvas>
         <canvas id="chartProximos" height="120"></canvas>
-    </div>
-    <div class="kpi-row" style="margin-top:2rem;">
-        <div class="kpi-card"><span class="kpi-label">Total eventos</span><span class="kpi-value"><?= $totalEventos ?></span></div>
-        <div class="kpi-card"><span class="kpi-label">Próximos eventos</span><span class="kpi-value"><?= count($proximosEventos) ?></span></div>
-        <div class="kpi-card"><span class="kpi-label">Ocupación media</span><span class="kpi-value"><?= $ocupacionMedia ?>%</span></div>
-        <div class="kpi-card"><span class="kpi-label">Ingresos totales</span><span class="kpi-value">€<?= number_format($ingresosTotales,2) ?></span></div>
-    </div>
-    <div class="filter-row">
-        <form method="GET" action="">
+    <style>
             <input type="hidden" name="page" value="reports">
             <input type="hidden" name="action" value="dashboard_events">
             <label>Desde: <input type="date" name="from" value="<?= $_GET['from'] ?? '' ?>"></label>
