@@ -193,7 +193,7 @@
                                 
                                 <div style="display: inline-block; position: relative;">
                                     <button onclick="toggleCertMenu(<?php echo $row['id']; ?>)" class="btn btn-sm btn-info" style="background: #8b5cf6; border-color: #8b5cf6;">
-                                        <i class="fas fa-certificate" title="Certificados"></i> <i class="fas fa-chevron-down" style="font-size: 0.7rem;"></i>
+                                        <i class="fas fa-award" title="Certificados"></i> <i class="fas fa-chevron-down" style="font-size: 0.7rem;"></i>
                                     </button>
                                     <div id="certMenu<?php echo $row['id']; ?>" class="dropdown-menu" style="display: none; position: absolute; right: 0; background: white; border: 1px solid var(--border-light); border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); z-index: 1000; min-width: 200px; margin-top: 0.25rem;">
                                         <a href="index.php?page=certificates&action=membership&id=<?php echo $row['id']; ?>" target="_blank" class="dropdown-item" style="display: block; padding: 0.5rem 1rem; color: var(--text-base); text-decoration: none; transition: background 0.2s;">
