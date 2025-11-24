@@ -120,9 +120,8 @@ function getLocation() {
     if (!navigator.geolocation) {
         alert('Tu navegador no soporta geolocalización');
         return;
-    }
-    
-    // Show loading
+
+    <?php $content = ob_get_clean(); include __DIR__ . '/../layout.php'; ?>
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Capturando...';
     btn.disabled = true;
     
