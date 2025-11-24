@@ -50,8 +50,6 @@
                                 <span class="badge badge-warning" style="background-color:#f59e42;color:#fff;">Pendiente</span>
                             <?php elseif ($paid): ?>
                                 <span class="badge badge-success" style="background-color:#22c55e;color:#fff;">Pagado</span>
-                            <?php else: ?>
-                                <span class="badge badge-inactive">Pendiente</span>
                             <?php endif; ?>
                         </td>
                         <td>
@@ -66,6 +64,12 @@
                                 <button class="btn btn-sm" style="background:#22c55e;color:#fff;cursor:default;">
                                     <i class="fas fa-user-check" style="color:#fff;"></i> Registrado
                                 </button>
+                                <form method="POST" action="index.php?page=events&action=updateAttendanceStatus&id=<?= $event->id ?>&member_id=<?= $p['member']['id'] ?>" style="display:inline;margin-left:0.5em;">
+                                    <input type="hidden" name="status" value="cancelled">
+                                    <button type="submit" class="btn btn-sm" style="background:#fff;color:#ef4444;border:1px solid #ef4444;">
+                                        <i class="fas fa-user-slash"></i> Cancelar registro
+                                    </button>
+                                </form>
                             <?php endif; ?>
                         </td>
                         <td style="text-align: right;">
