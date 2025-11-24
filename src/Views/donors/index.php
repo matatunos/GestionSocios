@@ -54,7 +54,7 @@
                                         <i class="fas fa-image"></i>
                                     </a>
                                 <?php endif; ?>
-                                <a href="index.php?page=donors&action=edit&id=<?php echo $row['id']; ?>" class="btn btn-sm btn-secondary">
+                                <a href="index.php?page=donors&action=edit&id=<?php echo $row['id']; ?>" class="btn btn-sm btn-warning">
                                     <i class="fas fa-edit" title="Editar"></i>
                                 </a>
                                 

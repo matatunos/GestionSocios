@@ -22,7 +22,7 @@ $events = $eventModel->readActive()->fetchAll(PDO::FETCH_ASSOC);
     </select>
 </form>
 <table border="1" cellpadding="6">
-    <tr><th>ID</th><th>Nombre</th><th>QR Vale Evento</th></tr>
+    <tr><th>ID</th><th>Nombre</th><th>QR Vale Evento</th><th>Acciones</th></tr>
     <?php foreach ($members as $member): ?>
     <tr>
         <td><?= $member['id'] ?></td>
@@ -33,6 +33,11 @@ $events = $eventModel->readActive()->fetchAll(PDO::FETCH_ASSOC);
             <?php else: ?>
             <em>Selecciona evento</em>
             <?php endif; ?>
+        </td>
+        <td>
+            <a href="index.php?page=members&action=edit&id=<?= $member['id'] ?>" class="btn btn-sm btn-warning">
+                <i class="fas fa-edit" title="Editar"></i>
+            </a>
         </td>
     </tr>
     <?php endforeach; ?>
