@@ -52,23 +52,21 @@ $events = $eventModel->readActive()->fetchAll(PDO::FETCH_ASSOC);
             <?php endif; ?>
         </td>
         <td style="text-align: right;">
-            <div class="member-actions">
-                <a href="index.php?page=members&action=edit&id=<?= $member['id'] ?>" class="btn btn-sm btn-warning" title="Editar">
-                    <i class="fas fa-edit"></i>
-                </a>
-                <a href="index.php?page=members&action=logo&id=<?= $member['id'] ?>" class="btn btn-sm btn-warning" title="Ver logo">
-                    <i class="fas fa-image"></i>
-                </a>
-                <a href="index.php?page=members&action=geolocate&id=<?= $member['id'] ?>" class="btn btn-sm btn-warning" title="Geolocalizar">
-                    <i class="fas fa-map-marker-alt"></i>
-                </a>
-                <button type="button" class="btn btn-sm btn-success" disabled title="Estado">
-                    <i class="fas fa-check-circle"></i> AL DÍA 2025
-                </button>
-                <a href="index.php?page=members&action=delete&id=<?= $member['id'] ?>" class="btn btn-sm btn-danger" title="Eliminar" onclick="return confirm('¿Seguro que quieres eliminar este socio?');">
-                    <i class="fas fa-trash"></i>
-                </a>
-            </div>
+            <a href="index.php?page=members&action=logo&id=<?= $member['id'] ?>" class="btn btn-sm btn-warning" title="Ver logo">
+                <i class="fas fa-image"></i>
+            </a>
+            <a href="index.php?page=members&action=edit&id=<?= $member['id'] ?>" class="btn btn-sm btn-warning" title="Editar">
+                <i class="fas fa-edit"></i>
+            </a>
+            <a href="index.php?page=members&action=geolocate&id=<?= $member['id'] ?>" class="btn btn-sm btn-warning" title="Geolocalizar">
+                <i class="fas fa-map-marker-alt"></i>
+            </a>
+            <button type="button" class="btn btn-sm btn-success" disabled title="Estado">
+                <i class="fas fa-check-circle"></i> AL DÍA 2025
+            </button>
+            <a href="index.php?page=members&action=delete&id=<?= $member['id'] ?>" class="btn btn-sm btn-danger" title="Eliminar" onclick="return confirm('¿Seguro que quieres eliminar este socio?');">
+                <i class="fas fa-trash"></i>
+            </a>
         </td>
     </tr>
     <?php endforeach; ?>
