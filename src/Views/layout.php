@@ -51,7 +51,7 @@ if (isset($_SESSION['user_id'])) {
     
     <div class="app-container">
         <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
+        <aside class="sidebar" id="sidebar" style="border: 3px solid red;">
             <div class="sidebar-header">
                 <div class="nav-brand">
                     <?php
