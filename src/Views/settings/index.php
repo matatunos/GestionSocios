@@ -6,11 +6,6 @@
     position: absolute;
     left: -9999px;
 }
-.tabs-system {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-}
 .tabs-nav {
     display: flex;
     justify-content: center;
@@ -19,11 +14,6 @@
     background: var(--bg-card);
     margin-bottom: 0;
     z-index: 2;
-}
-.tab-content-wrapper {
-    padding: 2rem;
-    position: relative;
-    z-index: 1;
 }
 .tabs-system #tab-organization:checked ~ .tabs-nav label[for="tab-organization"],
 .tabs-system #tab-fees:checked ~ .tabs-nav label[for="tab-fees"],
@@ -145,21 +135,15 @@
         <h1><i class="fas fa-cog"></i> Configuración</h1>
     </div>
     <div class="tabs-container">
-        <div class="tabs-system">
-            <input type="radio" id="tab-organization" name="tab-control" checked>
-            <input type="radio" id="tab-fees" name="tab-control">
-            <input type="radio" id="tab-ad_prices" name="tab-control">
-            <input type="radio" id="tab-database" name="tab-control">
-            <input type="radio" id="tab-security" name="tab-control">
-            <div class="tabs-nav">
-                <label for="tab-organization" class="tab-btn"><i class="fas fa-building"></i> Organización</label>
-                <label for="tab-fees" class="tab-btn"><i class="fas fa-euro-sign"></i> Cuotas</label>
-                <label for="tab-ad_prices" class="tab-btn"><i class="fas fa-tags"></i> Precios Anuncios</label>
-                <label for="tab-database" class="tab-btn"><i class="fas fa-database"></i> Base de Datos</label>
-                <label for="tab-security" class="tab-btn"><i class="fas fa-shield-alt"></i> Seguridad</label>
-            </div>
-            <!-- Organization Tab -->
-            <div id="organization" class="tab-content">
+        <div class="tabs-nav">
+            <button class="tab-btn active" onclick="switchTab('organization')" id="tab-organization"><i class="fas fa-building"></i> Organización</button>
+            <button class="tab-btn" onclick="switchTab('fees')" id="tab-fees"><i class="fas fa-euro-sign"></i> Cuotas</button>
+            <button class="tab-btn" onclick="switchTab('ad_prices')" id="tab-ad_prices"><i class="fas fa-tags"></i> Precios Anuncios</button>
+            <button class="tab-btn" onclick="switchTab('database')" id="tab-database"><i class="fas fa-database"></i> Base de Datos</button>
+            <button class="tab-btn" onclick="switchTab('security')" id="tab-security"><i class="fas fa-shield-alt"></i> Seguridad</button>
+        </div>
+        <!-- Organization Tab -->
+        <div id="organization" class="tab-content active-tab">
                 <h2 class="section-title">Configuración de la Organización</h2>
                 
                 <?php if (isset($_SESSION['success'])): ?>
@@ -332,10 +316,9 @@
                         </button>
                     </div>
                 </form>
-            </div>
-
-            <!-- Ad Prices Tab -->
-            <div id="ad_prices" class="tab-content">
+        </div>
+        <!-- Ad Prices Tab -->
+        <div id="ad_prices" class="tab-content">
                 <h2 class="section-title">Precios de Anuncios (Libro de Fiestas)</h2>
                 <div class="settings-grid">
                     <!-- Form to Update Prices -->
@@ -435,10 +418,9 @@
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Member Fees Tab -->
-            <div id="fees" class="tab-content">
+        </div>
+        <!-- Member Fees Tab -->
+        <div id="fees" class="tab-content">
                 <h2 class="section-title">Cuotas de Socios</h2>
                 <div class="settings-grid">
                     <!-- Define New Fee -->
@@ -489,10 +471,9 @@
                         <?php endif; ?>
                     </div>
                 </div>
-            </div>
-
-            <!-- Database Tab -->
-            <div id="database" class="tab-content">
+        </div>
+        <!-- Database Tab -->
+        <div id="database" class="tab-content">
                 <h2 class="section-title">Configuración de Base de Datos</h2>
                 <div class="alert alert-warning" style="background: #fffbeb; color: #92400e; padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem;">
                     <i class="fas fa-exclamation-triangle"></i> <strong>Cuidado:</strong> Cambiar estos valores puede dejar la aplicación inoperativa. Asegúrese de que los nuevos datos son correctos.
@@ -517,10 +498,9 @@
                     </div>
                     <button type="submit" class="btn btn-danger">Actualizar Conexión</button>
                 </form>
-            </div>
-
-            <!-- Security Tab -->
-            <div id="security" class="tab-content">
+        </div>
+        <!-- Security Tab -->
+        <div id="security" class="tab-content">
                 <h2 style="margin-bottom: 2rem; color: var(--text-color);">
                     <i class="fas fa-shield-alt" style="color: var(--primary-600);"></i> Seguridad
                 </h2>
@@ -570,7 +550,6 @@
                         </button>
                     </div>
                 </form>
-            </div>
         </div>
     </div>
 </div>
