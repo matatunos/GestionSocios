@@ -28,7 +28,6 @@ class ReportController {
         }
 
         // ...existing code...
-    }
     public function exportMembers() {
         $this->checkAdmin();
         $member = new Member($this->db);
