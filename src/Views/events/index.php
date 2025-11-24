@@ -26,7 +26,14 @@
             <?php else: ?>
                 <?php foreach ($events as $row): ?>
                     <tr>
-                        <td style="font-weight: 500;"><?php echo htmlspecialchars($row['name']); ?></td>
+                        <td style="font-weight: 500;">
+                            <?php if ($row['is_active']): ?>
+                                <i class="fas fa-circle" style="color: #22c55e; font-size: 0.8rem; margin-right: 0.3rem;"></i>
+                            <?php else: ?>
+                                <i class="fas fa-circle" style="color: #ef4444; font-size: 0.8rem; margin-right: 0.3rem;"></i>
+                            <?php endif; ?>
+                            <?php echo htmlspecialchars($row['name']); ?>
+                        </td>
                         <td><?php echo htmlspecialchars($row['date']); ?></td>
                         <td><?php echo number_format($row['price'], 2); ?> €</td>
                         <td>

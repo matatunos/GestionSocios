@@ -117,6 +117,7 @@ switch ($page) {
         else if ($action === 'update') $controller->update($_GET['id']);
         else if ($action === 'show') $controller->show($_GET['id']);
         else if ($action === 'markPaid') $controller->markPaid($_GET['id'], $_GET['member_id'] ?? null);
+        else if ($action === 'updateAttendanceStatus') $controller->updateAttendanceStatus();
         else $controller->index();
         break;
     case 'donations':

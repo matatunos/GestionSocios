@@ -27,13 +27,14 @@
             <tr>
                 <th>Socio</th>
                 <th>Estado de Pago</th>
+                <th>Asistencia</th>
                 <th style="text-align: right;">Acciones</th>
             </tr>
         </thead>
         <tbody>
             <?php if (empty($participants)): ?>
                 <tr>
-                    <td colspan="3" style="text-align: center; padding: 2rem; color: var(--text-muted);">No hay participantes.</td>
+                    <td colspan="4" style="text-align: center; padding: 2rem; color: var(--text-muted);">No hay participantes.</td>
                 </tr>
             <?php else: ?>
                 <?php foreach ($participants as $p): 
@@ -47,6 +48,15 @@
                             <span class="badge <?= $paid ? 'badge-active' : 'badge-inactive' ?>">
                                 <?= $paid ? 'Pagado' : 'Pendiente' ?>
                             </span>
+                        </td>
+                        <td>
+                            <form method="POST" action="index.php?page=events&action=updateAttendanceStatus&id=<?= $event->id ?>&member_id=<?= $p['member']['id'] ?>" style="display:inline;">
+                                <select name="status" class="form-control" style="width:auto;display:inline-block;" onchange="this.form.submit()">
+                                    <option value="registered" <?= ($p['payment'] && $p['payment']['status'] === 'registered') ? 'selected' : '' ?>>Registrado</option>
+                                    <option value="attended" <?= ($p['payment'] && $p['payment']['status'] === 'attended') ? 'selected' : '' ?>>Asistió</option>
+                                    <option value="cancelled" <?= ($p['payment'] && $p['payment']['status'] === 'cancelled') ? 'selected' : '' ?>>Cancelado</option>
+                                </select>
+                            </form>
                         </td>
                         <td style="text-align: right;">
                             <?php if (!$paid): ?>

@@ -147,4 +147,24 @@ class EventController {
             }
         }
     }
+
+    public function updateAttendanceStatus() {
+        $this->checkAdmin();
+        $eventId = $_GET['id'] ?? null;
+        $memberId = $_GET['member_id'] ?? null;
+        $status = $_POST['status'] ?? null;
+        if (!$eventId || !$memberId || !$status) {
+            $_SESSION['error'] = "Datos incompletos.";
+            header("Location: index.php?page=events&action=show&id=$eventId");
+            exit;
+        }
+        $stmt = $this->db->prepare("UPDATE event_attendance SET status = :status WHERE event_id = :event_id AND member_id = :member_id");
+        $stmt->bindParam(':status', $status);
+        $stmt->bindParam(':event_id', $eventId);
+        $stmt->bindParam(':member_id', $memberId);
+        $stmt->execute();
+        $_SESSION['success'] = "Estado actualizado correctamente.";
+        header("Location: index.php?page=events&action=show&id=$eventId");
+        exit;
+    }
 }
