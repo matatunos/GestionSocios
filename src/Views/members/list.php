@@ -236,15 +236,17 @@
                                 <?php if ($row['status'] === 'active'): ?>
                                     <a href="index.php?page=members&action=deactivate&id=<?php echo $row['id']; ?>" 
                                        class="btn btn-sm btn-warning"
+                                       title="Dar de Baja"
                                        onclick="return confirm('¿Dar de baja a este socio?\n\nEl socio pasará a estado inactivo pero se conservarán todos sus datos.');">
-                                        <i class="fas fa-user-slash"></i> Dar de Baja
+                                        <i class="fas fa-user-slash"></i>
                                     </a>
                                 <?php endif; ?>
                                 
                                 <a href="index.php?page=members&action=delete&id=<?php echo $row['id']; ?>" 
                                    class="btn btn-sm btn-danger"
+                                   title="Eliminar"
                                    onclick="return confirm('⚠️ ¿ELIMINAR PERMANENTEMENTE a este socio?\n\nEsta acción NO se puede deshacer.\nSe eliminará el socio pero se conservarán sus pagos asociados.');">
-                                    <i class="fas fa-trash"></i> Eliminar
+                                    <i class="fas fa-trash"></i>
                                 </a>
                             </td>
                         </tr>
