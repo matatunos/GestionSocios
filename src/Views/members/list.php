@@ -200,11 +200,17 @@
                                     </div>
                                 </div>
                                 
+                                <?php if (empty($row['has_paid_current_year'])): ?>
                                 <a href="index.php?page=members&action=markPaid&id=<?php echo $row['id']; ?>" 
                                    class="btn btn-sm btn-primary"
                                    onclick="return confirm('¿Marcar la cuota de <?php echo date('Y'); ?> como pagada para este socio?');">
                                     <i class="fas fa-check"></i> Marcar como Pagado
                                 </a>
+                                <?php else: ?>
+                                <span class="badge" style="background: #10b981; color: white; padding: 0.5rem 1rem; font-size: 0.875rem;">
+                                    <i class="fas fa-check-circle"></i> Al día <?php echo date('Y'); ?>
+                                </span>
+                                <?php endif; ?>
                                 
                                 <?php if ($row['status'] === 'active'): ?>
                                     <a href="index.php?page=members&action=deactivate&id=<?php echo $row['id']; ?>" 

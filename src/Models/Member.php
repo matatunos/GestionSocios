@@ -31,7 +31,16 @@ class Member {
     }
     
     public function readFiltered($filters = [], $limit = null, $offset = null) {
-        $query = "SELECT m.*, mc.name as category_name, mc.color as category_color
+        $currentYear = date('Y');
+        $query = "SELECT m.*, 
+                  mc.name as category_name, 
+                  mc.color as category_color,
+                  EXISTS (
+                      SELECT 1 FROM payments p 
+                      WHERE p.member_id = m.id 
+                      AND p.fee_year = $currentYear 
+                      AND p.status = 'paid'
+                  ) as has_paid_current_year
                   FROM " . $this->table_name . " m
                   LEFT JOIN member_categories mc ON m.category_id = mc.id
                   WHERE 1=1";
