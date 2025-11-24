@@ -1,6 +1,6 @@
 <?php
 // Script de diagnóstico para markPaid
-require_once __DIR__ . '/src/Config/Database.php';
+require_once __DIR__ . '/../src/Config/Database.php';
 
 $db = (new Database())->getConnection();
 $currentYear = date('Y');
