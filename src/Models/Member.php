@@ -85,18 +85,21 @@ class Member {
         // Filter by payment status (requires checking payments table)
         if (!empty($filters['payment_status'])) {
             $currentYear = date('Y');
-            
             if ($filters['payment_status'] === 'current') {
                 $query .= " AND EXISTS (
                     SELECT 1 FROM payments p 
                     WHERE p.member_id = m.id 
                     AND p.fee_year = $currentYear
+                    AND p.payment_type = 'fee'
+                    AND p.status = 'paid'
                 )";
             } elseif ($filters['payment_status'] === 'delinquent') {
                 $query .= " AND NOT EXISTS (
                     SELECT 1 FROM payments p 
                     WHERE p.member_id = m.id 
                     AND p.fee_year = $currentYear
+                    AND p.payment_type = 'fee'
+                    AND p.status = 'paid'
                 ) AND m.status = 'active'";
             }
         }
