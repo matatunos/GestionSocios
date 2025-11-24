@@ -63,8 +63,8 @@
                                     </button>
                                 </form>
                             <?php else: ?>
-                                <button class="btn btn-sm" style="background:#f59e42;color:#fff;cursor:default;">
-                                    <i class="fas fa-user-check"></i> Registrado
+                                <button class="btn btn-sm" style="background:#22c55e;color:#fff;cursor:default;">
+                                    <i class="fas fa-user-check" style="color:#fff;"></i> Registrado
                                 </button>
                             <?php endif; ?>
                         </td>
