@@ -114,11 +114,37 @@ document.addEventListener(\'DOMContentLoaded\', function() {
     // Create map centered on Spain
     map = L.map(\'map\').setView([40.4168, -3.7038], 6);
     
-    // Add OpenStreetMap tiles
-    L.tileLayer(\'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png\', {
+    // Define base layers
+    const streetMap = L.tileLayer(\'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png\', {
         attribution: \'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors\',
         maxZoom: 19
-    }).addTo(map);
+    });
+    
+    const satelliteMap = L.tileLayer(\'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}\', {
+        attribution: \'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community\',
+        maxZoom: 19
+    });
+    
+    const hybridBase = L.tileLayer(\'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}\', {
+        maxZoom: 19
+    });
+    
+    const labels = L.tileLayer(\'https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png\', {
+        maxZoom: 19,
+        pane: \'shadowPane\'
+    });
+    
+    // Add default layer (street map)
+    streetMap.addTo(map);
+    
+    // Create layer control
+    const baseMaps = {
+        "🗺️ Mapa de calles": streetMap,
+        "🛰️ Satélite": satelliteMap,
+        "🌍 Híbrido": L.layerGroup([hybridBase, labels])
+    };
+    
+    L.control.layers(baseMaps).addTo(map);
     
     // Load locations
     loadLocations();
