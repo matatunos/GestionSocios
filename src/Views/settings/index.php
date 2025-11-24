@@ -534,7 +534,12 @@
                 <hr style="margin: 3rem 0; border-color: var(--border-light);">
             
             
-                <h2 class="section-title">Categorías de Socios</h2>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2 class="section-title" style="margin: 0;">Categorías de Socios</h2>
+                    <a href="index.php?page=member_categories&action=create" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Nueva Categoría
+                    </a>
+                </div>
                 
                 <!-- Categories List -->
                 <div class="categories-list">

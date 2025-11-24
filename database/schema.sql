@@ -95,6 +95,21 @@ CREATE TABLE IF NOT EXISTS member_categories (
 )
 ENGINE=InnoDB;
 
+-- Tabla category_fee_history
+CREATE TABLE IF NOT EXISTS category_fee_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    category_id INT NOT NULL,
+    year INT NOT NULL,
+    fee_amount DECIMAL(10,2) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (category_id) REFERENCES member_categories(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_category_year (category_id, year),
+    INDEX idx_year (year),
+    INDEX idx_category_id (category_id)
+)
+ENGINE=InnoDB;
+
 -- Tabla conversation_participants
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
