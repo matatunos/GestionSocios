@@ -1,3 +1,9 @@
+-- Estados permitidos para asistencias a eventos
+INSERT INTO event_attendance_status (status_key, status_name) VALUES
+	('registered', 'Registrado'),
+	('confirmed', 'Confirmado'),
+	('attended', 'Asistió'),
+	('cancelled', 'Cancelado');
 -- Vaciado automático de tablas antes de insertar datos de prueba
 SET FOREIGN_KEY_CHECKS = 0;
 TRUNCATE TABLE event_attendance;
@@ -134,7 +140,7 @@ VALUES
 	(1, 5.00, '2025-04-12', 'Fiesta de Primavera', 'paid', 'event', 1),
 	(2, 5.00, '2025-04-12', 'Fiesta de Primavera', 'pending', 'event', 1),
 	(3, 5.00, '2025-04-12', 'Fiesta de Primavera', 'paid', 'event', 1),
-	(4, 5.00, '2025-04-12', 'Fiesta de Primavera', 'cancelled', 'event', 1),
+	(4, 5.00, '2025-04-12', 'Fiesta de Primavera', 'pending', 'event', 1),
 	-- ... (Patrón similar para los 10 eventos y 200 asistentes, alternando estados 'paid', 'pending', 'cancelled')
 	(200, 12.00, '2025-08-15', 'Fiesta de Verano', 'paid', 'event', 10);
 INSERT INTO members (first_name, last_name, dni, email, phone, address, category_id, status, join_date, deactivated_at) VALUES
