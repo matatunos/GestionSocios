@@ -94,9 +94,72 @@ $ingresosTotales = array_sum(array_map(function($e) use ($attendanceModel) {
                 <div class="chart-legend">Ocupación (%) por evento</div>
                 <canvas id="chartOcupacion" height="120"></canvas>
             </div>
+            <!-- Listado de próximos eventos -->
             <div class="chart-block">
                 <div class="chart-legend">Próximos eventos</div>
-                <canvas id="chartProximos" height="120"></canvas>
+                <ul class="event-list">
+                <?php foreach ($filteredEvents as $e): ?>
+                    <?php if (strtotime($e['date']) > time()): ?>
+                        <li>
+                            <strong><?= htmlspecialchars($e['name']) ?></strong> - <?= date('d/m/Y', strtotime($e['date'])) ?>
+                        </li>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+                </ul>
+            </div>
+            <!-- Ranking de eventos -->
+            <div class="chart-block">
+                <div class="chart-legend">Ranking de eventos</div>
+                <ul class="event-ranking">
+                    <li><strong>Más beneficios (€):</strong></li>
+                    <?php
+                    $ranking_beneficios = $filteredEvents;
+                    usort($ranking_beneficios, function($a, $b) use ($attendanceModel) {
+                        $benefA = ($a['price'] ?? 0) * ($attendanceModel->getStatsByEvent($a['id'])['confirmed'] ?? 0);
+                        $benefB = ($b['price'] ?? 0) * ($attendanceModel->getStatsByEvent($b['id'])['confirmed'] ?? 0);
+                        return $benefB <=> $benefA;
+                    });
+                    foreach (array_slice($ranking_beneficios, 0, 3) as $e):
+                        $benef = ($e['price'] ?? 0) * ($attendanceModel->getStatsByEvent($e['id'])['confirmed'] ?? 0);
+                    ?>
+                        <li><?= htmlspecialchars($e['name']) ?>: <?= $benef ?> €</li>
+                    <?php endforeach; ?>
+                    <li style="margin-top:1rem;"><strong>Más populares (confirmados):</strong></li>
+                    <?php
+                    $ranking_populares = $filteredEvents;
+                    usort($ranking_populares, function($a, $b) use ($attendanceModel) {
+                        $confA = $attendanceModel->getStatsByEvent($a['id'])['confirmed'] ?? 0;
+                        $confB = $attendanceModel->getStatsByEvent($b['id'])['confirmed'] ?? 0;
+                        return $confB <=> $confA;
+                    });
+                    foreach (array_slice($ranking_populares, 0, 3) as $e):
+                        $conf = $attendanceModel->getStatsByEvent($e['id'])['confirmed'] ?? 0;
+                    ?>
+                        <li><?= htmlspecialchars($e['name']) ?>: <?= $conf ?> confirmados</li>
+                    <?php endforeach; ?>
+                    <li style="margin-top:1rem;"><strong>Mayor ocupación (%):</strong></li>
+                    <?php
+                    $ranking_ocupacion = $filteredEvents;
+                    usort($ranking_ocupacion, function($a, $b) use ($attendanceModel) {
+                        $statsA = $attendanceModel->getStatsByEvent($a['id']);
+                        $statsB = $attendanceModel->getStatsByEvent($b['id']);
+                        $maxA = $a['max_attendees'] ?? 0;
+                        $maxB = $b['max_attendees'] ?? 0;
+                        $totalA = ($statsA['registered'] ?? 0) + ($statsA['confirmed'] ?? 0) + ($statsA['attended'] ?? 0) + ($statsA['cancelled'] ?? 0);
+                        $totalB = ($statsB['registered'] ?? 0) + ($statsB['confirmed'] ?? 0) + ($statsB['attended'] ?? 0) + ($statsB['cancelled'] ?? 0);
+                        $ocupA = $maxA ? ($totalA / $maxA) * 100 : 0;
+                        $ocupB = $maxB ? ($totalB / $maxB) * 100 : 0;
+                        return $ocupB <=> $ocupA;
+                    });
+                    foreach (array_slice($ranking_ocupacion, 0, 3) as $e):
+                        $stats = $attendanceModel->getStatsByEvent($e['id']);
+                        $max = $e['max_attendees'] ?? 0;
+                        $total = ($stats['registered'] ?? 0) + ($stats['confirmed'] ?? 0) + ($stats['attended'] ?? 0) + ($stats['cancelled'] ?? 0);
+                        $ocup = $max ? round(($total / $max) * 100, 1) : 0;
+                    ?>
+                        <li><?= htmlspecialchars($e['name']) ?>: <?= $ocup ?>%</li>
+                    <?php endforeach; ?>
+                </ul>
             </div>
         </div>
     </div>
@@ -113,7 +176,6 @@ const ocupacion = eventos.map((e, i) => {
     const total = (statsArr[i].registered ?? 0) + (statsArr[i].confirmed ?? 0) + (statsArr[i].attended ?? 0) + (statsArr[i].cancelled ?? 0);
     return max ? Math.round((total / max) * 100) : 0;
 });
-const proximos = eventos.map(e => (new Date(e.date) > new Date()) ? 1 : 0);
 new Chart(document.getElementById('chartAsistencia'), {
     type: 'bar',
     data: { labels, datasets: [{ label: 'Confirmados', data: asistencia, backgroundColor: '#22c55e' }] },
