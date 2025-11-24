@@ -107,4 +107,3 @@ new Chart(document.getElementById('chartProximos'), {
 .filter-row { margin-bottom:2rem; }
 .chart-row { display:flex; gap:2rem; }
 </style>
-?>
