@@ -192,19 +192,19 @@ CREATE TABLE IF NOT EXISTS documents (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     description TEXT,
-    file_name VARCHAR(255),
-    file_path VARCHAR(255),
-    file_size INT DEFAULT 0,
-    file_type VARCHAR(50),
-    category VARCHAR(50),
-    uploaded_user_id INT DEFAULT NULL,
-    is_public TINYINT(1) DEFAULT 1,
+    file_name VARCHAR(255) NOT NULL,
+    file_path VARCHAR(500) NOT NULL,
+    file_size INT NOT NULL COMMENT 'Tamaño en bytes',
+    file_type VARCHAR(100) NOT NULL COMMENT 'MIME type',
+    category VARCHAR(50) DEFAULT 'general' COMMENT 'general, actas, estatutos, facturas, otros',
+    uploaded_by INT NOT NULL,
+    is_public BOOLEAN DEFAULT TRUE COMMENT 'Si es visible para todos los socios',
     downloads INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT fk_documents_uploaded_user FOREIGN KEY (uploaded_user_id) REFERENCES users(id) ON DELETE SET NULL
+    FOREIGN KEY (uploaded_by) REFERENCES members(id) ON DELETE CASCADE
 )
-ENGINE=InnoDB;
+ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabla para control de acceso a documentos privados
 CREATE TABLE IF NOT EXISTS document_permissions (
