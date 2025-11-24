@@ -58,6 +58,8 @@ CREATE TABLE IF NOT EXISTS member_categories (
     is_active TINYINT(1) DEFAULT 1,
     display_order INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+ENGINE=InnoDB;
 -- Tabla messages
 CREATE TABLE IF NOT EXISTS messages (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -70,8 +72,6 @@ CREATE TABLE IF NOT EXISTS messages (
     FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
-)
-ENGINE=InnoDB;
 -- ...existing code...
 CREATE TABLE IF NOT EXISTS members (
     id INT AUTO_INCREMENT PRIMARY KEY,
