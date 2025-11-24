@@ -181,12 +181,12 @@
                                 </span>
                             </td>
                             <td style="text-align: right;">
-                                <a href="index.php?page=members&action=edit&id=<?php echo $row['id']; ?>" class="btn btn-sm btn-secondary">
+                                <a href="index.php?page=members&action=edit&id=<?php echo $row['id']; ?>" class="btn btn-sm btn-warning">
                                     <i class="fas fa-edit" title="Editar"></i>
                                 </a>
                                 
                                 <?php if (!empty($row['latitude']) && !empty($row['longitude'])): ?>
-                                <a href="index.php?page=map#member-<?php echo $row['id']; ?>" class="btn btn-sm btn-info" title="Ver en mapa">
+                                <a href="index.php?page=map#member-<?php echo $row['id']; ?>" class="btn btn-sm btn-warning" title="Ver en mapa">
                                     <i class="fas fa-map-marker-alt"></i>
                                 </a>
                                 <?php endif; ?>
