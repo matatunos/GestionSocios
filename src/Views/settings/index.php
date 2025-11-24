@@ -529,7 +529,6 @@
                         <?php endif; ?>
                     </div>
                 </div>
-                </div>
 
                 <hr style="margin: 3rem 0; border-color: var(--border-light);">
             
