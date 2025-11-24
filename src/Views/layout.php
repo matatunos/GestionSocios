@@ -147,11 +147,26 @@ if (isset($_SESSION['user_id'])) {
             </div>
             
             <ul class="nav-menu">
-                <li>
-                    <a href="index.php?page=dashboard" class="nav-link <?php echo ($page === 'dashboard') ? 'active' : ''; ?>">
+                <li class="nav-group">
+                    <a href="#" class="nav-link <?php echo ($page === 'dashboard' || $page === 'treasury') ? 'active' : ''; ?>">
                         <i class="fas fa-home"></i>
-                        <span>Panel</span>
+                        <span>Dashboard</span>
+                        <i class="fas fa-chevron-down" style="margin-left:0.5em;font-size:0.8em;"></i>
                     </a>
+                    <ul class="nav-submenu">
+                        <li>
+                            <a href="index.php?page=dashboard" class="nav-link <?php echo ($page === 'dashboard') ? 'active' : ''; ?>">
+                                <i class="fas fa-chart-pie"></i>
+                                <span>General</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="index.php?page=treasury" class="nav-link <?php echo ($page === 'treasury') ? 'active' : ''; ?>">
+                                <i class="fas fa-coins"></i>
+                                <span>Tesorería</span>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
                 <li>
                     <a href="index.php?page=members" class="nav-link <?php echo ($page === 'members') ? 'active' : ''; ?>">
