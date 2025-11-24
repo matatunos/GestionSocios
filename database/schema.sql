@@ -1,3 +1,17 @@
+-- ...existing code...
+CREATE TABLE IF NOT EXISTS members (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    email VARCHAR(150),
+    phone VARCHAR(20),
+    address TEXT,
+    status ENUM('active', 'inactive') DEFAULT 'active',
+    photo_url VARCHAR(255) DEFAULT NULL,
+    deactivated_at DATETIME DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS notifications (
     id INT AUTO_INCREMENT PRIMARY KEY,
     member_id INT NOT NULL,
