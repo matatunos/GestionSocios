@@ -27,31 +27,6 @@ TRUNCATE TABLE donations;
 TRUNCATE TABLE ad_prices;
 TRUNCATE TABLE settings;
 TRUNCATE TABLE notifications;
-TRUNCATE TABLE event_attendance;
-TRUNCATE TABLE event_payments;
-TRUNCATE TABLE payments;
-TRUNCATE TABLE expenses;
-TRUNCATE TABLE expense_categories;
-TRUNCATE TABLE members;
-TRUNCATE TABLE member_categories;
-TRUNCATE TABLE tasks;
-TRUNCATE TABLE task_categories;
-TRUNCATE TABLE users;
-TRUNCATE TABLE notifications;
-TRUNCATE TABLE organization_settings;
-TRUNCATE TABLE roles;
-TRUNCATE TABLE polls;
-TRUNCATE TABLE conversations;
-TRUNCATE TABLE messages;
-TRUNCATE TABLE conversation_participants;
-TRUNCATE TABLE documents;
-TRUNCATE TABLE annual_fees;
-TRUNCATE TABLE events;
-TRUNCATE TABLE donors;
-TRUNCATE TABLE book_ads;
-TRUNCATE TABLE donations;
-TRUNCATE TABLE ad_prices;
-TRUNCATE TABLE settings;
 SET FOREIGN_KEY_CHECKS = 1;
 
 -- Eventos de ejemplo
@@ -152,7 +127,6 @@ VALUES
 	(1, 4, 'cancelled', 0, NULL, '2025-04-04 13:00:00', '2025-04-04 13:00:00'),
 	-- ... (Patrón similar para los 10 eventos, alternando miembros y estados)
 	(10, 200, 'confirmed', 1, '2025-08-15 17:05:00', '2025-08-01 10:00:00', '2025-08-01 10:00:00');
-(10, 200, 'confirmed', 1, '2025-08-15 17:05:00', '2025-08-01 10:00:00', '2025-08-01 10:00:00');
 
 -- Pagos simulados para eventos
 INSERT INTO payments (member_id, amount, payment_date, concept, status, payment_type, event_id)
