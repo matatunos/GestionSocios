@@ -51,13 +51,8 @@ if (isset($_SESSION['user_id'])) {
     
     <div class="app-container">
         <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar" style="border: 3px solid red; background: #fff; color: #000;">
-        <style>
-        #sidebar, #sidebar * {
-            background: #fff !important;
-            color: #000 !important;
-        }
-        </style>
+        <aside class="sidebar" id="sidebar">
+
             <div class="sidebar-header">
                 <div class="nav-brand">
                     <?php
