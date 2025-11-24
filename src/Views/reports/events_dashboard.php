@@ -1,5 +1,5 @@
 
-<?php ob_start(); ?>
+
 
 <?php
 if (!isset($db) && isset($this) && property_exists($this, 'db')) {
