@@ -236,6 +236,9 @@
     </div>
 </div>
 
+<!-- Event Payments Widget -->
+<?php include __DIR__ . '/dashboard/widgets/events_payments.php'; ?>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
 // Chart.js Global Configuration

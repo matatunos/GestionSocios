@@ -161,4 +161,27 @@ class DashboardController {
 
         require __DIR__ . '/../Views/dashboard.php';
     }
+
+    public function markEventPaymentPaid() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['payment_id'])) {
+            require_once __DIR__ . '/../Models/EventPayment.php';
+            $paymentModel = new EventPayment($this->db);
+            $payment_id = $_POST['payment_id'];
+            $event_id = $_POST['event_id'] ?? null;
+            $stmt = $this->db->prepare("UPDATE event_payments SET status = 'paid', payment_date = NOW() WHERE id = :id");
+            $stmt->bindParam(':id', $payment_id);
+            $stmt->execute();
+            $_SESSION['success'] = "Pago registrado correctamente.";
+            if ($event_id) {
+                header('Location: index.php?page=dashboard');
+            } else {
+                header('Location: index.php?page=dashboard');
+            }
+            exit;
+        } else {
+            $_SESSION['error'] = "No se pudo registrar el pago.";
+            header('Location: index.php?page=dashboard');
+            exit;
+        }
+    }
 }

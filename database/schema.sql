@@ -178,6 +178,19 @@ CREATE TABLE IF NOT EXISTS conversation_participants (
     member_id INT DEFAULT NULL,
     joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_read_at DATETIME DEFAULT NULL,
+-- Pagos de participantes en eventos
+CREATE TABLE IF NOT EXISTS event_payments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    event_id INT NOT NULL,
+    member_id INT NOT NULL,
+    amount DECIMAL(10,2) NOT NULL,
+    status ENUM('pending','paid') DEFAULT 'pending',
+    payment_date DATETIME DEFAULT NULL,
+    method VARCHAR(50) DEFAULT NULL,
+    notes TEXT,
+    FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
+    FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;

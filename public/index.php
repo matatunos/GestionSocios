@@ -84,7 +84,8 @@ switch ($page) {
         break;
     case 'dashboard':
         $controller = new DashboardController();
-        $controller->index();
+        if ($action === 'markEventPaymentPaid') $controller->markEventPaymentPaid();
+        else $controller->index();
         break;
     case 'members':
         $controller = new MemberController();
