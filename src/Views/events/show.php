@@ -38,6 +38,7 @@
                 </tr>
             <?php else: ?>
                 <?php foreach ($participants as $p): 
+                    $attendanceStatus = $p['attendance']['status'] ?? 'pending';
                     $paid = $p['payment'] && $p['payment']['status'] === 'paid';
                 ?>
                     <tr>
@@ -45,23 +46,26 @@
                             <?= htmlspecialchars($p['member']['first_name'] . ' ' . $p['member']['last_name']) ?>
                         </td>
                         <td>
-                            <span class="badge <?= $paid ? 'badge-active' : 'badge-inactive' ?>">
-                                <?= $paid ? 'Pagado' : 'Pendiente' ?>
-                            </span>
+                            <?php if ($attendanceStatus === 'registered' && !$paid): ?>
+                                <span class="badge badge-warning" style="background-color:#f59e42;color:#fff;">Pendiente</span>
+                            <?php elseif ($paid): ?>
+                                <span class="badge badge-success" style="background-color:#22c55e;color:#fff;">Pagado</span>
+                            <?php else: ?>
+                                <span class="badge badge-inactive">Pendiente</span>
+                            <?php endif; ?>
                         </td>
                         <td>
-                            <?php
-                            $attendanceStatus = $p['attendance']['status'] ?? 'pending';
-                            ?>
                             <?php if ($attendanceStatus !== 'registered'): ?>
                                 <form method="POST" action="index.php?page=events&action=updateAttendanceStatus&id=<?= $event->id ?>&member_id=<?= $p['member']['id'] ?>" style="display:inline;">
                                     <input type="hidden" name="status" value="registered">
-                                    <button type="submit" class="btn btn-sm btn-success">
-                                        <i class="fas fa-user-check"></i> Marcar como registrado
+                                    <button type="submit" class="btn btn-sm" style="background:#fff;color:#f59e42;border:1px solid #f59e42;">
+                                        <i class="fas fa-user"></i> No registrado
                                     </button>
                                 </form>
                             <?php else: ?>
-                                <span class="badge badge-active">Registrado</span>
+                                <button class="btn btn-sm" style="background:#f59e42;color:#fff;cursor:default;">
+                                    <i class="fas fa-user-check"></i> Registrado
+                                </button>
                             <?php endif; ?>
                         </td>
                         <td style="text-align: right;">
