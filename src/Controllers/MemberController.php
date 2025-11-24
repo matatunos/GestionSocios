@@ -276,7 +276,8 @@ class MemberController {
         $fee = $feeStmt->fetch(PDO::FETCH_ASSOC);
         
         if (!$fee) {
-            header('Location: index.php?page=members&filter=delinquent&error=no_fee');
+            $_SESSION['error'] = 'No hay cuota definida para el año actual';
+            header('Location: index.php?page=members');
             exit;
         }
         
@@ -301,7 +302,20 @@ class MemberController {
             ]);
         }
         
-        header('Location: index.php?page=members&filter=delinquent&msg=marked_paid');
+        $_SESSION['success'] = 'Pago marcado correctamente';
+        
+        // Preserve current filters
+        $redirectParams = [];
+        if (isset($_GET['filter'])) $redirectParams['filter'] = $_GET['filter'];
+        if (isset($_GET['category'])) $redirectParams['category'] = $_GET['category'];
+        if (isset($_GET['payment_status'])) $redirectParams['payment_status'] = $_GET['payment_status'];
+        if (isset($_GET['search'])) $redirectParams['search'] = $_GET['search'];
+        if (isset($_GET['year_from'])) $redirectParams['year_from'] = $_GET['year_from'];
+        if (isset($_GET['year_to'])) $redirectParams['year_to'] = $_GET['year_to'];
+        if (isset($_GET['p'])) $redirectParams['p'] = $_GET['p'];
+        
+        $queryString = !empty($redirectParams) ? '&' . http_build_query($redirectParams) : '';
+        header('Location: index.php?page=members' . $queryString);
         exit;
     }
 
