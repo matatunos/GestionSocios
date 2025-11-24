@@ -533,30 +533,9 @@
 
                 <hr style="margin: 3rem 0; border-color: var(--border-light);">
             
+            
                 <h2 class="section-title">Categorías de Socios</h2>
                 
-                <!-- Statistics Overview -->
-                <div class="card mb-4">
-                    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">
-                        <i class="fas fa-chart-pie"></i> Resumen por Categoría
-                    </h3>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-                        <?php foreach ($statistics as $stat): ?>
-                            <div style="text-align: center; padding: 1rem; background: var(--bg-body); border-radius: var(--radius-md); border-left: 3px solid <?php echo htmlspecialchars($stat['color']); ?>">
-                                <div style="font-size: 2rem; font-weight: 700; color: <?php echo htmlspecialchars($stat['color']); ?>">
-                                    <?php echo $stat['member_count']; ?>
-                                </div>
-                                <div style="font-size: 0.875rem; color: var(--text-muted); margin-top: 0.25rem;">
-                                    <?php echo htmlspecialchars($stat['name']); ?>
-                                </div>
-                                <div style="font-size: 0.75rem; color: var(--text-light); margin-top: 0.25rem;">
-                                    <?php echo $stat['active_members']; ?> activos
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-
                 <!-- Categories List -->
                 <div class="categories-list">
                     <?php foreach ($categories as $category): ?>
