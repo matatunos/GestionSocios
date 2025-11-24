@@ -221,9 +221,13 @@ new Chart(document.getElementById('chartProximos'), {
 .dashboard-charts canvas {
     max-width: 340px;
     width: 100%;
-    height: 180px !important;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 1px 4px #0001;
+        height: 260px !important;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px #0001;
+    }
+        max-width: 1200px;
+        min-width: 400px;
+    }
 }
 </style>
