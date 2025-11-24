@@ -121,6 +121,50 @@ if (isset($_SESSION['user_id'])) {
                         </li>
                     </ul>
                 </li>
+                <!-- Menú de Socios -->
+                <li class="nav-group">
+                    <a href="#" class="nav-link <?php echo ($page === 'members' || $page === 'member_categories') ? 'active' : ''; ?>">
+                        <i class="fas fa-users"></i>
+                        <span>Socios</span>
+                        <i class="fas fa-chevron-down" style="margin-left:auto;font-size:0.8em;"></i>
+                    </a>
+                    <ul class="nav-submenu">
+                        <li>
+                            <a href="index.php?page=members" class="nav-link <?php echo ($page === 'members') ? 'active' : ''; ?>">
+                                <i class="fas fa-list"></i>
+                                <span>Listado</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="index.php?page=member_categories" class="nav-link <?php echo ($page === 'member_categories') ? 'active' : ''; ?>">
+                                <i class="fas fa-tags"></i>
+                                <span>Categorías</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <!-- Menú de Donantes -->
+                <li class="nav-group">
+                    <a href="#" class="nav-link <?php echo ($page === 'donors' || $page === 'donations') ? 'active' : ''; ?>">
+                        <i class="fas fa-hand-holding-heart"></i>
+                        <span>Donantes</span>
+                        <i class="fas fa-chevron-down" style="margin-left:auto;font-size:0.8em;"></i>
+                    </a>
+                    <ul class="nav-submenu">
+                        <li>
+                            <a href="index.php?page=donors" class="nav-link <?php echo ($page === 'donors') ? 'active' : ''; ?>">
+                                <i class="fas fa-list"></i>
+                                <span>Listado</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="index.php?page=donations" class="nav-link <?php echo ($page === 'donations') ? 'active' : ''; ?>">
+                                <i class="fas fa-gift"></i>
+                                <span>Donaciones</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
 
                 <li>
                     <a href="index.php?page=gallery" class="nav-link <?php echo ($page === 'gallery') ? 'active' : ''; ?>">
