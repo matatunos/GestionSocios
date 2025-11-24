@@ -39,8 +39,8 @@ $ingresosTotales = array_sum(array_map(function($e) use ($attendanceModel) {
     return ($e['price'] ?? 0) * ($stats['confirmed'] ?? 0);
 }, $filteredEvents));
 ?>
-<div class="dashboard">
-    <div class="filter-row">
+<section class="dashboard-content">
+    <div class="dashboard-filters">
         <form method="get" style="display:flex; gap:1rem; align-items:center;">
             <input type="hidden" name="page" value="reports">
             <input type="hidden" name="action" value="dashboard_events">
@@ -56,35 +56,39 @@ $ingresosTotales = array_sum(array_map(function($e) use ($attendanceModel) {
             <button type="submit" class="btn btn-primary">Filtrar</button>
         </form>
     </div>
-    <div class="kpi-row">
-        <div class="kpi-card">
-            <div class="kpi-label">Total eventos</div>
-            <div class="kpi-value"><?= $totalEventos ?></div>
-        </div>
-        <div class="kpi-card">
-            <div class="kpi-label">Próximos eventos</div>
-            <div class="kpi-value"><?= $proximosEventos ?></div>
-        </div>
-        <div class="kpi-card">
-            <div class="kpi-label">Eventos hoy</div>
-            <div class="kpi-value"><?= $eventosHoy ?></div>
-        </div>
-        <div class="kpi-card">
-            <div class="kpi-label">Ocupación media (%)</div>
-            <div class="kpi-value"><?= $ocupacionMedia ?></div>
-        </div>
-        <div class="kpi-card">
-            <div class="kpi-label">Ingresos totales (€)</div>
-            <div class="kpi-value"><?= $ingresosTotales ?></div>
+    <div class="dashboard-kpis">
+        <div class="kpi-row">
+            <div class="kpi-card">
+                <div class="kpi-label">Total eventos</div>
+                <div class="kpi-value"><?= $totalEventos ?></div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Próximos eventos</div>
+                <div class="kpi-value"><?= $proximosEventos ?></div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Eventos hoy</div>
+                <div class="kpi-value"><?= $eventosHoy ?></div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Ocupación media (%)</div>
+                <div class="kpi-value"><?= $ocupacionMedia ?></div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Ingresos totales (€)</div>
+                <div class="kpi-value"><?= $ingresosTotales ?></div>
+            </div>
         </div>
     </div>
-    <div class="chart-row">
-        <canvas id="chartAsistencia" height="120"></canvas>
-        <canvas id="chartIngresos" height="120"></canvas>
-        <canvas id="chartOcupacion" height="120"></canvas>
-        <canvas id="chartProximos" height="120"></canvas>
+    <div class="dashboard-charts">
+        <div class="chart-row">
+            <canvas id="chartAsistencia" height="120"></canvas>
+            <canvas id="chartIngresos" height="120"></canvas>
+            <canvas id="chartOcupacion" height="120"></canvas>
+            <canvas id="chartProximos" height="120"></canvas>
+        </div>
     </div>
-</div>
+</section>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 const eventos = <?= json_encode(array_values($filteredEvents)) ?>;
@@ -120,11 +124,18 @@ new Chart(document.getElementById('chartProximos'), {
 });
 </script>
 <style>
-.dashboard { padding:2rem; background: #fff; color: #222; }
-.dashboard .kpi-row { display:flex; gap:2rem; margin-bottom:2rem; }
-.dashboard .kpi-card { background:#f3f4f6; border-radius:8px; padding:1rem 2rem; box-shadow:0 2px 8px #0001; display:flex; flex-direction:column; align-items:center; }
-.dashboard .kpi-label { font-size:1rem; color:#555; }
-.dashboard .kpi-value { font-size:2rem; font-weight:700; color:#2563eb; }
-.dashboard .filter-row { margin-bottom:2rem; }
-.dashboard .chart-row { display:flex; gap:2rem; }
+.dashboard-content {
+    padding:2rem;
+    background: #fff;
+    color: #222;
+    border-radius: 12px;
+    box-shadow: 0 2px 16px #0001;
+    max-width: 100%;
+}
+.dashboard-filters { margin-bottom:2rem; }
+.dashboard-kpis .kpi-row { display:flex; gap:2rem; margin-bottom:2rem; }
+.dashboard-kpis .kpi-card { background:#f3f4f6; border-radius:8px; padding:1rem 2rem; box-shadow:0 2px 8px #0001; display:flex; flex-direction:column; align-items:center; }
+.dashboard-kpis .kpi-label { font-size:1rem; color:#555; }
+.dashboard-kpis .kpi-value { font-size:2rem; font-weight:700; color:#2563eb; }
+.dashboard-charts .chart-row { display:flex; gap:2rem; }
 </style>
