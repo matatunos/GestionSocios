@@ -276,33 +276,59 @@ class MemberController {
         $fee = $feeStmt->fetch(PDO::FETCH_ASSOC);
         
         if (!$fee) {
-            $_SESSION['error'] = 'No hay cuota definida para el año actual';
-            header('Location: index.php?page=members');
+            $_SESSION['error'] = "No hay cuota definida para el año $currentYear. Por favor, define la cuota en Configuración > Socios.";
+            
+            // Preserve current filters
+            $redirectParams = [];
+            if (isset($_GET['filter'])) $redirectParams['filter'] = $_GET['filter'];
+            if (isset($_GET['category'])) $redirectParams['category'] = $_GET['category'];
+            if (isset($_GET['payment_status'])) $redirectParams['payment_status'] = $_GET['payment_status'];
+            if (isset($_GET['search'])) $redirectParams['search'] = $_GET['search'];
+            if (isset($_GET['year_from'])) $redirectParams['year_from'] = $_GET['year_from'];
+            if (isset($_GET['year_to'])) $redirectParams['year_to'] = $_GET['year_to'];
+            if (isset($_GET['p'])) $redirectParams['p'] = $_GET['p'];
+            
+            $queryString = !empty($redirectParams) ? '&' . http_build_query($redirectParams) : '';
+            header('Location: index.php?page=members' . $queryString);
             exit;
         }
         
-        // Check if payment already exists
-        $checkStmt = $this->db->prepare("SELECT id, status FROM payments WHERE member_id = ? AND fee_year = ? AND payment_type = 'fee'");
-        $checkStmt->execute([$id, $currentYear]);
-        $existingPayment = $checkStmt->fetch(PDO::FETCH_ASSOC);
-        
-        if ($existingPayment) {
-            // Update existing payment to paid
-            $updateStmt = $this->db->prepare("UPDATE payments SET status = 'paid', payment_date = ? WHERE id = ?");
-            $updateStmt->execute([date('Y-m-d'), $existingPayment['id']]);
-        } else {
-            // Create new payment as paid
-            $insertStmt = $this->db->prepare("INSERT INTO payments (member_id, amount, payment_date, concept, status, fee_year, payment_type) VALUES (?, ?, ?, ?, 'paid', ?, 'fee')");
-            $insertStmt->execute([
-                $id,
-                $fee['amount'],
-                date('Y-m-d'),
-                "Cuota Anual " . $currentYear,
-                $currentYear
-            ]);
+        try {
+            // Check if payment already exists
+            $checkStmt = $this->db->prepare("SELECT id, status FROM payments WHERE member_id = ? AND fee_year = ? AND payment_type = 'fee'");
+            $checkStmt->execute([$id, $currentYear]);
+            $existingPayment = $checkStmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($existingPayment) {
+                // Update existing payment to paid
+                $updateStmt = $this->db->prepare("UPDATE payments SET status = 'paid', payment_date = ? WHERE id = ?");
+                $success = $updateStmt->execute([date('Y-m-d'), $existingPayment['id']]);
+                
+                if (!$success) {
+                    throw new Exception("Error al actualizar el pago existente");
+                }
+            } else {
+                // Create new payment as paid
+                $insertStmt = $this->db->prepare("INSERT INTO payments (member_id, amount, payment_date, concept, status, fee_year, payment_type) VALUES (?, ?, ?, ?, 'paid', ?, 'fee')");
+                $success = $insertStmt->execute([
+                    $id,
+                    $fee['amount'],
+                    date('Y-m-d'),
+                    "Cuota Anual " . $currentYear,
+                    $currentYear
+                ]);
+                
+                if (!$success) {
+                    throw new Exception("Error al crear el nuevo pago");
+                }
+            }
+            
+            $_SESSION['success'] = 'Pago marcado correctamente';
+            
+        } catch (Exception $e) {
+            error_log("Error in markPaid: " . $e->getMessage());
+            $_SESSION['error'] = 'Error al marcar el pago: ' . $e->getMessage();
         }
-        
-        $_SESSION['success'] = 'Pago marcado correctamente';
         
         // Preserve current filters
         $redirectParams = [];
