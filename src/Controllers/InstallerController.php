@@ -63,12 +63,27 @@ class InstallerController {
                 }
             }
 
-            // 4. Create/Update Admin User
+            // 4. Import sample data if requested
+            if (!empty($_POST['import_sample_data'])) {
+                $sampleFile = __DIR__ . '/../../database/sample_data.sql';
+                if (file_exists($sampleFile)) {
+                    $sampleSql = file_get_contents($sampleFile);
+                    try {
+                        $conn->exec($sampleSql);
+                    } catch (PDOException $e) {
+                        $error = "Error al importar datos de ejemplo: " . $e->getMessage();
+                        require __DIR__ . '/../Views/install.php';
+                        return;
+                    }
+                }
+            }
+
+            // 5. Create/Update Admin User
             $password_hash = password_hash($admin_pass, PASSWORD_DEFAULT);
             $stmt = $conn->prepare("INSERT INTO users (email, name, password, role) VALUES (:email, 'Administrator', :password, 'admin') ON DUPLICATE KEY UPDATE password=:password, role='admin'");
             $stmt->bindParam(':email', $admin_user);
             $stmt->bindParam(':password', $password_hash);
-            
+
             if ($stmt->execute()) {
                 header('Location: index.php?page=login&installed=true');
                 exit;
