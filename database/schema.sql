@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS event_attendance (
     event_id INT NOT NULL,
     member_id INT DEFAULT NULL,
     donor_id INT DEFAULT NULL,
+    status ENUM('registered','attended','cancelled') DEFAULT 'registered',
     attended TINYINT(1) DEFAULT 0,
     attended_at DATETIME DEFAULT NULL,
     registered_at DATETIME DEFAULT CURRENT_TIMESTAMP,
