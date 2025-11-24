@@ -3,6 +3,22 @@ $pageTitle = 'Gestión de Tareas';
 ob_start(); 
 ?>
 
+<style>
+    .btn-group.btn-group-sm {
+        display: flex;
+        flex-direction: row;
+        gap: 0.5em;
+        flex-wrap: nowrap;
+        align-items: center;
+    }
+    .btn-group.btn-group-sm .btn {
+        white-space: nowrap;
+        padding: 0.25em 0.5em;
+        font-size: 1em;
+        min-width: 32px;
+    }
+</style>
+
 <div class="dashboard-header">
     <div>
         <h1><i class="fas fa-tasks"></i> Gestión de Tareas</h1>
