@@ -206,6 +206,24 @@ CREATE TABLE IF NOT EXISTS documents (
 )
 ENGINE=InnoDB;
 
+-- Tabla para control de acceso a documentos privados
+CREATE TABLE IF NOT EXISTS document_permissions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    document_id INT NOT NULL,
+    member_id INT NOT NULL,
+    can_view BOOLEAN DEFAULT TRUE,
+    can_download BOOLEAN DEFAULT TRUE,
+    granted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    granted_by INT NOT NULL,
+    FOREIGN KEY (document_id) REFERENCES documents(id) ON DELETE CASCADE,
+    FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE,
+    FOREIGN KEY (granted_by) REFERENCES members(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_permission (document_id, member_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Índices
+CREATE INDEX idx_document_member ON document_permissions(document_id, member_id);
+
 CREATE TABLE IF NOT EXISTS annual_fees (
     year INT PRIMARY KEY,
     amount DECIMAL(10, 2) NOT NULL,
