@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS event_attendance (
+siCREATE TABLE IF NOT EXISTS event_attendance (
     id INT AUTO_INCREMENT PRIMARY KEY,
     event_id INT NOT NULL,
     member_id INT DEFAULT NULL,
