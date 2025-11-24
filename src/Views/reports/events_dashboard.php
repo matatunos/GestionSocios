@@ -96,15 +96,15 @@ $ingresosTotales = array_sum(array_map(function($e) use ($attendanceModel) {
             </div>
             <!-- Listado de próximos eventos -->
             <div class="chart-block">
-                        <canvas id="chartAsistencia" height="220"></canvas>
+                <div class="chart-legend">Próximos eventos</div>
                 <ul class="event-list">
                 <?php foreach ($filteredEvents as $e): ?>
                     <?php if (strtotime($e['date']) > time()): ?>
-                        <canvas id="chartIngresos" height="220"></canvas>
+                        <li>
                             <strong><?= htmlspecialchars($e['name']) ?></strong> - <?= date('d/m/Y', strtotime($e['date'])) ?>
                         </li>
                     <?php endif; ?>
-                        <canvas id="chartOcupacion" height="220"></canvas>
+                <?php endforeach; ?>
                 </ul>
             </div>
             <!-- Ranking de eventos -->
