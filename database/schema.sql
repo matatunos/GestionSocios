@@ -12,6 +12,8 @@ CREATE TABLE IF NOT EXISTS event_attendance (
     FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE SET NULL,
     FOREIGN KEY (donor_id) REFERENCES donors(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+ALTER TABLE event_attendance ADD UNIQUE KEY unique_event_member (event_id, member_id);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 -- Historial de imágenes de donantes
 CREATE TABLE IF NOT EXISTS donor_image_history (
     id INT AUTO_INCREMENT PRIMARY KEY,

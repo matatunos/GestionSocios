@@ -42,7 +42,14 @@ class DashboardController {
         $stmt->execute();
         $bookAdsPending = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
 
-        $pendingCobros = $membersPending + $bookAdsPending;
+        // Cobros pendientes de eventos: asistentes registrados pero no confirmados
+        $stmt = $this->db->prepare(
+            "SELECT COUNT(*) as total FROM event_attendance WHERE status = 'registered'"
+        );
+        $stmt->execute();
+        $eventPending = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+
+        $pendingCobros = $membersPending + $bookAdsPending + $eventPending;
 
         // 1. Recent Payments
         $paymentsStmt = $this->db->prepare(
