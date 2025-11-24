@@ -81,11 +81,23 @@ $ingresosTotales = array_sum(array_map(function($e) use ($attendanceModel) {
         </div>
     </div>
     <div class="dashboard-charts">
-        <div class="chart-row">
-            <canvas id="chartAsistencia" height="120"></canvas>
-            <canvas id="chartIngresos" height="120"></canvas>
-            <canvas id="chartOcupacion" height="120"></canvas>
-            <canvas id="chartProximos" height="120"></canvas>
+        <div class="chart-col">
+            <div class="chart-block">
+                <div class="chart-legend">Asistencia por evento (confirmados)</div>
+                <canvas id="chartAsistencia" height="120"></canvas>
+            </div>
+            <div class="chart-block">
+                <div class="chart-legend">Ingresos por evento (€)</div>
+                <canvas id="chartIngresos" height="120"></canvas>
+            </div>
+            <div class="chart-block">
+                <div class="chart-legend">Ocupación (%) por evento</div>
+                <canvas id="chartOcupacion" height="120"></canvas>
+            </div>
+            <div class="chart-block">
+                <div class="chart-legend">Próximos eventos</div>
+                <canvas id="chartProximos" height="120"></canvas>
+            </div>
         </div>
     </div>
 </section>
@@ -140,10 +152,12 @@ new Chart(document.getElementById('chartProximos'), {
 .dashboard-kpis .kpi-card { background:#f3f4f6; border-radius:8px; padding:1rem 2rem; box-shadow:0 2px 8px #0001; display:flex; flex-direction:column; align-items:center; min-width:180px; }
 .dashboard-kpis .kpi-label { font-size:1rem; color:#555; }
 .dashboard-kpis .kpi-value { font-size:2rem; font-weight:700; color:#2563eb; }
-.dashboard-charts { width: 100%; overflow-x: auto; }
-.dashboard-charts .chart-row { display:flex; gap:2rem; flex-wrap: wrap; justify-content: center; }
+.dashboard-charts { width: 100%; margin-top: 2rem; }
+.dashboard-charts .chart-col { display: flex; flex-direction: column; gap: 2rem; align-items: center; }
+.dashboard-charts .chart-block { width: 100%; max-width: 400px; background: #fff; border-radius: 8px; box-shadow: 0 1px 4px #0001; padding: 1rem; display: flex; flex-direction: column; align-items: center; }
+.dashboard-charts .chart-legend { font-size: 1rem; color: #2563eb; font-weight: 600; margin-bottom: 0.5rem; text-align: center; }
 .dashboard-charts canvas {
-    max-width: 240px;
+    max-width: 340px;
     width: 100%;
     height: 180px !important;
     background: #fff;
