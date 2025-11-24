@@ -226,5 +226,4 @@ class ReportController {
                             fclose($output);
                             exit;
                         }
-                    }
-                    ?>
+					}
