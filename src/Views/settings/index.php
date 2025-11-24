@@ -19,6 +19,48 @@ input[name="tab-control"] { display: none; }
 <?php ob_start(); ?>
 
 <style>
+.tab-content { display: none; }
+.tabs-system input[type="radio"] {
+    position: absolute;
+    left: -9999px;
+}
+.tabs-system {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+.tabs-nav {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    border-bottom: 3px solid var(--border-light);
+    background: var(--bg-card);
+    margin-bottom: 0;
+    z-index: 2;
+}
+.tab-content-wrapper {
+    padding: 2rem;
+    position: relative;
+    z-index: 1;
+}
+.tabs-system #tab-organization:checked ~ .tabs-nav label[for="tab-organization"],
+.tabs-system #tab-fees:checked ~ .tabs-nav label[for="tab-fees"],
+.tabs-system #tab-ad_prices:checked ~ .tabs-nav label[for="tab-ad_prices"],
+.tabs-system #tab-database:checked ~ .tabs-nav label[for="tab-database"],
+.tabs-system #tab-security:checked ~ .tabs-nav label[for="tab-security"] {
+    background: var(--primary-100, #e0e7ff);
+    color: var(--primary-700, #3730a3);
+    font-weight: bold;
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.tabs-system #tab-organization:checked ~ .tab-content-wrapper #organization,
+.tabs-system #tab-fees:checked ~ .tab-content-wrapper #fees,
+.tabs-system #tab-ad_prices:checked ~ .tab-content-wrapper #ad_prices,
+.tabs-system #tab-database:checked ~ .tab-content-wrapper #database,
+.tabs-system #tab-security:checked ~ .tab-content-wrapper #security {
+    display: block;
+}
 .settings-container {
     max-width: 1200px;
     margin: 0 auto;
