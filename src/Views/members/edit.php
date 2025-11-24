@@ -183,12 +183,48 @@ function getLocation() {
             btn.classList.remove('btn-success');
             btn.classList.add('btn-primary');
             
-            // Show coordinates
-            alert(`Ubicación capturada correctamente:\nLatitud: ${lat.toFixed(6)}\nLongitud: ${lng.toFixed(6)}\n\nGuarda el formulario para conservar la ubicación.`);
+            // Perform reverse geocoding
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Obteniendo dirección...';
             
-            setTimeout(() => {
-                btn.innerHTML = originalHTML;
-            }, 2000);
+            fetch(`index.php?page=geo&action=reverse&lat=${lat}&lng=${lng}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.error('Error en geocoding:', data.error);
+                        alert(`Ubicación capturada correctamente:\nLatitud: ${lat.toFixed(6)}\nLongitud: ${lng.toFixed(6)}\n\nNo se pudo obtener la dirección automáticamente.`);
+                    } else {
+                        // Fill address field with the complete address
+                        const addressField = document.getElementById('address');
+                        if (data.direccion_completa) {
+                            addressField.value = data.direccion_completa;
+                        }
+                        
+                        alert(`Ubicación y dirección capturadas:\nLatitud: ${lat.toFixed(6)}\nLongitud: ${lng.toFixed(6)}\nDirección: ${data.direccion_completa || 'No disponible'}\n\nGuarda el formulario para conservar los cambios.`);
+                    }
+                    
+                    btn.innerHTML = '<i class="fas fa-check"></i> ¡Completado!';
+                    btn.disabled = false;
+                    
+                    setTimeout(() => {
+                        btn.innerHTML = originalHTML;
+                        btn.classList.remove('btn-primary');
+                        btn.classList.add('btn-success');
+                    }, 3000);
+                })
+                .catch(error => {
+                    console.error('Error al obtener dirección:', error);
+                    alert(`Ubicación capturada correctamente:\nLatitud: ${lat.toFixed(6)}\nLongitud: ${lng.toFixed(6)}\n\nNo se pudo obtener la dirección automáticamente.`);
+                    
+                    btn.innerHTML = originalHTML;
+                    btn.disabled = false;
+                    btn.classList.remove('btn-primary');
+                    btn.classList.add('btn-success');
+                });
+        },
+        function(error) {
+            btn.innerHTML = originalHTML;
+            btn.disabled = false;
+            alert('Error al obtener la ubicación: ' + error.message);
         }
     );
 }

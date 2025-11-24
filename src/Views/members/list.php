@@ -183,6 +183,12 @@
                                     <i class="fas fa-edit"></i> Editar
                                 </a>
                                 
+                                <?php if (!empty($row['latitude']) && !empty($row['longitude'])): ?>
+                                <a href="index.php?page=map#member-<?php echo $row['id']; ?>" class="btn btn-sm btn-info" title="Ver en mapa">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </a>
+                                <?php endif; ?>
+                                
                                 <div style="display: inline-block; position: relative;">
                                     <button onclick="toggleCertMenu(<?php echo $row['id']; ?>)" class="btn btn-sm btn-info" style="background: #8b5cf6; border-color: #8b5cf6;">
                                         <i class="fas fa-certificate"></i> Certificados <i class="fas fa-chevron-down" style="font-size: 0.7rem;"></i>

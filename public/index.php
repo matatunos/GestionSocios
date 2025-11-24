@@ -314,6 +314,19 @@ switch ($page) {
         else if ($action === 'addComment') $controller->addComment();
         else $controller->index();
         break;
+    case 'map':
+        $controller = new MapController();
+        if ($action === 'getLocations') $controller->getLocations();
+        else $controller->index();
+        break;
+    case 'geo':
+        $controller = new GeoController();
+        if ($action === 'reverse') $controller->reverse();
+        else {
+            http_response_code(404);
+            echo json_encode(['error' => 'Invalid action']);
+        }
+        break;
     default:
         echo "404 Not Found";
         break;
