@@ -599,7 +599,7 @@
                         </div>
                     <?php endforeach; ?>
                 </div>
-        </div>
+        </div>  <!-- End of members tab -->
         <!-- Database Tab -->
         <div id="database" class="tab-content">
                 <h2 class="section-title">Configuración de Base de Datos</h2>
