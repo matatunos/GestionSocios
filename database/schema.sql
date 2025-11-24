@@ -55,7 +55,21 @@ CREATE TABLE IF NOT EXISTS member_categories (
     name VARCHAR(100) NOT NULL,
     description TEXT,
     color VARCHAR(30) DEFAULT NULL,
+    is_active TINYINT(1) DEFAULT 1,
+    display_order INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- Tabla messages
+CREATE TABLE IF NOT EXISTS messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sender_id INT NOT NULL,
+    receiver_id INT NOT NULL,
+    subject VARCHAR(255),
+    body TEXT,
+    is_read TINYINT(1) DEFAULT 0,
+    sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
 )
 ENGINE=InnoDB;
 -- ...existing code...
