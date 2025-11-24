@@ -10,6 +10,8 @@ class Donor {
     public $phone;
     public $email;
     public $address;
+    public $latitude;
+    public $longitude;
     public $logo_url;
     public $created_at;
 
@@ -18,7 +20,7 @@ class Donor {
     }
 
     public function create() {
-        $query = "INSERT INTO " . $this->table_name . " SET name=:name, contact_person=:contact_person, phone=:phone, email=:email, address=:address, logo_url=:logo_url";
+        $query = "INSERT INTO " . $this->table_name . " SET name=:name, contact_person=:contact_person, phone=:phone, email=:email, address=:address, latitude=:latitude, longitude=:longitude, logo_url=:logo_url";
         $stmt = $this->conn->prepare($query);
 
         $this->name = htmlspecialchars(strip_tags($this->name));
@@ -26,12 +28,16 @@ class Donor {
         $this->phone = htmlspecialchars(strip_tags($this->phone));
         $this->email = htmlspecialchars(strip_tags($this->email));
         $this->address = htmlspecialchars(strip_tags($this->address));
+        $this->latitude = ($this->latitude !== null && $this->latitude !== '') ? floatval($this->latitude) : null;
+        $this->longitude = ($this->longitude !== null && $this->longitude !== '') ? floatval($this->longitude) : null;
 
         $stmt->bindParam(":name", $this->name);
         $stmt->bindParam(":contact_person", $this->contact_person);
         $stmt->bindParam(":phone", $this->phone);
         $stmt->bindParam(":email", $this->email);
         $stmt->bindParam(":address", $this->address);
+        $stmt->bindParam(":latitude", $this->latitude);
+        $stmt->bindParam(":longitude", $this->longitude);
         $stmt->bindParam(":logo_url", $this->logo_url);
 
         if($stmt->execute()) {
@@ -79,6 +85,8 @@ class Donor {
             $this->phone = $row['phone'];
             $this->email = $row['email'];
             $this->address = $row['address'];
+            $this->latitude = $row['latitude'] ?? null;
+            $this->longitude = $row['longitude'] ?? null;
             $this->logo_url = $row['logo_url'];
             $this->created_at = $row['created_at'];
             return true;
@@ -87,7 +95,7 @@ class Donor {
     }
 
     public function update() {
-        $query = "UPDATE " . $this->table_name . " SET name=:name, contact_person=:contact_person, phone=:phone, email=:email, address=:address, logo_url=:logo_url WHERE id=:id";
+        $query = "UPDATE " . $this->table_name . " SET name=:name, contact_person=:contact_person, phone=:phone, email=:email, address=:address, latitude=:latitude, longitude=:longitude, logo_url=:logo_url WHERE id=:id";
         $stmt = $this->conn->prepare($query);
 
         $this->name = htmlspecialchars(strip_tags($this->name));
@@ -95,6 +103,8 @@ class Donor {
         $this->phone = htmlspecialchars(strip_tags($this->phone));
         $this->email = htmlspecialchars(strip_tags($this->email));
         $this->address = htmlspecialchars(strip_tags($this->address));
+        $this->latitude = ($this->latitude !== null && $this->latitude !== '') ? floatval($this->latitude) : null;
+        $this->longitude = ($this->longitude !== null && $this->longitude !== '') ? floatval($this->longitude) : null;
         $this->id = htmlspecialchars(strip_tags($this->id));
 
         $stmt->bindParam(":name", $this->name);
@@ -102,6 +112,8 @@ class Donor {
         $stmt->bindParam(":phone", $this->phone);
         $stmt->bindParam(":email", $this->email);
         $stmt->bindParam(":address", $this->address);
+        $stmt->bindParam(":latitude", $this->latitude);
+        $stmt->bindParam(":longitude", $this->longitude);
         $stmt->bindParam(":logo_url", $this->logo_url);
         $stmt->bindParam(":id", $this->id);
 

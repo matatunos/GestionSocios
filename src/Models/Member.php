@@ -197,10 +197,14 @@ class Member {
         if ($row) {
             $this->first_name = $row['first_name'];
             $this->last_name = $row['last_name'];
+            $this->dni = $row['dni'] ?? null;
             $this->email = $row['email'];
             $this->phone = $row['phone'];
             $this->address = $row['address'];
+            $this->latitude = $row['latitude'] ?? null;
+            $this->longitude = $row['longitude'] ?? null;
             $this->status = $row['status'];
+            $this->category_id = $row['category_id'] ?? null;
             $this->photo_url = $row['photo_url'];
             $this->created_at = $row['created_at'];
             $this->deactivated_at = $row['deactivated_at'] ?? null;
@@ -211,7 +215,7 @@ class Member {
 
     public function create() {
         $query = "INSERT INTO " . $this->table_name . " 
-                  SET first_name=:first_name, last_name=:last_name, dni=:dni, email=:email, phone=:phone, address=:address, status=:status, category_id=:category_id, photo_url=:photo_url";
+                  SET first_name=:first_name, last_name=:last_name, dni=:dni, email=:email, phone=:phone, address=:address, latitude=:latitude, longitude=:longitude, status=:status, category_id=:category_id, photo_url=:photo_url";
         
         $stmt = $this->conn->prepare($query);
 
@@ -221,6 +225,8 @@ class Member {
         $this->email = htmlspecialchars(strip_tags($this->email));
         $this->phone = htmlspecialchars(strip_tags($this->phone));
         $this->address = htmlspecialchars(strip_tags($this->address));
+        $this->latitude = ($this->latitude !== null && $this->latitude !== '') ? floatval($this->latitude) : null;
+        $this->longitude = ($this->longitude !== null && $this->longitude !== '') ? floatval($this->longitude) : null;
         $this->status = htmlspecialchars(strip_tags($this->status));
         $this->photo_url = htmlspecialchars(strip_tags($this->photo_url));
 
@@ -264,8 +270,8 @@ class Member {
         $this->email = htmlspecialchars(strip_tags($this->email));
         $this->phone = htmlspecialchars(strip_tags($this->phone));
         $this->address = htmlspecialchars(strip_tags($this->address));
-        $this->latitude = !empty($this->latitude) ? floatval($this->latitude) : null;
-        $this->longitude = !empty($this->longitude) ? floatval($this->longitude) : null;
+        $this->latitude = ($this->latitude !== null && $this->latitude !== '') ? floatval($this->latitude) : null;
+        $this->longitude = ($this->longitude !== null && $this->longitude !== '') ? floatval($this->longitude) : null;
         $this->status = htmlspecialchars(strip_tags($this->status));
         $this->photo_url = htmlspecialchars(strip_tags($this->photo_url));
         $this->deactivated_at = !empty($this->deactivated_at) ? htmlspecialchars(strip_tags($this->deactivated_at)) : null;
