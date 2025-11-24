@@ -1,3 +1,20 @@
+<?php
+// Cargar datos de config.php si existe
+$configDefaults = [
+    'host' => 'localhost',
+    'db_name' => 'asociacion_db',
+    'username' => 'root',
+    'password' => '',
+];
+$configFile = __DIR__ . '/../Config/config.php';
+if (file_exists($configFile)) {
+    include $configFile;
+    $configDefaults['host'] = defined('DB_HOST') ? DB_HOST : $configDefaults['host'];
+    $configDefaults['db_name'] = defined('DB_NAME') ? DB_NAME : $configDefaults['db_name'];
+    $configDefaults['username'] = defined('DB_USER') ? DB_USER : $configDefaults['username'];
+    $configDefaults['password'] = defined('DB_PASS') ? DB_PASS : $configDefaults['password'];
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
