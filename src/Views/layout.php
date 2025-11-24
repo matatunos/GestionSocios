@@ -154,42 +154,36 @@ if (isset($_SESSION['user_id'])) {
                         <span>Dashboard</span>
                         <i class="fas fa-chevron-down" style="margin-left:0.5em;font-size:0.8em;"></i>
                     </a>
-                    <ul class="nav-submenu">
-                        <li>
-                            <a href="index.php?page=dashboard" class="nav-link <?php echo ($page === 'dashboard') ? 'active' : ''; ?>">
-                                <i class="fas fa-chart-pie"></i>
-                                <span>General</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="index.php?page=treasury" class="nav-link <?php echo ($page === 'treasury') ? 'active' : ''; ?>">
-                                <i class="fas fa-coins"></i>
-                                <span>Tesorería</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="index.php?page=members" class="nav-link <?php echo ($page === 'members') ? 'active' : ''; ?>">
-                        <i class="fas fa-users"></i>
-                        <span>Socios</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="index.php?page=donors" class="nav-link <?php echo ($page === 'donors') ? 'active' : ''; ?>">
-                        <i class="fas fa-address-book"></i>
-                        <span>Donantes</span>
-                    </a>
-                </li>
+                    <li class="nav-group">
+                        <a href="#" class="nav-link <?php echo ($page === 'dashboard' || $page === 'treasury') ? 'active' : ''; ?>">
+                            <i class="fas fa-home"></i>
+                            <span>Dashboard</span>
+                            <i class="fas fa-chevron-down" style="margin-left:0.5em;font-size:0.8em;"></i>
+                        </a>
+                        <ul class="nav-submenu">
+                            <li>
+                                <a href="index.php?page=dashboard" class="nav-link <?php echo ($page === 'dashboard') ? 'active' : ''; ?>">
+                                    <i class="fas fa-chart-pie"></i>
+                                    <span>General</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="index.php?page=treasury" class="nav-link <?php echo ($page === 'treasury') ? 'active' : ''; ?>">
+                                    <i class="fas fa-coins"></i>
+                                    <span>Tesorería</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="index.php?page=reports&action=dashboard_events" class="nav-link <?php echo ($page === 'reports' && $action === 'dashboard_events') ? 'active' : ''; ?>">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>Eventos</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
                 <li>
                 </li>
 
-                <li>
-                    <a href="index.php?page=events" class="nav-link <?php echo ($page === 'events') ? 'active' : ''; ?>">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>Eventos</span>
-                    </a>
-                </li>
                 <li>
                     <a href="index.php?page=gallery" class="nav-link <?php echo ($page === 'gallery') ? 'active' : ''; ?>">
                         <i class="fas fa-images"></i>
@@ -273,27 +267,6 @@ if (isset($_SESSION['user_id'])) {
                         <i class="fas fa-book-open"></i>
                         <span>Libro Fiestas</span>
                     </a>
-                </li>
-                <li class="nav-group">
-                    <a href="#" class="nav-link <?php echo ($page === 'reports') ? 'active' : ''; ?>">
-                        <i class="fas fa-chart-bar"></i>
-                        <span>Informes</span>
-                        <i class="fas fa-chevron-down" style="margin-left:0.5em;font-size:0.8em;"></i>
-                    </a>
-                    <ul class="nav-submenu">
-                        <li>
-                            <a href="index.php?page=reports&action=dashboard_events" class="nav-link <?php echo ($page === 'reports' && $action === 'dashboard_events') ? 'active' : ''; ?>">
-                                <i class="fas fa-calendar-alt"></i>
-                                <span>Dashboard de eventos</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="index.php?page=reports&action=dashboard_events" class="nav-link <?php echo ($page === 'reports' && $action === 'dashboard_events') ? 'active' : ''; ?>">
-                                <i class="fas fa-calendar-alt"></i>
-                                <span>Dashboard de eventos</span>
-                            </a>
-                        </li>
-                    </ul>
                 </li>
                 <li>
                     <a href="index.php?page=settings" class="nav-link <?php echo ($page === 'settings') ? 'active' : ''; ?>">

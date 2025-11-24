@@ -38,8 +38,13 @@ $ingresosTotales = array_sum(array_map(function($e) use ($attendanceModel) {
 }, $filteredEvents));
 ?>
 <div class="dashboard">
-    <h2><i class="fas fa-chart-bar"></i> Dashboard de Eventos</h2>
-    <div class="kpi-row">
+    <div class="chart-row">
+        <canvas id="chartAsistencia" height="120"></canvas>
+        <canvas id="chartIngresos" height="120"></canvas>
+        <canvas id="chartOcupacion" height="120"></canvas>
+        <canvas id="chartProximos" height="120"></canvas>
+    </div>
+    <div class="kpi-row" style="margin-top:2rem;">
         <div class="kpi-card"><span class="kpi-label">Total eventos</span><span class="kpi-value"><?= $totalEventos ?></span></div>
         <div class="kpi-card"><span class="kpi-label">Próximos eventos</span><span class="kpi-value"><?= count($proximosEventos) ?></span></div>
         <div class="kpi-card"><span class="kpi-label">Ocupación media</span><span class="kpi-value"><?= $ocupacionMedia ?>%</span></div>
@@ -52,12 +57,6 @@ $ingresosTotales = array_sum(array_map(function($e) use ($attendanceModel) {
             <label>Estado: <select name="estado"><option value="">Todos</option><option value="activo">Activo</option><option value="inactivo">Inactivo</option></select></label>
             <button type="submit" class="btn btn-primary">Filtrar</button>
         </form>
-    </div>
-    <div class="chart-row">
-        <canvas id="chartAsistencia" height="120"></canvas>
-        <canvas id="chartIngresos" height="120"></canvas>
-        <canvas id="chartOcupacion" height="120"></canvas>
-        <canvas id="chartProximos" height="120"></canvas>
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
