@@ -1,15 +1,5 @@
 -- poll_options table moved after polls for FK integrity
-CREATE TABLE IF NOT EXISTS document_permissions (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    document_id INT NOT NULL,
-    user_id INT NOT NULL,
-    can_view TINYINT(1) DEFAULT 1,
-    can_edit TINYINT(1) DEFAULT 0,
-    can_delete TINYINT(1) DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (document_id) REFERENCES documents(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-) ENGINE=InnoDB;
+-- document_permissions table moved after documents for FK integrity
 CREATE TABLE IF NOT EXISTS tasks (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
