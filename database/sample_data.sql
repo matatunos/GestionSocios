@@ -1,3 +1,8 @@
+-- Categorías de socios
+INSERT INTO member_categories (name, description, color, is_active, display_order, default_fee) VALUES
+('General', 'Socios generales', '#3498db', 1, 1, 20.00),
+('Joven', 'Socios jóvenes', '#2ecc71', 1, 2, 10.00);
+
 -- 50 socios de ejemplo
 INSERT INTO members (first_name, last_name, dni, email, phone, address, category_id, status, join_date, deactivated_at) VALUES
 ('Socio1', 'Apellido1', '10000001A', 'socio1@demo.com', '600000001', 'Calle 1', 1, 'active', '2020-01-10', NULL),
