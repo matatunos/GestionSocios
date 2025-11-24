@@ -1,9 +1,4 @@
 -- Estados permitidos para asistencias a eventos
-INSERT INTO event_attendance_status (status_key, status_name) VALUES
-	('registered', 'Registrado'),
-	('confirmed', 'Confirmado'),
-	('attended', 'Asistió'),
-	('cancelled', 'Cancelado');
 -- Vaciado automático de tablas antes de insertar datos de prueba
 SET FOREIGN_KEY_CHECKS = 0;
 TRUNCATE TABLE event_attendance;
