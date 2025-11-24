@@ -1,5 +1,30 @@
--- Categorías de socios
-INSERT INTO member_categories (name, description, color, is_active, display_order, default_fee) VALUES
+-- Vaciado automático de tablas antes de insertar datos de prueba
+SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE TABLE payments;
+TRUNCATE TABLE expenses;
+TRUNCATE TABLE expense_categories;
+TRUNCATE TABLE members;
+TRUNCATE TABLE member_categories;
+TRUNCATE TABLE tasks;
+TRUNCATE TABLE task_categories;
+TRUNCATE TABLE users;
+TRUNCATE TABLE notifications;
+TRUNCATE TABLE organization_settings;
+TRUNCATE TABLE roles;
+TRUNCATE TABLE polls;
+TRUNCATE TABLE conversations;
+TRUNCATE TABLE messages;
+TRUNCATE TABLE conversation_participants;
+TRUNCATE TABLE documents;
+TRUNCATE TABLE annual_fees;
+TRUNCATE TABLE events;
+TRUNCATE TABLE donors;
+TRUNCATE TABLE book_ads;
+TRUNCATE TABLE donations;
+TRUNCATE TABLE ad_prices;
+TRUNCATE TABLE settings;
+SET FOREIGN_KEY_CHECKS = 1;
+
 ('General', 'Socios generales', '#3498db', 1, 1, 20.00),
 ('Joven', 'Socios jóvenes', '#2ecc71', 1, 2, 10.00);
 
