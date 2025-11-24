@@ -1,7 +1,7 @@
 
 <?php ob_start(); ?>
 
-
+<?php
 if (!isset($db) && isset($this) && property_exists($this, 'db')) {
     $db = $this->db;
 }
@@ -107,7 +107,4 @@ new Chart(document.getElementById('chartProximos'), {
 .filter-row { margin-bottom:2rem; }
 .chart-row { display:flex; gap:2rem; }
 </style>
-<?php
-$content = ob_get_clean();
-require __DIR__ . '/../layout.php';
 ?>
