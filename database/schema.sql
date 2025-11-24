@@ -1,3 +1,17 @@
+CREATE TABLE IF NOT EXISTS payments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    member_id INT NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    payment_date DATE NOT NULL,
+    concept VARCHAR(255) NOT NULL,
+    status ENUM('paid', 'pending') DEFAULT 'paid',
+    fee_year INT DEFAULT NULL,
+    payment_type ENUM('fee', 'event', 'donation') DEFAULT 'fee',
+    event_id INT DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE,
+    FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE SET NULL
+);
 
 CREATE TABLE IF NOT EXISTS documents (
     id INT AUTO_INCREMENT PRIMARY KEY,
