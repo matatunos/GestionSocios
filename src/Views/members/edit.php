@@ -1,4 +1,8 @@
+
 <?php ob_start(); ?>
+// ...existing code...
+// At the end of the file, after all HTML and JS:
+<?php $content = ob_get_clean(); include __DIR__ . '/../layout.php'; ?>
 
 <div class="mb-4">
     <a href="index.php?page=members" class="btn btn-sm btn-secondary mb-4">
