@@ -64,7 +64,7 @@ $events = $eventModel->readActive()->fetchAll(PDO::FETCH_ASSOC);
                         <i class="fas fa-check-circle"></i> AL DÍA 2025
                     </button>
                     <a href="index.php?page=members&action=delete&id=<?= $member['id'] ?>" class="btn btn-sm btn-danger" title="Eliminar" onclick="return confirm('¿Seguro que quieres eliminar este socio?');">
-                        <i class="fas fa-trash"></i>
+                                    <a href="index.php?page=members&action=edit&id=<?= $member['id'] ?>" class="btn btn-sm btn-warning" title="Editar">
                     </a>
             </div>
         </td>
