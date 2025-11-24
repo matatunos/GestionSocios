@@ -1,5 +1,10 @@
 -- Datos de ejemplo para GestionSocios
 
+-- Categorías de socios
+INSERT INTO member_categories (name, description, color, is_active, display_order, default_fee) VALUES
+('General', 'Socios generales', '#3498db', 1, 1, 20.00),
+('Joven', 'Socios jóvenes', '#2ecc71', 1, 2, 10.00);
+
 -- Socios
 INSERT INTO members (first_name, last_name, dni, email, phone, address, category_id, status, join_date) VALUES
 ('Juan', 'Pérez', '12345678A', 'juan.perez@example.com', '600123456', 'Calle Mayor 1', 1, 'active', '2022-01-15'),
