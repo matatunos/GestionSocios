@@ -23,7 +23,7 @@ $events = $eventModel->readActive()->fetchAll(PDO::FETCH_ASSOC);
         </select>
     </form>
 </div>
-<link rel="stylesheet" href="/css/listings.css">
+<link rel="stylesheet" href="/css/listings.css?v=1">
 <div class="card" style="padding: 0; overflow: hidden;">
     <div class="table-container" style="border: none; border-radius: 0;">
         <table class="table">

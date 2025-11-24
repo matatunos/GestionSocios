@@ -7,7 +7,7 @@
             if ($_GET['msg'] === 'deleted') echo 'Donante eliminado correctamente.';
         ?>
     </div>
-    <link rel="stylesheet" href="/css/listings.css">
+    <link rel="stylesheet" href="/css/listings.css?v=1">
 <?php endif; ?>
 
 <div class="flex justify-between items-center mb-4">
