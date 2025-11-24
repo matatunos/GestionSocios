@@ -207,9 +207,23 @@
                                 </div>
                                 
                                 <?php if (empty($row['has_paid_current_year'])): ?>
-                                <a href="index.php?page=members&action=markPaid&id=<?php echo $row['id']; ?>" 
+                                <?php
+                                // Obtener la cuota anual y concepto para el año actual
+                                $currentYear = date('Y');
+                                $feeAmount = 0;
+                                $feeConcept = 'Cuota Anual ' . $currentYear;
+                                try {
+                                    $feeStmt = $GLOBALS['db']->prepare("SELECT amount FROM annual_fees WHERE year = ?");
+                                    $feeStmt->execute([$currentYear]);
+                                    $feeRow = $feeStmt->fetch(PDO::FETCH_ASSOC);
+                                    if ($feeRow) {
+                                        $feeAmount = $feeRow['amount'];
+                                    }
+                                } catch (Exception $e) {}
+                                ?>
+                                <a href="index.php?page=members&action=markPaid&id=<?php echo $row['id']; ?>"
                                    class="btn btn-sm btn-primary"
-                                   onclick="return confirm('¿Marcar la cuota de <?php echo date('Y'); ?> como pagada para este socio?');">
+                                   onclick="return confirm('¿Marcar la cuota de <?php echo $currentYear; ?> como pagada para este socio?\nImporte: <?php echo number_format($feeAmount, 2); ?> €\nConcepto: <?php echo $feeConcept; ?>');">
                                     <i class="fas fa-check"></i> Marcar como Pagado
                                 </a>
                                 <?php else: ?>
