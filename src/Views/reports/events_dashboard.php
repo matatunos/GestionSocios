@@ -1,5 +1,7 @@
 <?php
 // Dashboard de Eventos con KPIs, filtros y gráficos avanzados
+ob_start();
+
 if (!isset($db) && isset($this) && property_exists($this, 'db')) {
     $db = $this->db;
 }
@@ -52,6 +54,8 @@ $ingresosTotales = array_sum(array_map(function($e) use ($attendanceModel) {
     </div>
     <div class="filter-row">
         <form method="GET" action="">
+            <input type="hidden" name="page" value="reports">
+            <input type="hidden" name="action" value="dashboard_events">
             <label>Desde: <input type="date" name="from" value="<?= $_GET['from'] ?? '' ?>"></label>
             <label>Hasta: <input type="date" name="to" value="<?= $_GET['to'] ?? '' ?>"></label>
             <label>Estado: <select name="estado"><option value="">Todos</option><option value="activo">Activo</option><option value="inactivo">Inactivo</option></select></label>
@@ -103,3 +107,7 @@ new Chart(document.getElementById('chartProximos'), {
 .filter-row { margin-bottom:2rem; }
 .chart-row { display:flex; gap:2rem; }
 </style>
+<?php
+$content = ob_get_clean();
+require __DIR__ . '/../layout.php';
+?>

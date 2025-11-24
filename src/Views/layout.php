@@ -48,61 +48,6 @@ if (isset($_SESSION['user_id'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-    <!-- Mobile Menu Toggle -->
-    <button class="mobile-menu-toggle" id="mobileMenuToggle">
-        <i class="fas fa-bars"></i>
-    </button>
-    
-    <!-- Mobile Overlay -->
-    <div class="mobile-overlay" id="mobileOverlay"></div>
-    
-    <!-- Mobile Menu Modal -->
-                <li class="nav-group">
-                    <a href="#" class="nav-link <?php echo ($page === 'dashboard' || $page === 'treasury') ? 'active' : ''; ?>">
-                        <i class="fas fa-home"></i>
-                        <span>Dashboard</span>
-                        <i class="fas fa-chevron-down" style="margin-left:0.5em;font-size:0.8em;"></i>
-                    </a>
-                    <ul class="nav-submenu">
-                        <li>
-                            <a href="index.php?page=dashboard" class="nav-link <?php echo ($page === 'dashboard') ? 'active' : ''; ?>">
-                                <i class="fas fa-chart-pie"></i>
-                                <span>General</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="index.php?page=treasury" class="nav-link <?php echo ($page === 'treasury') ? 'active' : ''; ?>">
-                                <i class="fas fa-coins"></i>
-                                <span>Tesorería</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="index.php?page=reports&action=dashboard_events" class="nav-link <?php echo ($page === 'reports' && $action === 'dashboard_events') ? 'active' : ''; ?>">
-                                <i class="fas fa-calendar-alt"></i>
-                                <span>Eventos</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <i class="fas fa-receipt"></i> Gastos
-            </a>
-            <a href="index.php?page=treasury" class="mobile-menu-item">
-                <i class="fas fa-coins"></i> Tesorería
-            </a>
-            <a href="index.php?page=tasks" class="mobile-menu-item">
-                <i class="fas fa-tasks"></i> Tareas
-            </a>
-            <a href="index.php?page=analytics" class="mobile-menu-item">
-                <i class="fas fa-chart-line"></i> Estadísticas
-            </a>
-            <a href="index.php?page=settings" class="mobile-menu-item">
-                <i class="fas fa-cog"></i> Configuración
-            </a>
-            <a href="index.php?page=logout" class="mobile-menu-item" style="color: #dc3545;">
-                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-            </a>
-        </div>
-    </div>
     
     <div class="app-container">
         <!-- Sidebar -->
@@ -149,39 +94,31 @@ if (isset($_SESSION['user_id'])) {
             
             <ul class="nav-menu">
                 <li class="nav-group">
-                    <a href="#" class="nav-link <?php echo ($page === 'dashboard' || $page === 'treasury') ? 'active' : ''; ?>">
+                    <a href="#" class="nav-link <?php echo ($page === 'dashboard' || $page === 'treasury' || ($page === 'reports' && $action === 'dashboard_events')) ? 'active' : ''; ?>">
                         <i class="fas fa-home"></i>
                         <span>Dashboard</span>
-                        <i class="fas fa-chevron-down" style="margin-left:0.5em;font-size:0.8em;"></i>
+                        <i class="fas fa-chevron-down" style="margin-left:auto;font-size:0.8em;"></i>
                     </a>
-                    <li class="nav-group">
-                        <a href="#" class="nav-link <?php echo ($page === 'dashboard' || $page === 'treasury') ? 'active' : ''; ?>">
-                            <i class="fas fa-home"></i>
-                            <span>Dashboard</span>
-                            <i class="fas fa-chevron-down" style="margin-left:0.5em;font-size:0.8em;"></i>
-                        </a>
-                        <ul class="nav-submenu">
-                            <li>
-                                <a href="index.php?page=dashboard" class="nav-link <?php echo ($page === 'dashboard') ? 'active' : ''; ?>">
-                                    <i class="fas fa-chart-pie"></i>
-                                    <span>General</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="index.php?page=treasury" class="nav-link <?php echo ($page === 'treasury') ? 'active' : ''; ?>">
-                                    <i class="fas fa-coins"></i>
-                                    <span>Tesorería</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="index.php?page=reports&action=dashboard_events" class="nav-link <?php echo ($page === 'reports' && $action === 'dashboard_events') ? 'active' : ''; ?>">
-                                    <i class="fas fa-calendar-alt"></i>
-                                    <span>Eventos</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                <li>
+                    <ul class="nav-submenu">
+                        <li>
+                            <a href="index.php?page=dashboard" class="nav-link <?php echo ($page === 'dashboard') ? 'active' : ''; ?>">
+                                <i class="fas fa-chart-pie"></i>
+                                <span>General</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="index.php?page=treasury" class="nav-link <?php echo ($page === 'treasury') ? 'active' : ''; ?>">
+                                <i class="fas fa-coins"></i>
+                                <span>Tesorería</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="index.php?page=reports&action=dashboard_events" class="nav-link <?php echo ($page === 'reports' && $action === 'dashboard_events') ? 'active' : ''; ?>">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Eventos</span>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
 
                 <li>
@@ -462,42 +399,6 @@ if (isset($_SESSION['user_id'])) {
             if (!document.getElementById('globalSearch').contains(e.target)) {
                 searchResults.style.display = 'none';
             }
-        });
-
-        // Mobile Menu
-        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-        const mobileOverlay = document.getElementById('mobileOverlay');
-        const mobileMenuModal = document.getElementById('mobileMenuModal');
-        const mobileMenuClose = document.getElementById('mobileMenuClose');
-        const sidebar = document.getElementById('sidebar');
-
-        // Show mobile menu button on mobile devices
-        // Sidebar always visible
-        mobileMenuToggle.style.display = 'none';
-        sidebar.style.display = '';
-        sidebar.style.width = '';
-        mobileMenuModal.classList.remove('active');
-        mobileOverlay.classList.remove('active');
-
-        window.addEventListener('resize', function() {
-            // Sidebar always visible on resize
-            mobileMenuToggle.style.display = 'none';
-            sidebar.style.display = '';
-            sidebar.style.width = '';
-            mobileMenuModal.classList.remove('active');
-            mobileOverlay.classList.remove('active');
-        });
-
-        mobileMenuToggle.addEventListener('click', function() {
-            // Mobile menu toggle disabled (sidebar always visible)
-        });
-
-        mobileMenuClose.addEventListener('click', function() {
-            // Mobile menu close disabled (sidebar always visible)
-        });
-
-        mobileOverlay.addEventListener('click', function() {
-            // Mobile overlay click disabled (sidebar always visible)
         });
 
         // Notifications System
