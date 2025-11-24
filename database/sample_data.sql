@@ -183,3 +183,12 @@ INSERT INTO settings (setting_key, setting_value) VALUES
 ('site_name', 'GestionSocios Demo'),
 ('site_email', 'info@demo.org'),
 ('maintenance_mode', '0');
+
+-- Donantes de ejemplo
+INSERT INTO donors (name, contact_person, phone, email, address, created_at) VALUES
+('Comercio Local S.L.', 'Pedro Martínez', '600111222', 'contacto@comerciolocal.es', 'Plaza Mayor 5', NOW()),
+('Bar El Encuentro', 'María López', '600333444', 'bar.encuentro@email.com', 'Calle Ancha 12', NOW()),
+('Ferretería García', 'Antonio García', '600555666', 'ferreteria.garcia@email.com', 'Avda. Constitución 45', NOW()),
+('Panadería La Espiga', 'Carmen Ruiz', '600777888', 'panaderia.espiga@email.com', 'Calle del Pan 3', NOW()),
+('Talleres Mecánicos Sanz', 'Roberto Sanz', '600999000', 'talleres.sanz@email.com', 'Polígono Industrial Nave 7', NOW());
+
