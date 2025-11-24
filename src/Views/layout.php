@@ -276,8 +276,16 @@ if (isset($_SESSION['user_id'])) {
         <!-- Main Content -->
         <main class="main-content">
             <?php
-            if (isset($view) && $view === 'events_dashboard') {
-                include __DIR__ . '/reports/events_dashboard.php';
+            if (isset($view)) {
+                // Incluir la vista correspondiente si existe
+                $viewPath = __DIR__ . '/' . $view . '.php';
+                if (file_exists($viewPath)) {
+                    include $viewPath;
+                } elseif ($view === 'events_dashboard') {
+                    include __DIR__ . '/reports/events_dashboard.php';
+                }
+            } elseif (isset($content)) {
+                echo $content;
             }
             ?>
         </main>
