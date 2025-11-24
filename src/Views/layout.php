@@ -274,15 +274,26 @@ if (isset($_SESSION['user_id'])) {
                         <span>Libro Fiestas</span>
                     </a>
                 </li>
-                <li>
-                    <a href="index.php?page=reports&action=executive" class="nav-link <?php echo ($page === 'reports' && ($action === 'executive' || !isset($action))) ? 'active' : ''; ?>">
+                <li class="nav-group">
+                    <a href="#" class="nav-link <?php echo ($page === 'reports') ? 'active' : ''; ?>">
                         <i class="fas fa-chart-bar"></i>
-                        <span>Informes generales</span>
+                        <span>Informes</span>
+                        <i class="fas fa-chevron-down" style="margin-left:0.5em;font-size:0.8em;"></i>
                     </a>
-                    <a href="index.php?page=reports&action=eventsAttendance" class="nav-link <?php echo ($page === 'reports' && $action === 'eventsAttendance') ? 'active' : ''; ?>">
-                        <i class="fas fa-calendar-check"></i>
-                        <span>Informe de eventos</span>
-                    </a>
+                    <ul class="nav-submenu">
+                        <li>
+                            <a href="index.php?page=reports&action=dashboard_events" class="nav-link <?php echo ($page === 'reports' && $action === 'dashboard_events') ? 'active' : ''; ?>">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Dashboard de eventos</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="index.php?page=reports&action=dashboard_events" class="nav-link <?php echo ($page === 'reports' && $action === 'dashboard_events') ? 'active' : ''; ?>">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Dashboard de eventos</span>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
                 <li>
                     <a href="index.php?page=settings" class="nav-link <?php echo ($page === 'settings') ? 'active' : ''; ?>">
