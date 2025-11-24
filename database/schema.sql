@@ -4,22 +4,6 @@ CREATE TABLE IF NOT EXISTS event_attendance_status (
     status_key VARCHAR(32) NOT NULL UNIQUE,
     status_name VARCHAR(64) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-CREATE TABLE IF NOT EXISTS event_attendance (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    event_id INT NOT NULL,
-    member_id INT DEFAULT NULL,
-    donor_id INT DEFAULT NULL,
-    status ENUM('registered','confirmed','attended','cancelled') DEFAULT 'registered',
-    attended TINYINT(1) DEFAULT 0,
-    attended_at DATETIME DEFAULT NULL,
-    registered_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    registration_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
-    FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE SET NULL,
-    FOREIGN KEY (donor_id) REFERENCES donors(id) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-ALTER TABLE event_attendance ADD UNIQUE KEY unique_event_member (event_id, member_id);
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 -- Historial de imágenes de donantes
 CREATE TABLE IF NOT EXISTS donor_image_history (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -313,6 +297,22 @@ CREATE TABLE IF NOT EXISTS events (
 -- Tabla book_ads
 
 CREATE TABLE IF NOT EXISTS donors (
+    -- Tabla de asistencias a eventos (después de members, events y donors)
+    CREATE TABLE IF NOT EXISTS event_attendance (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        event_id INT NOT NULL,
+        member_id INT DEFAULT NULL,
+        donor_id INT DEFAULT NULL,
+        status ENUM('registered','confirmed','attended','cancelled') DEFAULT 'registered',
+        attended TINYINT(1) DEFAULT 0,
+        attended_at DATETIME DEFAULT NULL,
+        registered_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        registration_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
+        FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE SET NULL,
+        FOREIGN KEY (donor_id) REFERENCES donors(id) ON DELETE SET NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    ALTER TABLE event_attendance ADD UNIQUE KEY unique_event_member (event_id, member_id);
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(150) NOT NULL,
     contact_person VARCHAR(100),
