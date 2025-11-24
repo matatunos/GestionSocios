@@ -36,6 +36,7 @@ $ingresosTotales = array_sum(array_map(function($e) use ($attendanceModel) {
     $stats = $attendanceModel->getStatsByEvent($e['id']);
     return ($e['price'] ?? 0) * ($stats['confirmed'] ?? 0);
 }, $filteredEvents));
+// No HTML antes del <div class="dashboard">, solo PHP para preparar datos
 ?>
 <div class="dashboard">
     <div class="chart-row">
