@@ -25,6 +25,8 @@ TRUNCATE TABLE ad_prices;
 TRUNCATE TABLE settings;
 SET FOREIGN_KEY_CHECKS = 1;
 
+
+INSERT INTO member_categories (name, description, color, is_active, display_order, default_fee) VALUES
 ('General', 'Socios generales', '#3498db', 1, 1, 20.00),
 ('Joven', 'Socios jóvenes', '#2ecc71', 1, 2, 10.00);
 
