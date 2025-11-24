@@ -77,12 +77,28 @@ if (file_exists($configFile)) {
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                 <div class="form-group">
-                    <label class="form-label">Usuario DB</label>
-                    <input type="text" name="username" class="form-control" placeholder="root" value="<?php echo $_POST['username'] ?? $configDefaults['username']; ?>" required>
+                    <label class="form-label">Usuario DB <span style="color:#888;font-size:0.9em" title="Este debe ser el usuario SQL, no el usuario del sistema">(usuario SQL)</span></label>
+                    <input type="text" name="username" class="form-control" placeholder="root" value="<?php echo $_POST['username'] ?? $configDefaults['username']; ?>" required pattern="^[a-zA-Z0-9_]+$" title="Solo letras, números y guiones bajos">
+                    <?php if (isset($configDefaults['username'])): ?>
+                    <small style="color:#888;">Precargado desde config.php: <b><?php echo htmlspecialchars($configDefaults['username']); ?></b></small>
+                    <?php endif; ?>
+                                <?php if (isset($configDefaults['host'])): ?>
+                                <small style="color:#888;">Precargado desde config.php: <b><?php echo htmlspecialchars($configDefaults['host']); ?></b></small>
+                                <?php endif; ?>
+                                <?php if (isset($configDefaults['db_name'])): ?>
+                                <small style="color:#888;">Precargado desde config.php: <b><?php echo htmlspecialchars($configDefaults['db_name']); ?></b></small>
+                                <?php endif; ?>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Contraseña DB</label>
                     <input type="password" name="password" class="form-control" value="<?php echo $_POST['password'] ?? $configDefaults['password']; ?>">
+                                <?php if (isset($configDefaults['password']) && $configDefaults['password'] !== ''): ?>
+                                <small style="color:#888;">Precargado desde config.php</small>
+                                <?php endif; ?>
+                            <div style="background:#fef9c3;color:#92400e;padding:0.5rem 1rem;border-radius:6px;margin-bottom:1rem;font-size:0.95em;">
+                                <b>Nota:</b> El usuario DB debe ser el usuario SQL con permisos sobre la base de datos.<br>
+                                Si tienes dudas, revisa el archivo <code>src/Config/config.php</code> o consulta con el administrador del servidor.
+                            </div>
                 </div>
             </div>
 
