@@ -145,8 +145,8 @@ CREATE TABLE IF NOT EXISTS book_ads (
     status ENUM('paid', 'pending') DEFAULT 'pending',
     image_url VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (donor_id) REFERENCES donors(id) ON DELETE CASCADE
-);
+    CONSTRAINT fk_book_ads_donor FOREIGN KEY (donor_id) REFERENCES donors(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS payments (
     id INT AUTO_INCREMENT PRIMARY KEY,
