@@ -18,3 +18,13 @@ foreach ($events as $event) {
                     <td>
                         <form method='POST' action='index.php?page=dashboard&action=markEventPaymentPaid' style='display:inline;'>
                             <input type='hidden' name='attendance_id' value='{$p['id']}'>
+                            <button type='submit' class='btn btn-sm btn-success'><i class='fas fa-euro-sign'></i> Registrar pago</button>
+                        </form>
+                    </td>
+                </tr>";
+        }
+        echo "</tbody></table></div>";
+    }
+    echo "</div>";
+}
+?>
