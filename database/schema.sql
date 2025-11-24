@@ -1,3 +1,9 @@
+CREATE TABLE IF NOT EXISTS task_categories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
 -- poll_options table moved after polls for FK integrity
 -- document_permissions table moved after documents for FK integrity
 CREATE TABLE IF NOT EXISTS tasks (
@@ -90,6 +96,7 @@ INSERT INTO users (email, name, password, role, active, status) VALUES ('admin@a
 
 CREATE TABLE IF NOT EXISTS conversations (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    subject VARCHAR(255) DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
@@ -113,6 +120,7 @@ CREATE TABLE IF NOT EXISTS conversation_participants (
     user_id INT NOT NULL,
     member_id INT DEFAULT NULL,
     joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_read_at DATETIME DEFAULT NULL,
     FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
@@ -256,6 +264,7 @@ CREATE TABLE IF NOT EXISTS donations (
     amount DECIMAL(10,2) NOT NULL,
     type ENUM('media','full','cover','back_cover') NOT NULL,
     year YEAR NOT NULL,
+    donation_date DATE DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (donor_id) REFERENCES donors(id) ON DELETE CASCADE
 );
