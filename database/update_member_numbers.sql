@@ -1,6 +1,0 @@
--- DEPRECATED: This script is no longer used
--- Use migration_add_member_number.sql instead
--- That migration includes:
--- 1. Adding the member_number column (ALTER TABLE)
--- 2. Updating existing records
--- 3. Adding index for performance
