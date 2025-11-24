@@ -23,6 +23,7 @@ $events = $eventModel->readActive()->fetchAll(PDO::FETCH_ASSOC);
         </select>
     </form>
 </div>
+<link rel="stylesheet" href="/css/listings.css">
 <div class="card" style="padding: 0; overflow: hidden;">
     <div class="table-container" style="border: none; border-radius: 0;">
         <table class="table">
@@ -48,23 +49,25 @@ $events = $eventModel->readActive()->fetchAll(PDO::FETCH_ASSOC);
             <em>Selecciona evento</em>
             <?php endif; ?>
         </td>
-        <td style="text-align: right;">
-            <?php if (!empty($member['logo_url'])): ?>
-                <a href="/<?= htmlspecialchars($member['logo_url']) ?>" target="_blank" class="btn btn-sm btn-warning" title="Ver Logo">
-                    <i class="fas fa-image"></i>
-                </a>
-            <?php endif; ?>
-            <a href="index.php?page=members&action=edit&id=<?= $member['id'] ?>" class="btn btn-sm btn-warning">
-                <i class="fas fa-edit" title="Editar"></i>
-            </a>
-            <?php if (!empty($member['latitude']) && !empty($member['longitude'])): ?>
-                <a href="index.php?page=map#member-<?= $member['id'] ?>" class="btn btn-sm btn-warning" title="Ver en mapa">
-                    <i class="fas fa-map-marker-alt"></i>
-                </a>
-            <?php endif; ?>
-            <a href="index.php?page=members&action=delete&id=<?= $member['id'] ?>" class="btn btn-sm btn-danger" title="Eliminar" onclick="return confirm('¿Seguro que quieres eliminar este socio?');">
-                <i class="fas fa-trash"></i>
-            </a>
+                    <td style="text-align: right;">
+                        <div class="listing-actions">
+                            <?php if (!empty($member['logo_url'])): ?>
+                                <a href="/<?= htmlspecialchars($member['logo_url']) ?>" target="_blank" class="btn btn-sm btn-warning" title="Ver Logo">
+                                    <i class="fas fa-image"></i>
+                                </a>
+                            <?php endif; ?>
+                            <a href="index.php?page=members&action=edit&id=<?= $member['id'] ?>" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit" title="Editar"></i>
+                            </a>
+                            <?php if (!empty($member['latitude']) && !empty($member['longitude'])): ?>
+                                <a href="index.php?page=map#member-<?= $member['id'] ?>" class="btn btn-sm btn-warning" title="Ver en mapa">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </a>
+                            <?php endif; ?>
+                            <a href="index.php?page=members&action=delete&id=<?= $member['id'] ?>" class="btn btn-sm btn-danger" title="Eliminar" onclick="return confirm('¿Seguro que quieres eliminar este socio?');">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
         </td>
     </tr>
     <?php endforeach; ?>
