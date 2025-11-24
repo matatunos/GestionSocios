@@ -136,6 +136,20 @@ CREATE TABLE IF NOT EXISTS events (
 );
 
 -- Tabla book_ads
+
+CREATE TABLE IF NOT EXISTS donors (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(150) NOT NULL,
+    contact_person VARCHAR(100),
+    phone VARCHAR(20),
+    email VARCHAR(150),
+    address TEXT,
+    latitude DECIMAL(9,6) DEFAULT NULL,
+    longitude DECIMAL(9,6) DEFAULT NULL,
+    logo_url VARCHAR(255) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
 CREATE TABLE IF NOT EXISTS book_ads (
     id INT AUTO_INCREMENT PRIMARY KEY,
     donor_id INT NOT NULL,
