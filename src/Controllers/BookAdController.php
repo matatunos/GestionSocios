@@ -189,8 +189,9 @@ class BookAdController {
             // Create new payment record (pending or paid)
             $paymentStatus = $this->bookAd->status === 'paid' ? 'paid' : 'pending';
             $paymentDate = $this->bookAd->status === 'paid' ? date('Y-m-d') : NULL;
-            $insertStmt = $this->db->prepare("INSERT INTO payments (member_id, amount, payment_date, concept, status, fee_year, payment_type, book_ad_id) VALUES (NULL, ?, ?, ?, ?, ?, 'book_ad', ?)");
+            $insertStmt = $this->db->prepare("INSERT INTO payments (member_id, amount, payment_date, concept, status, fee_year, payment_type, book_ad_id) VALUES (?, ?, ?, ?, ?, ?, 'book_ad', ?)");
             $insertStmt->execute([
+                $this->bookAd->donor_id,
                 $this->bookAd->amount,
                 $paymentDate,
                 'Anuncio Libro Fiestas ' . $this->bookAd->year . ' - ' . $donorModel->name,
