@@ -41,32 +41,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $admins = $db->query('SELECT id, email, name FROM users WHERE role="admin"')->fetchAll(PDO::FETCH_ASSOC);
 ?>
-<h2>Administradores</h2>
-<table border="1" cellpadding="6">
-    <tr><th>ID</th><th>Email</th><th>Nombre</th><th>Acciones</th></tr>
-    <?php foreach ($admins as $admin): ?>
-    <tr>
-        <form method="post">
-        <td><?= $admin['id'] ?><input type="hidden" name="id" value="<?= $admin['id'] ?>"></td>
-        <td><input type="text" name="email" value="<?= htmlspecialchars($admin['email']) ?>"></td>
-        <td><input type="text" name="name" value="<?= htmlspecialchars($admin['name']) ?>"></td>
-        <td>
-            <input type="password" name="password" placeholder="Nueva clave">
-            <button type="submit" name="edit">Guardar</button>
-            <button type="submit" name="delete" onclick="return confirm('¿Eliminar este usuario?')">Eliminar</button>
-        </td>
-        </form>
-    </tr>
-    <?php endforeach; ?>
-    <tr>
-        <form method="post">
-        <td>Nuevo</td>
-        <td><input type="text" name="email"></td>
-        <td><input type="text" name="name"></td>
-        <td>
-            <input type="password" name="password" placeholder="Clave">
-            <button type="submit" name="add">Añadir</button>
-        </td>
-        </form>
-    </tr>
-</table>
+<h2 class="section-title"><i class="fas fa-user-shield"></i> Administradores</h2>
+<div class="card mb-4">
+    <table class="table w-full" style="min-width: 400px;">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Email</th>
+                <th>Nombre</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($admins as $admin): ?>
+            <tr>
+                <form method="post" style="display:contents;">
+                <td style="font-weight:600; color:var(--primary-600);">
+                    <?= $admin['id'] ?>
+                    <input type="hidden" name="id" value="<?= $admin['id'] ?>">
+                </td>
+                <td><input type="text" name="email" value="<?= htmlspecialchars($admin['email']) ?>" class="form-control" style="width:180px;"></td>
+                <td><input type="text" name="name" value="<?= htmlspecialchars($admin['name']) ?>" class="form-control" style="width:140px;"></td>
+                <td style="display:flex; gap:0.5rem;">
+                    <input type="password" name="password" placeholder="Nueva clave" class="form-control" style="width:120px;">
+                    <button type="submit" name="edit" class="btn btn-sm btn-primary"><i class="fas fa-save"></i> Guardar</button>
+                    <button type="submit" name="delete" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este usuario?')"><i class="fas fa-trash"></i> Eliminar</button>
+                </td>
+                </form>
+            </tr>
+            <?php endforeach; ?>
+            <tr>
+                <form method="post" style="display:contents;">
+                <td style="font-weight:600; color:var(--primary-600);">Nuevo</td>
+                <td><input type="text" name="email" class="form-control" style="width:180px;"></td>
+                <td><input type="text" name="name" class="form-control" style="width:140px;"></td>
+                <td style="display:flex; gap:0.5rem;">
+                    <input type="password" name="password" placeholder="Clave" class="form-control" style="width:120px;">
+                    <button type="submit" name="add" class="btn btn-sm btn-success"><i class="fas fa-plus"></i> Añadir</button>
+                </td>
+                </form>
+            </tr>
+        </tbody>
+    </table>
+</div>
