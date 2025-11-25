@@ -176,31 +176,27 @@ $ingresosTotales = array_sum(array_map(function($e) use ($attendanceModel) {
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
     
     <!-- Upcoming Events List -->
-    <div class="card">
-        <h2 style="margin-bottom: 1rem;">Próximos Eventos</h2>
-        <div style="max-height: 400px; overflow-y: auto;">
-            <?php 
-            $upcomingEvents = array_filter($filteredEvents, function($e) { 
-                return strtotime($e['date']) > time(); 
-            });
-            ?>
-            <?php if (empty($upcomingEvents)): ?>
-                <p style="color: var(--text-muted); text-align: center; padding: 2rem 0;">No hay próximos eventos</p>
-            <?php else: ?>
-                <?php foreach ($upcomingEvents as $e): ?>
-                    <div style="padding: 0.75rem; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <div style="font-weight: 500; color: var(--text-main);">
-                                <?= htmlspecialchars($e['name']) ?>
-                            </div>
-                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">
-                                <i class="fas fa-calendar"></i> <?= date('d/m/Y', strtotime($e['date'])) ?>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </div>
+    <div class="card" style="margin-bottom: 1rem;">
+        <h2 style="margin-bottom: 0.5rem;">Próximos Eventos</h2>
+        <?php 
+        $upcomingEvents = array_filter($filteredEvents, function($e) { 
+            return strtotime($e['date']) > time(); 
+        });
+        ?>
+        <?php if (empty($upcomingEvents)): ?>
+            <p style="color: var(--text-muted); text-align: center; padding: 1rem 0;">No hay próximos eventos</p>
+        <?php else: ?>
+            <?php foreach ($upcomingEvents as $e): ?>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid var(--border-light);">
+                    <span style="font-weight: 500; color: var(--text-main);">
+                        <?= htmlspecialchars($e['name']) ?>
+                    </span>
+                    <span style="font-size: 0.95em; color: var(--secondary-600);">
+                        <i class="fas fa-calendar"></i> <?= date('d/m/Y', strtotime($e['date'])) ?>
+                    </span>
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
     </div>
     
     <!-- Event Rankings -->
@@ -273,12 +269,14 @@ $ingresosTotales = array_sum(array_map(function($e) use ($attendanceModel) {
                 foreach (array_slice($ranking_ocupacion, 0, 3) as $e):
                     $stats = $attendanceModel->getStatsByEvent($e['id']);
                     $max = $e['max_attendees'] ?? 0;
-                    $total = ($stats['registered'] ?? 0) + ($stats['confirmed'] ?? 0) + ($stats['attended'] ?? 0) + ($stats['cancelled'] ?? 0);
-                    $ocup = $max ? round(min(($total / $max) * 100, 100), 1) : 0;
+                    $confirmados = $stats['confirmed'] ?? 0;
+                    $asistidos = $stats['attended'] ?? 0;
+                    $ocupacion_real = $max ? round((($confirmados + $asistidos) / $max) * 100, 1) : 0;
                 ?>
-                    <div style="padding: 0.5rem 0; display: flex; justify-content: space-between;">
-                        <span style="color: var(--text-main);"><?= htmlspecialchars($e['name']) ?></span>
-                        <span style="font-weight: 600; color: var(--secondary-600);"><?= $ocup ?>%</span>
+                    <div style="padding: 0.5rem 0; display: flex; flex-direction: column;">
+                        <span style="color: var(--text-main); font-weight: 500;"><?= htmlspecialchars($e['name']) ?></span>
+                        <span style="font-size: 0.95em; color: var(--secondary-600);">Ocupación real: <?= $ocupacion_real ?>%</span>
+                        <span style="font-size: 0.85em; color: var(--primary-600);">Confirmados: <?= $confirmados ?>, Asistidos: <?= $asistidos ?>, Plazas: <?= $max ?></span>
                     </div>
                 <?php endforeach; ?>
             </div>
