@@ -175,7 +175,10 @@
 <div class="card">
     <div class="flex justify-between items-center mb-4">
         <h2>Actividad Reciente</h2>
-        <a href="index.php?page=payments" class="btn btn-sm btn-secondary">Ver todos los pagos</a>
+        <div class="btn-group">
+            <a href="index.php?page=audit_log" class="btn btn-sm btn-primary">Ver registro detallado</a>
+            <a href="index.php?page=payments" class="btn btn-sm btn-secondary">Ver todos los pagos</a>
+        </div>
     </div>
     <div class="table-container">
         <table class="table">
