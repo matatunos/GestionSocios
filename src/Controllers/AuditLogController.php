@@ -24,29 +24,19 @@ class AuditLogController {
         ];
         $page = $_GET['page_num'] ?? 1;
         $perPage = 25;
-        $result = $this->model->getAuditLog($filters, $page, $perPage);
+        $offset = ($page - 1) * $perPage;
+        $auditLogs = $this->model->readFiltered($filters, $perPage, $offset);
+        $total = $this->model->countFiltered($filters);
         require __DIR__ . '/../Views/audit_log/index.php';
     }
 
     public function export_excel() {
-        $filters = [
-            'user_id' => $_GET['user_id'] ?? null,
-            'action' => $_GET['action'] ?? null,
-            'entity' => $_GET['entity'] ?? null,
-            'date_from' => $_GET['date_from'] ?? null,
-            'date_to' => $_GET['date_to'] ?? null
-        ];
-        $this->model->exportExcel($filters);
+        // Implementar exportación a Excel si el modelo lo soporta
+        // $this->model->exportExcel($filters);
     }
 
     public function export_pdf() {
-        $filters = [
-            'user_id' => $_GET['user_id'] ?? null,
-            'action' => $_GET['action'] ?? null,
-            'entity' => $_GET['entity'] ?? null,
-            'date_from' => $_GET['date_from'] ?? null,
-            'date_to' => $_GET['date_to'] ?? null
-        ];
-        $this->model->exportPDF($filters);
+        // Implementar exportación a PDF si el modelo lo soporta
+        // $this->model->exportPDF($filters);
     }
 }
