@@ -101,6 +101,7 @@ $prediction = $prediction ?? null;
 <!-- Monthly Trend -->
 <div class="card">
     <h3 class="card-header"><i class="fas fa-chart-area"></i> Tendencia Mensual <?= date('Y') ?></h3>
+    <?php var_dump($monthlyTrend); ?>
     <?php if (empty($monthlyTrend) || array_sum(array_column($monthlyTrend, 'income')) == 0 && array_sum(array_column($monthlyTrend, 'expenses')) == 0): ?>
         <div class="alert alert-warning" style="margin: 2em; text-align: center;">No hay datos de ingresos ni gastos para este año.</div>
     <?php endif; ?>
