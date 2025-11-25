@@ -211,27 +211,28 @@ class Notification {
     /**
      * Obtener estadísticas de notificaciones
      */
-    public function getStats($member_id = null) {
+    public function getStats($user_id = null) {
         $query = "SELECT 
                     type,
                     COUNT(*) as total,
                     SUM(CASE WHEN is_read = 0 THEN 1 ELSE 0 END) as unread
                   FROM " . $this->table;
         
-        if ($member_id) {
-            $query .= " WHERE member_id = :member_id";
+        if ($user_id) {
+            $query .= " WHERE user_id = :user_id";
         }
         
         $query .= " GROUP BY type";
         
         $stmt = $this->conn->prepare($query);
         
-        if ($member_id) {
-            $stmt->bindParam(':member_id', $member_id, PDO::PARAM_INT);
+        if ($user_id) {
+            $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
         }
         
         $stmt->execute();
         
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
     }
 }
