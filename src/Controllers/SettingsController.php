@@ -111,7 +111,13 @@ class SettingsController {
         if (!isset($brandingSettings) || !is_array($brandingSettings)) $brandingSettings = [];
         if (!isset($legalSettings) || !is_array($legalSettings)) $legalSettings = [];
         // Do not expose password
+        // Capture view content
+        ob_start();
         require __DIR__ . '/../Views/settings/index.php';
+        $content = ob_get_clean();
+
+        // Include layout
+        require __DIR__ . '/../Views/layout.php';
     }
 
     public function updateGeneral() {
