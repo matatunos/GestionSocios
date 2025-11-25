@@ -46,14 +46,6 @@ CREATE TABLE IF NOT EXISTS expense_categories (
     color VARCHAR(30),
     is_active TINYINT(1) DEFAULT 1
 ) ENGINE=InnoDB;
-
--- Tabla para asistencias a eventos
-    name VARCHAR(100) NOT NULL,
-    description TEXT,
-    color VARCHAR(30),
-    is_active TINYINT(1) DEFAULT 1
-)
-ENGINE=InnoDB;
 -- Tabla expenses
 CREATE TABLE IF NOT EXISTS expenses (
     id INT AUTO_INCREMENT PRIMARY KEY,
