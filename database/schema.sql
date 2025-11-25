@@ -438,3 +438,5 @@ CREATE TABLE IF NOT EXISTS task_comments (
 	FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE,
 	FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+ALTER TABLE payments MODIFY payment_type VARCHAR(20);
+ALTER TABLE payments MODIFY payment_date DATE NULL;
