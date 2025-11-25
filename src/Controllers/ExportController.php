@@ -1,3 +1,5 @@
+
+ini_set('memory_limit', '256M');
 <?php
 
 require_once __DIR__ . '/../Models/Member.php';
