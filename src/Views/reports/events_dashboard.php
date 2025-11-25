@@ -191,11 +191,6 @@ new Chart(document.getElementById('chartOcupacion'), {
     data: { labels, datasets: [{ label: '% Ocupación', data: ocupacion, backgroundColor: '#f59e42' }] },
     options: { responsive: true, plugins: { legend: { display: false } } }
 });
-new Chart(document.getElementById('chartProximos'), {
-    type: 'bar',
-    data: { labels, datasets: [{ label: 'Próximos eventos', data: proximos, backgroundColor: '#6366f1' }] },
-    options: { responsive: true, plugins: { legend: { display: false } } }
-});
 </script>
 <style>
 .dashboard-content {
