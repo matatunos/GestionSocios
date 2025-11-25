@@ -274,7 +274,7 @@ $ingresosTotales = array_sum(array_map(function($e) use ($attendanceModel) {
                     $stats = $attendanceModel->getStatsByEvent($e['id']);
                     $max = $e['max_attendees'] ?? 0;
                     $total = ($stats['registered'] ?? 0) + ($stats['confirmed'] ?? 0) + ($stats['attended'] ?? 0) + ($stats['cancelled'] ?? 0);
-                    $ocup = $max ? round(($total / $max) * 100, 1) : 0;
+                    $ocup = $max ? round(min(($total / $max) * 100, 100), 1) : 0;
                 ?>
                     <div style="padding: 0.5rem 0; display: flex; justify-content: space-between;">
                         <span style="color: var(--text-main);"><?= htmlspecialchars($e['name']) ?></span>
