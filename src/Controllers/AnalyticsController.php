@@ -49,6 +49,7 @@ class AnalyticsController {
             'selectedYears' => $years
         ];
         
+        extract($data);
         require __DIR__ . '/../Views/analytics/index.php';
     }
     
