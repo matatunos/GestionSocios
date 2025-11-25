@@ -4,7 +4,10 @@
     <h1>Donaciones del Año <?= htmlspecialchars($year) ?></h1>
     <div class="btn-group">
         <a href="index.php?page=export&action=donations_excel" class="btn btn-secondary">
-            <i class="fas fa-download"></i> Exportar Excel
+            <i class="fas fa-file-excel"></i> Exportar Excel
+        </a>
+        <a href="index.php?page=export&action=donations_pdf" class="btn btn-secondary">
+            <i class="fas fa-file-pdf"></i> Exportar PDF
         </a>
         <a href="index.php?page=donations&action=create" class="btn btn-primary">
             <i class="fas fa-plus"></i> Añadir Donación
