@@ -5,7 +5,7 @@ class Notification {
     private $table = 'notifications';
     
     public $id;
-    public $member_id;
+    public $user_id;
     public $type;
     public $title;
     public $message;
@@ -51,9 +51,9 @@ class Notification {
     }
     
     /**
-     * Obtener notificaciones de un miembro
+     * Obtener notificaciones de un usuario
      */
-    public function readByMember($member_id, $limit = 50, $unread_only = false) {
+    public function readByUser($user_id, $limit = 50, $unread_only = false) {
         $query = "SELECT * FROM " . $this->table . " 
                   WHERE user_id = :user_id";
         
@@ -64,7 +64,7 @@ class Notification {
         $query .= " ORDER BY created_at DESC LIMIT :limit";
         
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':user_id', $member_id, PDO::PARAM_INT);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
         $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
         $stmt->execute();
         
@@ -75,7 +75,7 @@ class Notification {
      * Obtener notificaciones recientes para dropdown (últimas 10 no leídas)
      */
     public function getRecentUnread($member_id, $limit = 10) {
-        return $this->readByMember($member_id, $limit, true);
+        return $this->readByUser($member_id, $limit, true);
     }
     
     /**
@@ -83,10 +83,10 @@ class Notification {
      */
     public function countUnread($member_id) {
         $query = "SELECT COUNT(*) as total FROM " . $this->table . " 
-                  WHERE member_id = :member_id AND is_read = 0";
+              WHERE user_id = :user_id AND is_read = 0";
         
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':member_id', $member_id, PDO::PARAM_INT);
+        $stmt->bindParam(':user_id', $member_id, PDO::PARAM_INT);
         $stmt->execute();
         
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -108,15 +108,15 @@ class Notification {
     }
     
     /**
-     * Marcar todas las notificaciones de un miembro como leídas
+     * Marcar todas las notificaciones de un usuario como leídas
      */
-    public function markAllAsRead($member_id) {
+    public function markAllAsRead($user_id) {
         $query = "UPDATE " . $this->table . " 
                   SET is_read = 1, read_at = CURRENT_TIMESTAMP 
-                  WHERE member_id = :member_id AND is_read = 0";
+                  WHERE user_id = :user_id AND is_read = 0";
         
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':member_id', $member_id, PDO::PARAM_INT);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
         
         return $stmt->execute();
     }
@@ -149,9 +149,9 @@ class Notification {
     /**
      * Crear notificación de recordatorio de pago
      */
-    public static function createPaymentReminder($db, $member_id, $payment_details) {
+    public static function createPaymentReminder($db, $user_id, $payment_details) {
         $notification = new self($db);
-        $notification->member_id = $member_id;
+        $notification->user_id = $user_id;
         $notification->type = self::TYPE_PAYMENT_REMINDER;
         $notification->title = 'Recordatorio de pago';
         $notification->message = "Tienes un pago pendiente: {$payment_details['description']} por {$payment_details['amount']}€";
@@ -163,9 +163,9 @@ class Notification {
     /**
      * Crear notificación de evento próximo
      */
-    public static function createEventReminder($db, $member_id, $event_details) {
+    public static function createEventReminder($db, $user_id, $event_details) {
         $notification = new self($db);
-        $notification->member_id = $member_id;
+        $notification->user_id = $user_id;
         $notification->type = self::TYPE_EVENT_REMINDER;
         $notification->title = 'Evento próximo: ' . $event_details['name'];
         $notification->message = "El evento '{$event_details['name']}' será el {$event_details['date']}";
@@ -177,9 +177,9 @@ class Notification {
     /**
      * Crear notificación de anuncio general
      */
-    public static function createAnnouncement($db, $member_id, $title, $message, $link = null) {
+    public static function createAnnouncement($db, $user_id, $title, $message, $link = null) {
         $notification = new self($db);
-        $notification->member_id = $member_id;
+        $notification->user_id = $user_id;
         $notification->type = self::TYPE_ANNOUNCEMENT;
         $notification->title = $title;
         $notification->message = $message;
@@ -191,11 +191,11 @@ class Notification {
     /**
      * Enviar notificación a múltiples miembros
      */
-    public static function sendToMultiple($db, $member_ids, $type, $title, $message, $link = null) {
+    public static function sendToMultiple($db, $user_ids, $type, $title, $message, $link = null) {
         $success = true;
-        foreach ($member_ids as $member_id) {
+        foreach ($user_ids as $user_id) {
             $notification = new self($db);
-            $notification->member_id = $member_id;
+            $notification->user_id = $user_id;
             $notification->type = $type;
             $notification->title = $title;
             $notification->message = $message;
