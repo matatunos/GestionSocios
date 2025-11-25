@@ -105,6 +105,14 @@ class SettingsController {
         $passwordHash = '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi';
         $stmt = $this->db->prepare("UPDATE users SET password_hash = ? WHERE username = 'admin'");
         $stmt->execute([$passwordHash]);
+
+        // Registrar en audit_log
+        require_once __DIR__ . '/../Models/AuditLog.php';
+        $auditLog = new AuditLog($this->db);
+        $userId = $_SESSION['user_id'] ?? null;
+        $details = json_encode(['username' => 'admin']);
+        $auditLog->create($userId, 'reset_password', 'user', null, $details);
+
         header('Location: index.php?page=settings&tab=general&reset=1');
     }
 
@@ -228,6 +236,12 @@ class SettingsController {
         $stmt = $this->db->prepare("UPDATE users SET password = ? WHERE id = ?");
         if ($stmt->execute([$newPasswordHash, $userId])) {
             $_SESSION['password_success'] = 'Contraseña cambiada correctamente.';
+
+            // Registrar en audit_log
+            require_once __DIR__ . '/../Models/AuditLog.php';
+            $auditLog = new AuditLog($this->db);
+            $details = json_encode(['user_id' => $userId]);
+            $auditLog->create($userId, 'change_password', 'user', $userId, $details);
         } else {
             $_SESSION['password_error'] = 'Error al cambiar la contraseña.';
         }

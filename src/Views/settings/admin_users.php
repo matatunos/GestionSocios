@@ -5,6 +5,10 @@ $db = (new Database())->getConnection();
 
 // Procesar acciones: añadir, editar, borrar
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    require_once __DIR__ . '/../../Models/AuditLog.php';
+    $auditLog = new AuditLog($db);
+    $adminId = $_SESSION['user_id'] ?? null;
+
     if (isset($_POST['add'])) {
         $stmt = $db->prepare('INSERT INTO users (email, name, password, role) VALUES (?, ?, ?, "admin")');
         $stmt->execute([
@@ -12,6 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_POST['name'],
             password_hash($_POST['password'], PASSWORD_DEFAULT)
         ]);
+        $newUserId = $db->lastInsertId();
+        $details = json_encode(['email' => $_POST['email'], 'name' => $_POST['name']]);
+        $auditLog->create($adminId, 'create', 'user', $newUserId, $details);
     }
     if (isset($_POST['edit'])) {
         $stmt = $db->prepare('UPDATE users SET email=?, name=?, password=? WHERE id=?');
@@ -21,10 +28,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             password_hash($_POST['password'], PASSWORD_DEFAULT),
             $_POST['id']
         ]);
+        $details = json_encode(['email' => $_POST['email'], 'name' => $_POST['name']]);
+        $auditLog->create($adminId, 'update', 'user', $_POST['id'], $details);
     }
     if (isset($_POST['delete'])) {
         $stmt = $db->prepare('DELETE FROM users WHERE id=?');
         $stmt->execute([$_POST['id']]);
+        $details = json_encode(['user_id' => $_POST['id']]);
+        $auditLog->create($adminId, 'delete', 'user', $_POST['id'], $details);
     }
 }
 
