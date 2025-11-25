@@ -95,10 +95,6 @@ if (file_exists($configFile)) {
                                 <?php if (isset($configDefaults['password']) && $configDefaults['password'] !== ''): ?>
                                 <small style="color:#888;">Precargado desde config.php</small>
                                 <?php endif; ?>
-                            <div style="background:#fef9c3;color:#92400e;padding:0.5rem 1rem;border-radius:6px;margin-bottom:1rem;font-size:0.95em;">
-                                <b>Nota:</b> El usuario DB debe ser el usuario SQL con permisos sobre la base de datos.<br>
-                                Si tienes dudas, revisa el archivo <code>src/Config/config.php</code> o consulta con el administrador del servidor.
-                            </div>
                 </div>
             </div>
 
