@@ -48,9 +48,10 @@ class ExportController {
         
         // Datos
         foreach ($members as $member) {
+            $numeroSocio = !empty($member['member_number']) ? $member['member_number'] : $member['id'];
             fputcsv($output, [
                 $member['id'],
-                $member['member_number'],
+                $numeroSocio,
                 $member['first_name'],
                 $member['last_name'],
                 $member['email'],
@@ -367,9 +368,9 @@ class ExportController {
         foreach ($members as $member) {
             $statusClass = ($member['status'] === 'active') ? 'status-active' : 'status-inactive';
             $statusText = ($member['status'] === 'active') ? 'Activo' : 'Inactivo';
-            
+            $numeroSocio = !empty($member['member_number']) ? $member['member_number'] : $member['id'];
             $html .= '<tr>
-                <td>' . htmlspecialchars($member['member_number']) . '</td>
+                <td>' . htmlspecialchars($numeroSocio) . '</td>
                 <td>' . htmlspecialchars($member['first_name'] . ' ' . $member['last_name']) . '</td>
                 <td>' . htmlspecialchars($member['email']) . '</td>
                 <td>' . htmlspecialchars($member['phone']) . '</td>
