@@ -84,21 +84,15 @@ $ingresosTotales = array_sum(array_map(function($e) use ($attendanceModel) {
         <div class="chart-col">
             <div class="chart-block">
                 <div class="chart-legend">Asistencia por evento (confirmados)</div>
-                <div class="chart-container">
-                    <canvas id="chartAsistencia"></canvas>
-                </div>
+                <canvas id="chartAsistencia" style="max-height: 300px;"></canvas>
             </div>
             <div class="chart-block">
                 <div class="chart-legend">Ingresos por evento (€)</div>
-                <div class="chart-container">
-                    <canvas id="chartIngresos"></canvas>
-                </div>
+                <canvas id="chartIngresos" style="max-height: 300px;"></canvas>
             </div>
             <div class="chart-block">
                 <div class="chart-legend">Ocupación (%) por evento</div>
-                <div class="chart-container">
-                    <canvas id="chartOcupacion"></canvas>
-                </div>
+                <canvas id="chartOcupacion" style="max-height: 300px;"></canvas>
             </div>
             <!-- Listado de próximos eventos -->
             <div class="chart-block">
@@ -170,7 +164,7 @@ $ingresosTotales = array_sum(array_map(function($e) use ($attendanceModel) {
         </div>
     </div>
 </section>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
 const eventos = <?= json_encode(array_values($filteredEvents)) ?>;
 const labels = eventos.map(e => e.name);
@@ -188,9 +182,7 @@ new Chart(document.getElementById('chartAsistencia'), {
     options: { 
         responsive: true, 
         maintainAspectRatio: true,
-        aspectRatio: 2.5,
-        plugins: { legend: { display: false } },
-        animation: { duration: 750 }
+        plugins: { legend: { display: false } }
     }
 });
 new Chart(document.getElementById('chartIngresos'), {
@@ -199,9 +191,7 @@ new Chart(document.getElementById('chartIngresos'), {
     options: { 
         responsive: true, 
         maintainAspectRatio: true,
-        aspectRatio: 2.5,
-        plugins: { legend: { display: false } },
-        animation: { duration: 750 }
+        plugins: { legend: { display: false } }
     }
 });
 new Chart(document.getElementById('chartOcupacion'), {
@@ -210,9 +200,7 @@ new Chart(document.getElementById('chartOcupacion'), {
     options: { 
         responsive: true, 
         maintainAspectRatio: true,
-        aspectRatio: 2.5,
-        plugins: { legend: { display: false } },
-        animation: { duration: 750 }
+        plugins: { legend: { display: false } }
     }
 });
 </script>
@@ -242,8 +230,6 @@ new Chart(document.getElementById('chartOcupacion'), {
     border-radius: 8px; 
     box-shadow: 0 1px 4px #0001; 
     padding: 1.5rem; 
-    display: flex; 
-    flex-direction: column; 
 }
 .dashboard-charts .chart-legend { 
     font-size: 1rem; 
@@ -251,14 +237,5 @@ new Chart(document.getElementById('chartOcupacion'), {
     font-weight: 600; 
     margin-bottom: 1rem; 
     text-align: center; 
-}
-.dashboard-charts .chart-container {
-    position: relative;
-    width: 100%;
-    min-height: 300px;
-}
-.dashboard-charts canvas {
-    width: 100% !important;
-    height: auto !important;
 }
 </style>
