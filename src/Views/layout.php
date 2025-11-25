@@ -143,6 +143,13 @@ if (isset($_SESSION['user_id'])) {
                         </li>
                     </ul>
                 </li>
+                    <!-- Menú de Auditoría -->
+                    <li>
+                        <a href="index.php?page=audit_log" class="nav-link <?php echo ($page === 'audit_log') ? 'active' : ''; ?>">
+                            <i class="fas fa-user-shield"></i>
+                            <span>Auditoría</span>
+                        </a>
+                    </li>
                 <!-- Menú de Donantes -->
                 <li class="nav-group">
                     <a href="#" class="nav-link <?php echo ($page === 'donors' || $page === 'donations') ? 'active' : ''; ?>">
