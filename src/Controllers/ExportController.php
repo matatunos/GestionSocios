@@ -20,6 +20,14 @@ class ExportController {
         $memberModel = new Member($this->db);
         $stmt = $memberModel->readAll();
         $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Ordenar por nombre y apellidos
+        usort($members, function($a, $b) {
+            $cmp = strcmp($a['first_name'], $b['first_name']);
+            if ($cmp === 0) {
+                return strcmp($a['last_name'], $b['last_name']);
+            }
+            return $cmp;
+        });
         
         // Headers para descargar como archivo Excel (CSV)
         header('Content-Type: text/csv; charset=utf-8');
@@ -365,6 +373,14 @@ class ExportController {
             </thead>
             <tbody>';
         
+        // Ordenar por nombre y apellidos
+        usort($members, function($a, $b) {
+            $cmp = strcmp($a['first_name'], $b['first_name']);
+            if ($cmp === 0) {
+                return strcmp($a['last_name'], $b['last_name']);
+            }
+            return $cmp;
+        });
         foreach ($members as $member) {
             $statusClass = ($member['status'] === 'active') ? 'status-active' : 'status-inactive';
             $statusText = ($member['status'] === 'active') ? 'Activo' : 'Inactivo';
