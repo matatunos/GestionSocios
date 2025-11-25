@@ -89,6 +89,32 @@ def random_date(start_year, end_year):
     random_days = random.randint(0, delta.days)
     return start + timedelta(days=random_days)
 
+def random_join_date():
+    """Genera fecha de alta con distribución realista (más recientes)"""
+    # Distribución: 10% en 2020, 15% en 2021, 20% en 2022, 25% en 2023, 30% en 2024-2025
+    rand = random.random()
+    if rand < 0.10:
+        year = 2020
+    elif rand < 0.25:
+        year = 2021
+    elif rand < 0.45:
+        year = 2022
+    elif rand < 0.70:
+        year = 2023
+    else:
+        year = random.choice([2024, 2025])
+    
+    return random_date(year, year)
+
+def random_asturias_coords():
+    """Genera coordenadas aleatorias en la zona central de Asturias"""
+    # Zona central de Asturias (Oviedo, Gijón, Avilés)
+    # Latitud: 43.3 - 43.6
+    # Longitud: -6.0 - -5.6
+    lat = round(random.uniform(43.30, 43.60), 6)
+    lng = round(random.uniform(-6.00, -5.60), 6)
+    return lat, lng
+
 def random_phone():
     """Genera un número de teléfono español"""
     return f"6{random.randint(0, 9)}{random.randint(10000000, 99999999)}"
@@ -214,7 +240,7 @@ INSERT INTO task_categories (name, color, icon, description) VALUES
     output.append("-- ============================================\n")
     output.append(f"-- SOCIOS ({NUM_MEMBERS} registros)\n")
     output.append("-- ============================================\n\n")
-    output.append("INSERT INTO members (first_name, last_name, dni, email, phone, address, category_id, status, join_date, deactivated_at) VALUES\n")
+    output.append("INSERT INTO members (first_name, last_name, dni, email, phone, address, category_id, status, join_date, deactivated_at, latitude, longitude) VALUES\n")
     
     members = []
     for i in range(NUM_MEMBERS):
@@ -232,14 +258,15 @@ INSERT INTO task_categories (name, color, icon, description) VALUES
             deactivated_at = 'NULL'
         else:
             status = 'inactive'
-            deact_date = random_date(START_YEAR + 1, START_YEAR + YEARS)
+            deact_date = random_join_date()
             deactivated_at = f"'{deact_date.strftime('%Y-%m-%d')}'"
         
-        join_date = random_date(START_YEAR, START_YEAR + YEARS)
+        join_date = random_join_date()
+        lat, lng = random_asturias_coords()
         
         members.append(
             f"('{first_name}', '{last_name}', '{dni}', '{email}', '{phone}', '{address}', "
-            f"{category_id}, '{status}', '{join_date.strftime('%Y-%m-%d')}', {deactivated_at})"
+            f"{category_id}, '{status}', '{join_date.strftime('%Y-%m-%d')}', {deactivated_at}, {lat}, {lng})"
         )
     
     output.append(",\n".join(members) + ";\n\n")
@@ -248,7 +275,7 @@ INSERT INTO task_categories (name, color, icon, description) VALUES
     output.append("-- ============================================\n")
     output.append(f"-- DONANTES ({NUM_DONORS} registros)\n")
     output.append("-- ============================================\n\n")
-    output.append("INSERT INTO donors (name, contact_person, phone, email, address) VALUES\n")
+    output.append("INSERT INTO donors (name, contact_person, phone, email, address, latitude, longitude) VALUES\n")
     
     donors = []
     for i in range(NUM_DONORS):
@@ -259,9 +286,10 @@ INSERT INTO task_categories (name, color, icon, description) VALUES
         phone = random_phone()
         email = f"contacto{i+1}@{business_name.lower().replace(' ', '')}.com"
         address = f"{random.choice(['Calle', 'Avenida', 'Plaza'])} {random.choice(LAST_NAMES)} {random.randint(1, 100)}"
+        lat, lng = random_asturias_coords()
         
         donors.append(
-            f"('{name}', '{contact}', '{phone}', '{email}', '{address}')"
+            f"('{name}', '{contact}', '{phone}', '{email}', '{address}', {lat}, {lng})"
         )
     
     output.append(",\n".join(donors) + ";\n\n")
