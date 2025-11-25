@@ -1,5 +1,6 @@
 <?php
-// Vista de registro de actividad con filtros y paginación
+// Encapsular la vista en el layout principal para mostrar menús y estructura
+ob_start();
 ?>
 <div class="card mb-4">
     <h2 class="card-title">Registro de actividad</h2>
@@ -60,3 +61,6 @@
         <a href="index.php?page=audit_log&action=export_pdf" class="btn btn-secondary"><i class="fas fa-file-pdf"></i> Exportar PDF</a>
     </div>
 </div>
+<?php
+$content = ob_get_clean();
+require __DIR__ . '/../layout.php';
