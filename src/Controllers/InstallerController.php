@@ -64,9 +64,18 @@ class InstallerController {
             }
 
             // 4. Import sample data if requested
-            if (!empty($_POST['import_sample_data'])) {
-                $sampleFile = __DIR__ . '/../../database/sample_data.sql';
-                if (file_exists($sampleFile)) {
+            $sampleDataOption = $_POST['sample_data_option'] ?? 'none';
+            
+            if ($sampleDataOption !== 'none') {
+                $sampleFile = '';
+                
+                if ($sampleDataOption === 'small') {
+                    $sampleFile = __DIR__ . '/../../database/sample_data.sql';
+                } elseif ($sampleDataOption === 'large') {
+                    $sampleFile = __DIR__ . '/../../database/sample_data_large.sql';
+                }
+                
+                if ($sampleFile && file_exists($sampleFile)) {
                     $sampleSql = file_get_contents($sampleFile);
                     try {
                         $conn->exec($sampleSql);
@@ -75,6 +84,10 @@ class InstallerController {
                         require __DIR__ . '/../Views/install.php';
                         return;
                     }
+                } elseif ($sampleFile) {
+                    $error = "Archivo de datos de ejemplo no encontrado: " . basename($sampleFile);
+                    require __DIR__ . '/../Views/install.php';
+                    return;
                 }
             }
 
