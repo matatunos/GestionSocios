@@ -626,11 +626,13 @@
                 <button type="submit" class="btn btn-danger">Actualizar Conexión</button>
             </form>
             <div class="card text-center p-4 mb-4">
-                <form action="index.php?page=settings&action=downloadBackup" method="POST" style="display:inline-block;">
-                    <button type="submit" class="btn btn-primary btn-lg">
-                        <i class="fas fa-download"></i> Descargar Backup de Base de Datos
-                    </button>
-                </form>
+                <div class="d-flex justify-content-center">
+                    <form action="index.php?page=settings&action=downloadBackup" method="POST">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-download"></i> Descargar Backup de Base de Datos
+                        </button>
+                    </form>
+                </div>
                 <p class="mt-3 text-muted"><i class="fas fa-info-circle"></i> El backup incluye toda la estructura y datos actuales en formato SQL.</p>
             </div>
         </div>
