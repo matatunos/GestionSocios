@@ -1,3 +1,31 @@
+    // Descargar backup de la base de datos (dump SQL)
+    public function downloadBackup() {
+        $this->checkAdmin();
+        // Obtener datos de conexión
+        $host = defined('DB_HOST') ? DB_HOST : '';
+        $name = defined('DB_NAME') ? DB_NAME : '';
+        $user = defined('DB_USER') ? DB_USER : '';
+        $pass = defined('DB_PASS') ? DB_PASS : '';
+        $filename = 'backup_' . $name . '_' . date('Ymd_His') . '.sql';
+
+        // Comando mysqldump
+        $cmd = "mysqldump --host=" . escapeshellarg($host) . " --user=" . escapeshellarg($user) . " --password=" . escapeshellarg($pass) . " --routines --triggers --single-transaction " . escapeshellarg($name);
+
+        // Ejecutar y capturar salida
+        $output = null;
+        $result = null;
+        @exec($cmd, $output, $result);
+        if ($result !== 0 || empty($output)) {
+            echo '<div class="alert alert-danger">Error al generar el backup. Verifique la configuración y permisos del servidor.</div>';
+            exit;
+        }
+        $sql = implode("\n", $output);
+        header('Content-Type: application/sql');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Content-Length: ' . strlen($sql));
+        echo $sql;
+        exit;
+    }
 <?php
 
 class SettingsController {
