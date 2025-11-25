@@ -35,7 +35,9 @@
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($logs as $log): ?>
+                <?php if (empty($logs)): ?>
+                <tr><td colspan="6" style="text-align:center;color:var(--text-muted);">No hay registros de actividad.</td></tr>
+                <?php else: foreach ($logs as $log): ?>
                 <tr>
                     <td><?= htmlspecialchars($log['created_at']) ?></td>
                     <td><?= htmlspecialchars($log['username']) ?></td>
@@ -44,7 +46,7 @@
                     <td><?= htmlspecialchars($log['entity_id']) ?></td>
                     <td><?= htmlspecialchars($log['details']) ?></td>
                 </tr>
-                <?php endforeach; ?>
+                <?php endforeach; endif; ?>
             </tbody>
         </table>
     </div>

@@ -22,12 +22,17 @@ class AuditLogController {
             'date_from' => $_GET['date_from'] ?? null,
             'date_to' => $_GET['date_to'] ?? null
         ];
-        $page = $_GET['page_num'] ?? 1;
+        $page = isset($_GET['page_num']) ? max(1, (int)$_GET['page_num']) : 1;
         $perPage = 25;
         $offset = ($page - 1) * $perPage;
-        $auditLogs = $this->model->readFiltered($filters, $perPage, $offset);
+        $logs = $this->model->readFiltered($filters, $perPage, $offset);
         $total = $this->model->countFiltered($filters);
+        $totalPages = max(1, ceil($total / $perPage));
+        // Output buffering para layout
+        ob_start();
         require __DIR__ . '/../Views/audit_log/index.php';
+        $content = ob_get_clean();
+        require __DIR__ . '/../Views/layout.php';
     }
 
     public function export_excel() {
