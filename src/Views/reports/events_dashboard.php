@@ -226,8 +226,4 @@ new Chart(document.getElementById('chartProximos'), {
         border-radius: 8px;
         box-shadow: 0 1px 4px #0001;
     }
-        max-width: 1200px;
-        min-width: 400px;
-    }
-}
 </style>
