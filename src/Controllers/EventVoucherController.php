@@ -1,7 +1,7 @@
 <?php
 // Controlador para validación y escaneo de vales QR de eventos
 require_once __DIR__ . '/../Models/EventVoucher.php';
-require_once __DIR__ . '/../Config/Database.php';
+require_once __DIR__ . '/../Config/database.php';
 
 class EventVoucherController {
     private $db;

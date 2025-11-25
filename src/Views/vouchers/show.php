@@ -2,7 +2,7 @@
 // Vista para mostrar el QR de un vale de evento
 require_once __DIR__ . '/../../Helpers/QrGenerator.php';
 require_once __DIR__ . '/../../Models/EventVoucher.php';
-require_once __DIR__ . '/../../Config/Database.php';
+require_once __DIR__ . '/../../Config/database.php';
 
 $eventId = $_GET['event_id'] ?? null;
 $memberId = $_GET['member_id'] ?? null;
