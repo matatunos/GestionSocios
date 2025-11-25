@@ -329,6 +329,13 @@ switch ($page) {
             echo json_encode(['error' => 'Invalid action']);
         }
         break;
+    case 'audit_log':
+        require_once __DIR__ . '/../src/Controllers/AuditLogController.php';
+        $controller = new AuditLogController($db ?? null);
+        if ($action === 'export_excel') $controller->export_excel();
+        else if ($action === 'export_pdf') $controller->export_pdf();
+        else $controller->index();
+        break;
     default:
         echo "404 Not Found";
         break;

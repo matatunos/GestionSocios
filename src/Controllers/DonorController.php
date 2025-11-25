@@ -73,6 +73,11 @@ class DonorController {
             $this->donor->logo_url = $logoUrl;
 
             if ($this->donor->create()) {
+                // Registrar en audit_log
+                require_once __DIR__ . '/../Models/AuditLog.php';
+                $audit = new AuditLog($this->db);
+                $lastId = $this->db->lastInsertId();
+                $audit->create($_SESSION['user_id'], 'create', 'donor', $lastId, 'Alta de donante por el usuario ' . ($_SESSION['username'] ?? ''));
                 header('Location: index.php?page=donors&success=created');
             } else {
                 $error = "Error creating donor.";
@@ -198,6 +203,10 @@ class DonorController {
             $this->donor->logo_url = $logoUrl;
 
             if ($this->donor->update()) {
+                // Registrar en audit_log
+                require_once __DIR__ . '/../Models/AuditLog.php';
+                $audit = new AuditLog($this->db);
+                $audit->create($_SESSION['user_id'], 'update', 'donor', $id, 'Modificación de donante por el usuario ' . ($_SESSION['username'] ?? ''));
                 header('Location: index.php?page=donors&success=updated');
             } else {
                 $error = "Error updating donor.";
@@ -211,6 +220,10 @@ class DonorController {
         $this->checkAdmin();
         $this->donor->id = $id;
         if ($this->donor->delete()) {
+            // Registrar en audit_log
+            require_once __DIR__ . '/../Models/AuditLog.php';
+            $audit = new AuditLog($this->db);
+            $audit->create($_SESSION['user_id'], 'delete', 'donor', $id, 'Borrado de donante por el usuario ' . ($_SESSION['username'] ?? ''));
             header('Location: index.php?page=donors&msg=deleted');
         } else {
             header('Location: index.php?page=donors&error=1');

@@ -1,4 +1,5 @@
 <?php
+=======
 require_once __DIR__ . '/../Models/AuditLog.php';
 require_once __DIR__ . '/../Config/database.php';
 
@@ -6,9 +7,12 @@ class AuditLogController {
     private $db;
     private $auditLog;
 
-    public function __construct() {
-        $database = new Database();
-        $this->db = $database->getConnection();
+    public function __construct($db = null) {
+        if ($db === null) {
+            $database = new Database();
+            $db = $database->getConnection();
+        }
+        $this->db = $db;
         $this->auditLog = new AuditLog($this->db);
     }
 
@@ -27,7 +31,15 @@ class AuditLogController {
         $logs = $this->auditLog->readFiltered($filters, $limit, $offset);
         $total = $this->auditLog->countFiltered($filters);
         $totalPages = ceil($total / $limit);
-        require __DIR__ . '/../Views/audit_log/index.php';
+        // Si se requiere layout, usar output buffering
+        if (defined('USE_LAYOUT') && USE_LAYOUT) {
+            ob_start();
+            require __DIR__ . '/../Views/audit_log/index.php';
+            $content = ob_get_clean();
+            require __DIR__ . '/../Views/layout.php';
+        } else {
+            require __DIR__ . '/../Views/audit_log/index.php';
+        }
     }
 
     public function export_excel() {
@@ -96,5 +108,7 @@ class AuditLogController {
         $pdf->writeHTML($html, true, false, true, false, '');
         $pdf->Output('audit_log_' . date('Y-m-d') . '.pdf', 'D');
         exit;
+    }
+}
     }
 }

@@ -78,6 +78,12 @@ class MemberController {
             $this->member->photo_url = $this->handleUpload();
 
             if ($this->member->create()) {
+                // Registrar en audit_log
+                require_once __DIR__ . '/../Models/AuditLog.php';
+                $audit = new AuditLog($this->db);
+                $lastId = $this->db->lastInsertId();
+                $audit->create($_SESSION['user_id'], 'create', 'member', $lastId, 'Alta de socio por el usuario ' . ($_SESSION['username'] ?? ''));
+                
                 // Enviar notificación de bienvenida al nuevo socio
                 try {
                     require_once __DIR__ . '/../Helpers/NotificationHelper.php';
@@ -232,6 +238,11 @@ class MemberController {
             $this->member->photo_url = $photoUrl;
 
             if ($this->member->update()) {
+                // Registrar en audit_log
+                require_once __DIR__ . '/../Models/AuditLog.php';
+                $audit = new AuditLog($this->db);
+                $audit->create($_SESSION['user_id'], 'update', 'member', $id, 'Modificación de socio por el usuario ' . ($_SESSION['username'] ?? ''));
+                
                 header('Location: index.php?page=members');
             } else {
                 $error = "Error updating member.";
@@ -250,6 +261,11 @@ class MemberController {
             $this->member->deactivated_at = date('Y-m-d H:i:s');
             
             if ($this->member->update()) {
+                // Registrar en audit_log
+                require_once __DIR__ . '/../Models/AuditLog.php';
+                $audit = new AuditLog($this->db);
+                $audit->create($_SESSION['user_id'], 'deactivate', 'member', $id, 'Baja de socio por el usuario ' . ($_SESSION['username'] ?? ''));
+                
                 header('Location: index.php?page=members&msg=deactivated');
                 exit;
             }
@@ -262,6 +278,11 @@ class MemberController {
         $this->checkAdmin();
         $this->member->id = $id;
         if ($this->member->delete()) {
+            // Registrar en audit_log
+            require_once __DIR__ . '/../Models/AuditLog.php';
+            $audit = new AuditLog($this->db);
+            $audit->create($_SESSION['user_id'], 'delete', 'member', $id, 'Borrado de socio por el usuario ' . ($_SESSION['username'] ?? ''));
+            
             header('Location: index.php?page=members&msg=deleted');
             exit;
         }
@@ -306,10 +327,13 @@ class MemberController {
                 // Update existing payment to paid
                 $updateStmt = $this->db->prepare("UPDATE payments SET status = 'paid', payment_date = ? WHERE id = ?");
                 $success = $updateStmt->execute([date('Y-m-d'), $existingPayment['id']]);
-                
                 if (!$success) {
                     throw new Exception("Error al actualizar el pago existente");
                 }
+                // Registrar en audit_log
+                require_once __DIR__ . '/../Models/AuditLog.php';
+                $audit = new AuditLog($this->db);
+                $audit->create($_SESSION['user_id'], 'markPaid', 'member_payment', $existingPayment['id'], 'Pago marcado como realizado por el usuario ' . ($_SESSION['username'] ?? '')); 
             } else {
                 // Create new payment as paid
                 $insertStmt = $this->db->prepare("INSERT INTO payments (member_id, amount, payment_date, concept, status, fee_year, payment_type) VALUES (?, ?, ?, ?, 'paid', ?, 'fee')");
@@ -320,10 +344,14 @@ class MemberController {
                     "Cuota Anual " . $currentYear,
                     $currentYear
                 ]);
-                
                 if (!$success) {
                     throw new Exception("Error al crear el nuevo pago");
                 }
+                // Registrar en audit_log
+                require_once __DIR__ . '/../Models/AuditLog.php';
+                $audit = new AuditLog($this->db);
+                $lastId = $this->db->lastInsertId();
+                $audit->create($_SESSION['user_id'], 'markPaid', 'member_payment', $lastId, 'Pago creado y marcado como realizado por el usuario ' . ($_SESSION['username'] ?? ''));
             }
             
             $_SESSION['success'] = 'Pago marcado correctamente';
