@@ -81,6 +81,13 @@ CREATE TABLE IF NOT EXISTS polls (
     description TEXT,
     created_by INT NOT NULL,
     start_date DATE,
+    end_date DATE,
+    is_active TINYINT(1) DEFAULT 1,
+    allow_multiple_choices TINYINT(1) DEFAULT 0,
+    is_anonymous TINYINT(1) DEFAULT 1,
+    results_visible TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
 
 -- Tabla para asistencias a eventos
 CREATE TABLE IF NOT EXISTS event_attendance (
