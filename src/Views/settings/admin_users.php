@@ -1,7 +1,11 @@
 <?php
 // Gestión de usuarios administradores
-require_once __DIR__ . '/../../Config/Database.php';
-$db = (new Database())->getConnection();
+if (isset($this) && property_exists($this, 'db')) {
+    $db = $this->db;
+} else {
+    require_once __DIR__ . '/../../Config/database.php';
+    $db = (new Database())->getConnection();
+}
 
 // Procesar acciones: añadir, editar, borrar
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
