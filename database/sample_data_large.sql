@@ -58,27 +58,27 @@ INSERT INTO ad_prices (year, type, amount) VALUES
 (2020, 'media', 40.00),
 (2020, 'full', 80.00),
 (2020, 'cover', 120.00),
-(2020, 'back_cover', 100.0.00),
+(2020, 'back_cover', 100.00),
 (2021, 'media', 45.00),
 (2021, 'full', 90.00),
 (2021, 'cover', 135.00),
-(2021, 'back_cover', 112.5.00),
+(2021, 'back_cover', 112.50),
 (2022, 'media', 50.00),
 (2022, 'full', 100.00),
 (2022, 'cover', 150.00),
-(2022, 'back_cover', 125.0.00),
+(2022, 'back_cover', 125.00),
 (2023, 'media', 55.00),
 (2023, 'full', 110.00),
 (2023, 'cover', 165.00),
-(2023, 'back_cover', 137.5.00),
+(2023, 'back_cover', 137.50),
 (2024, 'media', 60.00),
 (2024, 'full', 120.00),
 (2024, 'cover', 180.00),
-(2024, 'back_cover', 150.0.00),
+(2024, 'back_cover', 150.00),
 (2025, 'media', 65.00),
 (2025, 'full', 130.00),
 (2025, 'cover', 195.00),
-(2025, 'back_cover', 162.5.00);
+(2025, 'back_cover', 162.50);
 
 -- Categorías de socios
 INSERT INTO member_categories (name, description, color, is_active, display_order, default_fee) VALUES
