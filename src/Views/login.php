@@ -28,8 +28,8 @@ if (!isset($associationName)) {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body style="background-color: var(--bg-body); display: flex; align-items: center; justify-content: center; min-height: 100vh;">
-    <div class="card" style="width: 100%; max-width: 400px; padding: 2rem;">
+<body style="background-color: var(--bg-body); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 1rem;">
+    <div class="card" style="width: 100%; max-width: 400px; padding: 2rem; box-sizing: border-box;">
         <div style="text-align: center; margin-bottom: 2rem;">
             <div style="font-size: 3rem; color: var(--primary-600); margin-bottom: 1rem;">
                 <i class="fas fa-users-rectangle"></i>
@@ -52,7 +52,7 @@ if (!isset($associationName)) {
                     <span style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-light);">
                         <i class="fas fa-user"></i>
                     </span>
-                    <input type="text" name="username" class="form-control" style="padding-left: 2.5rem;" placeholder="admin" required autofocus>
+                    <input type="text" name="username" class="form-control" style="padding-left: 2.5rem; width: 100%; box-sizing: border-box;" placeholder="admin" required autofocus>
                 </div>
             </div>
             <div class="form-group">
@@ -61,7 +61,7 @@ if (!isset($associationName)) {
                     <span style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-light);">
                         <i class="fas fa-lock"></i>
                     </span>
-                    <input type="password" name="password" class="form-control" style="padding-left: 2.5rem;" placeholder="••••••••" required>
+                    <input type="password" name="password" class="form-control" style="padding-left: 2.5rem; width: 100%; box-sizing: border-box;" placeholder="••••••••" required>
                 </div>
             </div>
             <button type="submit" class="btn btn-primary w-full" style="margin-top: 1rem;">
