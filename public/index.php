@@ -32,7 +32,7 @@ if (!file_exists(__DIR__ . '/../src/Config/config.php')) {
 } else {
     // Config exists, verify connection if not already in install mode
     if ($page !== 'install') {
-        require_once __DIR__ . '/../src/Config/Database.php';
+        require_once __DIR__ . '/../src/Config/database.php';
         $dbTest = new Database();
         $conn = $dbTest->getConnection();
         if ($conn === null) {
