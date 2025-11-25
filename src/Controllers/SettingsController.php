@@ -16,7 +16,11 @@
         $result = null;
         @exec($cmd, $output, $result);
         if ($result !== 0 || empty($output)) {
-            echo '<div class="alert alert-danger">Error al generar el backup. Verifique la configuración y permisos del servidor.</div>';
+            echo '<pre>';
+            echo 'Comando ejecutado: ' . htmlspecialchars($cmd) . "\n";
+            echo 'Código de salida: ' . $result . "\n";
+            echo 'Salida:' . "\n" . htmlspecialchars(implode("\n", $output));
+            echo '</pre>';
             exit;
         }
         $sql = implode("\n", $output);
