@@ -54,21 +54,54 @@ $admins = $db->query('SELECT id, email, name FROM users WHERE role="admin"')->fe
         </thead>
         <tbody>
             <?php foreach ($admins as $admin): ?>
-            <tr>
-                <form method="post" style="display:contents;">
-                <td style="font-weight:600; color:var(--primary-600);">
-                    <?= $admin['id'] ?>
-                    <input type="hidden" name="id" value="<?= $admin['id'] ?>">
-                </td>
-                <td><input type="text" name="email" value="<?= htmlspecialchars($admin['email']) ?>" class="form-control" style="width:180px;"></td>
-                <td><input type="text" name="name" value="<?= htmlspecialchars($admin['name']) ?>" class="form-control" style="width:140px;"></td>
-                <td style="display:flex; gap:0.5rem;">
-                    <input type="password" name="password" placeholder="Nueva clave" class="form-control" style="width:120px;">
-                    <button type="submit" name="edit" class="btn btn-sm btn-primary"><i class="fas fa-save"></i> Guardar</button>
-                    <button type="submit" name="delete" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este usuario?')"><i class="fas fa-trash"></i> Eliminar</button>
-                </td>
-                </form>
-            </tr>
+                <tr>
+                    <td style="font-weight:600; color:var(--primary-600);">
+                        <?= $admin['id'] ?>
+                    </td>
+                    <td style="font-family:monospace; color:var(--primary-700);">
+                        <?= htmlspecialchars($admin['email']) ?>
+                    </td>
+                    <td>
+                        <?= htmlspecialchars($admin['name']) ?>
+                    </td>
+                    <td style="display:flex; gap:0.5rem;">
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="document.getElementById('edit-admin-<?= $admin['id'] ?>').style.display='block'">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <button type="button" class="btn btn-sm btn-warning" onclick="document.getElementById('change-pass-<?= $admin['id'] ?>').style.display='block'">
+                            <i class="fas fa-key"></i> Cambiar contraseña
+                        </button>
+                        <form method="post" style="display:inline;">
+                            <input type="hidden" name="id" value="<?= $admin['id'] ?>">
+                            <button type="submit" name="delete" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este usuario?')">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                <!-- Formulario de edición -->
+                <tr id="edit-admin-<?= $admin['id'] ?>" style="display:none; background:#f9fafb;">
+                    <td colspan="4">
+                        <form method="post" style="display:flex; gap:1rem; align-items:center;">
+                            <input type="hidden" name="id" value="<?= $admin['id'] ?>">
+                            <input type="text" name="email" value="<?= htmlspecialchars($admin['email']) ?>" class="form-control" placeholder="Email" style="width:200px;">
+                            <input type="text" name="name" value="<?= htmlspecialchars($admin['name']) ?>" class="form-control" placeholder="Nombre" style="width:160px;">
+                            <button type="submit" name="edit" class="btn btn-sm btn-primary"><i class="fas fa-save"></i> Guardar cambios</button>
+                            <button type="button" class="btn btn-sm btn-light" onclick="document.getElementById('edit-admin-<?= $admin['id'] ?>').style.display='none'">Cancelar</button>
+                        </form>
+                    </td>
+                </tr>
+                <!-- Formulario de cambio de contraseña -->
+                <tr id="change-pass-<?= $admin['id'] ?>" style="display:none; background:#fef3c7;">
+                    <td colspan="4">
+                        <form method="post" style="display:flex; gap:1rem; align-items:center;">
+                            <input type="hidden" name="id" value="<?= $admin['id'] ?>">
+                            <input type="password" name="password" class="form-control" placeholder="Nueva contraseña" style="width:200px;">
+                            <button type="submit" name="edit" class="btn btn-sm btn-warning"><i class="fas fa-key"></i> Cambiar contraseña</button>
+                            <button type="button" class="btn btn-sm btn-light" onclick="document.getElementById('change-pass-<?= $admin['id'] ?>').style.display='none'">Cancelar</button>
+                        </form>
+                    </td>
+                </tr>
             <?php endforeach; ?>
             <tr>
                 <form method="post" style="display:contents;">
