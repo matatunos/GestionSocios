@@ -182,7 +182,7 @@ CREATE TABLE IF NOT EXISTS conversation_participants (
 ) ENGINE=InnoDB;
 -- ...existing code...
 CREATE TABLE IF NOT EXISTS members (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(100) NOT NULL,
     join_date DATE DEFAULT NULL,
     last_name VARCHAR(100) NOT NULL,
@@ -271,7 +271,7 @@ CREATE TABLE IF NOT EXISTS annual_fees (
 );
 
 CREATE TABLE IF NOT EXISTS events (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     event_type VARCHAR(50),
     color VARCHAR(30),
