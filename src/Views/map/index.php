@@ -166,8 +166,8 @@ document.addEventListener(\'DOMContentLoaded\', function() {
     // Load locations
     loadLocations();
     
-    // Listen to zoom changes to update label visibility
-    map.on(\'zoomend\', updateLabelVisibility);
+    // Listen to zoom and move changes to update label visibility
+    map.on(\'zoomend moveend\', updateLabelVisibility);
 });
 
 function loadLocations() {
@@ -223,13 +223,7 @@ function displayMarkers(locations) {
                         <i class="fas fa-edit"></i> Ver detalles
                     </a></p>
                 </div>
-            `)
-            .bindTooltip(location.name, {
-                permanent: true,
-                direction: \'top\',
-                className: \'marker-label\',
-                offset: [0, -15]
-            });
+            `);
         
         marker.locationData = location;
         marker.addTo(map);
@@ -241,23 +235,46 @@ function displayMarkers(locations) {
     if (bounds.length > 0) {
         map.fitBounds(bounds, { padding: [50, 50] });
     }
-    
-    // Update label visibility based on current zoom
-    updateLabelVisibility();
 }
 
-// Function to show/hide labels based on zoom level
+// Optimized function to show/hide labels only for visible markers
 function updateLabelVisibility() {
     const zoom = map.getZoom();
     const showLabels = zoom >= 14; // Show labels at zoom level 14 and above
     
+    if (!showLabels) {
+        // Remove all tooltips when zoom is too low
+        markers.forEach(marker => {
+            if (marker.getTooltip()) {
+                marker.unbindTooltip();
+            }
+        });
+        return;
+    }
+    
+    // Get map bounds
+    const bounds = map.getBounds();
+    
+    // Only process visible markers
     markers.forEach(marker => {
-        const tooltip = marker.getTooltip();
-        if (tooltip) {
-            if (showLabels) {
+        const markerLatLng = marker.getLatLng();
+        const isVisible = bounds.contains(markerLatLng);
+        
+        if (isVisible) {
+            // Add tooltip if it doesn\'t exist
+            if (!marker.getTooltip()) {
+                marker.bindTooltip(marker.locationData.name, {
+                    permanent: true,
+                    direction: \'top\',
+                    className: \'marker-label\',
+                    offset: [0, -15]
+                });
                 marker.openTooltip();
-            } else {
-                marker.closeTooltip();
+            }
+        } else {
+            // Remove tooltip if marker is not visible
+            if (marker.getTooltip()) {
+                marker.unbindTooltip();
             }
         }
     });
