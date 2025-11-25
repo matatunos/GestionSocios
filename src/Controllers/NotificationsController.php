@@ -15,14 +15,14 @@ class NotificationsController {
      * Vista principal de notificaciones
      */
     public function index() {
-        $member_id = $_SESSION['user_id'];
+        $user_id = $_SESSION['user_id'];
         
         // Obtener todas las notificaciones del usuario (últimas 100)
-        $notifications = $this->notificationModel->readByMember($member_id, 100);
+        $notifications = $this->notificationModel->readByUser($user_id, 100);
         
         // Obtener estadísticas
-        $stats = $this->notificationModel->getStats($member_id);
-        $unread_count = $this->notificationModel->countUnread($member_id);
+        $stats = $this->notificationModel->getStats($user_id);
+        $unread_count = $this->notificationModel->countUnread($user_id);
         
         require_once __DIR__ . '/../Views/notifications/index.php';
     }
@@ -33,11 +33,11 @@ class NotificationsController {
     public function getRecent() {
         header('Content-Type: application/json');
         
-        $member_id = $_SESSION['user_id'];
+        $user_id = $_SESSION['user_id'];
         
         // Obtener últimas 10 notificaciones no leídas
-        $notifications = $this->notificationModel->getRecentUnread($member_id, 10);
-        $unread_count = $this->notificationModel->countUnread($member_id);
+        $notifications = $this->notificationModel->getRecentUnread($user_id, 10);
+        $unread_count = $this->notificationModel->countUnread($user_id);
         
         echo json_encode([
             'success' => true,
