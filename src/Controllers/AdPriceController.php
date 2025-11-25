@@ -48,14 +48,24 @@ class AdPriceController {
             ];
 
             $success = true;
+            $changedPrices = [];
             foreach ($prices as $type => $amount) {
                 $this->adPrice->year = $year;
                 $this->adPrice->type = $type;
                 $this->adPrice->amount = $amount;
-                if (!$this->adPrice->save()) {
+                if ($this->adPrice->save()) {
+                    $changedPrices[$type] = $amount;
+                } else {
                     $success = false;
                 }
             }
+
+            // Audit log registro de cambio de precios
+            require_once __DIR__ . '/../Models/AuditLog.php';
+            $auditLog = new AuditLog($this->db);
+            $userId = $_SESSION['user_id'] ?? null;
+            $details = json_encode(['year' => $year, 'prices' => $changedPrices]);
+            $auditLog->create($userId, 'update', 'ad_price', null, $details);
 
             if ($success) {
                 $_SESSION['message'] = "Precios de anuncios actualizados correctamente para el año $year.";

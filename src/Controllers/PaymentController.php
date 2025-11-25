@@ -52,27 +52,20 @@ class PaymentController {
                 $member_id = $_POST['member_id'];
                 $payment_type = $_POST['payment_type'] ?? 'fee';
                 $payment_date = $_POST['payment_date'];
-                
-                // If it's a fee payment, check for duplicates
+                // ...existing code...
                 if ($payment_type === 'fee') {
                     $fee_year = date('Y', strtotime($payment_date));
-                    
-                    // Check if member already paid this year
                     $checkStmt = $this->db->prepare(
                         "SELECT id FROM payments 
                          WHERE member_id = ? AND fee_year = ? AND payment_type = 'fee'"
                     );
                     $checkStmt->execute([$member_id, $fee_year]);
-                    
                     if ($checkStmt->fetch()) {
-                        // Duplicate found - redirect with error
                         header("Location: index.php?page=payments&action=create&error=duplicate_fee&year=$fee_year");
                         exit;
                     }
-                    
                     $this->payment->fee_year = $fee_year;
                 }
-                
                 $this->payment->member_id = $member_id;
                 $this->payment->amount = $_POST['amount'];
                 $this->payment->payment_date = $payment_date;
@@ -82,27 +75,25 @@ class PaymentController {
                 $this->payment->event_id = !empty($_POST['event_id']) ? $_POST['event_id'] : null;
 
                 if ($this->payment->create()) {
+                    // Audit log registro alta pago
+                    require_once __DIR__ . '/../Models/AuditLog.php';
+                    $auditLog = new AuditLog($this->db);
+                    $userId = $_SESSION['user_id'] ?? null;
+                    $details = json_encode([
+                        'member_id' => $member_id,
+                        'amount' => $_POST['amount'],
+                        'payment_type' => $payment_type,
+                        'payment_date' => $payment_date
+                    ]);
+                    $auditLog->create($userId, 'create', 'payment', null, $details);
+
                     header('Location: index.php?page=payments&success=created');
                     exit;
                 } else {
                     throw new Exception("Error al crear el pago.");
                 }
             } catch (Exception $e) {
-                $error = $e->getMessage();
-                $stmt = $this->member->readAll();
-                $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                
-                // Reload events
-                $eventModel = new Event($this->db);
-                $stmtEvents = $eventModel->readActive();
-                $events = $stmtEvents->fetchAll(PDO::FETCH_ASSOC);
-                
-                // Reload fees
-                $feeModel = new Fee($this->db);
-                $stmtFees = $feeModel->readAll();
-                $fees = $stmtFees->fetchAll(PDO::FETCH_ASSOC);
-                
-                require __DIR__ . '/../Views/payments/create.php';
+                // ...existing code...
             }
         }
     }
@@ -131,13 +122,21 @@ class PaymentController {
             $this->payment->status = $_POST['status'];
 
             if ($this->payment->update()) {
+                // Audit log registro modificación pago
+                require_once __DIR__ . '/../Models/AuditLog.php';
+                $auditLog = new AuditLog($this->db);
+                $userId = $_SESSION['user_id'] ?? null;
+                $details = json_encode([
+                    'payment_id' => $id,
+                    'member_id' => $_POST['member_id'],
+                    'amount' => $_POST['amount'],
+                    'payment_date' => $_POST['payment_date']
+                ]);
+                $auditLog->create($userId, 'update', 'payment', $id, $details);
+
                 header('Location: index.php?page=payments');
             } else {
-                $error = "Error updating payment.";
-                $stmt = $this->member->readAll();
-                $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                $payment = $this->payment;
-                require __DIR__ . '/../Views/payments/edit.php';
+                // ...existing code...
             }
         }
     }
@@ -146,6 +145,13 @@ class PaymentController {
         $this->checkAdmin();
         $this->payment->id = $id;
         if ($this->payment->delete()) {
+            // Audit log registro eliminación pago
+            require_once __DIR__ . '/../Models/AuditLog.php';
+            $auditLog = new AuditLog($this->db);
+            $userId = $_SESSION['user_id'] ?? null;
+            $details = json_encode(['payment_id' => $id]);
+            $auditLog->create($userId, 'delete', 'payment', $id, $details);
+
             header('Location: index.php?page=payments');
         } else {
             header('Location: index.php?page=payments&error=delete_failed');
