@@ -216,7 +216,7 @@ new Chart(document.getElementById('chartProximos'), {
 .dashboard-kpis .kpi-value { font-size:2rem; font-weight:700; color:#2563eb; }
 .dashboard-charts { width: 100%; margin-top: 2rem; }
 .dashboard-charts .chart-col { display: flex; flex-direction: column; gap: 2rem; align-items: center; }
-.dashboard-charts .chart-block { width: 100%; max-width: 400px; background: #fff; border-radius: 8px; box-shadow: 0 1px 4px #0001; padding: 1rem; display: flex; flex-direction: column; align-items: center; }
+.dashboard-charts .chart-block { width: 100%; max-width: 900px; background: #fff; border-radius: 8px; box-shadow: 0 1px 4px #0001; padding: 1rem; display: flex; flex-direction: column; align-items: center; }
 .dashboard-charts .chart-legend { font-size: 1rem; color: #2563eb; font-weight: 600; margin-bottom: 0.5rem; text-align: center; }
 .dashboard-charts canvas {
     max-width: 900px;
