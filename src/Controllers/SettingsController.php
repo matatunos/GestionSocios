@@ -20,7 +20,7 @@
             exit;
         }
         $sql = implode("\n", $output);
-        header('Content-Type: application/sql');
+        header('Content-Type: application/octet-stream');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
         header('Content-Length: ' . strlen($sql));
         echo $sql;
