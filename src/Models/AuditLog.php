@@ -28,7 +28,7 @@ class AuditLog {
     }
 
     public function readRecent($limit = 20) {
-        $query = "SELECT a.*, u.username FROM " . $this->table_name . " a JOIN users u ON a.user_id = u.id ORDER BY a.created_at DESC LIMIT :limit";
+        $query = "SELECT a.*, u.name AS username FROM " . $this->table_name . " a JOIN users u ON a.user_id = u.id ORDER BY a.created_at DESC LIMIT :limit";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":limit", $limit, PDO::PARAM_INT);
         $stmt->execute();
@@ -36,7 +36,7 @@ class AuditLog {
     }
 
     public function readFiltered($filters = [], $limit = 50, $offset = 0) {
-        $query = "SELECT a.*, u.username FROM " . $this->table_name . " a JOIN users u ON a.user_id = u.id WHERE 1=1";
+        $query = "SELECT a.*, u.name AS username FROM " . $this->table_name . " a JOIN users u ON a.user_id = u.id WHERE 1=1";
         $params = [];
         if (!empty($filters['user_id'])) {
             $query .= " AND a.user_id = :user_id";
