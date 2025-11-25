@@ -1,6 +1,7 @@
 
 
 
+<link rel="stylesheet" href="/public/css/unificado.css">
 <?php
 if (!isset($db) && isset($this) && property_exists($this, 'db')) {
     $db = $this->db;

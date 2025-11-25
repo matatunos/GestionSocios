@@ -50,6 +50,10 @@ if (isset($_SESSION['user_id'])) {
 <body>
     
     <div class="app-container">
+        <!-- Mobile Menu Button -->
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Abrir menú" style="display:none;position:fixed;top:1rem;left:1rem;z-index:1000;background:#fff;border-radius:50%;border:none;padding:0.75rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+            <i class="fas fa-bars" style="font-size:1.5em;"></i>
+        </button>
         <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
 
@@ -60,7 +64,7 @@ if (isset($_SESSION['user_id'])) {
                     $orgInfo = ['name' => 'Gestión', 'short_name' => 'Gestión', 'logo' => '', 'logo_width' => 180];
                     try {
                         if (!isset($db)) {
-                            $db = (new Database())->getConnection();
+                            $db = (new Database(require __DIR__ . '/../Config/config.php'))->getConnection();
                         }
                         if ($db) {
                             require_once __DIR__ . '/../Models/OrganizationSettings.php';
@@ -236,7 +240,7 @@ if (isset($_SESSION['user_id'])) {
                         <?php
                         if (isset($_SESSION['user_id'])) {
                             require_once __DIR__ . '/../Models/Message.php';
-                            $msgModel = new Message($GLOBALS['db'] ?? (new Database())->getConnection());
+                            $msgModel = new Message($GLOBALS['db'] ?? (new Database(require __DIR__ . '/../Config/config.php'))->getConnection());
                             $unreadMessages = $msgModel->getUnreadCount($_SESSION['user_id']);
                             if ($unreadMessages > 0):
                         ?>
@@ -335,6 +339,35 @@ if (isset($_SESSION['user_id'])) {
             ?>
         </main>
     </div>
+    <script>
+        // Mobile Sidebar Toggle
+        function toggleSidebarMobile() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('sidebar-open');
+        }
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        function checkMobileMenuBtn() {
+            if (window.innerWidth <= 900) {
+                mobileMenuBtn.style.display = 'block';
+                document.getElementById('sidebar').classList.add('sidebar-mobile');
+            } else {
+                mobileMenuBtn.style.display = 'none';
+                document.getElementById('sidebar').classList.remove('sidebar-mobile','sidebar-open');
+            }
+        }
+        mobileMenuBtn.addEventListener('click', toggleSidebarMobile);
+        window.addEventListener('resize', checkMobileMenuBtn);
+        document.addEventListener('DOMContentLoaded', checkMobileMenuBtn);
+        // Cerrar menú al hacer click fuera en móvil
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            if (window.innerWidth <= 900 && sidebar.classList.contains('sidebar-open')) {
+                if (!sidebar.contains(e.target) && e.target !== mobileMenuBtn) {
+                    sidebar.classList.remove('sidebar-open');
+                }
+            }
+        });
+    </script>
 
     <script>
         // Language Changer

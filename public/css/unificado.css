@@ -1,0 +1,60 @@
+/* Responsive base for mobile */
+@media (max-width: 900px) {
+    .main-content {
+        padding: 1rem;
+        width: 100vw;
+        max-width: 100vw;
+    }
+    .sidebar {
+        width: 80vw;
+        max-width: 320px;
+        position: fixed;
+        left: -100vw;
+        top: 0;
+        height: 100vh;
+        z-index: 999;
+        background: var(--bg-sidebar, #fff);
+        box-shadow: 2px 0 12px rgba(0,0,0,0.08);
+        transition: left 0.3s cubic-bezier(.4,0,.2,1);
+    }
+    .sidebar.sidebar-open {
+        left: 0;
+    }
+    .sidebar-mobile {
+        left: -100vw;
+    }
+    .sidebar.sidebar-open {
+        left: 0;
+    }
+    .mobile-menu-btn {
+        display: block !important;
+    }
+    .analytics-grid {
+        grid-template-columns: 1fr;
+    }
+    .card {
+        padding: 1rem;
+    }
+    .page-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .table {
+        font-size: 0.95rem;
+    }
+    .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+/* Archivo CSS unificado para dashboard y vistas principales */
+
+/* Universal Box Sizing Fix */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+/* Archivo CSS unificado para dashboard y vistas principales */
+
+.year-filter {
+
+
