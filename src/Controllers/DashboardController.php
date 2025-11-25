@@ -110,7 +110,7 @@ class DashboardController {
         if (isset($_SESSION['user_id'])) {
             require_once __DIR__ . '/../Models/Notification.php';
             $notificationModel = new Notification($this->db);
-            $recentNotifications = $notificationModel->readByMember($_SESSION['user_id'], 5);
+            $recentNotifications = $notificationModel->readByUser($_SESSION['user_id'], 5);
         }
         
         // Monthly income data for chart
