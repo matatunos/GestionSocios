@@ -1,0 +1,12 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Commit y push corrección Poll.php",
+			"type": "shell",
+			"command": "git add src/Models/Poll.php; git commit -m \"Fix: Cambiar member_id por user_id en modelo Poll para alinearlo con el esquema actual\"; git push",
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}
