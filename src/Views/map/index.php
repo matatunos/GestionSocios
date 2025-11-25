@@ -98,6 +98,23 @@ $content = '
     background: #ef4444;
     color: white;
 }
+
+/* Marker labels that appear on zoom */
+.marker-label {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-main);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    white-space: nowrap;
+}
+
+.marker-label::before {
+    display: none;
+}
 </style>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -148,6 +165,9 @@ document.addEventListener(\'DOMContentLoaded\', function() {
     
     // Load locations
     loadLocations();
+    
+    // Listen to zoom changes to update label visibility
+    map.on(\'zoomend\', updateLabelVisibility);
 });
 
 function loadLocations() {
@@ -203,7 +223,13 @@ function displayMarkers(locations) {
                         <i class="fas fa-edit"></i> Ver detalles
                     </a></p>
                 </div>
-            `);
+            `)
+            .bindTooltip(location.name, {
+                permanent: true,
+                direction: \'top\',
+                className: \'marker-label\',
+                offset: [0, -15]
+            });
         
         marker.locationData = location;
         marker.addTo(map);
@@ -215,6 +241,26 @@ function displayMarkers(locations) {
     if (bounds.length > 0) {
         map.fitBounds(bounds, { padding: [50, 50] });
     }
+    
+    // Update label visibility based on current zoom
+    updateLabelVisibility();
+}
+
+// Function to show/hide labels based on zoom level
+function updateLabelVisibility() {
+    const zoom = map.getZoom();
+    const showLabels = zoom >= 14; // Show labels at zoom level 14 and above
+    
+    markers.forEach(marker => {
+        const tooltip = marker.getTooltip();
+        if (tooltip) {
+            if (showLabels) {
+                marker.openTooltip();
+            } else {
+                marker.closeTooltip();
+            }
+        }
+    });
 }
 
 function filterMarkers(type) {
