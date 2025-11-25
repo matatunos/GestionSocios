@@ -133,10 +133,10 @@ class ExportController {
     public function exportDonationsExcel() {
         $donationModel = new Donation($this->db);
         
-        $query = "SELECT d.*, m.first_name, m.last_name, m.member_number 
-                  FROM donations d
-                  LEFT JOIN members m ON d.member_id = m.id
-                  ORDER BY d.date DESC";
+        $query = "SELECT d.*, m.first_name, m.last_name, m.id AS member_id 
+              FROM donations d
+              LEFT JOIN members m ON d.member_id = m.id
+              ORDER BY d.date DESC";
         
         $stmt = $this->db->prepare($query);
         $stmt->execute();
@@ -168,7 +168,7 @@ class ExportController {
                 $donation['id'],
                 date('d/m/Y', strtotime($donation['date'])),
                 $donor_name,
-                $donation['member_number'] ?? '',
+                $donation['member_id'] ?? '',
                 number_format($donation['amount'], 2, ',', '.') . ' €',
                 $donation['description'],
                 $donation['payment_method'],
