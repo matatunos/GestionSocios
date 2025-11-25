@@ -340,33 +340,33 @@ if (isset($_SESSION['user_id'])) {
         </main>
     </div>
     <script>
-        // Mobile Sidebar Toggle
+    document.addEventListener('DOMContentLoaded', function() {
+        var mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        var sidebar = document.getElementById('sidebar');
         function toggleSidebarMobile() {
-            const sidebar = document.getElementById('sidebar');
             sidebar.classList.toggle('sidebar-open');
         }
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         function checkMobileMenuBtn() {
             if (window.innerWidth <= 900) {
-                mobileMenuBtn.style.display = 'block';
-                document.getElementById('sidebar').classList.add('sidebar-mobile');
+                if (mobileMenuBtn) mobileMenuBtn.style.display = 'block';
+                if (sidebar) sidebar.classList.add('sidebar-mobile');
             } else {
-                mobileMenuBtn.style.display = 'none';
-                document.getElementById('sidebar').classList.remove('sidebar-mobile','sidebar-open');
+                if (mobileMenuBtn) mobileMenuBtn.style.display = 'none';
+                if (sidebar) sidebar.classList.remove('sidebar-mobile','sidebar-open');
             }
         }
-        mobileMenuBtn.addEventListener('click', toggleSidebarMobile);
+        if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleSidebarMobile);
         window.addEventListener('resize', checkMobileMenuBtn);
-        document.addEventListener('DOMContentLoaded', checkMobileMenuBtn);
+        checkMobileMenuBtn();
         // Cerrar menú al hacer click fuera en móvil
         document.addEventListener('click', function(e) {
-            const sidebar = document.getElementById('sidebar');
             if (window.innerWidth <= 900 && sidebar.classList.contains('sidebar-open')) {
                 if (!sidebar.contains(e.target) && e.target !== mobileMenuBtn) {
                     sidebar.classList.remove('sidebar-open');
                 }
             }
         });
+    });
     </script>
 
     <script>
