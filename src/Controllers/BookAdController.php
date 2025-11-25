@@ -151,6 +151,10 @@ class BookAdController {
             if ($this->bookAd->update()) {
                 // Create payment record
                 $this->syncPayment($id);
+                // Registrar en audit_log
+                require_once __DIR__ . '/../Models/AuditLog.php';
+                $audit = new AuditLog($this->db);
+                $audit->create($_SESSION['user_id'], 'markPaid', 'bookad_payment', $id, 'Pago de anuncio de libro marcado como realizado por el usuario ' . ($_SESSION['username'] ?? ''));
                 header('Location: index.php?page=book&year=' . $year . '&msg=marked_paid');
                 exit;
             }

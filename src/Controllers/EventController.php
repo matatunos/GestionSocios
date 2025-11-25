@@ -61,15 +61,24 @@ class EventController {
         if ($existing) {
             $upd = $this->db->prepare("UPDATE payments SET status = 'paid', payment_date = ? WHERE id = ?");
             $upd->execute([date('Y-m-d'), $existing['id']]);
+            // Registrar en audit_log
+            require_once __DIR__ . '/../Models/AuditLog.php';
+            $audit = new AuditLog($this->db);
+            $audit->create($_SESSION['user_id'], 'markPaid', 'event_payment', $existing['id'], 'Pago de evento marcado como realizado por el usuario ' . ($_SESSION['username'] ?? ''));
         } else {
             $ins = $this->db->prepare("INSERT INTO payments (member_id, amount, payment_date, concept, status, fee_year, payment_type, event_id) VALUES (?, ?, ?, ?, 'paid', NULL, 'event', ?)");
             $ins->execute([
                 $memberId,
                 $this->event->price,
                 date('Y-m-d'),
-                'Evento: ' . $this->event->name,
+                $this->event->name,
                 $eventId
             ]);
+            // Registrar en audit_log
+            require_once __DIR__ . '/../Models/AuditLog.php';
+            $audit = new AuditLog($this->db);
+            $lastId = $this->db->lastInsertId();
+            $audit->create($_SESSION['user_id'], 'markPaid', 'event_payment', $lastId, 'Pago de evento creado y marcado como realizado por el usuario ' . ($_SESSION['username'] ?? ''));
         }
         header("Location: index.php?page=events&action=show&id=$eventId&msg=paid");
         exit;
