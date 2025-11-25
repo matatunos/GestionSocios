@@ -114,7 +114,7 @@ ob_start();
                                 <?php echo htmlspecialchars($payment['first_name'] . ' ' . $payment['last_name']); ?>
                             </div>
                             <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">
-                                <?php echo date('d/m/Y', strtotime($payment['payment_date'])); ?> • Cuota <?php echo $payment['year']; ?>
+                                <?php echo date('d/m/Y', strtotime($payment['payment_date'])); ?> • Cuota <?php echo $payment['fee_year']; ?>
                             </div>
                         </div>
                         <div style="font-weight: 600; color: var(--secondary-600);">
