@@ -4,7 +4,6 @@ require_once __DIR__ . '/../Models/AuditLog.php';
 require_once __DIR__ . '/../Config/database.php';
 
 class AuditLogController {
-    private $db;
     private $auditLog;
 
     public function __construct($db = null) {
@@ -108,7 +107,5 @@ class AuditLogController {
         $pdf->writeHTML($html, true, false, true, false, '');
         $pdf->Output('audit_log_' . date('Y-m-d') . '.pdf', 'D');
         exit;
-    }
-}
     }
 }
