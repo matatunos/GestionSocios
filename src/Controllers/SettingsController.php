@@ -1,3 +1,8 @@
+<?php
+
+class SettingsController {
+    // ...existing code...
+
     // Descargar backup de la base de datos (dump SQL)
     public function downloadBackup() {
         $this->checkAdmin();
@@ -39,9 +44,6 @@
         echo $sql;
         exit;
     }
-<?php
-
-class SettingsController {
     private $db;
 
     public function __construct() {
