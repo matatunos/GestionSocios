@@ -196,7 +196,7 @@
             <button class="tab-btn" onclick="switchTab('members')" id="tab-members"><i class="fas fa-users"></i> Socios</button>
             <button class="tab-btn" onclick="switchTab('ad_prices')" id="tab-ad_prices"><i class="fas fa-tags"></i> Precios Anuncios</button>
             <button class="tab-btn" onclick="switchTab('database')" id="tab-database"><i class="fas fa-database"></i> Base de Datos</button>
-            <button class="tab-btn" onclick="switchTab('security')" id="tab-security"><i class="fas fa-shield-alt"></i> Seguridad</button>
+            <button class="tab-btn" onclick="switchTab('admin_users')" id="tab-admin_users"><i class="fas fa-user-shield"></i> Administración de Usuarios</button>
         </div>
         <!-- Organization Tab -->
         <div id="organization" class="tab-content active-tab">
@@ -626,57 +626,9 @@
                     <button type="submit" class="btn btn-danger">Actualizar Conexión</button>
                 </form>
         </div>
-        <!-- Security Tab -->
-        <div id="security" class="tab-content">
-                <h2 style="margin-bottom: 2rem; color: var(--text-color);">
-                    <i class="fas fa-shield-alt" style="color: var(--primary-600);"></i> Seguridad
-                </h2>
-                <?php if (isset($_SESSION['password_success'])): ?>
-                    <div class="alert alert-success" style="margin-bottom: 1.5rem;">
-                        <i class="fas fa-check-circle"></i> <?= $_SESSION['password_success'] ?>
-                    </div>
-                    <?php unset($_SESSION['password_success']); ?>
-                <?php endif; ?>
-                <?php if (isset($_SESSION['password_error'])): ?>
-                    <div class="alert alert-danger" style="margin-bottom: 1.5rem;">
-                        <i class="fas fa-exclamation-circle"></i> <?= $_SESSION['password_error'] ?>
-                    </div>
-                    <?php unset($_SESSION['password_error']); ?>
-                <?php endif; ?>
-                <form method="POST" action="index.php?page=settings&action=changePassword" class="card" style="max-width: 600px;">
-                    <h3 style="margin-bottom: 1.5rem; color: var(--text-color);">
-                        <i class="fas fa-key"></i> Cambiar Contraseña
-                    </h3>
-                    <div class="form-group">
-                        <label class="form-label" for="current_password">
-                            <i class="fas fa-lock"></i> Contraseña Actual
-                        </label>
-                        <input type="password" name="current_password" id="current_password" class="form-control" required 
-                               placeholder="Introduce tu contraseña actual">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="new_password">
-                            <i class="fas fa-lock"></i> Nueva Contraseña
-                        </label>
-                        <input type="password" name="new_password" id="new_password" class="form-control" required 
-                               placeholder="Mínimo 6 caracteres" minlength="6">
-                        <small style="color: var(--text-muted); display: block; margin-top: 0.25rem;">
-                            Mínimo 6 caracteres. Se recomienda usar una combinación de letras, números y símbolos.
-                        </small>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="confirm_password">
-                            <i class="fas fa-lock"></i> Confirmar Nueva Contraseña
-                        </label>
-                        <input type="password" name="confirm_password" id="confirm_password" class="form-control" required 
-                               placeholder="Repite la nueva contraseña" minlength="6">
-                    </div>
-                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Cambiar Contraseña
-                        </button>
-                    </div>
-                </form>
+        <!-- Administración de Usuarios Tab -->
+        <div id="admin_users" class="tab-content">
+            <?php include __DIR__ . '/admin_users.php'; ?>
         </div>
     </div>
 </div>
