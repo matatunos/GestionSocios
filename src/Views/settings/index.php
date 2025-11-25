@@ -1,4 +1,4 @@
-<?php ob_start(); ?>
+
 
 <style>
 .tab-content { display: none; }
@@ -924,7 +924,4 @@ window.addEventListener('DOMContentLoaded', function() {
 <div class="alert alert-warning">La navegación por pestañas requiere JavaScript. Todas las secciones se muestran abajo.</div>
 </noscript>
 
-<?php 
-$content = ob_get_clean(); 
-require __DIR__ . '/../layout.php'; 
-?>
+
