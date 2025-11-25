@@ -108,10 +108,6 @@ if (file_exists($configFile)) {
                 <input type="password" name="admin_pass" class="form-control" required>
             </div>
 
-            <button type="submit" class="btn btn-primary w-full" style="margin-top: 1.5rem;">
-                Instalar y Configurar <i class="fas fa-rocket" style="margin-left: 0.5rem;"></i>
-            </button>
-
             <div class="form-group" style="margin-top:1.5rem;">
                 <label class="form-label">Datos de Ejemplo</label>
                 <div style="margin-top:0.75rem;">
@@ -130,6 +126,10 @@ if (file_exists($configFile)) {
                 </div>
                 <small style="color:#888;display:block;margin-top:0.5rem;">Los datos de ejemplo son útiles para probar el sistema. Los datos extensos simulan una asociación grande con mucha actividad.</small>
             </div>
+
+            <button type="submit" class="btn btn-primary w-full" style="margin-top: 1.5rem;">
+                Instalar y Configurar <i class="fas fa-rocket" style="margin-left: 0.5rem;"></i>
+            </button>
         </form>
     </div>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
