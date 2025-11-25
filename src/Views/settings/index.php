@@ -602,10 +602,10 @@
         <!-- Database Tab -->
         <div id="database" class="tab-content">
             <h2 class="section-title"><i class="fas fa-database"></i> Configuración y Backup de Base de Datos</h2>
-            <div class="alert alert-warning" style="background: #fffbeb; color: #92400e; padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem;">
+            <div class="card alert alert-warning mb-4">
                 <i class="fas fa-exclamation-triangle"></i> <strong>Cuidado:</strong> Cambiar estos valores puede dejar la aplicación inoperativa. Asegúrese de que los nuevos datos son correctos.
             </div>
-            <form action="index.php?page=settings&action=updateDatabase" method="POST" style="max-width: 600px; margin-bottom:2rem; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); padding: 2rem;">
+            <form action="index.php?page=settings&action=updateDatabase" method="POST" class="card mb-4" style="max-width: 600px; margin: 0 auto;">
                 <div class="form-group">
                     <label class="form-label" for="db_host">Host</label>
                     <input type="text" name="db_host" id="db_host" class="form-control" value="<?php echo htmlspecialchars($dbConfig['host'] ?? ''); ?>" required>
@@ -625,13 +625,13 @@
                 </div>
                 <button type="submit" class="btn btn-danger">Actualizar Conexión</button>
             </form>
-            <div style="margin-top:2rem; text-align:center;">
+            <div class="card text-center p-4 mb-4">
                 <form action="index.php?page=settings&action=downloadBackup" method="POST" style="display:inline-block;">
-                    <button type="submit" class="btn btn-primary" style="font-size:1.2rem; padding:0.75rem 2rem; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                    <button type="submit" class="btn btn-primary btn-lg">
                         <i class="fas fa-download"></i> Descargar Backup de Base de Datos
                     </button>
                 </form>
-                <p style="margin-top:1rem; color:#555; font-size:0.95rem;"><i class="fas fa-info-circle"></i> El backup incluye toda la estructura y datos actuales en formato SQL.</p>
+                <p class="mt-3 text-muted"><i class="fas fa-info-circle"></i> El backup incluye toda la estructura y datos actuales en formato SQL.</p>
             </div>
         </div>
         <!-- Administración de Usuarios Tab -->
