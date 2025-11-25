@@ -58,12 +58,12 @@ class Poll {
      * Leer todas las votaciones
      */
     public function read($status = 'all') {
-        $query = "SELECT p.*, 
-                         m.first_name, m.last_name,
-                         (SELECT COUNT(*) FROM poll_options WHERE poll_id = p.id) as options_count,
-                         (SELECT COUNT(DISTINCT member_id) FROM poll_votes WHERE poll_id = p.id) as votes_count
-                  FROM " . $this->table . " p
-                  JOIN members m ON p.created_by = m.id";
+         $query = "SELECT p.*, 
+                    u.name,
+                    (SELECT COUNT(*) FROM poll_options WHERE poll_id = p.id) as options_count,
+                    (SELECT COUNT(DISTINCT user_id) FROM poll_votes WHERE poll_id = p.id) as votes_count
+                FROM " . $this->table . " p
+                JOIN users u ON p.created_by = u.id";
         
         if ($status === 'active') {
             $query .= " WHERE p.is_active = 1 AND NOW() BETWEEN p.start_date AND p.end_date";
@@ -85,13 +85,13 @@ class Poll {
      * Leer votación por ID
      */
     public function readOne($id) {
-        $query = "SELECT p.*, 
-                         m.first_name, m.last_name,
-                         (SELECT COUNT(DISTINCT member_id) FROM poll_votes WHERE poll_id = p.id) as votes_count
-                  FROM " . $this->table . " p
-                  JOIN members m ON p.created_by = m.id
-                  WHERE p.id = :id
-                  LIMIT 1";
+         $query = "SELECT p.*, 
+                    u.name,
+                    (SELECT COUNT(DISTINCT user_id) FROM poll_votes WHERE poll_id = p.id) as votes_count
+                FROM " . $this->table . " p
+                JOIN users u ON p.created_by = u.id
+                WHERE p.id = :id
+                LIMIT 1";
         
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
@@ -137,13 +137,13 @@ class Poll {
     /**
      * Verificar si un usuario ya votó
      */
-    public function hasVoted($poll_id, $member_id) {
+    public function hasVoted($poll_id, $user_id) {
         $query = "SELECT COUNT(*) as count FROM poll_votes 
-                  WHERE poll_id = :poll_id AND member_id = :member_id";
+              WHERE poll_id = :poll_id AND user_id = :user_id";
         
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':poll_id', $poll_id, PDO::PARAM_INT);
-        $stmt->bindParam(':member_id', $member_id, PDO::PARAM_INT);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
         $stmt->execute();
         
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -153,7 +153,7 @@ class Poll {
     /**
      * Registrar voto
      */
-    public function vote($poll_id, $option_ids, $member_id) {
+    public function vote($poll_id, $option_ids, $user_id) {
         // Si no es un array, convertirlo
         if (!is_array($option_ids)) {
             $option_ids = [$option_ids];
@@ -166,15 +166,15 @@ class Poll {
         }
         
         // Insertar votos
-        $query = "INSERT INTO poll_votes (poll_id, option_id, member_id) 
-                  VALUES (:poll_id, :option_id, :member_id)";
+        $query = "INSERT INTO poll_votes (poll_id, option_id, user_id) 
+                  VALUES (:poll_id, :option_id, :user_id)";
         
         $stmt = $this->conn->prepare($query);
         
         foreach ($option_ids as $option_id) {
             $stmt->bindParam(':poll_id', $poll_id, PDO::PARAM_INT);
             $stmt->bindParam(':option_id', $option_id, PDO::PARAM_INT);
-            $stmt->bindParam(':member_id', $member_id, PDO::PARAM_INT);
+            $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
             
             if (!$stmt->execute()) {
                 return false;
@@ -187,13 +187,13 @@ class Poll {
     /**
      * Obtener voto de un usuario
      */
-    public function getUserVote($poll_id, $member_id) {
+    public function getUserVote($poll_id, $user_id) {
         $query = "SELECT option_id FROM poll_votes 
-                  WHERE poll_id = :poll_id AND member_id = :member_id";
+              WHERE poll_id = :poll_id AND user_id = :user_id";
         
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':poll_id', $poll_id, PDO::PARAM_INT);
-        $stmt->bindParam(':member_id', $member_id, PDO::PARAM_INT);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
         $stmt->execute();
         
         return $stmt->fetchAll(PDO::FETCH_COLUMN);
@@ -277,11 +277,11 @@ class Poll {
      * Obtener votantes (solo si no es anónima)
      */
     public function getVoters($poll_id) {
-        $query = "SELECT DISTINCT m.first_name, m.last_name, pv.voted_at
-                  FROM poll_votes pv
-                  JOIN members m ON pv.member_id = m.id
-                  WHERE pv.poll_id = :poll_id
-                  ORDER BY pv.voted_at DESC";
+        $query = "SELECT DISTINCT u.name, u.email, pv.voted_at
+              FROM poll_votes pv
+              JOIN users u ON pv.user_id = u.id
+              WHERE pv.poll_id = :poll_id
+              ORDER BY pv.voted_at DESC";
         
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':poll_id', $poll_id, PDO::PARAM_INT);
