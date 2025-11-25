@@ -55,7 +55,7 @@ class Notification {
      */
     public function readByMember($member_id, $limit = 50, $unread_only = false) {
         $query = "SELECT * FROM " . $this->table . " 
-                  WHERE member_id = :member_id";
+                  WHERE user_id = :user_id";
         
         if ($unread_only) {
             $query .= " AND is_read = 0";
@@ -64,7 +64,7 @@ class Notification {
         $query .= " ORDER BY created_at DESC LIMIT :limit";
         
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':member_id', $member_id, PDO::PARAM_INT);
+        $stmt->bindParam(':user_id', $member_id, PDO::PARAM_INT);
         $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
         $stmt->execute();
         
