@@ -91,9 +91,9 @@ CREATE TABLE IF NOT EXISTS polls (
 
 -- Tabla para asistencias a eventos
 CREATE TABLE IF NOT EXISTS event_attendance (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    event_id INT NOT NULL,
-    member_id INT NOT NULL,
+    id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    event_id INT(11) NOT NULL,
+    member_id INT(11) NOT NULL,
     status ENUM('registered','confirmed','attended','cancelled') NOT NULL,
     attended TINYINT(1) DEFAULT 0,
     attended_at DATETIME DEFAULT NULL,
