@@ -1,29 +1,38 @@
     // Descargar backup de la base de datos (dump SQL)
     public function downloadBackup() {
         $this->checkAdmin();
-        // Obtener datos de conexión
-        $host = defined('DB_HOST') ? DB_HOST : '';
+        $db = $this->db;
         $name = defined('DB_NAME') ? DB_NAME : '';
-        $user = defined('DB_USER') ? DB_USER : '';
-        $pass = defined('DB_PASS') ? DB_PASS : '';
         $filename = 'backup_' . $name . '_' . date('Ymd_His') . '.sql';
 
-        // Comando mysqldump
-        $cmd = "mysqldump --host=" . escapeshellarg($host) . " --user=" . escapeshellarg($user) . " --password=" . escapeshellarg($pass) . " --routines --triggers --single-transaction " . escapeshellarg($name);
-
-        // Ejecutar y capturar salida
-        $output = null;
-        $result = null;
-        @exec($cmd, $output, $result);
-        if ($result !== 0 || empty($output)) {
-            echo '<pre>';
-            echo 'Comando ejecutado: ' . htmlspecialchars($cmd) . "\n";
-            echo 'Código de salida: ' . $result . "\n";
-            echo 'Salida:' . "\n" . htmlspecialchars(implode("\n", $output));
-            echo '</pre>';
-            exit;
+        $sql = "-- Backup generado por PHP\n-- Fecha: " . date('Y-m-d H:i:s') . "\n\n";
+        $tables = [];
+        $stmt = $db->query("SHOW TABLES");
+        while ($row = $stmt->fetch(PDO::FETCH_NUM)) {
+            $tables[] = $row[0];
         }
-        $sql = implode("\n", $output);
+        foreach ($tables as $table) {
+            // Estructura
+            $createStmt = $db->query("SHOW CREATE TABLE `{$table}`");
+            $createRow = $createStmt->fetch(PDO::FETCH_NUM);
+            $sql .= "\n-- Estructura para tabla `{$table}`\n";
+            $sql .= $createRow[1] . ";\n\n";
+            // Datos
+            $dataStmt = $db->query("SELECT * FROM `{$table}`");
+            $rows = $dataStmt->fetchAll(PDO::FETCH_ASSOC);
+            if (count($rows) > 0) {
+                $sql .= "-- Datos para tabla `{$table}`\n";
+                foreach ($rows as $row) {
+                    $columns = array_map(function($col){ return "`$col`"; }, array_keys($row));
+                    $values = array_map(function($val) use ($db) {
+                        if ($val === null) return 'NULL';
+                        return $db->quote($val);
+                    }, array_values($row));
+                    $sql .= "INSERT INTO `{$table}` (" . implode(",", $columns) . ") VALUES (" . implode(",", $values) . ");\n";
+                }
+                $sql .= "\n";
+            }
+        }
         header('Content-Type: application/octet-stream');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
         header('Content-Length: ' . strlen($sql));
