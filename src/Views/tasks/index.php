@@ -84,10 +84,10 @@ ob_start();
                     <a href="/index.php?page=tasks&filter=overdue" class="btn btn-sm btn-outline-danger <?= ($_GET['filter'] ?? '') === 'overdue' ? 'active' : '' ?>">Vencidas</a>
                 </div>
             </div>
-            <div class="row g-3 mt-2 align-items-end">
-                <div class="col-md-3">
+            <div style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; margin-top: 1rem;">
+                <div style="flex: 1; min-width: 150px;">
                     <label class="form-label">Estado</label>
-                    <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <select name="status" class="form-control" onchange="this.form.submit()">
                         <option value="">Todos</option>
                         <option value="pending" <?= ($_GET['status'] ?? '') === 'pending' ? 'selected' : '' ?>>Pendiente</option>
                         <option value="in_progress" <?= ($_GET['status'] ?? '') === 'in_progress' ? 'selected' : '' ?>>En Progreso</option>
@@ -95,9 +95,9 @@ ob_start();
                         <option value="cancelled" <?= ($_GET['status'] ?? '') === 'cancelled' ? 'selected' : '' ?>>Cancelada</option>
                     </select>
                 </div>
-                <div class="col-md-3">
+                <div style="flex: 1; min-width: 150px;">
                     <label class="form-label">Prioridad</label>
-                    <select name="priority" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <select name="priority" class="form-control" onchange="this.form.submit()">
                         <option value="">Todas</option>
                         <option value="urgent" <?= ($_GET['priority'] ?? '') === 'urgent' ? 'selected' : '' ?>>Urgente</option>
                         <option value="high" <?= ($_GET['priority'] ?? '') === 'high' ? 'selected' : '' ?>>Alta</option>
@@ -105,18 +105,18 @@ ob_start();
                         <option value="low" <?= ($_GET['priority'] ?? '') === 'low' ? 'selected' : '' ?>>Baja</option>
                     </select>
                 </div>
-                <div class="col-md-3">
+                <div style="flex: 1; min-width: 150px;">
                     <label class="form-label">Categoría</label>
-                    <select name="category_id" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <select name="category_id" class="form-control" onchange="this.form.submit()">
                         <option value="">Todas</option>
                         <?php foreach ($categories as $category): ?>
                             <option value="<?= $category['id'] ?>" <?= ($_GET['category_id'] ?? '') == $category['id'] ? 'selected' : '' ?>><?= htmlspecialchars($category['name']) ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <div class="col-md-3">
+                <div style="flex: 1; min-width: 150px;">
                     <label class="form-label">Asignado a</label>
-                    <select name="assigned_to" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <select name="assigned_to" class="form-control" onchange="this.form.submit()">
                         <option value="">Todos</option>
                         <?php foreach ($users as $user): ?>
                             <option value="<?= $user['id'] ?>" <?= ($_GET['assigned_to'] ?? '') == $user['id'] ? 'selected' : '' ?>><?= htmlspecialchars($user['name']) ?></option>

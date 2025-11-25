@@ -414,20 +414,6 @@
     border: 1px solid var(--border-light);
     border-radius: var(--radius-md);
     font-size: 1rem;
-    background: white;
-    transition: var(--transition);
-    color: var(--text-main);
-}
-
-.form-control:focus {
-    outline: none;
-    border-color: var(--primary-500);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-}
-
-/* Filter Form */
-.filter-form {
-    background: var(--bg-card);
     border-radius: var(--radius-lg);
     padding: 1rem;
     margin-bottom: 1.5rem;
