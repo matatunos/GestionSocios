@@ -1,13 +1,13 @@
 <?php ob_start(); ?>
 
-<div class="flex justify-between items-center mb-4">
-    <h1>Editar Donante</h1>
-    <a href="index.php?page=donors" class="btn btn-secondary">
-        <i class="fas fa-arrow-left"></i> Volver
+<div class="mb-4">
+    <a href="index.php?page=donors" class="btn btn-sm btn-secondary mb-4">
+        <i class="fas fa-arrow-left"></i> Volver al listado
     </a>
+    <h1>Editar Donante</h1>
 </div>
 
-<div class="card">
+<div class="card" style="max-width: 800px;">
     <?php if (isset($error)): ?>
         <div class="alert alert-error mb-4">
             <i class="fas fa-exclamation-circle"></i> <?php echo $error; ?>
@@ -15,29 +15,33 @@
     <?php endif; ?>
 
     <form method="POST" action="index.php?page=donors&action=update&id=<?php echo $donor->id; ?>" enctype="multipart/form-data">
-        <div class="form-group">
-            <label for="name">Nombre del Negocio / Donante</label>
+        <div class="form-group mb-3">
+            <label class="form-label">Nombre del Negocio / Donante</label>
             <input type="text" id="name" name="name" class="form-control" value="<?php echo htmlspecialchars($donor->name); ?>" required>
         </div>
 
-        <div class="grid grid-2">
-            <div class="form-group">
-                <label for="contact_person">Persona de Contacto</label>
-                <input type="text" id="contact_person" name="contact_person" class="form-control" value="<?php echo htmlspecialchars($donor->contact_person); ?>">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label">Persona de Contacto</label>
+                    <input type="text" id="contact_person" name="contact_person" class="form-control" value="<?php echo htmlspecialchars($donor->contact_person); ?>">
+                </div>
             </div>
-            <div class="form-group">
-                <label for="phone">Teléfono</label>
-                <input type="text" id="phone" name="phone" class="form-control" value="<?php echo htmlspecialchars($donor->phone); ?>">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label">Teléfono</label>
+                    <input type="text" id="phone" name="phone" class="form-control" value="<?php echo htmlspecialchars($donor->phone); ?>">
+                </div>
             </div>
         </div>
 
-        <div class="form-group">
-            <label for="email">Email</label>
+        <div class="form-group mb-3">
+            <label class="form-label">Email</label>
             <input type="email" id="email" name="email" class="form-control" value="<?php echo htmlspecialchars($donor->email); ?>">
         </div>
 
-        <div class="form-group">
-            <label for="address">Dirección</label>
+        <div class="form-group mb-3">
+            <label class="form-label">Dirección</label>
             <div style="position: relative;">
                 <textarea id="address" name="address" class="form-control" rows="3"><?php echo htmlspecialchars($donor->address); ?></textarea>
                 <button type="button" id="getLocationBtn" class="btn btn-sm btn-success" 
@@ -112,18 +116,36 @@
             <input type="hidden" name="longitude" id="longitude" value="<?php echo htmlspecialchars($donor->longitude ?? ''); ?>">
         </div>
 
-        <div class="form-group">
-            <label for="logo">Logo</label>
+        <div class="form-group mb-3">
+            <label class="form-label">Logo</label>
             <?php if (!empty($donor->logo_url)): ?>
                 <div class="mb-2">
-                    <img src="/<?php echo htmlspecialchars($donor->logo_url); ?>" alt="Logo actual" style="max-width: 200px; height: auto; border-radius: 8px;">
+                    <img src="/<?php echo htmlspecialchars($donor->logo_url); ?>" alt="Logo actual" style="max-width: 200px; height: auto; border-radius: 8px; border: 1px solid #ddd; padding: 8px; background: white;">
+                    <div class="d-flex gap-2 mt-2">
+                        <a href="/<?php echo htmlspecialchars($donor->logo_url); ?>" target="_blank" class="btn btn-sm btn-secondary">
+                            <i class="fas fa-eye"></i> Ver
+                        </a>
+                        <a href="/<?php echo htmlspecialchars($donor->logo_url); ?>" download class="btn btn-sm btn-secondary">
+                            <i class="fas fa-download"></i> Descargar
+                        </a>
+                        <?php 
+                        require_once __DIR__ . '/../../Models/DonorImageHistory.php';
+                        $database = new Database();
+                        $imageHistory = new DonorImageHistory($database->getConnection());
+                        if ($imageHistory->countByDonor($donor->id) > 0): 
+                        ?>
+                            <a href="index.php?page=donors&action=imageHistory&id=<?php echo $donor->id; ?>" class="btn btn-sm btn-primary">
+                                <i class="fas fa-history"></i> Histórico (<?php echo $imageHistory->countByDonor($donor->id); ?>)
+                            </a>
+                        <?php endif; ?>
+                    </div>
                 </div>
             <?php endif; ?>
             <input type="file" id="logo" name="logo" class="form-control" accept="image/*">
-            <small class="text-muted">Formatos permitidos: JPG, PNG, GIF. Tamaño máximo: 2MB</small>
+            <small class="text-muted">Formatos permitidos: JPG, PNG, GIF. Tamaño máximo: 2MB. Dejar en blanco para mantener el logo actual.</small>
         </div>
 
-        <div class="text-right">
+        <div class="text-right mt-4">
             <button type="submit" class="btn btn-primary">
                 <i class="fas fa-save"></i> Actualizar Donante
             </button>
