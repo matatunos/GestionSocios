@@ -73,6 +73,15 @@ class BookExportController {
     }
 
     public function generatePdf() {
+                                        // Depuración: texto fijo para confirmar ejecución
+                                        $debugPath = '/opt/GestionSocios/public/debug_pages.log';
+                                        @file_put_contents($debugPath, "DEPURACION PDF INICIO\n");
+                                        try {
+                                            // ...existing code...
+                                        } catch (Exception $e) {
+                                            @file_put_contents($debugPath, "EXCEPCION: " . $e->getMessage() . "\n", FILE_APPEND);
+                                            throw $e;
+                                        }
                                 // Depuración: volcar $pages al inicio del método
                                 $debugPath = '/opt/GestionSocios/public/debug_pages.log';
                                 $year = $_GET['year'] ?? date('Y');
