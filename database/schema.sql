@@ -393,10 +393,13 @@ CREATE TABLE IF NOT EXISTS donor_image_history (
     id INT AUTO_INCREMENT PRIMARY KEY,
     donor_id INT NOT NULL,
     image_url VARCHAR(255) NOT NULL,
+    is_current TINYINT(1) DEFAULT 1,
     uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     uploaded_by INT DEFAULT NULL,
+    replaced_at TIMESTAMP NULL DEFAULT NULL,
     FOREIGN KEY (donor_id) REFERENCES donors(id) ON DELETE CASCADE,
-    FOREIGN KEY (uploaded_by) REFERENCES users(id) ON DELETE SET NULL
+    FOREIGN KEY (uploaded_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_donor_current (donor_id, is_current)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabla de historial de imágenes de socios
@@ -404,10 +407,13 @@ CREATE TABLE IF NOT EXISTS member_image_history (
     id INT AUTO_INCREMENT PRIMARY KEY,
     member_id INT NOT NULL,
     image_url VARCHAR(255) NOT NULL,
+    is_current TINYINT(1) DEFAULT 1,
     uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     uploaded_by INT DEFAULT NULL,
+    replaced_at TIMESTAMP NULL DEFAULT NULL,
     FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE,
-    FOREIGN KEY (uploaded_by) REFERENCES users(id) ON DELETE SET NULL
+    FOREIGN KEY (uploaded_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_member_current (member_id, is_current)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabla de registro de actividad (audit log)
