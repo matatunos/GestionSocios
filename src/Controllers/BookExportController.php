@@ -156,8 +156,11 @@ class BookExportController {
 
         // ...existing code...
         // Bucle de generación de páginas PDF
-        foreach ($pages as $idx => $page) {
-            if ($idx > 0) {
+        $first = true;
+        foreach ($pages as $page) {
+            if ($first) {
+                $first = false;
+            } else {
                 $pdf->AddPage();
             }
             $pdf->SetFont('helvetica', 'B', 16);
