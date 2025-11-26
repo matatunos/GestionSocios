@@ -6,27 +6,63 @@ class BookExportController {
     public function __construct() {
         $database = new Database();
         $this->db = $database->getConnection();
+    }
+
+    public function index() {
+        $year = $_GET['year'] ?? date('Y');
+        
         require_once __DIR__ . '/../Models/BookPage.php';
         $bookPageModel = new BookPage($this->db);
-        $version_id = $_GET['version_id'] ?? null;
-        if ($version_id) {
-            $pages = $bookPageModel->getAllByVersion($version_id);
-        } else {
-            $book_id = $year;
-            $pages = $bookPageModel->getAllByBook($book_id);
+        
+        require_once __DIR__ . '/../Models/BookActivity.php';
+        $activityModel = new BookActivity($this->db);
+        $activitiesStmt = $activityModel->readAllByYear($year);
+        $activities = $activitiesStmt->fetchAll(PDO::FETCH_ASSOC);
+
+        require_once __DIR__ . '/../Models/BookAd.php';
+        $bookAdModel = new BookAd($this->db);
+        $adsStmt = $bookAdModel->readAllByYear($year);
+        $ads = $adsStmt->fetchAll(PDO::FETCH_ASSOC);
+
+        require_once __DIR__ . '/../Models/BookVersion.php';
+        // Check if BookVersion model exists, if not create a simple query or handle it
+        // Assuming BookVersion model exists based on usage in view
+        $bookVersions = [];
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM book_versions WHERE book_id = (SELECT id FROM books WHERE year = ? LIMIT 1)");
+            $stmt->execute([$year]);
+            $bookVersions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            // Ignore if table doesn't exist yet
         }
 
-        // Si no hay páginas en la tabla, construir $pages a partir de actividades y anuncios
-        if (empty($pages)) {
+        $version_id = $_GET['version_id'] ?? null;
+        
+        // Get book_id for the current year
+        $stmt = $this->db->prepare("SELECT id FROM books WHERE year = ?");
+        $stmt->execute([$year]);
+        $book = $stmt->fetch(PDO::FETCH_ASSOC);
+        $book_id = $book['id'] ?? null;
+
+        if ($version_id) {
+            $pages = $bookPageModel->getAllByVersion($version_id);
+        } elseif ($book_id) {
+            $pages = $bookPageModel->getAllByBook($book_id);
+        } else {
             $pages = [];
-            $pages[] = [
+        }
+
+        $editorBlocks = [];
+        // If no pages exist, we might want to show default blocks based on activities and ads
+        if (empty($pages)) {
+            $editorBlocks[] = [
                 'id' => 'cover',
                 'content' => 'Portada',
                 'position' => 'full',
                 'type' => 'cover'
             ];
             foreach ($activities as $activity) {
-                $pages[] = [
+                $editorBlocks[] = [
                     'id' => 'activity_' . $activity['id'],
                     'content' => $activity['title'],
                     'position' => 'full',
@@ -35,8 +71,8 @@ class BookExportController {
                 ];
             }
             foreach ($ads as $ad) {
-                if ($ad['paid'] ?? true) {
-                    $pages[] = [
+                if ($ad['status'] === 'paid') {
+                    $editorBlocks[] = [
                         'id' => 'ad_' . $ad['id'],
                         'content' => $ad['donor_name'],
                         'position' => 'full',
@@ -45,108 +81,79 @@ class BookExportController {
                     ];
                 }
             }
+        } else {
+            $editorBlocks = $pages;
         }
-        foreach ($activities as $activity) {
-            $editorBlocks[] = [
-                'id' => 'activity_' . $activity['id'],
-                'content' => $activity['title'],
-                'position' => 'full',
-                'type' => 'activity',
-                'image_url' => $activity['image_url'] ?? null
-            ];
-        }
-        foreach ($ads as $ad) {
-            if ($ad['paid'] ?? true) {
-                $editorBlocks[] = [
-                    'id' => 'ad_' . $ad['id'],
-                    'content' => $ad['donor_name'],
-                    'position' => 'full',
-                    'type' => 'ad',
-                    'image_url' => $ad['image_url'] ?? null
-                ];
-            }
-        }
-        if (!empty($bookPages)) {
-            $editorBlocks = $bookPages;
-        }
+
         require __DIR__ . '/../Views/book/export.php';
     }
 
     public function generatePdf() {
-                                                    // Página de depuración antes de la portada
-                                                    $pdf->AddPage();
-                                                    $pdf->SetFont('courier', '', 8);
-                                                    $debugText = print_r($pages, true);
-                                                    $pdf->MultiCell(0, 100, "DEBUG pages:\n" . $debugText, 0, 'L');
-                                                    $pdf->SetFont('helvetica', 'B', 32);
-                                                // Depuración visual: mostrar contenido de $pages en la primera página del PDF
-                                                $pdf->SetFont('courier', '', 8);
-                                                $debugText = print_r($pages, true);
-                                                $pdf->MultiCell(0, 100, "DEBUG pages:\n" . $debugText, 0, 'L');
-                                                $pdf->SetFont('helvetica', 'B', 16);
-                                            // Depuración: volcado antes de checkAdmin
-                                            $debugPath = '/opt/GestionSocios/public/debug_pages.log';
-                                            @file_put_contents($debugPath, "ANTES DE CHECKADMIN\n");
-                                            $this->checkAdmin();
-                                        // Depuración: texto fijo para confirmar ejecución
-                                        $debugPath = '/opt/GestionSocios/public/debug_pages.log';
-                                        @file_put_contents($debugPath, "DEPURACION PDF INICIO\n");
-                                        try {
-                                            // ...existing code...
-                                        } catch (Exception $e) {
-                                            @file_put_contents($debugPath, "EXCEPCION: " . $e->getMessage() . "\n", FILE_APPEND);
-                                            throw $e;
-                                        }
-                                // Depuración: volcar $pages al inicio del método
-                                $debugPath = '/opt/GestionSocios/public/debug_pages.log';
-                                $year = $_GET['year'] ?? date('Y');
-                                require_once __DIR__ . '/../Models/BookPage.php';
-                                $bookPageModel = new BookPage($this->db);
-                                $version_id = $_GET['version_id'] ?? null;
-                                if ($version_id) {
-                                    $pages = $bookPageModel->getAllByVersion($version_id);
-                                } else {
-                                    $book_id = $year;
-                                    $pages = $bookPageModel->getAllByBook($book_id);
-                                }
-
-                                    // Página de depuración antes de la portada
-                                    $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
-                                    $pdf->AddPage();
-                                    $pdf->SetFont('courier', '', 8);
-                                    $debugText = print_r($pages, true);
-                                    $pdf->MultiCell(0, 100, "DEBUG pages:\n" . $debugText, 0, 'L');
-                                    $pdf->SetFont('helvetica', 'B', 32);
-                                $debugWrite = @file_put_contents($debugPath, print_r($pages, true));
-                                if ($debugWrite === false) {
-                                    error_log('No se pudo escribir el log en ' . $debugPath);
-                                }
-                        // Depuración: inicio del método
-                        $debugPath = __DIR__ . '/../../public/debug_pages.log';
-                        @file_put_contents($debugPath, "INICIO generatePdf\n");
-                    // Depuración: comprobar ejecución del método y permisos de escritura
-                    $debugPath = __DIR__ . '/../../public/debug_pages.log';
-                    @file_put_contents($debugPath, "INICIO generatePdf\n");
-        // Depuración: comprobar ejecución del método y permisos de escritura
-        $debugPath = '/opt/GestionSocios/public/debug_pages.log';
-        $debugWrite = @file_put_contents($debugPath, "INICIO generatePdf\n");
-        if ($debugWrite === false) {
-            echo '<pre style="color:red">No se pudo escribir el log en ' . $debugPath . '</pre>';
-        }
-        @file_put_contents($debugPath, "INICIO generatePdf\n");
-        $this->checkAdmin();
         $year = $_GET['year'] ?? date('Y');
+        
+        $this->checkAdmin();
+        
         require_once __DIR__ . '/../../vendor/autoload.php';
-        require_once __DIR__ . '/../Models/BookAd.php';
-        $bookAdModel = new BookAd($this->db);
-        $adsStmt = $bookAdModel->readAllByYear($year);
-        $ads = $adsStmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Fetch Data
+        require_once __DIR__ . '/../Models/BookPage.php';
+        $bookPageModel = new BookPage($this->db);
+        
+        $version_id = $_GET['version_id'] ?? null;
+        
+        // Get book_id
+        $stmt = $this->db->prepare("SELECT id FROM books WHERE year = ?");
+        $stmt->execute([$year]);
+        $book = $stmt->fetch(PDO::FETCH_ASSOC);
+        $book_id = $book['id'] ?? null;
 
-        require_once __DIR__ . '/../Models/BookActivity.php';
-        $activityModel = new BookActivity($this->db);
-        $activitiesStmt = $activityModel->readAllByYear($year);
-        $activities = $activitiesStmt->fetchAll(PDO::FETCH_ASSOC);
+        if ($version_id) {
+            $pages = $bookPageModel->getAllByVersion($version_id);
+        } elseif ($book_id) {
+            $pages = $bookPageModel->getAllByBook($book_id);
+        } else {
+            $pages = [];
+        }
 
+        // If no pages, generate from source
+        if (empty($pages)) {
+            require_once __DIR__ . '/../Models/BookActivity.php';
+            $activityModel = new BookActivity($this->db);
+            $activitiesStmt = $activityModel->readAllByYear($year);
+            $activities = $activitiesStmt->fetchAll(PDO::FETCH_ASSOC);
+
+            require_once __DIR__ . '/../Models/BookAd.php';
+            $bookAdModel = new BookAd($this->db);
+            $adsStmt = $bookAdModel->readAllByYear($year);
+            $ads = $adsStmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $pages = [];
+            $pages[] = [
+                'content' => 'Portada',
+                'position' => 'full',
+                'type' => 'cover'
+            ];
+            foreach ($activities as $activity) {
+                $pages[] = [
+                    'content' => $activity['title'],
+                    'position' => 'full',
+                    'type' => 'activity',
+                    'image_url' => $activity['image_url'] ?? null
+                ];
+            }
+            foreach ($ads as $ad) {
+                if ($ad['status'] === 'paid') {
+                    $pages[] = [
+                        'content' => $ad['donor_name'],
+                        'position' => 'full',
+                        'type' => 'ad',
+                        'image_url' => $ad['image_url'] ?? null
+                    ];
+                }
+            }
+        }
+
+        // Create PDF
         $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
         $pdf->SetCreator('GestionSocios');
         $pdf->SetAuthor('Asociación');
@@ -156,11 +163,7 @@ class BookExportController {
         $pdf->setPrintFooter(false);
         $pdf->SetMargins(15, 15, 15);
         $pdf->SetAutoPageBreak(true, 15);
-        // Página de depuración
-        $pdf->AddPage();
-        $pdf->SetFont('courier', '', 8);
-        $debugText = print_r($pages, true);
-        $pdf->MultiCell(0, 100, "DEBUG pages:\n" . $debugText, 0, 'L');
+
         // Portada
         $pdf->AddPage();
         $pdf->SetFont('helvetica', 'B', 32);
@@ -169,63 +172,20 @@ class BookExportController {
         $pdf->SetFont('helvetica', '', 24);
         $pdf->Cell(0, 15, $year, 0, 1, 'C');
 
-        require_once __DIR__ . '/../Models/BookPage.php';
-        $bookPageModel = new BookPage($this->db);
-        $version_id = $_GET['version_id'] ?? null;
-        if ($version_id) {
-            $pages = $bookPageModel->getAllByVersion($version_id);
-        } else {
-            $book_id = $year;
-            $pages = $bookPageModel->getAllByBook($book_id);
-        }
-        // Si no hay páginas en la tabla, construir $pages a partir de actividades y anuncios
-        if (empty($pages)) {
-            $pages = [];
-            $pages[] = [
-                'id' => 'cover',
-                'content' => 'Portada',
-                'position' => 'full',
-                'type' => 'cover'
-            ];
-            foreach ($activities as $activity) {
-                $pages[] = [
-                    'id' => 'activity_' . $activity['id'],
-                    'content' => $activity['title'],
-                    'position' => 'full',
-                    'type' => 'activity',
-                    'image_url' => $activity['image_url'] ?? null
-                ];
-            }
-            foreach ($ads as $ad) {
-                if ($ad['paid'] ?? true) {
-                    $pages[] = [
-                        'id' => 'ad_' . $ad['id'],
-                        'content' => $ad['donor_name'],
-                        'position' => 'full',
-                        'type' => 'ad',
-                        'image_url' => $ad['image_url'] ?? null
-                    ];
-                }
-            }
-        }
-
-        // ...existing code...
-        // Bucle de generación de páginas PDF
-        $first = true;
+        // Pages
         foreach ($pages as $page) {
-            if ($first) {
-                $first = false;
-            } else {
-                $pdf->AddPage();
-            }
+            if (isset($page['type']) && $page['type'] === 'cover') continue; // Skip cover if it's in the list
+
+            $pdf->AddPage();
             $pdf->SetFont('helvetica', 'B', 16);
-            $pdf->Cell(0, 10, $page['content'], 0, 1);
+            $pdf->Cell(0, 10, $page['content'] ?? '', 0, 1);
+            
             if (!empty($page['image_url'])) {
                 $imagePath = __DIR__ . '/../../public/' . $page['image_url'];
                 if (file_exists($imagePath)) {
-                    if ($page['position'] === 'top') {
+                    if (isset($page['position']) && $page['position'] === 'top') {
                         $pdf->Image($imagePath, 15, $pdf->GetY(), 180, 80, '', '', '', true, 300);
-                    } else if ($page['position'] === 'bottom') {
+                    } else if (isset($page['position']) && $page['position'] === 'bottom') {
                         $pdf->SetY(-100);
                         $pdf->Image($imagePath, 15, $pdf->GetY(), 180, 80, '', '', '', true, 300);
                     } else {
@@ -239,61 +199,23 @@ class BookExportController {
             }
         }
 
-        // Depuración: volcar $pages justo antes de la salida
-        @file_put_contents($debugPath, "ANTES DE OUTPUT\n", FILE_APPEND);
-        $debugResult = @file_put_contents($debugPath, print_r($pages, true), FILE_APPEND);
-        if ($debugResult === false) {
-            error_log('No se pudo crear el archivo de depuración: ' . $debugPath);
-        }
+        require_once __DIR__ . '/../Models/AuditLog.php';
+        AuditLog::log('export_pdf', 'book', $year, null, ['year' => $year]);
 
-        foreach ($pages as $idx => $page) {
-            if ($idx > 0) {
-                $pdf->AddPage();
-            }
-            $pdf->SetFont('helvetica', 'B', 16);
-            $pdf->Cell(0, 10, $page['content'], 0, 1);
-            if (!empty($page['image_url'])) {
-                $imagePath = __DIR__ . '/../../public/' . $page['image_url'];
-                if (file_exists($imagePath)) {
-                    if ($page['position'] === 'top') {
-                        $pdf->Image($imagePath, 15, $pdf->GetY(), 180, 80, '', '', '', true, 300);
-                    } else if ($page['position'] === 'bottom') {
-                        $pdf->SetY(-100);
-                        $pdf->Image($imagePath, 15, $pdf->GetY(), 180, 80, '', '', '', true, 300);
-                    } else {
-                        $pdf->Image($imagePath, 15, $pdf->GetY(), 180, 0, '', '', '', true, 300);
-                    }
-                } else {
-                    $this->drawDefaultImage($pdf, $page);
-                }
-            } else {
-                $this->drawDefaultImage($pdf, $page);
-            }
-        }
-
-        AuditLog::log('export_pdf', 'book', $year, null, [
-            'year' => $year,
-        ]);
-        // Depuración: justo antes de exit
-        $debugWrite2 = @file_put_contents($debugPath, "ANTES DE EXIT\n", FILE_APPEND);
-        if ($debugWrite2 === false) {
-            echo '<pre style="color:red">No se pudo escribir el log en ' . $debugPath . ' (antes de exit)</pre>';
-        }
         $pdf->Output('libro_fiestas_' . $year . '.pdf', 'D');
         exit;
     }
 
     private function drawDefaultImage($pdf, $page) {
         $text = $page['content'] ?? 'Sin imagen';
-        if ($page['type'] === 'ad') {
+        $height = 180;
+        
+        if (isset($page['type']) && $page['type'] === 'ad') {
             if (isset($page['position']) && ($page['position'] === 'top' || $page['position'] === 'bottom')) {
                 $height = 80;
-            } else {
-                $height = 180;
             }
-        } else {
-            $height = 180;
         }
+        
         $x = 15;
         $y = $pdf->GetY();
         $pdf->SetFillColor(230, 230, 230);
@@ -303,5 +225,11 @@ class BookExportController {
         $pdf->SetXY($x, $y + ($height/2) - 10);
         $pdf->Cell(180, 20, $text, 0, 0, 'C');
     }
+
+    private function checkAdmin() {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: index.php?page=login');
+            exit;
+        }
+    }
 }
-        // Determinar texto identificativo
