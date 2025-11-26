@@ -61,6 +61,30 @@ class BookAdController {
             $this->bookAd->status = $_POST['status'];
             $this->bookAd->image_url = ''; // Handle upload if needed later
 
+            // Validar que solo haya una portada y una contraportada por año
+            if ($this->bookAd->ad_type === 'cover' || $this->bookAd->ad_type === 'back_cover') {
+                $checkQuery = "SELECT COUNT(*) as count FROM book_ads WHERE year = :year AND ad_type = :ad_type";
+                $checkStmt = $this->db->prepare($checkQuery);
+                $checkStmt->bindParam(':year', $this->bookAd->year);
+                $checkStmt->bindParam(':ad_type', $this->bookAd->ad_type);
+                $checkStmt->execute();
+                $result = $checkStmt->fetch(PDO::FETCH_ASSOC);
+                
+                if ($result['count'] > 0) {
+                    $typeName = $this->bookAd->ad_type === 'cover' ? 'portada' : 'contraportada';
+                    $error = "Ya existe una {$typeName} para el año {$this->bookAd->year}. Solo puede haber una {$typeName} por año.";
+                    $year = $_POST['year'];
+                    require_once __DIR__ . '/../Models/Donor.php';
+                    $donorModel = new Donor($this->db);
+                    $donors = $donorModel->readAll();
+                    require_once __DIR__ . '/../Models/AdPrice.php';
+                    $adPriceModel = new AdPrice($this->db);
+                    $adPrices = $adPriceModel->getPricesByYear($year);
+                    require __DIR__ . '/../Views/book/create_ad.php';
+                    return;
+                }
+            }
+
             if ($this->bookAd->create()) {
                 // Get the last inserted ID
                 $adId = $this->db->lastInsertId();
@@ -114,6 +138,31 @@ class BookAdController {
             $this->bookAd->amount = !empty($_POST['amount']) ? floatval($_POST['amount']) : 0.00;
             $this->bookAd->status = $_POST['status'];
             $this->bookAd->image_url = ''; // Keep existing
+            
+            // Validar que solo haya una portada y una contraportada por año
+            if ($this->bookAd->ad_type === 'cover' || $this->bookAd->ad_type === 'back_cover') {
+                $checkQuery = "SELECT COUNT(*) as count FROM book_ads WHERE year = :year AND ad_type = :ad_type AND id != :id";
+                $checkStmt = $this->db->prepare($checkQuery);
+                $checkStmt->bindParam(':year', $this->bookAd->year);
+                $checkStmt->bindParam(':ad_type', $this->bookAd->ad_type);
+                $checkStmt->bindParam(':id', $id);
+                $checkStmt->execute();
+                $result = $checkStmt->fetch(PDO::FETCH_ASSOC);
+                
+                if ($result['count'] > 0) {
+                    $typeName = $this->bookAd->ad_type === 'cover' ? 'portada' : 'contraportada';
+                    $error = "Ya existe una {$typeName} para el año {$this->bookAd->year}. Solo puede haber una {$typeName} por año.";
+                    $bookAd = $this->bookAd;
+                    require_once __DIR__ . '/../Models/Donor.php';
+                    $donorModel = new Donor($this->db);
+                    $donors = $donorModel->readAll();
+                    require_once __DIR__ . '/../Models/AdPrice.php';
+                    $adPriceModel = new AdPrice($this->db);
+                    $adPrices = $adPriceModel->getPricesByYear($_POST['year']);
+                    require __DIR__ . '/../Views/book/edit_ad.php';
+                    return;
+                }
+            }
             
             if ($this->bookAd->update()) {
                 // If marked as paid, create/update payment record
