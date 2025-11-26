@@ -71,6 +71,10 @@ CREATE TABLE IF NOT EXISTS members (
     photo_url VARCHAR(255) DEFAULT NULL,
     join_date DATE DEFAULT NULL,
     amount DECIMAL(10, 2) NOT NULL,
+    is_active TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (category_id) REFERENCES member_categories(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabla de historial de cuotas por categoría
@@ -85,8 +89,19 @@ CREATE TABLE IF NOT EXISTS category_fee_history (
     INDEX idx_category_id (category_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-    is_active TINYINT(1) DEFAULT 1,
+-- Tabla de eventos
+CREATE TABLE IF NOT EXISTS events (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    event_date DATETIME NOT NULL,
+    location VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Tabla de estados de asistencia a eventos
+CREATE TABLE IF NOT EXISTS event_attendance_statuses (
     id INT AUTO_INCREMENT PRIMARY KEY,
     status_key VARCHAR(32) NOT NULL UNIQUE,
     status_name VARCHAR(64) NOT NULL
@@ -150,8 +165,25 @@ CREATE TABLE IF NOT EXISTS ad_prices (
 CREATE TABLE IF NOT EXISTS payments (
     id INT AUTO_INCREMENT PRIMARY KEY,
     amount DECIMAL(10, 2) NOT NULL,
+    payment_date DATE NULL,
+    payment_type VARCHAR(20),
+    description TEXT,
+    member_id INT DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de categorías de tareas
+CREATE TABLE IF NOT EXISTS task_categories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
     color VARCHAR(30),
     is_active TINYINT(1) DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de gastos
+CREATE TABLE IF NOT EXISTS expenses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
     category_id INT DEFAULT NULL,
     description TEXT,
     amount DECIMAL(10,2) NOT NULL,
@@ -165,6 +197,14 @@ CREATE TABLE IF NOT EXISTS payments (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de notificaciones
+CREATE TABLE IF NOT EXISTS notifications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    message TEXT,
+    type VARCHAR(50) DEFAULT 'info',
     link VARCHAR(255) DEFAULT NULL,
     is_read TINYINT(1) DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -229,6 +269,9 @@ CREATE TABLE IF NOT EXISTS document_permissions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     document_id INT NOT NULL,
     member_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (document_id) REFERENCES documents(id) ON DELETE CASCADE,
+    FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Índice para permisos de documentos
@@ -251,6 +294,14 @@ CREATE TABLE IF NOT EXISTS polls (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabla de opciones de encuestas
+CREATE TABLE IF NOT EXISTS poll_options (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    poll_id INT NOT NULL,
+    option_text VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (poll_id) REFERENCES polls(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Tabla de libros de fiestas
 CREATE TABLE IF NOT EXISTS books (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -258,6 +309,18 @@ CREATE TABLE IF NOT EXISTS books (
     title VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla para guardar versiones del libro de fiestas
+CREATE TABLE IF NOT EXISTS book_versions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    book_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    created_by INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabla para páginas del libro de fiestas (con soporte de versiones y posición)
@@ -273,6 +336,26 @@ CREATE TABLE IF NOT EXISTS book_pages (
     FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
     FOREIGN KEY (version_id) REFERENCES book_versions(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de actividades del libro de fiestas
+CREATE TABLE IF NOT EXISTS book_activities (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    year YEAR NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    image_url VARCHAR(255),
+    page_number INT DEFAULT NULL,
+    display_order INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_year (year),
+    INDEX idx_order (year, display_order)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de tipos de tareas
+CREATE TABLE IF NOT EXISTS task_types (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
     icon VARCHAR(100) DEFAULT NULL,
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -289,11 +372,25 @@ CREATE TABLE IF NOT EXISTS tasks (
     priority INT DEFAULT 0,
     status ENUM('pending','in_progress','completed') DEFAULT 'pending',
     due_date DATE DEFAULT NULL,
+    completed_at DATETIME DEFAULT NULL,
+    completed_by INT DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (assigned_to) REFERENCES users(id) ON DELETE SET NULL,
     FOREIGN KEY (category_id) REFERENCES task_categories(id) ON DELETE SET NULL,
-    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
+    FOREIGN KEY (completed_by) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de comentarios en tareas
+CREATE TABLE IF NOT EXISTS task_comments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    task_id INT NOT NULL,
+    user_id INT DEFAULT NULL,
+    comment TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabla de historial de imágenes de donantes
@@ -352,110 +449,3 @@ ON DUPLICATE KEY UPDATE setting_key=setting_key;
 INSERT INTO users (email, name, password, role, active, status) 
 VALUES ('admin@admin.com', 'Administrador', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 1, 'active') 
 ON DUPLICATE KEY UPDATE id=id;
-
-ALTER TABLE tasks ADD COLUMN completed_at DATETIME DEFAULT NULL AFTER status;
-ALTER TABLE tasks ADD COLUMN completed_by INT DEFAULT NULL AFTER completed_at;
-ALTER TABLE tasks ADD CONSTRAINT fk_tasks_completed_by FOREIGN KEY (completed_by) REFERENCES users(id) ON DELETE SET NULL;
-
--- Migración: Crear tabla task_comments para comentarios en tareas
-CREATE TABLE IF NOT EXISTS task_comments (
-	id INT AUTO_INCREMENT PRIMARY KEY,
-	task_id INT NOT NULL,
-	user_id INT DEFAULT NULL,
-	comment TEXT NOT NULL,
-	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE,
-	FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-ALTER TABLE payments MODIFY payment_type VARCHAR(20);
-ALTER TABLE payments MODIFY payment_date DATE NULL;
-
--- Migración: Añadir columnas is_current y replaced_at a las tablas de historial de imágenes
--- Fecha: 2025-11-26
-ALTER TABLE donor_image_history 
-ADD COLUMN IF NOT EXISTS is_current TINYINT(1) DEFAULT 1 AFTER image_url,
-ADD COLUMN IF NOT EXISTS replaced_at TIMESTAMP NULL DEFAULT NULL AFTER uploaded_by;
-
-ALTER TABLE member_image_history 
-ADD COLUMN IF NOT EXISTS is_current TINYINT(1) DEFAULT 1 AFTER image_url,
-ADD COLUMN IF NOT EXISTS replaced_at TIMESTAMP NULL DEFAULT NULL AFTER uploaded_by;
-
--- Crear índices para mejorar el rendimiento de las consultas
-CREATE INDEX IF NOT EXISTS idx_donor_current ON donor_image_history(donor_id, is_current);
-CREATE INDEX IF NOT EXISTS idx_member_current ON member_image_history(member_id, is_current);
-
--- Tabla de actividades del libro de fiestas
-CREATE TABLE IF NOT EXISTS book_activities (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    year YEAR NOT NULL,
-    title VARCHAR(255) NOT NULL,
-    description TEXT,
-    image_url VARCHAR(255),
-    page_number INT DEFAULT NULL,
-    display_order INT DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_year (year),
-    INDEX idx_order (year, display_order)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-ALTER TABLE audit_log DROP COLUMN entity;
-
-CREATE TABLE IF NOT EXISTS books (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    year YEAR NOT NULL,
-    title VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
--- Tabla para páginas del libro de fiestas
-CREATE TABLE IF NOT EXISTS book_pages (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    book_id INT NOT NULL,
-    page_number INT NOT NULL,
-    content TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
--- Crear tabla book_pages para maquetación de libro de fiestas
-CREATE TABLE IF NOT EXISTS book_pages (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    book_id INT NOT NULL,
-    page_number INT NOT NULL,
-    content TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
--- Migración: Añadir campo 'position' a la tabla book_pages para soportar imágenes a media página
--- Fecha: 2025-11-26
-ALTER TABLE book_pages ADD COLUMN position ENUM('full', 'top', 'bottom') DEFAULT 'full' AFTER page_number;
-
--- Ejemplo de uso:
--- 'full' = página completa
--- 'top' = parte superior de la página
--- 'bottom' = parte inferior de la página
--- Tabla para guardar versiones del libro de fiestas
-CREATE TABLE IF NOT EXISTS book_versions (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    book_id INT NOT NULL,
-    name VARCHAR(100) NOT NULL,
-    created_by INT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
-    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- A  adir relaci  n de versi  n a book_pages
-ALTER TABLE book_pages ADD COLUMN version_id INT DEFAULT NULL AFTER book_id;
-ALTER TABLE book_pages ADD FOREIGN KEY (version_id) REFERENCES book_versions(id) ON DELETE CASCADE;
-
-CREATE TABLE IF NOT EXISTS books (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    year YEAR NOT NULL,
-    title VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
