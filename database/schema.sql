@@ -97,27 +97,8 @@ CREATE TABLE IF NOT EXISTS category_fee_history (
     INDEX idx_category_id (category_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabla de eventos
-CREATE TABLE IF NOT EXISTS events (
-    id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    event_type VARCHAR(50),
-    color VARCHAR(30),
-    description TEXT,
-    location VARCHAR(255),
-    date DATE NOT NULL,
-    start_time TIME DEFAULT NULL,
-    end_time TIME DEFAULT NULL,
-    price DECIMAL(10, 2) DEFAULT 0.00,
-    max_attendees INT DEFAULT NULL,
-    requires_registration TINYINT(1) DEFAULT 0,
-    registration_deadline DATE DEFAULT NULL,
     is_active TINYINT(1) DEFAULT 1,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 -- Tabla de estados de asistencia a eventos
-CREATE TABLE IF NOT EXISTS event_attendance_status (
     id INT AUTO_INCREMENT PRIMARY KEY,
     status_key VARCHAR(32) NOT NULL UNIQUE,
     status_name VARCHAR(64) NOT NULL
@@ -338,33 +319,28 @@ CREATE TABLE IF NOT EXISTS polls (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabla de opciones de encuestas
-CREATE TABLE IF NOT EXISTS poll_options (
+-- Tabla de libros de fiestas
+CREATE TABLE IF NOT EXISTS books (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    poll_id INT NOT NULL,
-    option_text VARCHAR(255) NOT NULL,
-    votes INT DEFAULT 0,
+    year YEAR NOT NULL,
+    title VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (poll_id) REFERENCES polls(id) ON DELETE CASCADE
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabla de votos en encuestas
-CREATE TABLE IF NOT EXISTS poll_votes (
+-- Tabla para páginas del libro de fiestas (con soporte de versiones y posición)
+CREATE TABLE IF NOT EXISTS book_pages (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    poll_id INT NOT NULL,
-    option_id INT NOT NULL,
-    user_id INT NOT NULL,
-    voted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (poll_id) REFERENCES polls(id) ON DELETE CASCADE,
-    FOREIGN KEY (option_id) REFERENCES poll_options(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    UNIQUE KEY unique_vote (poll_id, user_id, option_id)
+    book_id INT NOT NULL,
+    version_id INT DEFAULT NULL,
+    page_number INT NOT NULL,
+    position ENUM('full', 'top', 'bottom') DEFAULT 'full',
+    content TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
+    FOREIGN KEY (version_id) REFERENCES book_versions(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Tabla de categorías de tareas
-CREATE TABLE IF NOT EXISTS task_categories (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    color VARCHAR(30) DEFAULT NULL,
     icon VARCHAR(100) DEFAULT NULL,
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -509,4 +485,45 @@ CREATE TABLE IF NOT EXISTS book_pages (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Crear tabla book_pages para maquetación de libro de fiestas
+CREATE TABLE IF NOT EXISTS book_pages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    book_id INT NOT NULL,
+    page_number INT NOT NULL,
+    content TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Migración: Añadir campo 'position' a la tabla book_pages para soportar imágenes a media página
+-- Fecha: 2025-11-26
+ALTER TABLE book_pages ADD COLUMN position ENUM('full', 'top', 'bottom') DEFAULT 'full' AFTER page_number;
+
+-- Ejemplo de uso:
+-- 'full' = página completa
+-- 'top' = parte superior de la página
+-- 'bottom' = parte inferior de la página
+-- Tabla para guardar versiones del libro de fiestas
+CREATE TABLE IF NOT EXISTS book_versions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    book_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    created_by INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- A  adir relaci  n de versi  n a book_pages
+ALTER TABLE book_pages ADD COLUMN version_id INT DEFAULT NULL AFTER book_id;
+ALTER TABLE book_pages ADD FOREIGN KEY (version_id) REFERENCES book_versions(id) ON DELETE CASCADE;
+
+CREATE TABLE IF NOT EXISTS books (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    year YEAR NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
