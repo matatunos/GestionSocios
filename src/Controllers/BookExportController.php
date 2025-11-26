@@ -178,6 +178,36 @@ class BookExportController {
             $book_id = $year;
             $pages = $bookPageModel->getAllByBook($book_id);
         }
+        // Si no hay páginas en la tabla, construir $pages a partir de actividades y anuncios
+        if (empty($pages)) {
+            $pages = [];
+            $pages[] = [
+                'id' => 'cover',
+                'content' => 'Portada',
+                'position' => 'full',
+                'type' => 'cover'
+            ];
+            foreach ($activities as $activity) {
+                $pages[] = [
+                    'id' => 'activity_' . $activity['id'],
+                    'content' => $activity['title'],
+                    'position' => 'full',
+                    'type' => 'activity',
+                    'image_url' => $activity['image_url'] ?? null
+                ];
+            }
+            foreach ($ads as $ad) {
+                if ($ad['paid'] ?? true) {
+                    $pages[] = [
+                        'id' => 'ad_' . $ad['id'],
+                        'content' => $ad['donor_name'],
+                        'position' => 'full',
+                        'type' => 'ad',
+                        'image_url' => $ad['image_url'] ?? null
+                    ];
+                }
+            }
+        }
 
         // ...existing code...
         // Bucle de generación de páginas PDF
