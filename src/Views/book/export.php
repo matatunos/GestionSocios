@@ -114,6 +114,47 @@
 
 <!-- Content Preview -->
 <div class="card" style="padding: 0; overflow: hidden;">
+<!-- Editor de páginas del libro -->
+<div class="card" style="margin: 2rem 0; padding: 1.5rem;">
+    <h3 style="margin-top:0;">Editor de páginas del libro</h3>
+    <div id="book-pages-list" style="margin-bottom: 1rem; min-height: 60px; background: #f8fafc; border: 1px dashed #bbb; padding: 1rem; border-radius: 8px;"></div>
+    <button id="add-page-btn" class="btn btn-primary" type="button">Añadir página</button>
+    <p style="color: var(--text-muted); margin-top: 1rem;">Arrastra los bloques para reordenar. Haz clic en ✏️ para editar o 🗑️ para eliminar.</p>
+    <div style="color: #888; font-size: 0.95em; margin-top: 0.5rem;">Si no ves bloques, añade una página o revisa que existan páginas en el libro.</div>
+</div>
+<style>
+    .book-page-block {
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        margin-bottom: 8px;
+        padding: 10px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        cursor: grab;
+        transition: box-shadow 0.2s;
+    }
+    .book-page-block:active {
+        box-shadow: 0 2px 8px #aaa;
+        background: #f3f4f6;
+    }
+    .book-page-block .page-title {
+        flex: 1;
+        font-weight: 500;
+    }
+    .book-page-block button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 1.1em;
+        margin-left: 4px;
+    }
+</style>
+<script>
+window.bookPages = <?php echo json_encode($bookPages ?? []); ?>;
+</script>
+<script src="public/js/book_pages_editor.js"></script>
     <div style="padding: 1.5rem; border-bottom: 1px solid var(--border-light);">
         <h3 style="margin: 0;">Vista Previa del Contenido</h3>
         <p style="font-size: 0.875rem; color: var(--text-muted); margin: 0.5rem 0 0 0;">El PDF se generará en el siguiente orden:</p>
