@@ -452,7 +452,4 @@ CREATE TABLE IF NOT EXISTS task_comments (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ALTER TABLE payments MODIFY payment_type VARCHAR(20);
 ALTER TABLE payments MODIFY payment_date DATE NULL;
-ALTER TABLE tasks ADD COLUMN completed_at DATETIME DEFAULT NULL AFTER status;
-ALTER TABLE tasks ADD COLUMN completed_by INT DEFAULT NULL AFTER completed_at;
-ALTER TABLE tasks ADD CONSTRAINT fk_tasks_completed_by FOREIGN KEY (completed_by) REFERENCES users(id) ON DELETE SET NULL;
 
