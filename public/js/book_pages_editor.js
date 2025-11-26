@@ -2,11 +2,11 @@
 // Permite reordenar, añadir y borrar páginas
 // Uso: incluir este script en la página de maquetación/exportación
 
-const bookPages = [
-    { id: 1, content: 'Portada' },
-    { id: 2, content: 'Índice' },
-    { id: 3, content: 'Página 1' },
-    { id: 4, content: 'Página 2' }
+let bookPages = window.bookPages ? [...window.bookPages] : [
+    { id: 1, content: 'Portada', position: 'full' },
+    { id: 2, content: 'Índice', position: 'full' },
+    { id: 3, content: 'Página 1', position: 'full' },
+    { id: 4, content: 'Página 2', position: 'full' }
 ];
 
 function renderPages() {
