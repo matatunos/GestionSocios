@@ -32,6 +32,49 @@ class BookExportController {
         $activitiesStmt = $activityModel->readAllByYear($year);
         $activities = $activitiesStmt->fetchAll(PDO::FETCH_ASSOC);
 
+        // Cargar páginas reales del libro
+        require_once __DIR__ . '/../Models/BookPage.php';
+        $bookPageModel = new BookPage($this->db);
+        $book_id = $year; // Ajusta si el id del libro es diferente
+        $bookPages = $bookPageModel->getAllByBook($book_id);
+
+        // Preparar bloques iniciales para el editor
+        $editorBlocks = [];
+        // Portada
+        $editorBlocks[] = [
+            'id' => 'cover',
+            'content' => 'Portada',
+            'position' => 'full',
+            'type' => 'cover'
+        ];
+        // Actividades
+        foreach ($activities as $activity) {
+            $editorBlocks[] = [
+                'id' => 'activity_' . $activity['id'],
+                'content' => $activity['title'],
+                'position' => 'full',
+                'type' => 'activity',
+                'image_url' => $activity['image_url'] ?? null
+            ];
+        }
+        // Donaciones pagadas / anuncios
+        foreach ($ads as $ad) {
+            if ($ad['paid'] ?? true) { // Ajusta el campo si es necesario
+                $editorBlocks[] = [
+                    'id' => 'ad_' . $ad['id'],
+                    'content' => $ad['donor_name'],
+                    'position' => 'full',
+                    'type' => 'ad',
+                    'image_url' => $ad['image_url'] ?? null
+                ];
+            }
+        }
+
+        // Si hay páginas guardadas, úsalas como orden inicial
+        if (!empty($bookPages)) {
+            $editorBlocks = $bookPages;
+        }
+
         require __DIR__ . '/../Views/book/export.php';
     }
 

@@ -152,7 +152,7 @@
     }
 </style>
 <script>
-window.bookPages = <?php echo json_encode($bookPages ?? []); ?>;
+window.bookPages = <?php echo json_encode($editorBlocks ?? []); ?>;
 </script>
 <script src="/js/book_pages_editor.js"></script>
     <div style="padding: 1.5rem; border-bottom: 1px solid var(--border-light);">
