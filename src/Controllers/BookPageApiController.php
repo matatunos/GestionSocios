@@ -63,6 +63,10 @@ class BookPageApiController {
             $bookVersionModel = new BookVersion($this->db);
             $version_id = $bookVersionModel->create($book_id, $data['version_name'] ?? 'Versión automática', $_SESSION['user_id'] ?? 1);
         }
+        // Actualizar el book_id en cada página
+        foreach ($pages as $idx => $page) {
+            $pages[$idx]['book_id'] = $book_id;
+        }
         $bookPageModel = new BookPage($this->db);
         $bookPageModel->savePages($version_id, $pages);
         echo json_encode(['success' => true]);
