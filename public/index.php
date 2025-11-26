@@ -78,14 +78,20 @@ switch ($page) {
         break;
     case 'login':
         $controller = new AuthController();
-        if ($action === 'login') $controller->login();
-        case 'book_page_api':
-            require_once __DIR__ . '/../src/Controllers/BookPageApiController.php';
-            $controller = new BookPageApiController();
-            if ($action === 'savePages') $controller->savePages();
-            break;
-        else if ($action === 'logout') $controller->logout();
-        else $controller->showLogin();
+        if ($action === 'login') {
+            $controller->login();
+        } else if ($action === 'logout') {
+            $controller->logout();
+        } else {
+            $controller->showLogin();
+        }
+        break;
+    case 'book_page_api':
+        require_once __DIR__ . '/../src/Controllers/BookPageApiController.php';
+        $controller = new BookPageApiController();
+        if ($action === 'savePages') {
+            $controller->savePages();
+        }
         break;
     case 'dashboard':
         $controller = new DashboardController();
