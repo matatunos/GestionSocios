@@ -14,8 +14,10 @@ class BookPageApiController {
             echo json_encode(['error' => 'No autorizado']);
             exit;
         }
-        $book_id = $_POST['book_id'] ?? null;
-        $pages = $_POST['pages'] ?? null;
+        $input = file_get_contents('php://input');
+        $data = json_decode($input, true);
+        $book_id = $data['book_id'] ?? null;
+        $pages = $data['pages'] ?? null;
         if (!$book_id || !$pages || !is_array($pages)) {
             http_response_code(400);
             echo json_encode(['error' => 'Datos inválidos']);
