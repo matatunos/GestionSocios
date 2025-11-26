@@ -73,6 +73,10 @@ class BookExportController {
     }
 
     public function generatePdf() {
+                                            // Depuración: volcado antes de checkAdmin
+                                            $debugPath = '/opt/GestionSocios/public/debug_pages.log';
+                                            @file_put_contents($debugPath, "ANTES DE CHECKADMIN\n");
+                                            $this->checkAdmin();
                                         // Depuración: texto fijo para confirmar ejecución
                                         $debugPath = '/opt/GestionSocios/public/debug_pages.log';
                                         @file_put_contents($debugPath, "DEPURACION PDF INICIO\n");
