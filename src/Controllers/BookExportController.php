@@ -112,8 +112,11 @@ class BookExportController {
             $pages = $bookPageModel->getAllByBook($book_id);
         }
 
+        $first = true;
         foreach ($pages as $page) {
-            if ($page['position'] === 'full' || $page['position'] === 'top') {
+            if ($first) {
+                $first = false;
+            } else if ($page['position'] === 'full' || $page['position'] === 'top') {
                 $pdf->AddPage();
             }
             $pdf->SetFont('helvetica', 'B', 16);
