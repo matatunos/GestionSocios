@@ -5,7 +5,12 @@
         <h1><i class="fas fa-file-pdf" style="color: var(--text-muted); margin-right: 0.5rem;"></i> Maquetación y Exportación <?php echo $year; ?></h1>
         <p style="color: var(--text-muted); margin-top: 0.5rem;">Organiza el contenido y genera el PDF para imprenta</p>
     </div>
+<<<<<<< HEAD
     <div style="display: flex; gap: 1rem; align-items: center;">
+=======
+    
+    <div>
+>>>>>>> 080e6c6929499a75caee3baefc568c3193113258
         <form action="index.php" method="GET" style="display: inline-flex; align-items: center;">
             <input type="hidden" name="page" value="book_export">
             <select name="year" onchange="this.form.submit()" class="form-select">
@@ -19,6 +24,7 @@
                 <?php endfor; ?>
             </select>
         </form>
+<<<<<<< HEAD
         <!-- Selector de versión -->
         <form action="index.php" method="GET" style="display: inline-flex; align-items: center;">
             <input type="hidden" name="page" value="book_export">
@@ -32,6 +38,8 @@
             </select>
         </form>
         <button type="button" class="btn btn-secondary" onclick="crearNuevaVersion()" style="margin-left: 0.5rem;">Nueva versión</button>
+=======
+>>>>>>> 080e6c6929499a75caee3baefc568c3193113258
     </div>
 </div>
 
@@ -130,9 +138,12 @@
 <div class="card" style="margin: 2rem 0; padding: 1.5rem;">
     <h3 style="margin-top:0;">Editor de páginas del libro</h3>
     <div id="book-pages-list" style="margin-bottom: 1rem; min-height: 60px; background: #f8fafc; border: 1px dashed #bbb; padding: 1rem; border-radius: 8px;"></div>
+<<<<<<< HEAD
         <button onclick="savePages(<?php echo $book_id ?? 0; ?>)" class="btn btn-primary" style="margin-top: 1rem;">
             <i class="fas fa-save" style="margin-right:0.5rem;"></i> Guardar libro
         </button>
+=======
+>>>>>>> 080e6c6929499a75caee3baefc568c3193113258
     <button id="add-page-btn" class="btn btn-primary" type="button">Añadir página</button>
     <p style="color: var(--text-muted); margin-top: 1rem;">Arrastra los bloques para reordenar. Haz clic en ✏️ para editar o 🗑️ para eliminar.</p>
     <div style="color: #888; font-size: 0.95em; margin-top: 0.5rem;">Si no ves bloques, añade una página o revisa que existan páginas en el libro.</div>
@@ -168,6 +179,7 @@
 </style>
 <script>
 window.bookPages = <?php echo json_encode($editorBlocks ?? []); ?>;
+<<<<<<< HEAD
 window.bookVersions = <?php echo json_encode($bookVersions ?? []); ?>;
 window.versionId = <?php echo json_encode($version_id ?? 0); ?>;
 function crearNuevaVersion() {
@@ -189,6 +201,8 @@ function crearNuevaVersion() {
     })
     .catch(() => alert('Error de red al crear versión'));
 }
+=======
+>>>>>>> 080e6c6929499a75caee3baefc568c3193113258
 </script>
 <script src="/js/book_pages_editor.js"></script>
     <div style="padding: 1.5rem; border-bottom: 1px solid var(--border-light);">

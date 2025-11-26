@@ -56,7 +56,6 @@ CREATE TABLE IF NOT EXISTS member_categories (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabla de socios
 CREATE TABLE IF NOT EXISTS members (
     id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(100) NOT NULL,
@@ -71,18 +70,7 @@ CREATE TABLE IF NOT EXISTS members (
     status ENUM('active', 'inactive') DEFAULT 'active',
     photo_url VARCHAR(255) DEFAULT NULL,
     join_date DATE DEFAULT NULL,
-    deactivated_at DATETIME DEFAULT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (category_id) REFERENCES member_categories(id) ON DELETE SET NULL,
-    UNIQUE KEY unique_email (email)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Tabla de cuotas anuales
-CREATE TABLE IF NOT EXISTS annual_fees (
-    year INT PRIMARY KEY,
     amount DECIMAL(10, 2) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabla de historial de cuotas por categoría
@@ -148,7 +136,6 @@ CREATE TABLE IF NOT EXISTS book_ads (
     CONSTRAINT fk_book_ads_donor FOREIGN KEY (donor_id) REFERENCES donors(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabla de precios de anuncios
 CREATE TABLE IF NOT EXISTS ad_prices (
     id INT AUTO_INCREMENT PRIMARY KEY,
     year YEAR NOT NULL,
@@ -162,45 +149,9 @@ CREATE TABLE IF NOT EXISTS ad_prices (
 -- Tabla de pagos
 CREATE TABLE IF NOT EXISTS payments (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    member_id INT NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,
-    payment_date DATE NOT NULL,
-    concept VARCHAR(255) NOT NULL,
-    status ENUM('paid', 'pending') DEFAULT 'paid',
-    fee_year INT DEFAULT NULL,
-    payment_type ENUM('fee', 'event', 'donation') DEFAULT 'fee',
-    event_id INT DEFAULT NULL,
-    book_ad_id INT DEFAULT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE,
-    FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE SET NULL,
-    CONSTRAINT fk_payments_book_ad FOREIGN KEY (book_ad_id) REFERENCES book_ads(id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Tabla de donaciones
-CREATE TABLE IF NOT EXISTS donations (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    donor_id INT NOT NULL,
-    amount DECIMAL(10,2) NOT NULL,
-    type ENUM('media','full','cover','back_cover') NOT NULL,
-    year YEAR NOT NULL,
-    donation_date DATE DEFAULT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (donor_id) REFERENCES donors(id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Tabla de categorías de gastos
-CREATE TABLE IF NOT EXISTS expense_categories (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    description TEXT,
     color VARCHAR(30),
     is_active TINYINT(1) DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Tabla de gastos
-CREATE TABLE IF NOT EXISTS expenses (
-    id INT AUTO_INCREMENT PRIMARY KEY,
     category_id INT DEFAULT NULL,
     description TEXT,
     amount DECIMAL(10,2) NOT NULL,
@@ -212,17 +163,8 @@ CREATE TABLE IF NOT EXISTS expenses (
     receipt_file VARCHAR(255),
     created_by INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (category_id) REFERENCES expense_categories(id) ON DELETE SET NULL,
     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Tabla de notificaciones
-CREATE TABLE IF NOT EXISTS notifications (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    title VARCHAR(255) NOT NULL,
-    message TEXT NOT NULL,
-    type VARCHAR(50) DEFAULT NULL,
     link VARCHAR(255) DEFAULT NULL,
     is_read TINYINT(1) DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -266,7 +208,6 @@ CREATE TABLE IF NOT EXISTS conversation_participants (
     FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabla de documentos
 CREATE TABLE IF NOT EXISTS documents (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
@@ -275,7 +216,6 @@ CREATE TABLE IF NOT EXISTS documents (
     file_path VARCHAR(500) NOT NULL,
     file_size INT NOT NULL COMMENT 'Tamaño en bytes',
     file_type VARCHAR(100) NOT NULL COMMENT 'MIME type',
-    category VARCHAR(50) DEFAULT 'general' COMMENT 'general, actas, estatutos, facturas, otros',
     uploaded_by INT NOT NULL,
     is_public BOOLEAN DEFAULT TRUE COMMENT 'Si es visible para todos los socios',
     downloads INT DEFAULT 0,
@@ -289,14 +229,6 @@ CREATE TABLE IF NOT EXISTS document_permissions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     document_id INT NOT NULL,
     member_id INT NOT NULL,
-    can_view BOOLEAN DEFAULT TRUE,
-    can_download BOOLEAN DEFAULT TRUE,
-    granted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    granted_by INT NOT NULL,
-    FOREIGN KEY (document_id) REFERENCES documents(id) ON DELETE CASCADE,
-    FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE,
-    FOREIGN KEY (granted_by) REFERENCES users(id) ON DELETE CASCADE,
-    UNIQUE KEY unique_permission (document_id, member_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Índice para permisos de documentos
@@ -437,9 +369,6 @@ CREATE TABLE IF NOT EXISTS task_comments (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ALTER TABLE payments MODIFY payment_type VARCHAR(20);
 ALTER TABLE payments MODIFY payment_date DATE NULL;
-ALTER TABLE tasks ADD COLUMN completed_at DATETIME DEFAULT NULL AFTER status;
-ALTER TABLE tasks ADD COLUMN completed_by INT DEFAULT NULL AFTER completed_at;
-ALTER TABLE tasks ADD CONSTRAINT fk_tasks_completed_by FOREIGN KEY (completed_by) REFERENCES users(id) ON DELETE SET NULL;
 
 -- Migración: Añadir columnas is_current y replaced_at a las tablas de historial de imágenes
 -- Fecha: 2025-11-26
