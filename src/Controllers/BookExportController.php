@@ -73,6 +73,11 @@ class BookExportController {
     }
 
     public function generatePdf() {
+                                                // Depuración visual: mostrar contenido de $pages en la primera página del PDF
+                                                $pdf->SetFont('courier', '', 8);
+                                                $debugText = print_r($pages, true);
+                                                $pdf->MultiCell(0, 100, "DEBUG pages:\n" . $debugText, 0, 'L');
+                                                $pdf->SetFont('helvetica', 'B', 16);
                                             // Depuración: volcado antes de checkAdmin
                                             $debugPath = '/opt/GestionSocios/public/debug_pages.log';
                                             @file_put_contents($debugPath, "ANTES DE CHECKADMIN\n");
@@ -143,6 +148,12 @@ class BookExportController {
         $pdf->Cell(0, 20, 'Libro de Fiestas', 0, 1, 'C');
         $pdf->SetFont('helvetica', '', 24);
         $pdf->Cell(0, 15, $year, 0, 1, 'C');
+
+            // Depuración visual: mostrar contenido de $pages en la primera página del PDF
+            $pdf->SetFont('courier', '', 8);
+            $debugText = print_r($pages, true);
+            $pdf->MultiCell(0, 100, "DEBUG pages:\n" . $debugText, 0, 'L');
+            $pdf->SetFont('helvetica', 'B', 16);
 
         require_once __DIR__ . '/../Models/BookPage.php';
         $bookPageModel = new BookPage($this->db);
