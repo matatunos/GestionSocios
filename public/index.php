@@ -141,13 +141,35 @@ switch ($page) {
         else $controller->index();
         break;
     case 'book':
-        $controller = new BookAdController();
+        if ($action === 'dashboard') {
+            require_once __DIR__ . '/../src/Controllers/BookDashboardController.php';
+            $controller = new BookDashboardController();
+            $controller->index();
+        } else {
+            $controller = new BookAdController();
+            if ($action === 'create') $controller->create();
+            else if ($action === 'store') $controller->store();
+            else if ($action === 'edit') $controller->edit($_GET['id']);
+            else if ($action === 'update') $controller->update($_GET['id']);
+            else if ($action === 'markPaid') $controller->markPaid($_GET['id']);
+            else if ($action === 'delete') $controller->delete($_GET['id']);
+            else $controller->index();
+        }
+        break;
+    case 'book_activities':
+        require_once __DIR__ . '/../src/Controllers/BookActivityController.php';
+        $controller = new BookActivityController();
         if ($action === 'create') $controller->create();
         else if ($action === 'store') $controller->store();
         else if ($action === 'edit') $controller->edit($_GET['id']);
         else if ($action === 'update') $controller->update($_GET['id']);
-        else if ($action === 'markPaid') $controller->markPaid($_GET['id']);
         else if ($action === 'delete') $controller->delete($_GET['id']);
+        else $controller->index();
+        break;
+    case 'book_export':
+        require_once __DIR__ . '/../src/Controllers/BookExportController.php';
+        $controller = new BookExportController();
+        if ($action === 'generatePdf') $controller->generatePdf();
         else $controller->index();
         break;
     case 'member_categories':
