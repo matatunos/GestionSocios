@@ -1,15 +1,15 @@
 <?php ob_start(); ?>
 
-<div class="mb-6">
-    <a href="index.php?page=book_activities&year=<?php echo $activity->year; ?>" class="btn btn-sm btn-secondary mb-4">
+<div style="margin-bottom: 1.5rem;">
+    <a href="index.php?page=book_activities&year=<?php echo $activity->year; ?>" class="btn btn-sm btn-secondary" style="margin-bottom: 1rem;">
         <i class="fas fa-arrow-left"></i> Volver al listado
     </a>
-    <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Editar Actividad</h1>
+    <h1>Editar Actividad</h1>
 </div>
 
-<div class="card max-w-2xl">
+<div class="card" style="max-width: 800px;">
     <?php if (isset($error)): ?>
-        <div class="alert alert-error mb-4">
+        <div class="alert alert-error" style="margin-bottom: 1.5rem;">
             <i class="fas fa-exclamation-circle"></i> <?php echo $error; ?>
         </div>
     <?php endif; ?>
@@ -17,17 +17,17 @@
     <form method="POST" action="index.php?page=book_activities&action=update&id=<?php echo $activity->id; ?>" enctype="multipart/form-data">
         <input type="hidden" name="year" value="<?php echo $activity->year; ?>">
 
-        <div class="form-group mb-4">
-            <label class="form-label">Título <span class="text-red-500">*</span></label>
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label class="form-label">Título <span style="color: var(--danger-600);">*</span></label>
             <input type="text" name="title" class="form-control" required value="<?php echo htmlspecialchars($activity->title); ?>">
         </div>
 
-        <div class="form-group mb-4">
+        <div class="form-group" style="margin-bottom: 1.5rem;">
             <label class="form-label">Descripción</label>
             <textarea name="description" class="form-control" rows="4"><?php echo htmlspecialchars($activity->description); ?></textarea>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
             <div class="form-group">
                 <label class="form-label">Número de Página</label>
                 <input type="number" name="page_number" class="form-control" value="<?php echo $activity->page_number; ?>">
@@ -35,40 +35,40 @@
             <div class="form-group">
                 <label class="form-label">Orden de Visualización</label>
                 <input type="number" name="display_order" class="form-control" value="<?php echo $activity->display_order; ?>">
-                <small class="text-gray-500 text-xs">Menor número aparece primero</small>
+                <small style="color: var(--text-muted); font-size: 0.75rem;">Menor número aparece primero</small>
             </div>
         </div>
 
-        <div class="form-group mb-6">
+        <div class="form-group" style="margin-bottom: 1.5rem;">
             <label class="form-label">Imagen / Foto</label>
             
             <?php if ($activity->image_url): ?>
-                <div class="mb-4">
-                    <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Imagen Actual:</p>
-                    <img src="<?php echo htmlspecialchars($activity->image_url); ?>" alt="Current Image" class="h-48 w-auto rounded-lg shadow-sm object-cover border border-gray-200 dark:border-gray-600">
+                <div style="margin-bottom: 1rem;">
+                    <p style="font-size: 0.875rem; font-weight: 500; color: var(--text-main); margin-bottom: 0.5rem;">Imagen Actual:</p>
+                    <img src="<?php echo htmlspecialchars($activity->image_url); ?>" alt="Current Image" style="max-height: 200px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: 1px solid var(--border-light);">
                 </div>
             <?php endif; ?>
 
-            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-lg hover:border-indigo-500 transition-colors">
-                <div class="space-y-1 text-center">
-                    <i class="fas fa-image text-4xl text-gray-400 mb-2"></i>
-                    <div class="flex text-sm text-gray-600 dark:text-gray-400">
-                        <label for="image-upload" class="relative cursor-pointer bg-white dark:bg-gray-800 rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none">
+            <div style="margin-top: 0.5rem; display: flex; justify-content: center; padding: 2rem; border: 2px dashed var(--border-light); border-radius: 8px; background: var(--bg-glass);">
+                <div style="text-align: center;">
+                    <i class="fas fa-image" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+                    <div style="font-size: 0.875rem; color: var(--text-main);">
+                        <label for="image-upload" style="cursor: pointer; color: var(--primary-600); font-weight: 500;">
                             <span>Cambiar imagen</span>
-                            <input id="image-upload" name="image" type="file" class="sr-only" accept="image/*" onchange="previewImage(this)">
+                            <input id="image-upload" name="image" type="file" style="display: none;" accept="image/*" onchange="previewImage(this)">
                         </label>
-                        <p class="pl-1">o arrastrar y soltar</p>
+                        <span style="color: var(--text-muted);"> o arrastrar y soltar</span>
                     </div>
-                    <p class="text-xs text-gray-500">PNG, JPG, GIF hasta 5MB</p>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">PNG, JPG, GIF hasta 5MB</p>
                 </div>
             </div>
-            <div id="image-preview" class="mt-4 hidden">
-                <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Vista previa nueva imagen:</p>
-                <img src="" alt="Preview" class="h-48 w-auto rounded-lg shadow-sm object-cover">
+            <div id="image-preview" style="margin-top: 1rem; display: none;">
+                <p style="font-size: 0.875rem; font-weight: 500; color: var(--text-main); margin-bottom: 0.5rem;">Vista previa nueva imagen:</p>
+                <img src="" alt="Preview" style="max-height: 200px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
             </div>
         </div>
 
-        <div class="flex justify-end gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
+        <div style="display: flex; justify-content: flex-end; gap: 0.5rem; padding-top: 1rem; border-top: 1px solid var(--border-light);">
             <a href="index.php?page=book_activities&year=<?php echo $activity->year; ?>" class="btn btn-secondary">Cancelar</a>
             <button type="submit" class="btn btn-primary">
                 <i class="fas fa-save"></i> Actualizar Actividad
@@ -87,12 +87,12 @@ function previewImage(input) {
         
         reader.onload = function(e) {
             img.src = e.target.result;
-            preview.classList.remove('hidden');
+            preview.style.display = 'block';
         }
         
         reader.readAsDataURL(input.files[0]);
     } else {
-        preview.classList.add('hidden');
+        preview.style.display = 'none';
     }
 }
 </script>

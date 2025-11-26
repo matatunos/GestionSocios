@@ -1,17 +1,15 @@
 <?php ob_start(); ?>
 
-<div class="flex justify-between items-center mb-6">
+<div class="flex justify-between items-center mb-4">
     <div>
-        <h1 class="text-2xl font-bold text-gray-800 dark:text-white">
-            <i class="fas fa-calendar-day mr-2 text-purple-600"></i> Actividades Libro <?php echo $year; ?>
-        </h1>
-        <p class="text-gray-600 dark:text-gray-400 mt-1">Gestión de contenidos, saludas y programa</p>
+        <h1><i class="fas fa-calendar-day" style="color: #a855f7; margin-right: 0.5rem;"></i> Actividades Libro <?php echo $year; ?></h1>
+        <p style="color: var(--text-muted); margin-top: 0.5rem;">Gestión de contenidos, saludas y programa</p>
     </div>
     
-    <div class="flex gap-2">
-        <form action="index.php" method="GET" class="flex items-center gap-2">
+    <div style="display: flex; gap: 0.5rem;">
+        <form action="index.php" method="GET" style="display: inline-flex; align-items: center;">
             <input type="hidden" name="page" value="book_activities">
-            <select name="year" onchange="this.form.submit()" class="form-select rounded-lg border-gray-300">
+            <select name="year" onchange="this.form.submit()" class="form-select">
                 <?php 
                 $currentYear = date('Y');
                 for($y = $currentYear + 1; $y >= $currentYear - 5; $y--): 
@@ -30,7 +28,7 @@
 </div>
 
 <?php if (isset($_GET['msg'])): ?>
-    <div class="alert alert-success mb-4">
+    <div class="alert alert-success" style="margin-bottom: 1.5rem;">
         <i class="fas fa-check-circle"></i>
         <?php 
         if ($_GET['msg'] == 'created') echo 'Actividad creada correctamente.';
@@ -40,75 +38,74 @@
     </div>
 <?php endif; ?>
 
-<div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-    <div class="overflow-x-auto">
-        <table class="w-full text-sm text-left">
-            <thead class="bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 font-medium">
+<div class="card" style="padding: 0; overflow: hidden;">
+    <div class="table-container" style="border: none; border-radius: 0;">
+        <table class="table">
+            <thead>
                 <tr>
-                    <th class="px-6 py-3 w-16">Orden</th>
-                    <th class="px-6 py-3 w-24">Imagen</th>
-                    <th class="px-6 py-3">Título / Descripción</th>
-                    <th class="px-6 py-3 w-24">Página</th>
-                    <th class="px-6 py-3 w-32 text-right">Acciones</th>
+                    <th style="width: 80px;">Orden</th>
+                    <th style="width: 100px;">Imagen</th>
+                    <th>Título / Descripción</th>
+                    <th style="width: 100px;">Página</th>
+                    <th style="width: 120px; text-align: right;">Acciones</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+            <tbody>
                 <?php if (empty($activities)): ?>
                     <tr>
-                        <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                        <td colspan="5" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                            <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 1rem; display: block; opacity: 0.3;"></i>
                             No hay actividades registradas para este año.
-                            <br>
-                            <a href="index.php?page=book_activities&action=create&year=<?php echo $year; ?>" class="text-indigo-600 hover:underline mt-2 inline-block">
-                                Crear la primera actividad
+                            <br><br>
+                            <a href="index.php?page=book_activities&action=create&year=<?php echo $year; ?>" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus"></i> Crear la primera actividad
                             </a>
                         </td>
                     </tr>
                 <?php else: ?>
                     <?php foreach ($activities as $activity): ?>
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors group">
-                            <td class="px-6 py-4 text-gray-500">
-                                <span class="font-mono bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+                        <tr>
+                            <td>
+                                <span class="badge badge-secondary" style="font-family: monospace;">
                                     <?php echo $activity['display_order']; ?>
                                 </span>
                             </td>
-                            <td class="px-6 py-4">
+                            <td>
                                 <?php if ($activity['image_url']): ?>
                                     <img src="<?php echo htmlspecialchars($activity['image_url']); ?>" 
                                          alt="Imagen" 
-                                         class="h-12 w-12 object-cover rounded-lg border border-gray-200 dark:border-gray-600">
+                                         style="height: 48px; width: 48px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-light);">
                                 <?php else: ?>
-                                    <div class="h-12 w-12 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center text-gray-400">
+                                    <div style="height: 48px; width: 48px; background: var(--bg-glass); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--text-muted);">
                                         <i class="fas fa-image"></i>
                                     </div>
                                 <?php endif; ?>
                             </td>
-                            <td class="px-6 py-4">
-                                <div class="font-medium text-gray-900 dark:text-white">
+                            <td>
+                                <div style="font-weight: 500; color: var(--text-main);">
                                     <?php echo htmlspecialchars($activity['title']); ?>
                                 </div>
                                 <?php if ($activity['description']): ?>
-                                    <div class="text-xs text-gray-500 mt-1 line-clamp-2">
+                                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; max-width: 500px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                         <?php echo htmlspecialchars($activity['description']); ?>
                                     </div>
                                 <?php endif; ?>
                             </td>
-                            <td class="px-6 py-4 text-gray-500">
+                            <td style="color: var(--text-muted);">
                                 <?php echo $activity['page_number'] ? 'Pág. ' . $activity['page_number'] : '-'; ?>
                             </td>
-                            <td class="px-6 py-4 text-right">
-                                <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <a href="index.php?page=book_activities&action=edit&id=<?php echo $activity['id']; ?>" 
-                                       class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                                       title="Editar">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="index.php?page=book_activities&action=delete&id=<?php echo $activity['id']; ?>" 
-                                       class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                       onclick="return confirm('¿Estás seguro de eliminar esta actividad?')"
-                                       title="Eliminar">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
-                                </div>
+                            <td style="text-align: right;">
+                                <a href="index.php?page=book_activities&action=edit&id=<?php echo $activity['id']; ?>" 
+                                   class="btn btn-sm btn-secondary"
+                                   title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="index.php?page=book_activities&action=delete&id=<?php echo $activity['id']; ?>" 
+                                   class="btn btn-sm btn-danger"
+                                   onclick="return confirm('¿Estás seguro de eliminar esta actividad?')"
+                                   title="Eliminar">
+                                    <i class="fas fa-trash"></i>
+                                </a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
