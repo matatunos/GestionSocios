@@ -222,7 +222,7 @@ class BookExportController {
                 }
             }
 
-            require_once __DIR__ . '/../Models/AuditLog.php';
+            require_once __DIR__ . '/../Helpers/AuditLog.php';
             AuditLog::log('export_pdf', 'book', $year, null, ['year' => $year]);
 
             $pdf->Output('libro_fiestas_' . $year . '.pdf', 'D');
