@@ -8,6 +8,7 @@ class BookActivityController {
         $database = new Database();
         $this->db = $database->getConnection();
         require_once __DIR__ . '/../Models/BookActivity.php';
+        require_once __DIR__ . '/../Helpers/AuditLog.php';
         $this->bookActivity = new BookActivity($this->db);
     }
 
@@ -59,6 +60,15 @@ class BookActivityController {
             }
 
             if ($this->bookActivity->create()) {
+                $activityId = $this->db->lastInsertId();
+                AuditLog::logCreate('book_activity', $activityId, [
+                    'year' => $this->bookActivity->year,
+                    'title' => $this->bookActivity->title,
+                    'description' => $this->bookActivity->description,
+                    'page_number' => $this->bookActivity->page_number,
+                    'display_order' => $this->bookActivity->display_order,
+                    'image_url' => $this->bookActivity->image_url
+                ]);
                 header('Location: index.php?page=book_activities&year=' . $_POST['year'] . '&msg=created');
             } else {
                 $error = "Error creando actividad.";
@@ -84,6 +94,16 @@ class BookActivityController {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->bookActivity->id = $id;
             $this->bookActivity->readOne(); // Load existing data (especially image)
+            
+            // Store old values for audit
+            $oldValues = [
+                'year' => $this->bookActivity->year,
+                'title' => $this->bookActivity->title,
+                'description' => $this->bookActivity->description,
+                'page_number' => $this->bookActivity->page_number,
+                'display_order' => $this->bookActivity->display_order,
+                'image_url' => $this->bookActivity->image_url
+            ];
             
             $this->bookActivity->year = $_POST['year'];
             $this->bookActivity->title = $_POST['title'];
@@ -112,6 +132,14 @@ class BookActivityController {
             }
 
             if ($this->bookActivity->update()) {
+                AuditLog::logUpdate('book_activity', $id, $oldValues, [
+                    'year' => $this->bookActivity->year,
+                    'title' => $this->bookActivity->title,
+                    'description' => $this->bookActivity->description,
+                    'page_number' => $this->bookActivity->page_number,
+                    'display_order' => $this->bookActivity->display_order,
+                    'image_url' => $this->bookActivity->image_url
+                ]);
                 header('Location: index.php?page=book_activities&year=' . $_POST['year'] . '&msg=updated');
             } else {
                 $error = "Error actualizando actividad.";
@@ -126,7 +154,16 @@ class BookActivityController {
         $this->bookActivity->id = $id;
         if ($this->bookActivity->readOne()) {
             $year = $this->bookActivity->year;
+            $deletedData = [
+                'year' => $this->bookActivity->year,
+                'title' => $this->bookActivity->title,
+                'description' => $this->bookActivity->description,
+                'page_number' => $this->bookActivity->page_number,
+                'display_order' => $this->bookActivity->display_order,
+                'image_url' => $this->bookActivity->image_url
+            ];
             if ($this->bookActivity->delete()) {
+                AuditLog::logDelete('book_activity', $id, $deletedData);
                 header('Location: index.php?page=book_activities&year=' . $year . '&msg=deleted');
                 exit;
             }

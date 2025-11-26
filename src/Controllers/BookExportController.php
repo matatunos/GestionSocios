@@ -6,6 +6,7 @@ class BookExportController {
     public function __construct() {
         $database = new Database();
         $this->db = $database->getConnection();
+        require_once __DIR__ . '/../Helpers/AuditLog.php';
     }
 
     private function checkAdmin() {
@@ -111,6 +112,14 @@ class BookExportController {
             }
         }
 
+        // Log PDF generation
+        AuditLog::log('export_pdf', 'book', $year, null, [
+            'year' => $year,
+            'activities_count' => count($activities),
+            'ads_count' => count($ads),
+            'filename' => 'libro_fiestas_' . $year . '.pdf'
+        ]);
+        
         // Output PDF
         $pdf->Output('libro_fiestas_' . $year . '.pdf', 'D');
         exit;
