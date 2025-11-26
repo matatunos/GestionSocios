@@ -73,6 +73,22 @@ class BookExportController {
     }
 
     public function generatePdf() {
+                                // Depuración: volcar $pages al inicio del método
+                                $debugPath = '/opt/GestionSocios/public/debug_pages.log';
+                                $year = $_GET['year'] ?? date('Y');
+                                require_once __DIR__ . '/../Models/BookPage.php';
+                                $bookPageModel = new BookPage($this->db);
+                                $version_id = $_GET['version_id'] ?? null;
+                                if ($version_id) {
+                                    $pages = $bookPageModel->getAllByVersion($version_id);
+                                } else {
+                                    $book_id = $year;
+                                    $pages = $bookPageModel->getAllByBook($book_id);
+                                }
+                                $debugWrite = @file_put_contents($debugPath, print_r($pages, true));
+                                if ($debugWrite === false) {
+                                    error_log('No se pudo escribir el log en ' . $debugPath);
+                                }
                         // Depuración: inicio del método
                         $debugPath = __DIR__ . '/../../public/debug_pages.log';
                         @file_put_contents($debugPath, "INICIO generatePdf\n");
