@@ -7,22 +7,23 @@ class BookPage {
     }
 
 
-    public function getAllByBook($book_id) {
-        $stmt = $this->db->prepare("SELECT * FROM book_pages WHERE book_id = :book_id ORDER BY page_number ASC, position ASC");
-        $stmt->bindParam(':book_id', $book_id);
+    public function getAllByVersion($version_id) {
+        $stmt = $this->db->prepare("SELECT * FROM book_pages WHERE version_id = :version_id ORDER BY page_number ASC, position ASC");
+        $stmt->bindParam(':version_id', $version_id);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function savePages($book_id, $pages) {
-        // Elimina las páginas actuales
-        $stmt = $this->db->prepare("DELETE FROM book_pages WHERE book_id = :book_id");
-        $stmt->bindParam(':book_id', $book_id);
+    public function savePages($version_id, $pages) {
+        // Elimina las páginas actuales de la versión
+        $stmt = $this->db->prepare("DELETE FROM book_pages WHERE version_id = :version_id");
+        $stmt->bindParam(':version_id', $version_id);
         $stmt->execute();
         // Inserta las nuevas páginas
-        $insert = $this->db->prepare("INSERT INTO book_pages (book_id, page_number, content, position) VALUES (:book_id, :page_number, :content, :position)");
+        $insert = $this->db->prepare("INSERT INTO book_pages (version_id, book_id, page_number, content, position) VALUES (:version_id, :book_id, :page_number, :content, :position)");
         foreach ($pages as $idx => $page) {
-            $insert->bindParam(':book_id', $book_id);
+            $insert->bindParam(':version_id', $version_id);
+            $insert->bindValue(':book_id', $page['book_id'] ?? 0);
             $insert->bindValue(':page_number', $page['page_number'] ?? ($idx + 1));
             $insert->bindValue(':content', $page['content']);
             $insert->bindValue(':position', $page['position'] ?? 'full');

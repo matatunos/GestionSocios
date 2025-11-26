@@ -5,8 +5,7 @@
         <h1><i class="fas fa-file-pdf" style="color: var(--text-muted); margin-right: 0.5rem;"></i> Maquetación y Exportación <?php echo $year; ?></h1>
         <p style="color: var(--text-muted); margin-top: 0.5rem;">Organiza el contenido y genera el PDF para imprenta</p>
     </div>
-    
-    <div>
+    <div style="display: flex; gap: 1rem; align-items: center;">
         <form action="index.php" method="GET" style="display: inline-flex; align-items: center;">
             <input type="hidden" name="page" value="book_export">
             <select name="year" onchange="this.form.submit()" class="form-select">
@@ -20,6 +19,19 @@
                 <?php endfor; ?>
             </select>
         </form>
+        <!-- Selector de versión -->
+        <form action="index.php" method="GET" style="display: inline-flex; align-items: center;">
+            <input type="hidden" name="page" value="book_export">
+            <input type="hidden" name="year" value="<?php echo $year; ?>">
+            <select name="version_id" onchange="this.form.submit()" class="form-select">
+                <?php foreach (($bookVersions ?? []) as $v): ?>
+                    <option value="<?php echo $v['id']; ?>" <?php echo ($v['id'] == ($version_id ?? 0)) ? 'selected' : ''; ?>>
+                        <?php echo htmlspecialchars($v['name']); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </form>
+        <button type="button" class="btn btn-secondary" onclick="crearNuevaVersion()" style="margin-left: 0.5rem;">Nueva versión</button>
     </div>
 </div>
 
@@ -118,6 +130,9 @@
 <div class="card" style="margin: 2rem 0; padding: 1.5rem;">
     <h3 style="margin-top:0;">Editor de páginas del libro</h3>
     <div id="book-pages-list" style="margin-bottom: 1rem; min-height: 60px; background: #f8fafc; border: 1px dashed #bbb; padding: 1rem; border-radius: 8px;"></div>
+        <button onclick="savePages(<?php echo $book_id ?? 0; ?>)" class="btn btn-primary" style="margin-top: 1rem;">
+            <i class="fas fa-save" style="margin-right:0.5rem;"></i> Guardar libro
+        </button>
     <button id="add-page-btn" class="btn btn-primary" type="button">Añadir página</button>
     <p style="color: var(--text-muted); margin-top: 1rem;">Arrastra los bloques para reordenar. Haz clic en ✏️ para editar o 🗑️ para eliminar.</p>
     <div style="color: #888; font-size: 0.95em; margin-top: 0.5rem;">Si no ves bloques, añade una página o revisa que existan páginas en el libro.</div>
@@ -153,6 +168,27 @@
 </style>
 <script>
 window.bookPages = <?php echo json_encode($editorBlocks ?? []); ?>;
+window.bookVersions = <?php echo json_encode($bookVersions ?? []); ?>;
+window.versionId = <?php echo json_encode($version_id ?? 0); ?>;
+function crearNuevaVersion() {
+    var nombre = prompt('Nombre de la nueva versión:');
+    if (!nombre) return;
+    // Aquí deberías hacer una petición AJAX para crear la versión y recargar la página
+    fetch('index.php?page=book_page_api&action=createVersion', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ book_id: <?php echo json_encode($book_id ?? 0); ?>, name: nombre })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success && data.version_id) {
+            window.location.href = 'index.php?page=book_export&year=<?php echo $year; ?>&version_id=' + data.version_id;
+        } else {
+            alert('Error al crear versión: ' + (data.error || 'Desconocido'));
+        }
+    })
+    .catch(() => alert('Error de red al crear versión'));
+}
 </script>
 <script src="/js/book_pages_editor.js"></script>
     <div style="padding: 1.5rem; border-bottom: 1px solid var(--border-light);">

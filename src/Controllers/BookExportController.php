@@ -19,6 +19,7 @@ class BookExportController {
     public function index() {
         $this->checkAdmin();
         $year = $_GET['year'] ?? date('Y');
+        $version_id = $_GET['version_id'] ?? null;
 
         // Get all ads for the year
         require_once __DIR__ . '/../Models/BookAd.php';
@@ -32,11 +33,19 @@ class BookExportController {
         $activitiesStmt = $activityModel->readAllByYear($year);
         $activities = $activitiesStmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // Cargar páginas reales del libro
+        // Cargar versiones del libro
+        require_once __DIR__ . '/../Models/BookVersion.php';
+        $bookVersionModel = new BookVersion($this->db);
+        $book_id = $year; // Ajusta si el id del libro es diferente
+        $bookVersions = $bookVersionModel->getAllByBook($book_id);
+
+        // Cargar páginas de la versión seleccionada
         require_once __DIR__ . '/../Models/BookPage.php';
         $bookPageModel = new BookPage($this->db);
-        $book_id = $year; // Ajusta si el id del libro es diferente
-        $bookPages = $bookPageModel->getAllByBook($book_id);
+        $bookPages = [];
+        if ($version_id) {
+            $bookPages = $bookPageModel->getAllByVersion($version_id);
+        }
 
         // Preparar bloques iniciales para el editor
         $editorBlocks = [];
@@ -59,7 +68,7 @@ class BookExportController {
         }
         // Donaciones pagadas / anuncios
         foreach ($ads as $ad) {
-            if ($ad['paid'] ?? true) { // Ajusta el campo si es necesario
+            if ($ad['paid'] ?? true) {
                 $editorBlocks[] = [
                     'id' => 'ad_' . $ad['id'],
                     'content' => $ad['donor_name'],
@@ -70,7 +79,7 @@ class BookExportController {
             }
         }
 
-        // Si hay páginas guardadas, úsalas como orden inicial
+        // Si hay páginas guardadas en la versión, úsalas como orden inicial
         if (!empty($bookPages)) {
             $editorBlocks = $bookPages;
         }
@@ -81,6 +90,7 @@ class BookExportController {
     public function generatePdf() {
         $this->checkAdmin();
         $year = $_GET['year'] ?? date('Y');
+        $version_id = $_GET['version_id'] ?? null;
 
         // Load TCPDF
         require_once __DIR__ . '/../../vendor/autoload.php';
@@ -121,11 +131,13 @@ class BookExportController {
         $pdf->SetFont('helvetica', '', 24);
         $pdf->Cell(0, 15, $year, 0, 1, 'C');
 
-        // Obtener páginas personalizadas del libro
+        // Obtener páginas personalizadas de la versión
         require_once __DIR__ . '/../Models/BookPage.php';
         $bookPageModel = new BookPage($this->db);
-        $book_id = $year; // Ajusta si el id del libro es diferente
-        $pages = $bookPageModel->getAllByBook($book_id);
+        $pages = [];
+        if ($version_id) {
+            $pages = $bookPageModel->getAllByVersion($version_id);
+        }
 
         foreach ($pages as $page) {
             // Nueva página si es completa o superior
@@ -153,13 +165,14 @@ class BookExportController {
         // Log PDF generation
         AuditLog::log('export_pdf', 'book', $year, null, [
             'year' => $year,
+            'version_id' => $version_id,
             'activities_count' => count($activities),
             'ads_count' => count($ads),
-            'filename' => 'libro_fiestas_' . $year . '.pdf'
+            'filename' => 'libro_fiestas_' . $year . '_v' . $version_id . '.pdf'
         ]);
         
         // Output PDF
-        $pdf->Output('libro_fiestas_' . $year . '.pdf', 'D');
+        $pdf->Output('libro_fiestas_' . $year . '_v' . $version_id . '.pdf', 'D');
         exit;
     }
 }
