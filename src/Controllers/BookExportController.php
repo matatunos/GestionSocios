@@ -237,9 +237,10 @@ class BookExportController {
 
     private function drawDefaultImage($pdf, $page) {
         $text = $page['content'] ?? 'Sin imagen';
+        $type = $page['type'] ?? 'default';
         $height = 180;
         
-        if (isset($page['type']) && $page['type'] === 'ad') {
+        if ($type === 'ad') {
             if (isset($page['position']) && ($page['position'] === 'top' || $page['position'] === 'bottom')) {
                 $height = 80;
             }
@@ -247,12 +248,110 @@ class BookExportController {
         
         $x = 15;
         $y = $pdf->GetY();
-        $pdf->SetFillColor(230, 230, 230);
+        
+        // Define colors based on type
+        if ($type === 'activity') {
+            // Purple gradient for activities
+            $colorR = 163;
+            $colorG = 85;
+            $colorB = 247;
+            $bgR = 243;
+            $bgG = 232;
+            $bgB = 255;
+            $icon = '📅';
+        } elseif ($type === 'ad') {
+            // Blue gradient for ads
+            $colorR = 59;
+            $colorG = 130;
+            $colorB = 246;
+            $bgR = 219;
+            $bgG = 234;
+            $bgB = 254;
+            $icon = '📢';
+        } else {
+            // Gray for others
+            $colorR = 100;
+            $colorG = 100;
+            $colorB = 100;
+            $bgR = 243;
+            $bgG = 244;
+            $bgB = 246;
+            $icon = '📄';
+        }
+        
+        // Draw gradient background
+        $pdf->SetFillColor($bgR, $bgG, $bgB);
         $pdf->Rect($x, $y, 180, $height, 'F');
-        $pdf->SetFont('helvetica', 'B', 22);
-        $pdf->SetTextColor(100, 100, 100);
-        $pdf->SetXY($x, $y + ($height/2) - 10);
-        $pdf->Cell(180, 20, $text, 0, 0, 'C');
+        
+        // Draw border
+        $pdf->SetDrawColor($colorR, $colorG, $colorB);
+        $pdf->SetLineWidth(0.5);
+        $pdf->Rect($x, $y, 180, $height, 'D');
+        
+        // Draw decorative top bar
+        $pdf->SetFillColor($colorR, $colorG, $colorB);
+        $pdf->Rect($x, $y, 180, 3, 'F');
+        
+        // Add icon/emoji at top (if supported)
+        $pdf->SetFont('helvetica', 'B', 32);
+        $pdf->SetTextColor($colorR, $colorG, $colorB);
+        $pdf->SetXY($x, $y + 15);
+        $pdf->Cell(180, 15, $icon, 0, 0, 'C');
+        
+        // Add main text
+        $pdf->SetFont('helvetica', 'B', 18);
+        $pdf->SetTextColor(30, 41, 59); // Dark slate
+        $pdf->SetXY($x, $y + ($height/2) - 5);
+        
+        // Wrap text if too long
+        $maxWidth = 160;
+        if ($pdf->GetStringWidth($text) > $maxWidth) {
+            // Split into multiple lines
+            $words = explode(' ', $text);
+            $lines = [];
+            $currentLine = '';
+            
+            foreach ($words as $word) {
+                $testLine = $currentLine . ($currentLine ? ' ' : '') . $word;
+                if ($pdf->GetStringWidth($testLine) > $maxWidth) {
+                    if ($currentLine) {
+                        $lines[] = $currentLine;
+                    }
+                    $currentLine = $word;
+                } else {
+                    $currentLine = $testLine;
+                }
+            }
+            if ($currentLine) {
+                $lines[] = $currentLine;
+            }
+            
+            // Limit to 3 lines
+            $lines = array_slice($lines, 0, 3);
+            $lineHeight = 8;
+            $startY = $y + ($height/2) - (count($lines) * $lineHeight / 2);
+            
+            foreach ($lines as $i => $line) {
+                $pdf->SetXY($x, $startY + ($i * $lineHeight));
+                if ($i === 2 && count($lines) === 3 && strlen($line) > 30) {
+                    $line = substr($line, 0, 27) . '...';
+                }
+                $pdf->Cell(180, $lineHeight, $line, 0, 0, 'C');
+            }
+        } else {
+            $pdf->Cell(180, 10, $text, 0, 0, 'C');
+        }
+        
+        // Add type label at bottom
+        $pdf->SetFont('helvetica', '', 10);
+        $pdf->SetTextColor($colorR, $colorG, $colorB);
+        $pdf->SetXY($x, $y + $height - 15);
+        $typeLabel = $type === 'activity' ? 'ACTIVIDAD' : ($type === 'ad' ? 'ANUNCIO' : 'CONTENIDO');
+        $pdf->Cell(180, 5, $typeLabel, 0, 0, 'C');
+        
+        // Reset colors
+        $pdf->SetTextColor(0, 0, 0);
+        $pdf->SetDrawColor(0, 0, 0);
     }
 
     private function checkAdmin() {
