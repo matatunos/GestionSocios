@@ -73,6 +73,9 @@ class BookExportController {
     }
 
     public function generatePdf() {
+                        // Depuración: inicio del método
+                        $debugPath = __DIR__ . '/../../public/debug_pages.log';
+                        @file_put_contents($debugPath, "INICIO generatePdf\n");
                     // Depuración: comprobar ejecución del método y permisos de escritura
                     $debugPath = __DIR__ . '/../../public/debug_pages.log';
                     @file_put_contents($debugPath, "INICIO generatePdf\n");
@@ -180,6 +183,8 @@ class BookExportController {
         AuditLog::log('export_pdf', 'book', $year, null, [
             'year' => $year,
         ]);
+        // Depuración: justo antes de exit
+        @file_put_contents($debugPath, "ANTES DE EXIT\n", FILE_APPEND);
         $pdf->Output('libro_fiestas_' . $year . '.pdf', 'D');
         exit;
     }
