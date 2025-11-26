@@ -143,8 +143,12 @@ class BookExportController {
             $pages = $bookPageModel->getAllByBook($book_id);
         }
 
-        // Depuración: mostrar el contenido de $pages
-        file_put_contents(__DIR__ . '/../../debug_pages.log', print_r($pages, true));
+        // Depuración: mostrar el contenido de $pages y manejo de errores
+        $debugPath = __DIR__ . '/../../debug_pages.log';
+        $debugResult = @file_put_contents($debugPath, print_r($pages, true));
+        if ($debugResult === false) {
+            error_log('No se pudo crear el archivo de depuración: ' . $debugPath);
+        }
 
         foreach ($pages as $idx => $page) {
             if ($idx > 0) {
