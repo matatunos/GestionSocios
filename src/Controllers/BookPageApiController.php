@@ -56,20 +56,21 @@ class BookPageApiController {
         $data = json_decode($input, true);
         $book_id = $data['book_id'] ?? null;
         $pages = $data['pages'] ?? null;
-        if (!$book_id || !$pages || !is_array($pages)) {
+        // Si no hay book_id, intenta crear el libro automáticamente
+        require_once __DIR__ . '/../Models/Book.php';
+        $bookModel = new Book($this->db);
+        if (!$book_id || !$bookModel->exists($book_id)) {
+            // Crear libro si no existe o si no se envió book_id
+            $book_id = $bookModel->create([
+                'year' => $data['year'] ?? date('Y'),
+                'name' => $data['book_name'] ?? 'Libro ' . ($data['year'] ?? date('Y')),
+                'created_by' => $_SESSION['user_id'] ?? 1
+            ]);
+        }
+        if (!$pages || !is_array($pages)) {
             http_response_code(400);
             echo json_encode(['error' => 'Datos inválidos']);
             exit;
-        }
-        require_once __DIR__ . '/../Models/Book.php';
-        $bookModel = new Book($this->db);
-        if (!$bookModel->exists($book_id)) {
-            // Crear libro si no existe
-            $book_id = $bookModel->create([
-            'year' => $data['year'] ?? date('Y'),
-            'name' => $data['book_name'] ?? 'Libro ' . ($data['year'] ?? date('Y')),
-            'created_by' => $_SESSION['user_id'] ?? 1
-            ]);
         }
         $version_id = $data['version_id'] ?? null;
         if (!$version_id) {
