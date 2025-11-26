@@ -6,46 +6,46 @@ class BookExportController {
     public function __construct() {
         $database = new Database();
         $this->db = $database->getConnection();
-        require_once __DIR__ . '/../Helpers/AuditLog.php';
-    }
-
-    private function checkAdmin() {
-        if (($_SESSION['role'] ?? '') !== 'admin') {
-            header('Location: index.php?page=book&action=dashboard');
-            exit;
-        }
-    }
-
-    public function index() {
-        $this->checkAdmin();
-        $year = $_GET['year'] ?? date('Y');
-        require_once __DIR__ . '/../Models/BookAd.php';
-        $bookAdModel = new BookAd($this->db);
-        $adsStmt = $bookAdModel->readAllByYear($year);
-        $ads = $adsStmt->fetchAll(PDO::FETCH_ASSOC);
-
-        require_once __DIR__ . '/../Models/BookActivity.php';
-        $activityModel = new BookActivity($this->db);
-        $activitiesStmt = $activityModel->readAllByYear($year);
-        $activities = $activitiesStmt->fetchAll(PDO::FETCH_ASSOC);
-
         require_once __DIR__ . '/../Models/BookPage.php';
         $bookPageModel = new BookPage($this->db);
         $version_id = $_GET['version_id'] ?? null;
         if ($version_id) {
-            $bookPages = $bookPageModel->getAllByVersion($version_id);
+            $pages = $bookPageModel->getAllByVersion($version_id);
         } else {
             $book_id = $year;
-            $bookPages = $bookPageModel->getAllByBook($book_id);
+            $pages = $bookPageModel->getAllByBook($book_id);
         }
 
-        $editorBlocks = [];
-        $editorBlocks[] = [
-            'id' => 'cover',
-            'content' => 'Portada',
-            'position' => 'full',
-            'type' => 'cover'
-        ];
+        // Si no hay páginas en la tabla, construir $pages a partir de actividades y anuncios
+        if (empty($pages)) {
+            $pages = [];
+            $pages[] = [
+                'id' => 'cover',
+                'content' => 'Portada',
+                'position' => 'full',
+                'type' => 'cover'
+            ];
+            foreach ($activities as $activity) {
+                $pages[] = [
+                    'id' => 'activity_' . $activity['id'],
+                    'content' => $activity['title'],
+                    'position' => 'full',
+                    'type' => 'activity',
+                    'image_url' => $activity['image_url'] ?? null
+                ];
+            }
+            foreach ($ads as $ad) {
+                if ($ad['paid'] ?? true) {
+                    $pages[] = [
+                        'id' => 'ad_' . $ad['id'],
+                        'content' => $ad['donor_name'],
+                        'position' => 'full',
+                        'type' => 'ad',
+                        'image_url' => $ad['image_url'] ?? null
+                    ];
+                }
+            }
+        }
         foreach ($activities as $activity) {
             $editorBlocks[] = [
                 'id' => 'activity_' . $activity['id'],
