@@ -1,95 +1,89 @@
 <?php ob_start(); ?>
 
-<?php $title = 'Subir Documento'; ?>
-
-<div class="page-header">
-    <div>
-        <h1 class="page-title">
-            <i class="fas fa-cloud-upload-alt"></i> Subir Documento
-        </h1>
-        <p class="page-subtitle">Añadir un nuevo documento a la biblioteca</p>
-    </div>
-    <div class="page-actions">
-        <a href="index.php?page=documents" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Volver
-        </a>
-    </div>
+<div class="mb-4">
+    <a href="index.php?page=documents" class="btn btn-sm btn-secondary mb-4">
+        <i class="fas fa-arrow-left"></i> Volver al listado
+    </a>
+    <h1>Subir Documento</h1>
 </div>
 
-<?php if (isset($_SESSION['error'])): ?>
-    <div class="alert alert-danger">
-        <i class="fas fa-exclamation-circle"></i> <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
-    </div>
-<?php endif; ?>
+<div class="card" style="max-width: 800px;">
+    <?php if (isset($_SESSION['error'])): ?>
+        <div class="alert alert-error mb-4">
+            <i class="fas fa-exclamation-circle"></i> <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
+        </div>
+    <?php endif; ?>
 
-<div class="card">
     <form method="POST" action="index.php?page=documents&action=store" enctype="multipart/form-data">
-        <div class="form-grid">
-            <!-- Título -->
-            <div class="form-group" style="grid-column: 1 / -1;">
-                <label for="title">Título <span class="required">*</span></label>
-                <input type="text" name="title" id="title" class="form-input" required maxlength="255" placeholder="Título descriptivo del documento">
-            </div>
-            
-            <!-- Descripción -->
-            <div class="form-group" style="grid-column: 1 / -1;">
-                <label for="description">Descripción</label>
-                <textarea name="description" id="description" class="form-input" rows="4" placeholder="Descripción detallada del contenido"></textarea>
-            </div>
-            
-            <!-- Categoría -->
-            <div class="form-group">
-                <label for="category">Categoría <span class="required">*</span></label>
-                <select name="category" id="category" class="form-select" required>
-                    <option value="general">General</option>
-                    <option value="actas">Actas</option>
-                    <option value="estatutos">Estatutos</option>
-                    <option value="facturas">Facturas</option>
-                    <option value="otros">Otros</option>
-                </select>
-            </div>
-            
-            <!-- Visibilidad -->
-            <div class="form-group">
-                <label for="is_public">Visibilidad</label>
-                <label class="toggle-switch" style="margin-top: 0.5rem;">
-                    <input type="checkbox" name="is_public" id="is_public" checked onchange="togglePermissions()">
-                    <span class="toggle-slider"></span>
-                    <span class="toggle-label">
-                        <span class="toggle-text">Documento público (visible para todos)</span>
-                    </span>
-                </label>
-            </div>
-            
-            <!-- Archivo -->
-            <div class="form-group" style="grid-column: 1 / -1;">
-                <label for="file">Archivo <span class="required">*</span></label>
-                <input type="file" name="file" id="file" class="form-input" required accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.jpg,.jpeg,.png,.zip,.rar">
-                <small class="form-text">Formatos permitidos: PDF, Word, Excel, TXT, Imágenes, ZIP, RAR. Máximo 10MB</small>
-            </div>
-            
-            <!-- Permisos (solo si es privado) -->
-            <div class="form-group" id="permissionsSection" style="grid-column: 1 / -1; display: none;">
-                <label>Socios con acceso</label>
-                <div class="members-select-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 0.5rem; max-height: 300px; overflow-y: auto; padding: 1rem; background: var(--bg-glass); border: 1px solid var(--border-light); border-radius: var(--radius-md);">
-                    <?php foreach ($members as $member): ?>
-                        <label style="display: flex; align-items: center; padding: 0.5rem; border-radius: 0.5rem; cursor: pointer; transition: var(--transition);" class="member-checkbox-label">
-                            <input type="checkbox" name="permitted_members[]" value="<?php echo $member['id']; ?>" class="member-checkbox" style="margin-right: 0.5rem;">
-                            <span style="font-size: 0.875rem;"><?php echo htmlspecialchars($member['first_name'] . ' ' . $member['last_name']); ?></span>
-                        </label>
-                    <?php endforeach; ?>
+        
+        <div class="form-group mb-3">
+            <label for="title" class="form-label">Título <span class="text-danger">*</span></label>
+            <input type="text" name="title" id="title" class="form-control" required maxlength="255" placeholder="Título descriptivo del documento">
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="description" class="form-label">Descripción</label>
+            <textarea name="description" id="description" class="form-control" rows="4" placeholder="Descripción detallada del contenido"></textarea>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="category" class="form-label">Categoría <span class="text-danger">*</span></label>
+                    <select name="category" id="category" class="form-control" required>
+                        <option value="general">General</option>
+                        <option value="actas">Actas</option>
+                        <option value="estatutos">Estatutos</option>
+                        <option value="facturas">Facturas</option>
+                        <option value="otros">Otros</option>
+                    </select>
                 </div>
-                <small class="form-text">Selecciona los socios que podrán ver y descargar este documento</small>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label">Visibilidad</label>
+                    <div class="form-check form-switch mt-2">
+                        <input class="form-check-input" type="checkbox" id="is_public" name="is_public" checked onchange="togglePermissions()">
+                        <label class="form-check-label" for="is_public">Documento público (visible para todos)</label>
+                    </div>
+                </div>
             </div>
         </div>
-        
-        <div class="form-actions">
+
+        <div class="form-group mb-3">
+            <label for="file" class="form-label">Archivo <span class="text-danger">*</span></label>
+            <input type="file" name="file" id="file" class="form-control" required accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,.jpg,.jpeg,.png,.zip,.rar">
+            <small class="text-muted">Formatos permitidos: PDF, Word, Excel, TXT, Imágenes, ZIP, RAR. Máximo 10MB</small>
+        </div>
+
+        <!-- Permisos (solo si es privado) -->
+        <div id="permissionsSection" style="display: none;" class="mb-3">
+            <div class="card bg-light border">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Socios con acceso</h5>
+                    <div class="members-list" style="max-height: 200px; overflow-y: auto; padding-right: 10px;">
+                        <?php if (isset($members) && is_array($members)): ?>
+                            <?php foreach ($members as $member): ?>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" name="permitted_members[]" value="<?php echo $member['id']; ?>" id="member_<?php echo $member['id']; ?>">
+                                    <label class="form-check-label" for="member_<?php echo $member['id']; ?>">
+                                        <?php echo htmlspecialchars($member['first_name'] . ' ' . $member['last_name']); ?>
+                                    </label>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <p class="text-muted">No hay socios disponibles.</p>
+                        <?php endif; ?>
+                    </div>
+                    <small class="text-muted mt-2 d-block">Selecciona los socios que podrán ver y descargar este documento.</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-right mt-4">
             <button type="submit" class="btn btn-primary">
                 <i class="fas fa-cloud-upload-alt"></i> Subir Documento
             </button>
-            <a href="index.php?page=documents" class="btn btn-secondary">
-                <i class="fas fa-times"></i> Cancelar
-            </a>
         </div>
     </form>
 </div>
@@ -101,7 +95,7 @@ function togglePermissions() {
     permissionsSection.style.display = isPublic ? 'none' : 'block';
 }
 
-// Preview del archivo seleccionado
+// Preview del archivo seleccionado (opcional, solo log por ahora)
 document.getElementById('file').addEventListener('change', function(e) {
     if (this.files.length > 0) {
         const file = this.files[0];
@@ -110,20 +104,6 @@ document.getElementById('file').addEventListener('change', function(e) {
     }
 });
 </script>
-
-<style>
-.required {
-    color: var(--danger-500);
-}
-
-.member-checkbox-label:hover {
-    background: var(--primary-50);
-}
-
-[data-theme="dark"] .member-checkbox-label:hover {
-    background: rgba(99, 102, 241, 0.1);
-}
-</style>
 
 <?php
 $content = ob_get_clean();
