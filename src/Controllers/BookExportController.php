@@ -12,83 +12,93 @@ class BookExportController {
         global $page; // Make $page available for layout.php
         $year = $_GET['year'] ?? date('Y');
         
-        require_once __DIR__ . '/../Models/BookPage.php';
-        $bookPageModel = new BookPage($this->db);
-        
-        require_once __DIR__ . '/../Models/BookActivity.php';
-        $activityModel = new BookActivity($this->db);
-        $activitiesStmt = $activityModel->readAllByYear($year);
-        $activities = $activitiesStmt->fetchAll(PDO::FETCH_ASSOC);
-
-        require_once __DIR__ . '/../Models/BookAd.php';
-        $bookAdModel = new BookAd($this->db);
-        $adsStmt = $bookAdModel->readAllByYear($year);
-        $ads = $adsStmt->fetchAll(PDO::FETCH_ASSOC);
-
-        require_once __DIR__ . '/../Models/BookVersion.php';
-        // Check if BookVersion model exists, if not create a simple query or handle it
-        // Assuming BookVersion model exists based on usage in view
-        $bookVersions = [];
         try {
-            $stmt = $this->db->prepare("SELECT * FROM book_versions WHERE book_id = (SELECT id FROM books WHERE year = ? LIMIT 1)");
-            $stmt->execute([$year]);
-            $bookVersions = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Exception $e) {
-            // Ignore if table doesn't exist yet
-        }
+            require_once __DIR__ . '/../Models/BookPage.php';
+            $bookPageModel = new BookPage($this->db);
+            
+            require_once __DIR__ . '/../Models/BookActivity.php';
+            $activityModel = new BookActivity($this->db);
+            $activitiesStmt = $activityModel->readAllByYear($year);
+            $activities = $activitiesStmt ? $activitiesStmt->fetchAll(PDO::FETCH_ASSOC) : [];
 
-        $version_id = $_GET['version_id'] ?? null;
-        
-        // Get book_id for the current year
-        $stmt = $this->db->prepare("SELECT id FROM books WHERE year = ?");
-        $stmt->execute([$year]);
-        $book = $stmt->fetch(PDO::FETCH_ASSOC);
-        $book_id = $book['id'] ?? null;
+            require_once __DIR__ . '/../Models/BookAd.php';
+            $bookAdModel = new BookAd($this->db);
+            $adsStmt = $bookAdModel->readAllByYear($year);
+            $ads = $adsStmt ? $adsStmt->fetchAll(PDO::FETCH_ASSOC) : [];
 
-        if ($version_id) {
-            $pages = $bookPageModel->getAllByVersion($version_id);
-        } elseif ($book_id) {
-            $pages = $bookPageModel->getAllByBook($book_id);
-        } else {
-            $pages = [];
-        }
-
-        $editorBlocks = [];
-        // If no pages exist, we might want to show default blocks based on activities and ads
-        if (empty($pages)) {
-            $editorBlocks[] = [
-                'id' => 'cover',
-                'content' => 'Portada',
-                'position' => 'full',
-                'type' => 'cover'
-            ];
-            foreach ($activities as $activity) {
-                $editorBlocks[] = [
-                    'id' => 'activity_' . $activity['id'],
-                    'content' => $activity['title'],
-                    'position' => 'full',
-                    'type' => 'activity',
-                    'image_url' => $activity['image_url'] ?? null
-                ];
+            require_once __DIR__ . '/../Models/BookVersion.php';
+            $bookVersions = [];
+            try {
+                $stmt = $this->db->prepare("SELECT * FROM book_versions WHERE book_id = (SELECT id FROM books WHERE year = ? LIMIT 1)");
+                $stmt->execute([$year]);
+                $bookVersions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            } catch (Exception $e) {
+                // Ignore if table doesn't exist yet
+                error_log("BookVersion query failed: " . $e->getMessage());
             }
-            foreach ($ads as $ad) {
-                if ($ad['status'] === 'paid') {
+
+            $version_id = $_GET['version_id'] ?? null;
+            
+            // Get book_id for the current year
+            $book_id = null;
+            try {
+                $stmt = $this->db->prepare("SELECT id FROM books WHERE year = ?");
+                $stmt->execute([$year]);
+                $book = $stmt->fetch(PDO::FETCH_ASSOC);
+                $book_id = $book['id'] ?? null;
+            } catch (Exception $e) {
+                error_log("Failed to get book_id: " . $e->getMessage());
+            }
+
+            if ($version_id) {
+                $pages = $bookPageModel->getAllByVersion($version_id);
+            } elseif ($book_id) {
+                $pages = $bookPageModel->getAllByBook($book_id);
+            } else {
+                $pages = [];
+            }
+
+            $editorBlocks = [];
+            // If no pages exist, we might want to show default blocks based on activities and ads
+            if (empty($pages)) {
+                $editorBlocks[] = [
+                    'id' => 'cover',
+                    'content' => 'Portada',
+                    'position' => 'full',
+                    'type' => 'cover'
+                ];
+                foreach ($activities as $activity) {
                     $editorBlocks[] = [
-                        'id' => 'ad_' . $ad['id'],
-                        'content' => $ad['donor_name'],
+                        'id' => 'activity_' . $activity['id'],
+                        'content' => $activity['title'],
                         'position' => 'full',
-                        'type' => 'ad',
-                        'image_url' => $ad['image_url'] ?? null
+                        'type' => 'activity',
+                        'image_url' => $activity['image_url'] ?? null
                     ];
                 }
+                foreach ($ads as $ad) {
+                    if (($ad['status'] ?? '') === 'paid') {
+                        $editorBlocks[] = [
+                            'id' => 'ad_' . $ad['id'],
+                            'content' => $ad['donor_name'] ?? '',
+                            'position' => 'full',
+                            'type' => 'ad',
+                            'image_url' => $ad['image_url'] ?? null
+                        ];
+                    }
+                }
+            } else {
+                $editorBlocks = $pages;
             }
-        } else {
-            $editorBlocks = $pages;
-        }
 
-        // Ensure all variables are available in view scope
-        // (PHP's require includes the file in the current scope, so local variables are accessible)
-        require __DIR__ . '/../Views/book/export.php';
+            // Ensure all variables are available in view scope
+            // (PHP's require includes the file in the current scope, so local variables are accessible)
+            require __DIR__ . '/../Views/book/export.php';
+        } catch (Exception $e) {
+            error_log("BookExportController::index() error: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+            die("Error loading export view: " . $e->getMessage());
+        }
     }
 
     public function generatePdf() {
