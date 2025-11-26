@@ -154,7 +154,7 @@
 <script>
 window.bookPages = <?php echo json_encode($bookPages ?? []); ?>;
 </script>
-<script src="public/js/book_pages_editor.js"></script>
+<script src="/js/book_pages_editor.js"></script>
     <div style="padding: 1.5rem; border-bottom: 1px solid var(--border-light);">
         <h3 style="margin: 0;">Vista Previa del Contenido</h3>
         <p style="font-size: 0.875rem; color: var(--text-muted); margin: 0.5rem 0 0 0;">El PDF se generará en el siguiente orden:</p>
