@@ -143,7 +143,34 @@ class BookExportController {
             $pages = $bookPageModel->getAllByBook($book_id);
         }
 
-        // Depuración: mostrar el contenido de $pages y manejo de errores
+        // ...existing code...
+        // Bucle de generación de páginas PDF
+        foreach ($pages as $idx => $page) {
+            if ($idx > 0) {
+                $pdf->AddPage();
+            }
+            $pdf->SetFont('helvetica', 'B', 16);
+            $pdf->Cell(0, 10, $page['content'], 0, 1);
+            if (!empty($page['image_url'])) {
+                $imagePath = __DIR__ . '/../../public/' . $page['image_url'];
+                if (file_exists($imagePath)) {
+                    if ($page['position'] === 'top') {
+                        $pdf->Image($imagePath, 15, $pdf->GetY(), 180, 80, '', '', '', true, 300);
+                    } else if ($page['position'] === 'bottom') {
+                        $pdf->SetY(-100);
+                        $pdf->Image($imagePath, 15, $pdf->GetY(), 180, 80, '', '', '', true, 300);
+                    } else {
+                        $pdf->Image($imagePath, 15, $pdf->GetY(), 180, 0, '', '', '', true, 300);
+                    }
+                } else {
+                    $this->drawDefaultImage($pdf, $page);
+                }
+            } else {
+                $this->drawDefaultImage($pdf, $page);
+            }
+        }
+
+        // Depuración: volcar $pages justo antes de la salida
         $debugPath = __DIR__ . '/../../public/debug_pages.log';
         $debugResult = @file_put_contents($debugPath, print_r($pages, true));
         if ($debugResult === false) {
