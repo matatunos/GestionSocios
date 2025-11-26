@@ -462,3 +462,17 @@ ALTER TABLE tasks ADD COLUMN completed_at DATETIME DEFAULT NULL AFTER status;
 ALTER TABLE tasks ADD COLUMN completed_by INT DEFAULT NULL AFTER completed_at;
 ALTER TABLE tasks ADD CONSTRAINT fk_tasks_completed_by FOREIGN KEY (completed_by) REFERENCES users(id) ON DELETE SET NULL;
 
+-- Migración: Añadir columnas is_current y replaced_at a las tablas de historial de imágenes
+-- Fecha: 2025-11-26
+ALTER TABLE donor_image_history 
+ADD COLUMN IF NOT EXISTS is_current TINYINT(1) DEFAULT 1 AFTER image_url,
+ADD COLUMN IF NOT EXISTS replaced_at TIMESTAMP NULL DEFAULT NULL AFTER uploaded_by;
+
+ALTER TABLE member_image_history 
+ADD COLUMN IF NOT EXISTS is_current TINYINT(1) DEFAULT 1 AFTER image_url,
+ADD COLUMN IF NOT EXISTS replaced_at TIMESTAMP NULL DEFAULT NULL AFTER uploaded_by;
+
+-- Crear índices para mejorar el rendimiento de las consultas
+CREATE INDEX IF NOT EXISTS idx_donor_current ON donor_image_history(donor_id, is_current);
+CREATE INDEX IF NOT EXISTS idx_member_current ON member_image_history(member_id, is_current);
+
