@@ -73,37 +73,12 @@ class BookExportController {
     }
 
     public function generatePdf() {
-                // Depuración: mostrar el contenido de $pages
-                file_put_contents(__DIR__ . '/../../debug_pages.log', print_r($pages, true));
-
-                // Generar una página por cada entrada en $pages
-                // Depuración: mostrar el contenido de $pages
-                file_put_contents(__DIR__ . '/../../debug_pages.log', print_r($pages, true));
-
-                foreach ($pages as $idx => $page) {
-                    if ($idx > 0) {
-                        $pdf->AddPage();
-                    }
-                    $pdf->SetFont('helvetica', 'B', 16);
-                    $pdf->Cell(0, 10, $page['content'], 0, 1);
-                    if (!empty($page['image_url'])) {
-                        $imagePath = __DIR__ . '/../../public/' . $page['image_url'];
-                        if (file_exists($imagePath)) {
-                            if ($page['position'] === 'top') {
-                                $pdf->Image($imagePath, 15, $pdf->GetY(), 180, 80, '', '', '', true, 300);
-                            } else if ($page['position'] === 'bottom') {
-                                $pdf->SetY(-100);
-                                $pdf->Image($imagePath, 15, $pdf->GetY(), 180, 80, '', '', '', true, 300);
-                            } else {
-                                $pdf->Image($imagePath, 15, $pdf->GetY(), 180, 0, '', '', '', true, 300);
-                            }
-                        } else {
-                            $this->drawDefaultImage($pdf, $page);
-                        }
-                    } else {
-                        $this->drawDefaultImage($pdf, $page);
-                    }
-                }
+                    // Depuración: comprobar ejecución del método y permisos de escritura
+                    $debugPath = __DIR__ . '/../../public/debug_pages.log';
+                    @file_put_contents($debugPath, "INICIO generatePdf\n");
+        // Depuración: comprobar ejecución del método y permisos de escritura
+        $debugPath = __DIR__ . '/../../public/debug_pages.log';
+        @file_put_contents($debugPath, "INICIO generatePdf\n");
         $this->checkAdmin();
         $year = $_GET['year'] ?? date('Y');
         require_once __DIR__ . '/../../vendor/autoload.php';
@@ -171,8 +146,8 @@ class BookExportController {
         }
 
         // Depuración: volcar $pages justo antes de la salida
-        $debugPath = __DIR__ . '/../../public/debug_pages.log';
-        $debugResult = @file_put_contents($debugPath, print_r($pages, true));
+        @file_put_contents($debugPath, "ANTES DE OUTPUT\n", FILE_APPEND);
+        $debugResult = @file_put_contents($debugPath, print_r($pages, true), FILE_APPEND);
         if ($debugResult === false) {
             error_log('No se pudo crear el archivo de depuración: ' . $debugPath);
         }
