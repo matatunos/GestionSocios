@@ -40,25 +40,31 @@ class BookPageApiController {
         }
         $input = file_get_contents('php://input');
         $data = json_decode($input, true);
-<<<<<<< HEAD
-        $version_id = $data['version_id'] ?? null;
-        $pages = $data['pages'] ?? null;
-        if (!$version_id || !$pages || !is_array($pages)) {
-=======
         $book_id = $data['book_id'] ?? null;
         $pages = $data['pages'] ?? null;
         if (!$book_id || !$pages || !is_array($pages)) {
->>>>>>> 080e6c6929499a75caee3baefc568c3193113258
             http_response_code(400);
             echo json_encode(['error' => 'Datos inválidos']);
             exit;
         }
+        require_once __DIR__ . '/../Models/Book.php';
+        $bookModel = new Book($this->db);
+        if (!$bookModel->exists($book_id)) {
+            // Crear libro si no existe
+            $book_id = $bookModel->create([
+            'year' => $data['year'] ?? date('Y'),
+            'name' => $data['book_name'] ?? 'Libro ' . ($data['year'] ?? date('Y')),
+            'created_by' => $_SESSION['user_id'] ?? 1
+            ]);
+        }
+        $version_id = $data['version_id'] ?? null;
+        if (!$version_id) {
+            require_once __DIR__ . '/../Models/BookVersion.php';
+            $bookVersionModel = new BookVersion($this->db);
+            $version_id = $bookVersionModel->create($book_id, $data['version_name'] ?? 'Versión automática', $_SESSION['user_id'] ?? 1);
+        }
         $bookPageModel = new BookPage($this->db);
-<<<<<<< HEAD
         $bookPageModel->savePages($version_id, $pages);
-=======
-        $bookPageModel->savePages($book_id, $pages);
->>>>>>> 080e6c6929499a75caee3baefc568c3193113258
         echo json_encode(['success' => true]);
     }
 }
