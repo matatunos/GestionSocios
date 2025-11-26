@@ -244,11 +244,38 @@ if (isset($_SESSION['user_id'])) {
                         <?php endif; } ?>
                     </a>
                 </li>
-                <li>
-                    <a href="index.php?page=book" class="nav-link <?php echo ($page === 'book') ? 'active' : ''; ?>">
+                <li class="nav-group">
+                    <a href="#" class="nav-link <?php echo ($page === 'book' || $page === 'book_activities' || $page === 'book_export') ? 'active' : ''; ?>">
                         <i class="fas fa-book-open"></i>
                         <span>Libro Fiestas</span>
+                        <i class="fas fa-chevron-down" style="margin-left:auto;font-size:0.8em;"></i>
                     </a>
+                    <ul class="nav-submenu">
+                        <li>
+                            <a href="index.php?page=book&action=dashboard" class="nav-link <?php echo ($page === 'book' && $action === 'dashboard') ? 'active' : ''; ?>">
+                                <i class="fas fa-chart-pie"></i>
+                                <span>Resumen</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="index.php?page=book" class="nav-link <?php echo ($page === 'book' && $action === 'index') ? 'active' : ''; ?>">
+                                <i class="fas fa-ad"></i>
+                                <span>Anunciantes</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="index.php?page=book_activities" class="nav-link <?php echo ($page === 'book_activities') ? 'active' : ''; ?>">
+                                <i class="fas fa-calendar-day"></i>
+                                <span>Actividades</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="index.php?page=book_export" class="nav-link <?php echo ($page === 'book_export') ? 'active' : ''; ?>">
+                                <i class="fas fa-file-pdf"></i>
+                                <span>Maquetación</span>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
                 <!-- Menú de Auditoría -->
                 <li>
