@@ -33,6 +33,13 @@ class BookPageApiController {
     }
 
     public function savePages() {
+                        // Volcado de depuración en la respuesta JSON
+                        echo json_encode([
+                            'debug_book_id' => $book_id,
+                            'debug_pages' => $pages
+                        ]);
+                        // Salir antes de guardar para depuración
+                        exit;
                 // Depuración: mostrar el book_id final y el de cada página
                 error_log('BookPageApiController::savePages - book_id final: ' . $book_id);
                 foreach ($pages as $idx => $page) {
