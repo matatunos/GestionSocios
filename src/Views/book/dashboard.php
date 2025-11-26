@@ -1,18 +1,16 @@
 <?php ob_start(); ?>
 
-<div class="flex justify-between items-center mb-6">
+<div class="flex justify-between items-center mb-4">
     <div>
-        <h1 class="text-2xl font-bold text-gray-800 dark:text-white">
-            <i class="fas fa-book-open mr-2 text-indigo-600"></i> Libro de Fiestas <?php echo $year; ?>
-        </h1>
-        <p class="text-gray-600 dark:text-gray-400 mt-1">Resumen financiero y gestión de contenidos</p>
+        <h1><i class="fas fa-book-open" style="color: var(--primary-600); margin-right: 0.5rem;"></i> Libro de Fiestas <?php echo $year; ?></h1>
+        <p style="color: var(--text-muted); margin-top: 0.5rem;">Resumen financiero y gestión de contenidos</p>
     </div>
     
-    <div class="flex gap-2">
-        <form action="index.php" method="GET" class="flex items-center gap-2">
+    <div>
+        <form action="index.php" method="GET" style="display: inline-flex; align-items: center; gap: 0.5rem;">
             <input type="hidden" name="page" value="book">
             <input type="hidden" name="action" value="dashboard">
-            <select name="year" onchange="this.form.submit()" class="form-select rounded-lg border-gray-300">
+            <select name="year" onchange="this.form.submit()" class="form-select">
                 <?php 
                 $currentYear = date('Y');
                 for($y = $currentYear + 1; $y >= $currentYear - 5; $y--): 
@@ -26,166 +24,167 @@
     </div>
 </div>
 
-<!-- Stats Grid -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+<!-- Statistics Cards -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+    
     <!-- Ingresos Totales -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border-l-4 border-green-500">
-        <div class="flex justify-between items-start">
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
             <div>
-                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Ingresos Confirmados</p>
-                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+                <p style="color: var(--text-muted); font-size: 0.875rem; margin: 0;">Ingresos Confirmados</p>
+                <h2 style="margin: 0.5rem 0; font-size: 2rem; color: var(--secondary-600);">
                     <?php echo number_format($incomeStats['total_income'] ?? 0, 2); ?> €
-                </h3>
+                </h2>
             </div>
-            <div class="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                <i class="fas fa-coins text-green-600 dark:text-green-400 text-xl"></i>
+            <div style="width: 48px; height: 48px; background: var(--secondary-100); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-coins" style="font-size: 1.5rem; color: var(--secondary-600);"></i>
             </div>
         </div>
-        <div class="mt-4 text-sm text-gray-600 dark:text-gray-400">
-            <span class="text-yellow-600 font-medium">
+        <div style="font-size: 0.875rem; color: var(--text-muted);">
+            <span style="color: #d97706; font-weight: 600;">
                 <?php echo number_format($incomeStats['pending_income'] ?? 0, 2); ?> €
             </span> pendientes
         </div>
     </div>
 
     <!-- Gastos -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border-l-4 border-red-500">
-        <div class="flex justify-between items-start">
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
             <div>
-                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Gastos (Imprenta/Otros)</p>
-                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+                <p style="color: var(--text-muted); font-size: 0.875rem; margin: 0;">Gastos (Imprenta/Otros)</p>
+                <h2 style="margin: 0.5rem 0; font-size: 2rem; color: var(--danger-600);">
                     <?php echo number_format($expenseStats['total_cost'] ?? 0, 2); ?> €
-                </h3>
+                </h2>
             </div>
-            <div class="p-2 bg-red-50 dark:bg-red-900/20 rounded-lg">
-                <i class="fas fa-receipt text-red-600 dark:text-red-400 text-xl"></i>
+            <div style="width: 48px; height: 48px; background: var(--danger-100); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-receipt" style="font-size: 1.5rem; color: var(--danger-600);"></i>
             </div>
         </div>
-        <div class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+        <div style="font-size: 0.875rem; color: var(--text-muted);">
             <?php echo $expenseStats['total_expenses'] ?? 0; ?> movimientos registrados
         </div>
     </div>
 
     <!-- Resultado Neto -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border-l-4 <?php echo $netResult >= 0 ? 'border-indigo-500' : 'border-orange-500'; ?>">
-        <div class="flex justify-between items-start">
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
             <div>
-                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Resultado Neto</p>
-                <h3 class="text-2xl font-bold <?php echo $netResult >= 0 ? 'text-indigo-600' : 'text-orange-600'; ?> mt-1">
+                <p style="color: var(--text-muted); font-size: 0.875rem; margin: 0;">Resultado Neto</p>
+                <h2 style="margin: 0.5rem 0; font-size: 2rem; color: <?php echo $netResult >= 0 ? 'var(--primary-600)' : 'var(--danger-600)'; ?>;">
                     <?php echo number_format($netResult, 2); ?> €
-                </h3>
+                </h2>
             </div>
-            <div class="p-2 <?php echo $netResult >= 0 ? 'bg-indigo-50' : 'bg-orange-50'; ?> rounded-lg">
-                <i class="fas fa-chart-line <?php echo $netResult >= 0 ? 'text-indigo-600' : 'text-orange-600'; ?> text-xl"></i>
+            <div style="width: 48px; height: 48px; background: <?php echo $netResult >= 0 ? 'var(--primary-100)' : 'var(--danger-100)'; ?>; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-chart-line" style="font-size: 1.5rem; color: <?php echo $netResult >= 0 ? 'var(--primary-600)' : 'var(--danger-600)'; ?>;"></i>
             </div>
         </div>
-        <div class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+        <div style="font-size: 0.875rem; color: var(--text-muted);">
             Balance final estimado
         </div>
     </div>
 
     <!-- Estadísticas Anuncios -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border-l-4 border-blue-500">
-        <div class="flex justify-between items-start">
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
             <div>
-                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Anuncios</p>
-                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+                <p style="color: var(--text-muted); font-size: 0.875rem; margin: 0;">Total Anuncios</p>
+                <h2 style="margin: 0.5rem 0; font-size: 2rem; color: var(--text-main);">
                     <?php echo $incomeStats['total_ads'] ?? 0; ?>
-                </h3>
+                </h2>
             </div>
-            <div class="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                <i class="fas fa-ad text-blue-600 dark:text-blue-400 text-xl"></i>
+            <div style="width: 48px; height: 48px; background: #dbeafe; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-ad" style="font-size: 1.5rem; color: #3b82f6;"></i>
             </div>
         </div>
-        <div class="mt-4 flex gap-2 text-xs">
-            <span class="px-2 py-1 bg-gray-100 rounded text-gray-600">Full: <?php echo $incomeStats['full_page_count']; ?></span>
-            <span class="px-2 py-1 bg-gray-100 rounded text-gray-600">Media: <?php echo $incomeStats['half_page_count']; ?></span>
+        <div style="display: flex; gap: 0.5rem; font-size: 0.75rem;">
+            <span class="badge badge-secondary">Full: <?php echo $incomeStats['full_page_count']; ?></span>
+            <span class="badge badge-secondary">Media: <?php echo $incomeStats['half_page_count']; ?></span>
         </div>
     </div>
 </div>
 
 <!-- Main Actions Grid -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
     <!-- Gestión Anunciantes -->
-    <a href="index.php?page=book&year=<?php echo $year; ?>" class="group block bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all p-6 border border-gray-100 dark:border-gray-700">
-        <div class="flex items-center gap-4 mb-4">
-            <div class="p-3 bg-blue-100 text-blue-600 rounded-lg group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                <i class="fas fa-users text-xl"></i>
+    <a href="index.php?page=book&year=<?php echo $year; ?>" class="card" style="text-decoration: none; transition: transform 0.2s, box-shadow 0.2s; cursor: pointer;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)';" onmouseout="this.style.transform=''; this.style.boxShadow='';">
+        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+            <div style="width: 48px; height: 48px; background: #dbeafe; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-users" style="font-size: 1.5rem; color: #3b82f6;"></i>
             </div>
-            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Anunciantes</h3>
+            <h3 style="margin: 0; color: var(--text-main);">Anunciantes</h3>
         </div>
-        <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1rem;">
             Gestionar empresas, anuncios contratados y estados de pago.
         </p>
-        <div class="text-blue-600 text-sm font-medium group-hover:translate-x-1 transition-transform inline-flex items-center">
-            Gestionar anuncios <i class="fas fa-arrow-right ml-1"></i>
+        <div style="color: #3b82f6; font-size: 0.875rem; font-weight: 500;">
+            Gestionar anuncios <i class="fas fa-arrow-right" style="margin-left: 0.25rem;"></i>
         </div>
     </a>
 
     <!-- Gestión Actividades -->
-    <a href="index.php?page=book_activities&year=<?php echo $year; ?>" class="group block bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all p-6 border border-gray-100 dark:border-gray-700">
-        <div class="flex items-center gap-4 mb-4">
-            <div class="p-3 bg-purple-100 text-purple-600 rounded-lg group-hover:bg-purple-600 group-hover:text-white transition-colors">
-                <i class="fas fa-calendar-day text-xl"></i>
+    <a href="index.php?page=book_activities&year=<?php echo $year; ?>" class="card" style="text-decoration: none; transition: transform 0.2s, box-shadow 0.2s; cursor: pointer;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)';" onmouseout="this.style.transform=''; this.style.boxShadow='';">
+        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+            <div style="width: 48px; height: 48px; background: #f3e8ff; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-calendar-day" style="font-size: 1.5rem; color: #a855f7;"></i>
             </div>
-            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Actividades</h3>
+            <h3 style="margin: 0; color: var(--text-main);">Actividades</h3>
         </div>
-        <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1rem;">
             Añadir páginas de contenido, saludas, programa de actos y fotos.
         </p>
-        <div class="text-purple-600 text-sm font-medium group-hover:translate-x-1 transition-transform inline-flex items-center">
-            Gestionar contenido <i class="fas fa-arrow-right ml-1"></i>
+        <div style="color: #a855f7; font-size: 0.875rem; font-weight: 500;">
+            Gestionar contenido <i class="fas fa-arrow-right" style="margin-left: 0.25rem;"></i>
         </div>
     </a>
 
     <!-- Maquetación y Exportación -->
-    <a href="index.php?page=book_export&year=<?php echo $year; ?>" class="group block bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all p-6 border border-gray-100 dark:border-gray-700">
-        <div class="flex items-center gap-4 mb-4">
-            <div class="p-3 bg-gray-100 text-gray-600 rounded-lg group-hover:bg-gray-800 group-hover:text-white transition-colors">
-                <i class="fas fa-file-pdf text-xl"></i>
+    <a href="index.php?page=book_export&year=<?php echo $year; ?>" class="card" style="text-decoration: none; transition: transform 0.2s, box-shadow 0.2s; cursor: pointer;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)';" onmouseout="this.style.transform=''; this.style.boxShadow='';">
+        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+            <div style="width: 48px; height: 48px; background: #f3f4f6; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-file-pdf" style="font-size: 1.5rem; color: #6b7280;"></i>
             </div>
-            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Maquetación</h3>
+            <h3 style="margin: 0; color: var(--text-main);">Maquetación</h3>
         </div>
-        <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1rem;">
             Organizar el orden de las páginas y generar el PDF final para imprenta.
         </p>
-        <div class="text-gray-600 text-sm font-medium group-hover:translate-x-1 transition-transform inline-flex items-center">
-            Generar PDF <i class="fas fa-arrow-right ml-1"></i>
+        <div style="color: #6b7280; font-size: 0.875rem; font-weight: 500;">
+            Generar PDF <i class="fas fa-arrow-right" style="margin-left: 0.25rem;"></i>
         </div>
     </a>
 </div>
 
 <!-- Recent Activity -->
-<div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-    <div class="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
-        <h3 class="font-bold text-gray-900 dark:text-white">Últimos Anuncios Registrados</h3>
-        <a href="index.php?page=book&year=<?php echo $year; ?>" class="text-sm text-indigo-600 hover:text-indigo-800">Ver todos</a>
+<div class="card" style="padding: 0; overflow: hidden;">
+    <div style="padding: 1.5rem; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center;">
+        <h2 style="margin: 0;">Últimos Anuncios Registrados</h2>
+        <a href="index.php?page=book&year=<?php echo $year; ?>" class="btn btn-sm btn-secondary">Ver todos</a>
     </div>
-    <div class="overflow-x-auto">
-        <table class="w-full text-sm text-left">
-            <thead class="bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 font-medium">
+    <div class="table-container" style="border: none; border-radius: 0;">
+        <table class="table">
+            <thead>
                 <tr>
-                    <th class="px-6 py-3">Donante</th>
-                    <th class="px-6 py-3">Tipo</th>
-                    <th class="px-6 py-3">Importe</th>
-                    <th class="px-6 py-3">Estado</th>
-                    <th class="px-6 py-3">Fecha</th>
+                    <th>Donante</th>
+                    <th>Tipo</th>
+                    <th style="text-align: right;">Importe</th>
+                    <th>Estado</th>
+                    <th>Fecha</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+            <tbody>
                 <?php if (empty($recentAds)): ?>
                     <tr>
-                        <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                        <td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-muted);">
                             No hay anuncios registrados para este año.
                         </td>
                     </tr>
                 <?php else: ?>
                     <?php foreach ($recentAds as $ad): ?>
-                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                            <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
+                        <tr>
+                            <td style="font-weight: 500;">
                                 <?php echo htmlspecialchars($ad['donor_name']); ?>
                             </td>
-                            <td class="px-6 py-4 text-gray-600 dark:text-gray-300">
+                            <td style="color: var(--text-muted);">
                                 <?php 
                                 $types = [
                                     'full' => 'Página Completa',
@@ -196,21 +195,17 @@
                                 echo $types[$ad['ad_type']] ?? $ad['ad_type']; 
                                 ?>
                             </td>
-                            <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
+                            <td style="text-align: right; font-weight: 600;">
                                 <?php echo number_format($ad['amount'], 2); ?> €
                             </td>
-                            <td class="px-6 py-4">
+                            <td>
                                 <?php if ($ad['status'] === 'paid'): ?>
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        Pagado
-                                    </span>
+                                    <span class="badge badge-success">Pagado</span>
                                 <?php else: ?>
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                        Pendiente
-                                    </span>
+                                    <span class="badge" style="background-color: #d97706; color: white;">Pendiente</span>
                                 <?php endif; ?>
                             </td>
-                            <td class="px-6 py-4 text-gray-500">
+                            <td style="color: var(--text-muted);">
                                 <?php echo date('d/m/Y', strtotime($ad['created_at'])); ?>
                             </td>
                         </tr>
