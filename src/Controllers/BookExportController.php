@@ -78,36 +78,31 @@ class BookExportController {
         $pdf->SetFont('helvetica', '', 24);
         $pdf->Cell(0, 15, $year, 0, 1, 'C');
 
-        // Add activities
-        foreach ($activities as $activity) {
-            $pdf->AddPage();
+        // Obtener páginas personalizadas del libro
+        require_once __DIR__ . '/../Models/BookPage.php';
+        $bookPageModel = new BookPage($this->db);
+        $book_id = $year; // Ajusta si el id del libro es diferente
+        $pages = $bookPageModel->getAllByBook($book_id);
+
+        foreach ($pages as $page) {
+            // Nueva página si es completa o superior
+            if ($page['position'] === 'full' || $page['position'] === 'top') {
+                $pdf->AddPage();
+            }
             $pdf->SetFont('helvetica', 'B', 16);
-            $pdf->Cell(0, 10, $activity['title'], 0, 1);
-            
-            if ($activity['description']) {
-                $pdf->SetFont('helvetica', '', 11);
-                $pdf->MultiCell(0, 5, $activity['description'], 0, 'L');
-            }
-
-            if ($activity['image_url']) {
-                $imagePath = __DIR__ . '/../../public/' . $activity['image_url'];
+            $pdf->Cell(0, 10, $page['content'], 0, 1);
+            // Si hay imagen, colocar según posición
+            if (!empty($page['image_url'])) {
+                $imagePath = __DIR__ . '/../../public/' . $page['image_url'];
                 if (file_exists($imagePath)) {
-                    $pdf->Ln(5);
-                    $pdf->Image($imagePath, 15, $pdf->GetY(), 180, 0, '', '', '', true, 300);
-                }
-            }
-        }
-
-        // Add ads
-        foreach ($ads as $ad) {
-            $pdf->AddPage();
-            $pdf->SetFont('helvetica', 'B', 14);
-            $pdf->Cell(0, 10, $ad['donor_name'], 0, 1, 'C');
-            
-            if ($ad['image_url']) {
-                $imagePath = __DIR__ . '/../../public/' . $ad['image_url'];
-                if (file_exists($imagePath)) {
-                    $pdf->Image($imagePath, 15, $pdf->GetY(), 180, 0, '', '', '', true, 300);
+                    if ($page['position'] === 'top') {
+                        $pdf->Image($imagePath, 15, $pdf->GetY(), 180, 80, '', '', '', true, 300);
+                    } else if ($page['position'] === 'bottom') {
+                        $pdf->SetY(-100);
+                        $pdf->Image($imagePath, 15, $pdf->GetY(), 180, 80, '', '', '', true, 300);
+                    } else {
+                        $pdf->Image($imagePath, 15, $pdf->GetY(), 180, 0, '', '', '', true, 300);
+                    }
                 }
             }
         }
