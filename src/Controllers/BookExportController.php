@@ -73,6 +73,37 @@ class BookExportController {
     }
 
     public function generatePdf() {
+                // Depuración: mostrar el contenido de $pages
+                file_put_contents(__DIR__ . '/../../debug_pages.log', print_r($pages, true));
+
+                // Generar una página por cada entrada en $pages
+                // Depuración: mostrar el contenido de $pages
+                file_put_contents(__DIR__ . '/../../debug_pages.log', print_r($pages, true));
+
+                foreach ($pages as $idx => $page) {
+                    if ($idx > 0) {
+                        $pdf->AddPage();
+                    }
+                    $pdf->SetFont('helvetica', 'B', 16);
+                    $pdf->Cell(0, 10, $page['content'], 0, 1);
+                    if (!empty($page['image_url'])) {
+                        $imagePath = __DIR__ . '/../../public/' . $page['image_url'];
+                        if (file_exists($imagePath)) {
+                            if ($page['position'] === 'top') {
+                                $pdf->Image($imagePath, 15, $pdf->GetY(), 180, 80, '', '', '', true, 300);
+                            } else if ($page['position'] === 'bottom') {
+                                $pdf->SetY(-100);
+                                $pdf->Image($imagePath, 15, $pdf->GetY(), 180, 80, '', '', '', true, 300);
+                            } else {
+                                $pdf->Image($imagePath, 15, $pdf->GetY(), 180, 0, '', '', '', true, 300);
+                            }
+                        } else {
+                            $this->drawDefaultImage($pdf, $page);
+                        }
+                    } else {
+                        $this->drawDefaultImage($pdf, $page);
+                    }
+                }
         $this->checkAdmin();
         $year = $_GET['year'] ?? date('Y');
         require_once __DIR__ . '/../../vendor/autoload.php';
@@ -112,11 +143,11 @@ class BookExportController {
             $pages = $bookPageModel->getAllByBook($book_id);
         }
 
-        $first = true;
-        foreach ($pages as $page) {
-            if ($first) {
-                $first = false;
-            } else if ($page['position'] === 'full' || $page['position'] === 'top') {
+        // Depuración: mostrar el contenido de $pages
+        file_put_contents(__DIR__ . '/../../debug_pages.log', print_r($pages, true));
+
+        foreach ($pages as $idx => $page) {
+            if ($idx > 0) {
                 $pdf->AddPage();
             }
             $pdf->SetFont('helvetica', 'B', 16);
