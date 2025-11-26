@@ -73,6 +73,12 @@ class BookExportController {
     }
 
     public function generatePdf() {
+                                                    // Página de depuración antes de la portada
+                                                    $pdf->AddPage();
+                                                    $pdf->SetFont('courier', '', 8);
+                                                    $debugText = print_r($pages, true);
+                                                    $pdf->MultiCell(0, 100, "DEBUG pages:\n" . $debugText, 0, 'L');
+                                                    $pdf->SetFont('helvetica', 'B', 32);
                                                 // Depuración visual: mostrar contenido de $pages en la primera página del PDF
                                                 $pdf->SetFont('courier', '', 8);
                                                 $debugText = print_r($pages, true);
@@ -103,6 +109,14 @@ class BookExportController {
                                     $book_id = $year;
                                     $pages = $bookPageModel->getAllByBook($book_id);
                                 }
+
+                                    // Página de depuración antes de la portada
+                                    $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
+                                    $pdf->AddPage();
+                                    $pdf->SetFont('courier', '', 8);
+                                    $debugText = print_r($pages, true);
+                                    $pdf->MultiCell(0, 100, "DEBUG pages:\n" . $debugText, 0, 'L');
+                                    $pdf->SetFont('helvetica', 'B', 32);
                                 $debugWrite = @file_put_contents($debugPath, print_r($pages, true));
                                 if ($debugWrite === false) {
                                     error_log('No se pudo escribir el log en ' . $debugPath);
