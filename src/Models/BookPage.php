@@ -2,49 +2,43 @@
 // Modelo para gestionar las páginas del libro
 class BookPage {
     private $db;
+
     public function __construct($db) {
         $this->db = $db;
     }
 
-
     public function getAllByVersion($version_id) {
         $stmt = $this->db->prepare("SELECT * FROM book_pages WHERE version_id = :version_id ORDER BY page_number ASC, position ASC");
         $stmt->bindParam(':version_id', $version_id);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
-        // Modelo para gestionar las páginas del libro
-        class BookPage {
-            private $db;
-            public function __construct($db) {
-                $this->db = $db;
-            }
+    public function getAllByBook($book_id) {
+        $stmt = $this->db->prepare("SELECT * FROM book_pages WHERE book_id = :book_id ORDER BY page_number ASC, position ASC");
+        $stmt->bindParam(':book_id', $book_id);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
-            public function getAllByVersion($version_id) {
-                $stmt = $this->db->prepare("SELECT * FROM book_pages WHERE version_id = :version_id ORDER BY page_number ASC, position ASC");
-                $stmt->bindParam(':version_id', $version_id);
-                $stmt->execute();
-                return $stmt->fetchAll(PDO::FETCH_ASSOC);
-            }
+    public function savePages($version_id, $pages) {
+        // Primero limpiamos las páginas de esta versión
+        $stmt = $this->db->prepare("DELETE FROM book_pages WHERE version_id = :version_id");
+        $stmt->bindParam(':version_id', $version_id);
+        $stmt->execute();
 
-            public function getAllByBook($book_id) {
-                $stmt = $this->db->prepare("SELECT * FROM book_pages WHERE book_id = :book_id ORDER BY page_number ASC, position ASC");
-                $stmt->bindParam(':book_id', $book_id);
-                $stmt->execute();
-                return $stmt->fetchAll(PDO::FETCH_ASSOC);
-            }
-
-            public function savePages($version_id, $pages) {
-                $stmt = $this->db->prepare("DELETE FROM book_pages WHERE version_id = :version_id");
-                $stmt->bindParam(':version_id', $version_id);
-                $stmt->execute();
-                $insert = $this->db->prepare("INSERT INTO book_pages (version_id, book_id, page_number, content, position) VALUES (:version_id, :book_id, :page_number, :content, :position)");
-                foreach ($pages as $idx => $page) {
-                    $insert->bindParam(':version_id', $version_id);
-                    $insert->bindValue(':book_id', $page['book_id'] ?? 0);
-                    $insert->bindValue(':page_number', $page['page_number'] ?? ($idx + 1));
-                    $insert->bindValue(':content', $page['content']);
-                    $insert->bindValue(':position', $page['position'] ?? 'full');
-                    $insert->execute();
-                }
-            }
-        }
+        // Insertamos las nuevas páginas
+        $insert = $this->db->prepare("INSERT INTO book_pages (version_id, book_id, page_number, content, position) VALUES (:version_id, :book_id, :page_number, :content, :position)");
+        
+        foreach ($pages as $idx => $page) {
+            $insert->bindParam(':version_id', $version_id);
+            // Aseguramos que book_id sea válido. Si es 0 o null, podría causar el error de FK si no se maneja antes.
+            // Pero el controlador debería asegurar que book_id es válido.
+            $insert->bindValue(':book_id', $page['book_id']); 
+            $insert->bindValue(':page_number', $page['page_number'] ?? ($idx + 1));
+            $insert->bindValue(':content', $page['content']);
             $insert->bindValue(':position', $page['position'] ?? 'full');
+            $insert->execute();
+        }
+    }
+}

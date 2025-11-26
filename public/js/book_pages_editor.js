@@ -31,7 +31,7 @@ function renderPages() {
         setTimeout(() => {
             const selector = div.querySelector('.page-type-selector');
             if (selector) {
-                selector.addEventListener('change', function(e) {
+                selector.addEventListener('change', function (e) {
                     const idx = parseInt(this.dataset.idx);
                     bookPages[idx].position = this.value;
                     renderPages();
@@ -96,33 +96,32 @@ function deletePage(idx) {
 }
 
 function savePages(bookId) {
+    const payload = {
+        book_id: bookId,
+        pages: bookPages,
+        version_id: window.versionId || null
+    };
+
     fetch('index.php?page=book_page_api&action=savePages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ book_id: bookId, pages: bookPages })
+        body: JSON.stringify(payload)
     })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            alert('Páginas guardadas correctamente');
-        } else {
-            alert('Error al guardar: ' + (data.error || 'Desconocido'));
-        }
-    })
-    .catch(() => alert('Error de red al guardar páginas'));
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert('Páginas guardadas correctamente');
+            } else {
+                alert('Error al guardar: ' + (data.error || 'Desconocido'));
+            }
+        })
+        .catch(() => alert('Error de red al guardar páginas'));
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     renderPages();
-    document.getElementById('add-page-btn').onclick = addPage;
-    // Botón guardar
-    const saveBtn = document.createElement('button');
-    saveBtn.textContent = 'Guardar cambios';
-    saveBtn.className = 'btn btn-success';
-    saveBtn.style.marginLeft = '1rem';
-    saveBtn.onclick = function() {
-        const bookId = window.bookId || prompt('ID del libro:', '2025');
-        if (bookId) savePages(bookId);
-    };
-    document.getElementById('add-page-btn').after(saveBtn);
+    const addBtn = document.getElementById('add-page-btn');
+    if (addBtn) {
+        addBtn.onclick = addPage;
+    }
 });
