@@ -19,10 +19,25 @@ function renderPages() {
         div.dataset.idx = idx;
         div.innerHTML = `
             <span class="page-title">${page.content}</span>
-            <span class="page-position" style="margin-left:10px; color:#888; font-size:0.9em;">${getPositionLabel(page.position)}</span>
+            <select class="page-type-selector" data-idx="${idx}" style="margin-left:10px;">
+                <option value="full" ${page.position === 'full' ? 'selected' : ''}>Completa</option>
+                <option value="top" ${page.position === 'top' ? 'selected' : ''}>Superior</option>
+                <option value="bottom" ${page.position === 'bottom' ? 'selected' : ''}>Inferior</option>
+            </select>
             <button onclick="editPage(${idx})">✏️</button>
             <button onclick="deletePage(${idx})">🗑️</button>
         `;
+        // Selector de tipo de página
+        setTimeout(() => {
+            const selector = div.querySelector('.page-type-selector');
+            if (selector) {
+                selector.addEventListener('change', function(e) {
+                    const idx = parseInt(this.dataset.idx);
+                    bookPages[idx].position = this.value;
+                    renderPages();
+                });
+            }
+        }, 0);
         div.ondragstart = (e) => {
             e.dataTransfer.setData('text/plain', idx);
         };
