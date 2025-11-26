@@ -9,6 +9,7 @@ class BookExportController {
     }
 
     public function index() {
+        global $page; // Make $page available for layout.php
         $year = $_GET['year'] ?? date('Y');
         
         require_once __DIR__ . '/../Models/BookPage.php';
@@ -85,6 +86,8 @@ class BookExportController {
             $editorBlocks = $pages;
         }
 
+        // Ensure all variables are available in view scope
+        // (PHP's require includes the file in the current scope, so local variables are accessible)
         require __DIR__ . '/../Views/book/export.php';
     }
 
