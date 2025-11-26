@@ -33,6 +33,13 @@ class BookPageApiController {
     }
 
     public function savePages() {
+                // Depuración: mostrar el book_id final y el de cada página
+                error_log('BookPageApiController::savePages - book_id final: ' . $book_id);
+                foreach ($pages as $idx => $page) {
+                    error_log('Página ' . $idx . ' book_id antes: ' . ($page['book_id'] ?? 'null'));
+                    $pages[$idx]['book_id'] = $book_id;
+                    error_log('Página ' . $idx . ' book_id después: ' . $pages[$idx]['book_id']);
+                }
         if (($_SESSION['role'] ?? '') !== 'admin') {
             http_response_code(403);
             echo json_encode(['error' => 'No autorizado']);
