@@ -33,6 +33,10 @@ class BookPageApiController {
     }
 
     public function savePages() {
+                                        // Asignar el book_id generado a cada página
+                                        foreach ($pages as $idx => $page) {
+                                            $pages[$idx]['book_id'] = $book_id;
+                                        }
                                 // Volcado de depuración en la respuesta JSON antes de guardar
                                 echo json_encode([
                                     'debug_book_id' => $book_id,
