@@ -80,7 +80,11 @@ class BookExportController {
                     $debugPath = __DIR__ . '/../../public/debug_pages.log';
                     @file_put_contents($debugPath, "INICIO generatePdf\n");
         // Depuración: comprobar ejecución del método y permisos de escritura
-        $debugPath = __DIR__ . '/../../public/debug_pages.log';
+        $debugPath = '/opt/GestionSocios/public/debug_pages.log';
+        $debugWrite = @file_put_contents($debugPath, "INICIO generatePdf\n");
+        if ($debugWrite === false) {
+            echo '<pre style="color:red">No se pudo escribir el log en ' . $debugPath . '</pre>';
+        }
         @file_put_contents($debugPath, "INICIO generatePdf\n");
         $this->checkAdmin();
         $year = $_GET['year'] ?? date('Y');
@@ -184,7 +188,10 @@ class BookExportController {
             'year' => $year,
         ]);
         // Depuración: justo antes de exit
-        @file_put_contents($debugPath, "ANTES DE EXIT\n", FILE_APPEND);
+        $debugWrite2 = @file_put_contents($debugPath, "ANTES DE EXIT\n", FILE_APPEND);
+        if ($debugWrite2 === false) {
+            echo '<pre style="color:red">No se pudo escribir el log en ' . $debugPath . ' (antes de exit)</pre>';
+        }
         $pdf->Output('libro_fiestas_' . $year . '.pdf', 'D');
         exit;
     }
