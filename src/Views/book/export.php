@@ -153,11 +153,20 @@
         align-items: center;
         gap: 12px;
         cursor: grab;
-        transition: box-shadow 0.2s;
+        transition: all 0.2s ease;
     }
-    .book-page-block:active {
-        box-shadow: 0 2px 8px #aaa;
-        background: #f3f4f6;
+    .book-page-block:hover {
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .book-page-block.dragging {
+        opacity: 0.5;
+        background: #f8fafc;
+        border: 1px dashed #cbd5e1;
+    }
+    .book-page-block.drag-over {
+        border-top: 2px solid var(--primary-500);
+        background: var(--primary-50);
+        transform: translateY(2px);
     }
     .book-page-block .page-title {
         flex: 1;
@@ -169,6 +178,12 @@
         cursor: pointer;
         font-size: 1.1em;
         margin-left: 4px;
+        padding: 4px;
+        border-radius: 4px;
+        transition: background 0.2s;
+    }
+    .book-page-block button:hover {
+        background: rgba(0,0,0,0.05);
     }
 </style>
 <script>
