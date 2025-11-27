@@ -309,6 +309,17 @@ function crearNuevaVersion() {
 }
 </script>
 <script src="/js/book_pages_editor.js?v=<?php echo time(); ?>"></script>
+
+<!-- Modal para añadir página -->
+<div id="add-page-modal" class="modal-overlay">
+    <div class="modal-content">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+            <h3 style="margin:0;">Añadir Página</h3>
+            <button onclick="closeAddModal()" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+        </div>
+
+        <div style="border-bottom: 1px solid #e2e8f0; margin-bottom: 1rem; display: flex; gap: 1rem;">
+            <button class="tab-btn active" onclick="switchTab('custom')">Personalizada</button>
             <button class="tab-btn" onclick="switchTab('activities')">Actividades</button>
             <button class="tab-btn" onclick="switchTab('ads')">Anuncios</button>
         </div>
