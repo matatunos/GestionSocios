@@ -227,19 +227,21 @@ class DonorController {
                 if ((string)$original['latitude'] !== (string)($_POST['latitude'] ?? '')) $changedFields[] = 'latitud';
                 if ((string)$original['longitude'] !== (string)($_POST['longitude'] ?? '')) $changedFields[] = 'longitud';
                 if ((string)$logoUrl !== (string)$original['logo_url']) $changedFields[] = 'imagen';
+                $detalle = 'Modificación de donante: ' . $original['name'] . ' (' . $original['email'] . ') por el usuario ' . ($_SESSION['username'] ?? '');
                 if ($changedFields) {
-                    $detalle = 'Modificación de donante: ' . $original['name'] . ' (' . $original['email'] . ') por el usuario ' . ($_SESSION['username'] ?? '');
                     $detalle .= ' [Campos modificados: ' . implode(', ', $changedFields) . ']';
-                    require_once __DIR__ . '/../Models/AuditLog.php';
-                    $audit = new AuditLog($this->db);
-                    $audit->create(
-                        $_SESSION['user_id'],
-                        'update',
-                        'donor',
-                        $id,
-                        $detalle
-                    );
+                } else {
+                    $detalle .= ' [Sin cambios detectados]';
                 }
+                require_once __DIR__ . '/../Models/AuditLog.php';
+                $audit = new AuditLog($this->db);
+                $audit->create(
+                    $_SESSION['user_id'],
+                    'update',
+                    'donor',
+                    $id,
+                    $detalle
+                );
                 header('Location: index.php?page=donors&success=updated');
             } else {
                 $error = "Error updating donor.";
