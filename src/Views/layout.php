@@ -217,6 +217,13 @@ if (isset($_SESSION['user_id'])) {
                         <?php endif; ?>
                     </a>
                 </li>
+                <!-- Menú de Auditoría -->
+                <li>
+                    <a href="index.php?page=audit_log" class="nav-link <?php echo ($page === 'audit_log') ? 'active' : ''; ?>">
+                        <i class="fas fa-user-shield"></i>
+                        <span>Auditoría</span>
+                    </a>
+                </li>
                 <li>
                     <a href="index.php?page=documents" class="nav-link <?php echo ($page === 'documents') ? 'active' : ''; ?>">
                         <i class="fas fa-folder-open"></i>
@@ -277,13 +284,7 @@ if (isset($_SESSION['user_id'])) {
                         </li>
                     </ul>
                 </li>
-                <!-- Menú de Auditoría -->
-                <li>
-                    <a href="index.php?page=audit_log" class="nav-link <?php echo ($page === 'audit_log') ? 'active' : ''; ?>">
-                        <i class="fas fa-user-shield"></i>
-                        <span>Auditoría</span>
-                    </a>
-                </li>
+
                 <li>
                     <a href="index.php?page=settings" class="nav-link <?php echo ($page === 'settings') ? 'active' : ''; ?>">
                         <i class="fas fa-cog"></i>
