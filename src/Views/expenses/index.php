@@ -183,27 +183,42 @@ function buildPageUrl($page, $filters) {
 </div>
 <!-- Paginación: fuera del bloque de estadísticas -->
 <?php if (isset($totalPages) && $totalPages > 1): ?>
-    <div class="text-center" style="margin-bottom:0.5rem; color:var(--text-muted); font-size:0.95rem;">
+<div style="display: flex; justify-content: space-between; align-items: center; margin: 2rem 0 1rem 0; flex-wrap: wrap; gap: 1rem;">
+    <div style="font-size: 0.95rem; color: var(--text-muted);">
         Mostrando <?php echo (($page - 1) * 20 + 1); ?> - <?php echo min($page * 20, $totalRecords); ?> de <?php echo $totalRecords; ?> registros
     </div>
-    <nav aria-label="Paginación de gastos" style="margin-bottom:2rem;">
-        <ul class="pagination justify-content-center">
-            <li class="page-item<?php echo ($page <= 1) ? ' disabled' : ''; ?>">
-                <a class="page-link" href="<?php echo buildPageUrl($page - 1, $filters); ?>" tabindex="-1">&laquo; Anterior</a>
-            </li>
-            <?php for ($p = 1; $p <= $totalPages; $p++): ?>
-                <li class="page-item<?php echo ($p == $page) ? ' active' : ''; ?>">
-                    <a class="page-link" href="<?php echo buildPageUrl($p, $filters); ?>"><?php echo $p; ?></a>
-                </li>
-            <?php endfor; ?>
-            <li class="page-item<?php echo ($page >= $totalPages) ? ' disabled' : ''; ?>">
-                <a class="page-link" href="<?php echo buildPageUrl($page + 1, $filters); ?>">Siguiente &raquo;</a>
-            </li>
-        </ul>
-        <div class="text-center" style="margin-top:0.5rem; color:var(--text-muted); font-size:0.95rem;">
-            Página <?php echo $page; ?> de <?php echo $totalPages; ?>
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <?php if ($page > 1): ?>
+            <a href="<?php echo buildPageUrl($page - 1, $filters); ?>" class="btn btn-sm btn-secondary">
+                <i class="fas fa-chevron-left"></i> Anterior
+            </a>
+        <?php endif; ?>
+        <div style="display: flex; gap: 0.25rem;">
+            <?php 
+            $startPage = max(1, $page - 2);
+            $endPage = min($totalPages, $page + 2);
+            if ($startPage > 1) {
+                echo '<span style="padding: 0.25rem 0.5rem;">...</span>';
+            }
+            for ($i = $startPage; $i <= $endPage; $i++): ?>
+                <a href="<?php echo buildPageUrl($i, $filters); ?>" 
+                   class="btn btn-sm <?php echo $i == $page ? 'btn-primary' : 'btn-secondary'; ?>"
+                   style="<?php echo $i == $page ? '' : 'background: white;'; ?>">
+                    <?php echo $i; ?>
+                </a>
+            <?php endfor; 
+            if ($endPage < $totalPages) {
+                echo '<span style="padding: 0.25rem 0.5rem;">...</span>';
+            }
+            ?>
         </div>
-    </nav>
+        <?php if ($page < $totalPages): ?>
+            <a href="<?php echo buildPageUrl($page + 1, $filters); ?>" class="btn btn-sm btn-secondary">
+                Siguiente <i class="fas fa-chevron-right"></i>
+            </a>
+        <?php endif; ?>
+    </div>
+</div>
 <?php endif; ?>
 
 <!-- Expenses by Category Chart -->
