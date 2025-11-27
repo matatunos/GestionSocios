@@ -1,35 +1,3 @@
-    // Count all expenses with filters (para paginación)
-    public function countAll($filters = []) {
-        $query = "SELECT COUNT(*) as total FROM " . $this->table . " e WHERE 1=1";
-        $params = [];
-        if (!empty($filters['category_id'])) {
-            $query .= " AND e.category_id = :category_id";
-            $params[':category_id'] = $filters['category_id'];
-        }
-        if (!empty($filters['start_date'])) {
-            $query .= " AND e.expense_date >= :start_date";
-            $params[':start_date'] = $filters['start_date'];
-        }
-        if (!empty($filters['end_date'])) {
-            $query .= " AND e.expense_date <= :end_date";
-            $params[':end_date'] = $filters['end_date'];
-        }
-        if (!empty($filters['year'])) {
-            $query .= " AND YEAR(e.expense_date) = :year";
-            $params[':year'] = $filters['year'];
-        }
-        if (!empty($filters['month'])) {
-            $query .= " AND MONTH(e.expense_date) = :month";
-            $params[':month'] = $filters['month'];
-        }
-        $stmt = $this->conn->prepare($query);
-        foreach ($params as $key => $value) {
-            $stmt->bindValue($key, $value);
-        }
-        $stmt->execute();
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        return $row ? (int)$row['total'] : 0;
-    }
 <?php
 
 class Expense {
