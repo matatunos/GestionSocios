@@ -424,55 +424,76 @@ class BookExportController {
             $html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">';
             $html .= '<head><meta charset="utf-8"><title>Libro de Fiestas ' . $year . '</title>';
             $html .= '<style>
-                body { font-family: Arial, sans-serif; }
+                body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
                 .page-break { page-break-after: always; }
-                .page-container { width: 100%; height: 100%; position: relative; border: 1px solid #eee; padding: 20px; box-sizing: border-box; }
-                .page-title { font-size: 24px; font-weight: bold; text-align: center; margin-bottom: 20px; }
-                .page-image { text-align: center; margin: 20px 0; }
-                .page-image img { max-width: 100%; max-height: 500px; }
-                .page-type { font-size: 12px; color: #666; text-align: center; margin-top: 20px; text-transform: uppercase; }
+                .page-full { width: 100%; min-height: 800px; position: relative; border: 1px solid #eee; padding: 20px; box-sizing: border-box; }
+                .page-half { width: 100%; height: 400px; position: relative; border: 1px solid #eee; padding: 15px; box-sizing: border-box; }
+                .page-title { font-size: 20px; font-weight: bold; text-align: center; margin-bottom: 15px; }
+                .page-image { text-align: center; margin: 10px 0; }
+                .page-image img { max-width: 100%; max-height: 300px; }
+                .page-type { font-size: 11px; color: #666; text-align: center; margin-top: 15px; text-transform: uppercase; }
                 .cover-title { font-size: 48px; font-weight: bold; text-align: center; margin-top: 200px; }
                 .cover-year { font-size: 36px; text-align: center; margin-top: 20px; }
             </style>';
             $html .= '</head><body>';
 
             // Cover
-            $html .= '<div class="page-container">';
+            $html .= '<div class="page-full">';
             $html .= '<div class="cover-title">Libro de Fiestas</div>';
             $html .= '<div class="cover-year">' . $year . '</div>';
             $html .= '</div>';
 
-            // Pages
-            $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+            // Pages - handle half-page layouts
+            $i = 0;
+            $totalPages = count($pages);
             
-            foreach ($pages as $page) {
-                if (isset($page['type']) && $page['type'] === 'cover') continue;
-
-                // Explicit page break for Word
+            while ($i < $totalPages) {
+                $currentPage = $pages[$i];
+                
+                // Skip cover if it appears in the list
+                if (isset($currentPage['type']) && $currentPage['type'] === 'cover') {
+                    $i++;
+                    continue;
+                }
+                
+                $position = $currentPage['position'] ?? 'full';
+                
+                // Page break before starting new page
                 $html .= '<br style="page-break-before: always; clear: both;" />';
                 
-                $html .= '<div class="page-container">';
-                $html .= '<div class="page-title">' . htmlspecialchars($page['content'] ?? '') . '</div>';
-                
-                if (!empty($page['image_url'])) {
-                    // For Word, absolute URLs are better, or base64. 
-                    // Let's try absolute URL if accessible, otherwise relative might fail if not localhost.
-                    // Ideally we embed as base64 for portability.
-                    $imagePath = __DIR__ . '/../../public/' . $page['image_url'];
-                    if (file_exists($imagePath)) {
-                        $imageData = base64_encode(file_get_contents($imagePath));
-                        $src = 'data:image/' . pathinfo($imagePath, PATHINFO_EXTENSION) . ';base64,' . $imageData;
-                        $html .= '<div class="page-image"><img src="' . $src . '"></div>';
+                if ($position === 'full') {
+                    // Full page element
+                    $html .= $this->generatePageHtml($currentPage, 'full');
+                    $i++;
+                } else if ($position === 'top') {
+                    // Top half - check if next element is bottom
+                    $html .= $this->generatePageHtml($currentPage, 'top');
+                    
+                    // Check if next page is bottom positioned
+                    if ($i + 1 < $totalPages) {
+                        $nextPage = $pages[$i + 1];
+                        $nextPosition = $nextPage['position'] ?? 'full';
+                        
+                        if ($nextPosition === 'bottom' && (!isset($nextPage['type']) || $nextPage['type'] !== 'cover')) {
+                            // Add bottom half on same page
+                            $html .= $this->generatePageHtml($nextPage, 'bottom');
+                            $i += 2; // Skip both elements
+                        } else {
+                            // No bottom element, just move to next
+                            $i++;
+                        }
                     } else {
-                        $html .= '<div style="text-align:center; padding: 50px; background: #f0f0f0;">[Imagen no encontrada]</div>';
+                        $i++;
                     }
+                } else if ($position === 'bottom') {
+                    // Bottom half without top (shouldn't happen often, but handle it)
+                    $html .= $this->generatePageHtml($currentPage, 'bottom');
+                    $i++;
                 } else {
-                    $html .= '<div style="text-align:center; padding: 50px; background: #f0f0f0;">[Sin imagen]</div>';
+                    // Unknown position, treat as full
+                    $html .= $this->generatePageHtml($currentPage, 'full');
+                    $i++;
                 }
-
-                $typeLabel = isset($page['type']) ? ($page['type'] === 'activity' ? 'Actividad' : ($page['type'] === 'ad' ? 'Anuncio' : 'Contenido')) : 'Página';
-                $html .= '<div class="page-type">' . $typeLabel . '</div>';
-                $html .= '</div>';
             }
 
             $html .= '</body></html>';
@@ -489,6 +510,33 @@ class BookExportController {
             http_response_code(500);
             die("Error generando DOCX: " . $e->getMessage());
         }
+    }
+
+    private function generatePageHtml($page, $layout = 'full') {
+        $html = '';
+        $containerClass = ($layout === 'full') ? 'page-full' : 'page-half';
+        
+        $html .= '<div class="' . $containerClass . '">';
+        $html .= '<div class="page-title">' . htmlspecialchars($page['content'] ?? '') . '</div>';
+        
+        if (!empty($page['image_url'])) {
+            $imagePath = __DIR__ . '/../../public/' . $page['image_url'];
+            if (file_exists($imagePath)) {
+                $imageData = base64_encode(file_get_contents($imagePath));
+                $src = 'data:image/' . pathinfo($imagePath, PATHINFO_EXTENSION) . ';base64,' . $imageData;
+                $html .= '<div class="page-image"><img src="' . $src . '"></div>';
+            } else {
+                $html .= '<div style="text-align:center; padding: 30px; background: #f0f0f0;">[Imagen no encontrada]</div>';
+            }
+        } else {
+            $html .= '<div style="text-align:center; padding: 30px; background: #f0f0f0;">[Sin imagen]</div>';
+        }
+
+        $typeLabel = isset($page['type']) ? ($page['type'] === 'activity' ? 'Actividad' : ($page['type'] === 'ad' ? 'Anuncio' : 'Contenido')) : 'Página';
+        $html .= '<div class="page-type">' . $typeLabel . '</div>';
+        $html .= '</div>';
+        
+        return $html;
     }
 
     private function checkAdmin() {
