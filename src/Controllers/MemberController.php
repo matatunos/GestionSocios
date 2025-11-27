@@ -326,6 +326,19 @@ class MemberController {
         $this->checkAdmin();
         $currentYear = date('Y');
         
+                $original = [
+                    'first_name' => $this->member->first_name,
+                    'last_name' => $this->member->last_name,
+                    'dni' => $this->member->dni,
+                    'email' => $this->member->email,
+                    'phone' => $this->member->phone,
+                    'address' => $this->member->address,
+                    'latitude' => $this->member->latitude,
+                    'longitude' => $this->member->longitude,
+                    'status' => $this->member->status,
+                    'category_id' => $this->member->category_id,
+                    'photo_url' => $this->member->photo_url
+                ];
         // Check if fee for current year exists
         $feeStmt = $this->db->prepare("SELECT amount FROM annual_fees WHERE year = ?");
         $feeStmt->execute([$currentYear]);

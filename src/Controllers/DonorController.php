@@ -308,8 +308,18 @@ class DonorController {
             $newFileName = 'donor_' . time() . '_' . uniqid() . '.' . $extension;
             $permanentPath = __DIR__ . '/../../public/uploads/donors/' . $newFileName;
             
-            if (rename($tempPath, $permanentPath)) {
-                $newLogoUrl = 'uploads/donors/' . $newFileName;
+                    $this->donor->readOne();
+                    $currentLogo = $this->donor->logo_url;
+                    $original = [
+                        'name' => $this->donor->name,
+                        'contact_person' => $this->donor->contact_person,
+                        'phone' => $this->donor->phone,
+                        'email' => $this->donor->email,
+                        'address' => $this->donor->address,
+                        'latitude' => $this->donor->latitude,
+                        'longitude' => $this->donor->longitude,
+                        'logo_url' => $this->donor->logo_url
+                    ];
                 
                 // Mark old image as replaced in history
                 $this->imageHistory->markAllAsNotCurrent($id);
