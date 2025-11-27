@@ -185,11 +185,101 @@
     .book-page-block button:hover {
         background: rgba(0,0,0,0.05);
     }
-</style>
+    
+    /* Tipos de página */
+    .book-page-block.type-activity {
+        border-left: 4px solid #a855f7;
+        background: #faf5ff;
+    }
+    .book-page-block.type-ad {
+        border-left: 4px solid #3b82f6;
+        background: #eff6ff;
+    }
+    .book-page-block.type-cover {
+        border-left: 4px solid #64748b;
+        background: #f1f5f9;
+    }
+    
+    /* Modal Styles */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.2s;
+    }
+    .modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+    .modal-content {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+    }
+    .content-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    .content-item {
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 0.75rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+    }
+    .content-item:hover {
+        border-color: var(--primary-500);
+        background: var(--primary-50);
+    }
+    .content-item img {
+        width: 100%;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 4px;
+        margin-bottom: 0.5rem;
+        background: #f1f5f9;
+    }
+    .content-item.used {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background: #f1f5f9;
+    }
+    .tab-btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        background: none;
+        border-bottom: 2px solid transparent;
+        cursor: pointer;
+        font-weight: 500;
+        color: var(--text-muted);
+    }
+    .tab-btn.active {
+        color: var(--primary-600);
+        border-bottom-color: var(--primary-600);
+    }</style>
 <script>
 window.bookPages = <?php echo json_encode($editorBlocks ?? []); ?>;
 window.bookVersions = <?php echo json_encode($bookVersions ?? []); ?>;
 window.versionId = <?php echo json_encode($version_id ?? 0); ?>;
+window.availableActivities = <?php echo json_encode($activities ?? []); ?>;
+window.availableAds = <?php echo json_encode($ads ?? []); ?>;
 function crearNuevaVersion() {
     var nombre = prompt('Nombre de la nueva versión:');
     if (!nombre) return;
@@ -219,6 +309,48 @@ function crearNuevaVersion() {
 }
 </script>
 <script src="/js/book_pages_editor.js"></script>
+
+<!-- Modal para añadir página -->
+<div id="add-page-modal" class="modal-overlay">
+    <div class="modal-content">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+            <h3 style="margin:0;">Añadir Página</h3>
+            <button onclick="closeAddModal()" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+        </div>
+
+        <div style="border-bottom: 1px solid #e2e8f0; margin-bottom: 1rem; display: flex; gap: 1rem;">
+            <button class="tab-btn active" onclick="switchTab('custom')">Personalizada</button>
+            <button class="tab-btn" onclick="switchTab('activities')">Actividades</button>
+            <button class="tab-btn" onclick="switchTab('ads')">Anuncios</button>
+        </div>
+
+        <div id="tab-custom" class="tab-content">
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label style="display:block; margin-bottom:0.5rem;">Título de la página</label>
+                <input type="text" id="new-page-title" class="form-control" placeholder="Ej: Introducción">
+            </div>
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label style="display:block; margin-bottom:0.5rem;">Posición</label>
+                <select id="new-page-pos" class="form-select">
+                    <option value="full">Completa</option>
+                    <option value="top">Superior (Media)</option>
+                    <option value="bottom">Inferior (Media)</option>
+                </select>
+            </div>
+            <button onclick="addCustomPage()" class="btn btn-primary" style="width:100%;">Añadir Página</button>
+        </div>
+
+        <div id="tab-activities" class="tab-content" style="display:none;">
+            <p style="color:var(--text-muted); font-size:0.9em;">Selecciona una actividad para añadirla al libro.</p>
+            <div id="activities-list" class="content-grid"></div>
+        </div>
+
+        <div id="tab-ads" class="tab-content" style="display:none;">
+            <p style="color:var(--text-muted); font-size:0.9em;">Selecciona un anuncio para añadirlo al libro.</p>
+            <div id="ads-list" class="content-grid"></div>
+        </div>
+    </div>
+</div>
 
 <?php $content = ob_get_clean(); ?>
 <?php require __DIR__ . '/../layout.php'; ?>
