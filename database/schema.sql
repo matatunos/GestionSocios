@@ -330,6 +330,8 @@ CREATE TABLE IF NOT EXISTS book_pages (
     version_id INT DEFAULT NULL,
     page_number INT NOT NULL,
     position ENUM('full', 'top', 'bottom') DEFAULT 'full',
+    type VARCHAR(50) DEFAULT 'custom',
+    image_url VARCHAR(255) DEFAULT NULL,
     content TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
