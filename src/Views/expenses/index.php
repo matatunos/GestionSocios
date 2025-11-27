@@ -1,8 +1,5 @@
-<?php
-$content = ob_get_clean();
-require_once __DIR__ . '/../layout.php';
-?>
 <?php ob_start(); ?>
+<div class="page-content">
 <?php
 // Inicializar variables de paginación si no existen
 if (!isset($page)) $page = 1;
@@ -409,3 +406,12 @@ function buildPageUrl($page, $filters) {
                                     </div>
                                 </div>
                                 <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php $content = ob_get_clean(); require_once __DIR__ . '/../layout.php'; ?>
