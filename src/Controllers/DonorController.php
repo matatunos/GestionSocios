@@ -206,7 +206,7 @@ class DonorController {
                 // Registrar en audit_log
                 require_once __DIR__ . '/../Models/AuditLog.php';
                 $audit = new AuditLog($this->db);
-                $audit->create($_SESSION['user_id'], 'update', 'donor', $id, 'Modificación de donante por el usuario ' . ($_SESSION['username'] ?? ''));
+                $audit->create($_SESSION['user_id'], 'update', 'donor', $id, 'Modificación de donante por el usuario ' . ($_SESSION['username'] ?? '') . ($logoUrl ? ' (imagen modificada)' : ''));
                 header('Location: index.php?page=donors&success=updated');
             } else {
                 $error = "Error updating donor.";

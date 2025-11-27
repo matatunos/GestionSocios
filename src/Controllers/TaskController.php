@@ -133,6 +133,11 @@ class TaskController {
             $taskModel->notes = $_POST['notes'] ?? '';
 
             if ($taskModel->create()) {
+                // Auditoría de alta de tarea
+                require_once __DIR__ . '/../Models/AuditLog.php';
+                $audit = new AuditLog($this->db);
+                $lastId = $this->db->lastInsertId();
+                $audit->create($_SESSION['user_id'], 'create', 'task', $lastId, 'Alta de tarea por el usuario ' . ($_SESSION['username'] ?? ''));
                 $_SESSION['success'] = 'Tarea creada exitosamente';
                 header('Location: /index.php?page=tasks');
                 exit;
@@ -184,6 +189,10 @@ class TaskController {
             $taskModel->notes = $_POST['notes'] ?? '';
 
             if ($taskModel->update()) {
+                // Auditoría de modificación de tarea
+                require_once __DIR__ . '/../Models/AuditLog.php';
+                $audit = new AuditLog($this->db);
+                $audit->create($_SESSION['user_id'], 'update', 'task', $taskModel->id, 'Modificación de tarea por el usuario ' . ($_SESSION['username'] ?? ''));
                 $_SESSION['success'] = 'Tarea actualizada exitosamente';
                 header('Location: /index.php?page=tasks');
                 exit;
@@ -255,6 +264,10 @@ class TaskController {
         $taskModel->id = $_GET['id'] ?? 0;
 
         if ($taskModel->delete()) {
+            // Auditoría de borrado de tarea
+            require_once __DIR__ . '/../Models/AuditLog.php';
+            $audit = new AuditLog($this->db);
+            $audit->create($_SESSION['user_id'], 'delete', 'task', $taskModel->id, 'Eliminación de tarea por el usuario ' . ($_SESSION['username'] ?? ''));
             $_SESSION['success'] = 'Tarea eliminada exitosamente';
         } else {
             $_SESSION['error'] = 'Error al eliminar la tarea';

@@ -83,6 +83,10 @@ class MemberController {
                 $audit = new AuditLog($this->db);
                 $lastId = $this->db->lastInsertId();
                 $audit->create($_SESSION['user_id'], 'create', 'member', $lastId, 'Alta de socio por el usuario ' . ($_SESSION['username'] ?? ''));
+                require_once __DIR__ . '/../Models/AuditLog.php';
+                $audit = new AuditLog($this->db);
+                $lastId = $this->db->lastInsertId();
+                $audit->create($_SESSION['user_id'], 'create', 'member', $lastId, 'Alta de socio por el usuario ' . ($_SESSION['username'] ?? ''));
                 
                 // Enviar notificación de bienvenida al nuevo socio
                 try {
@@ -241,8 +245,7 @@ class MemberController {
                 // Registrar en audit_log
                 require_once __DIR__ . '/../Models/AuditLog.php';
                 $audit = new AuditLog($this->db);
-                $audit->create($_SESSION['user_id'], 'update', 'member', $id, 'Modificación de socio por el usuario ' . ($_SESSION['username'] ?? ''));
-                
+                $audit->create($_SESSION['user_id'], 'update', 'member', $id, 'Modificación de socio por el usuario ' . ($_SESSION['username'] ?? '') . ($photoUrl ? ' (imagen modificada)' : ''));
                 header('Location: index.php?page=members');
             } else {
                 $error = "Error updating member.";

@@ -36,7 +36,11 @@ class FeeController {
                 $exists = $this->fee->exists($year);
 
                 if ($this->fee->createOrUpdate()) {
-                    $action = $exists ? 'updated' : 'created';
+                    // Auditoría de alta/modificación de tarifa
+                    require_once __DIR__ . '/../Models/AuditLog.php';
+                    $audit = new AuditLog($this->db);
+                    $action = $exists ? 'update' : 'create';
+                    $audit->create($_SESSION['user_id'], $action, 'fee', $year, 'Tarifa de socio ' . ($exists ? 'modificada' : 'creada') . ' por el usuario ' . ($_SESSION['username'] ?? ''));
                     header("Location: index.php?page=settings&tab=fees&success=$action&year=$year");
                     exit;
                 } else {

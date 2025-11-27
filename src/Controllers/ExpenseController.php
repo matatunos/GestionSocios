@@ -75,6 +75,11 @@ class ExpenseController {
         }
         
         if ($expenseModel->create()) {
+            // Auditoría de alta de gasto
+            require_once __DIR__ . '/../Models/AuditLog.php';
+            $audit = new AuditLog($this->db);
+            $lastId = $this->db->lastInsertId();
+            $audit->create($_SESSION['user_id'], 'create', 'expense', $lastId, 'Alta de gasto por el usuario ' . ($_SESSION['username'] ?? ''));
             $_SESSION['success'] = 'Gasto registrado correctamente';
         } else {
             $_SESSION['error'] = 'Error al registrar el gasto';
@@ -150,6 +155,10 @@ class ExpenseController {
         }
         
         if ($expenseModel->update()) {
+            // Auditoría de modificación de gasto
+            require_once __DIR__ . '/../Models/AuditLog.php';
+            $audit = new AuditLog($this->db);
+            $audit->create($_SESSION['user_id'], 'update', 'expense', $expenseModel->id, 'Modificación de gasto por el usuario ' . ($_SESSION['username'] ?? ''));
             $_SESSION['success'] = 'Gasto actualizado correctamente';
         } else {
             $_SESSION['error'] = 'Error al actualizar el gasto';
@@ -170,6 +179,10 @@ class ExpenseController {
             $_SESSION['error'] = 'Gasto no encontrado';
         } else {
             if ($expenseModel->delete()) {
+                // Auditoría de borrado de gasto
+                require_once __DIR__ . '/../Models/AuditLog.php';
+                $audit = new AuditLog($this->db);
+                $audit->create($_SESSION['user_id'], 'delete', 'expense', $expenseModel->id, 'Eliminación de gasto por el usuario ' . ($_SESSION['username'] ?? ''));
                 $_SESSION['success'] = 'Gasto eliminado correctamente';
             } else {
                 $_SESSION['error'] = 'Error al eliminar el gasto';

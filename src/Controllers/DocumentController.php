@@ -130,6 +130,11 @@ class DocumentController {
         $this->documentModel->is_public = $is_public;
         
         if ($this->documentModel->create()) {
+            // Auditoría de alta de documento
+            require_once __DIR__ . '/../Models/AuditLog.php';
+            $audit = new AuditLog($this->db);
+            $lastId = $this->db->lastInsertId();
+            $audit->create($_SESSION['user_id'], 'create', 'document', $lastId, 'Alta de documento por el usuario ' . ($_SESSION['username'] ?? ''));
             // Si es privado, otorgar permisos a usuarios seleccionados
             if (!$is_public && isset($_POST['permitted_members'])) {
                 $permitted_members = $_POST['permitted_members'];
@@ -141,7 +146,6 @@ class DocumentController {
                     );
                 }
             }
-            
             $_SESSION['success'] = 'Documento subido correctamente';
         } else {
             $_SESSION['error'] = 'Error al guardar el documento en la base de datos';
@@ -265,6 +269,10 @@ class DocumentController {
         $this->documentModel->is_public = isset($_POST['is_public']) ? 1 : 0;
         
         if ($this->documentModel->update()) {
+            // Auditoría de modificación de documento
+            require_once __DIR__ . '/../Models/AuditLog.php';
+            $audit = new AuditLog($this->db);
+            $audit->create($_SESSION['user_id'], 'update', 'document', $id, 'Modificación de documento por el usuario ' . ($_SESSION['username'] ?? ''));
             $_SESSION['success'] = 'Documento actualizado correctamente';
         } else {
             $_SESSION['error'] = 'Error al actualizar el documento';
@@ -300,6 +308,10 @@ class DocumentController {
         }
         
         if ($this->documentModel->delete($id)) {
+            // Auditoría de borrado de documento
+            require_once __DIR__ . '/../Models/AuditLog.php';
+            $audit = new AuditLog($this->db);
+            $audit->create($_SESSION['user_id'], 'delete', 'document', $id, 'Eliminación de documento por el usuario ' . ($_SESSION['username'] ?? ''));
             $_SESSION['success'] = 'Documento eliminado correctamente';
         } else {
             $_SESSION['error'] = 'Error al eliminar el documento';

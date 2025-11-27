@@ -76,16 +76,18 @@ class CertificateController {
         // Generate certificate
         try {
             $result = $this->certificateModel->generateMembershipCertificate($memberId);
-            
             if (!$result) {
                 $_SESSION['error'] = 'No se pudo generar el certificado: Socio no encontrado';
                 header('Location: index.php?page=members');
                 exit;
             }
-            
             $pdf = $result['pdf'];
             $member = $result['member'];
             $filename = $this->generateFilename('certificado_socio', $member);
+            // Auditoría de expedición de certificado de socio
+            require_once __DIR__ . '/../Models/AuditLog.php';
+            $audit = new AuditLog($this->db);
+            $audit->create($_SESSION['user_id'], 'expedite', 'certificate', $memberId, 'Certificado de socio expedido por el usuario ' . ($_SESSION['username'] ?? ''));
         } catch (Exception $e) {
             error_log('Certificate generation error: ' . $e->getMessage());
             $_SESSION['error'] = 'Error al generar certificado: ' . $e->getMessage();
@@ -124,16 +126,18 @@ class CertificateController {
         // Generate certificate
         try {
             $result = $this->certificateModel->generatePaymentCertificate($memberId, $year);
-            
             if (!$result) {
                 $_SESSION['error'] = 'No se pudo generar el certificado: Socio no encontrado';
                 header('Location: index.php?page=members');
                 exit;
             }
-            
             $pdf = $result['pdf'];
             $member = $result['member'];
             $filename = $this->generateFilename('certificado_pagos', $member, $year);
+            // Auditoría de expedición de certificado de pagos
+            require_once __DIR__ . '/../Models/AuditLog.php';
+            $audit = new AuditLog($this->db);
+            $audit->create($_SESSION['user_id'], 'expedite', 'certificate', $memberId, 'Certificado de pagos expedido por el usuario ' . ($_SESSION['username'] ?? '') . ' para el año ' . $year);
         } catch (Exception $e) {
             error_log('Payment certificate error: ' . $e->getMessage());
             $_SESSION['error'] = 'Error al generar certificado: ' . $e->getMessage();
@@ -172,12 +176,15 @@ class CertificateController {
         // Generate certificate
         try {
             $pdf = $this->certificateModel->generateDonationCertificate($donorId, $year);
-            
             if (!$pdf) {
                 $_SESSION['error'] = 'No se pudo generar el certificado: Donante no encontrado';
                 header('Location: index.php?page=donors');
                 exit;
             }
+            // Auditoría de expedición de certificado de donaciones
+            require_once __DIR__ . '/../Models/AuditLog.php';
+            $audit = new AuditLog($this->db);
+            $audit->create($_SESSION['user_id'], 'expedite', 'certificate', $donorId, 'Certificado de donaciones expedido por el usuario ' . ($_SESSION['username'] ?? '') . ' para el año ' . $year);
         } catch (Exception $e) {
             error_log('Donation certificate error: ' . $e->getMessage());
             $_SESSION['error'] = 'Error al generar certificado: ' . $e->getMessage();

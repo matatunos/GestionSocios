@@ -114,6 +114,11 @@ class EventController {
             $this->event->is_active = isset($_POST['is_active']) ? 1 : 0;
 
             if ($this->event->create()) {
+                // Auditoría de alta de evento
+                require_once __DIR__ . '/../Models/AuditLog.php';
+                $audit = new AuditLog($this->db);
+                $lastId = $this->db->lastInsertId();
+                $audit->create($_SESSION['user_id'], 'create', 'event', $lastId, 'Alta de evento por el usuario ' . ($_SESSION['username'] ?? ''));
                 $_SESSION['success'] = "Evento creado correctamente";
                 header('Location: index.php?page=calendar');
             } else {
@@ -150,6 +155,10 @@ class EventController {
             $this->event->is_active = isset($_POST['is_active']) ? 1 : 0;
 
             if ($this->event->update()) {
+                // Auditoría de modificación de evento
+                require_once __DIR__ . '/../Models/AuditLog.php';
+                $audit = new AuditLog($this->db);
+                $audit->create($_SESSION['user_id'], 'update', 'event', $id, 'Modificación de evento por el usuario ' . ($_SESSION['username'] ?? ''));
                 $_SESSION['success'] = "Evento actualizado correctamente";
                 header('Location: index.php?page=calendar');
             } else {
@@ -189,6 +198,10 @@ class EventController {
             $stmt->bindParam(':status', $status);
             $stmt->execute();
         }
+        // Auditoría de cambio de estado de asistencia
+        require_once __DIR__ . '/../Models/AuditLog.php';
+        $audit = new AuditLog($this->db);
+        $audit->create($_SESSION['user_id'], 'update', 'event_attendance', $eventId, 'Cambio de estado de asistencia para el evento ' . $eventId . ', miembro ' . $memberId . ' por el usuario ' . ($_SESSION['username'] ?? ''));
         $_SESSION['success'] = "Estado actualizado correctamente.";
         header("Location: index.php?page=events&action=show&id=$eventId");
         exit;

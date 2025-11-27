@@ -45,6 +45,11 @@ class DonationController {
             $this->donation->type = $_POST['type'];
             $this->donation->year = $_POST['year'];
             if ($this->donation->create()) {
+                // Auditoría de alta de donación
+                require_once __DIR__ . '/../Models/AuditLog.php';
+                $audit = new AuditLog($this->db);
+                $lastId = $this->db->lastInsertId();
+                $audit->create($_SESSION['user_id'], 'create', 'donation', $lastId, 'Alta de donación por el usuario ' . ($_SESSION['username'] ?? ''));
                 header('Location: index.php?page=donations&msg=created');
                 exit;
             } else {
