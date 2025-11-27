@@ -1,3 +1,4 @@
+<?php require __DIR__ . '/../layout.php'; ?>
 <?php ob_start(); ?>
 <?php
 // Inicializar variables de paginación si no existen
