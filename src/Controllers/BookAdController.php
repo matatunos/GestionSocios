@@ -165,6 +165,20 @@ class BookAdController {
             }
             
             if ($this->bookAd->update()) {
+                // Registrar en audit_log el cambio de anuncio (incluyendo imagen)
+                require_once __DIR__ . '/../Models/Donor.php';
+                $donorModel = new Donor($this->db);
+                $donorModel->id = $this->bookAd->donor_id;
+                $donorModel->readOne();
+                require_once __DIR__ . '/../Models/AuditLog.php';
+                $audit = new AuditLog($this->db);
+                $audit->create(
+                    $_SESSION['user_id'],
+                    'update',
+                    'bookad',
+                    $id,
+                    'Anuncio de donante modificado para: ' . $donorModel->name . ' (' . $donorModel->email . ') por el usuario ' . ($_SESSION['username'] ?? '')
+                );
                 // If marked as paid, create/update payment record
                 if ($_POST['status'] === 'paid') {
                     $this->syncPayment($id);
@@ -203,7 +217,18 @@ class BookAdController {
                 // Registrar en audit_log
                 require_once __DIR__ . '/../Models/AuditLog.php';
                 $audit = new AuditLog($this->db);
-                $audit->create($_SESSION['user_id'], 'markPaid', 'bookad_payment', $id, 'Pago de anuncio de libro marcado como realizado por el usuario ' . ($_SESSION['username'] ?? ''));
+                // Obtener datos del donante
+                require_once __DIR__ . '/../Models/Donor.php';
+                $donorModel = new Donor($this->db);
+                $donorModel->id = $this->bookAd->donor_id;
+                $donorModel->readOne();
+                $audit->create(
+                    $_SESSION['user_id'],
+                    'markPaid',
+                    'bookad_payment',
+                    $id,
+                    'Pago de anuncio de libro marcado como realizado para: ' . $donorModel->name . ' (' . $donorModel->email . ') por el usuario ' . ($_SESSION['username'] ?? '')
+                );
                 header('Location: index.php?page=book&year=' . $year . '&msg=marked_paid');
                 exit;
             }

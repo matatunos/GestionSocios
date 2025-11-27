@@ -87,7 +87,13 @@ class CertificateController {
             // Auditoría de expedición de certificado de socio
             require_once __DIR__ . '/../Models/AuditLog.php';
             $audit = new AuditLog($this->db);
-            $audit->create($_SESSION['user_id'], 'expedite', 'certificate', $memberId, 'Certificado de socio expedido por el usuario ' . ($_SESSION['username'] ?? ''));
+            $audit->create(
+                $_SESSION['user_id'],
+                'expedite',
+                'certificate',
+                $memberId,
+                'Certificado de socio expedido para: ' . $member['first_name'] . ' ' . $member['last_name'] . ' (' . $member['email'] . ') por el usuario ' . ($_SESSION['username'] ?? '')
+            );
         } catch (Exception $e) {
             error_log('Certificate generation error: ' . $e->getMessage());
             $_SESSION['error'] = 'Error al generar certificado: ' . $e->getMessage();
@@ -137,7 +143,13 @@ class CertificateController {
             // Auditoría de expedición de certificado de pagos
             require_once __DIR__ . '/../Models/AuditLog.php';
             $audit = new AuditLog($this->db);
-            $audit->create($_SESSION['user_id'], 'expedite', 'certificate', $memberId, 'Certificado de pagos expedido por el usuario ' . ($_SESSION['username'] ?? '') . ' para el año ' . $year);
+            $audit->create(
+                $_SESSION['user_id'],
+                'expedite',
+                'certificate',
+                $memberId,
+                'Certificado de pagos expedido para: ' . $member['first_name'] . ' ' . $member['last_name'] . ' (' . $member['email'] . ') por el usuario ' . ($_SESSION['username'] ?? '') . ' para el año ' . $year
+            );
         } catch (Exception $e) {
             error_log('Payment certificate error: ' . $e->getMessage());
             $_SESSION['error'] = 'Error al generar certificado: ' . $e->getMessage();
@@ -184,7 +196,18 @@ class CertificateController {
             // Auditoría de expedición de certificado de donaciones
             require_once __DIR__ . '/../Models/AuditLog.php';
             $audit = new AuditLog($this->db);
-            $audit->create($_SESSION['user_id'], 'expedite', 'certificate', $donorId, 'Certificado de donaciones expedido por el usuario ' . ($_SESSION['username'] ?? '') . ' para el año ' . $year);
+            // Obtener datos del donante
+            require_once __DIR__ . '/../Models/Donor.php';
+            $donorModel = new Donor($this->db);
+            $donorModel->id = $donorId;
+            $donorModel->readOne();
+            $audit->create(
+                $_SESSION['user_id'],
+                'expedite',
+                'certificate',
+                $donorId,
+                'Certificado de donaciones expedido para: ' . $donorModel->name . ' (' . $donorModel->email . ') por el usuario ' . ($_SESSION['username'] ?? '') . ' para el año ' . $year
+            );
         } catch (Exception $e) {
             error_log('Donation certificate error: ' . $e->getMessage());
             $_SESSION['error'] = 'Error al generar certificado: ' . $e->getMessage();
