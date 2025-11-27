@@ -15,23 +15,41 @@ class BookPageApiController {
             echo json_encode(['error' => 'No autorizado']);
             exit;
         }
-        $input = file_get_contents('php://input');
-        $data = json_decode($input, true);
-        $book_id = $data['book_id'] ?? null;
-        $name = $data['name'] ?? null;
-        $created_by = $_SESSION['user_id'] ?? null;
 
-        if (!$book_id || !$name || !$created_by) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Datos inválidos']);
-            exit;
+        try {
+            $input = file_get_contents('php://input');
+            $data = json_decode($input, true);
+            
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                http_response_code(400);
+                echo json_encode(['error' => 'JSON inválido: ' . json_last_error_msg()]);
+                exit;
+            }
+            
+            $book_id = $data['book_id'] ?? null;
+            $name = $data['name'] ?? null;
+            $created_by = $_SESSION['user_id'] ?? null;
+
+            if (!$book_id || !$name) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Datos inválidos: se requiere book_id y name']);
+                exit;
+            }
+
+            require_once __DIR__ . '/../Models/BookVersion.php';
+            $bookVersionModel = new BookVersion($this->db);
+            $version_id = $bookVersionModel->create($book_id, $name, $created_by);
+
+            echo json_encode(['success' => true, 'version_id' => $version_id]);
+        } catch (PDOException $e) {
+            error_log("Database error in createVersion: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['error' => 'Error de base de datos', 'details' => $e->getMessage()]);
+        } catch (Exception $e) {
+            error_log("Error in createVersion: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['error' => 'Error al crear versión', 'details' => $e->getMessage()]);
         }
-
-        require_once __DIR__ . '/../Models/BookVersion.php';
-        $bookVersionModel = new BookVersion($this->db);
-        $version_id = $bookVersionModel->create($book_id, $name, $created_by);
-
-        echo json_encode(['success' => true, 'version_id' => $version_id]);
     }
 
     public function savePages() {
