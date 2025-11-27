@@ -159,7 +159,7 @@ function formatDetails($details) {
                     </td>
                     <td><?= getActionBadge($log['action']) ?></td>
                     <td>
-                        <div style="font-weight: 500;"><?= htmlspecialchars($log['entity']) ?></div>
+                        <div style="font-weight: 500;"><?= htmlspecialchars(isset($log['entity']) ? $log['entity'] : '') ?></div>
                         <?php if (!empty($log['entity_id'])): ?>
                             <div style="font-size: 0.8rem; color: var(--text-muted);">Ref: #<?= htmlspecialchars($log['entity_id']) ?></div>
                         <?php endif; ?>

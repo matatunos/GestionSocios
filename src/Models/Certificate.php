@@ -338,37 +338,65 @@ class Certificate {
         $orgName = htmlspecialchars($orgSettings['org_name'] ?? 'la Asociación');
         $name = htmlspecialchars($member['first_name'] . ' ' . $member['last_name']);
         $dni = htmlspecialchars($member['dni'] ?? '');
-        // Use member_number if available, otherwise use ID
         $memberNumber = htmlspecialchars($member['member_number'] ?? $member['id']);
         $joinDate = date('d/m/Y', strtotime($member['join_date']));
         $category = htmlspecialchars($member['category_name'] ?? 'General');
-        
+        $status = $member['status'] ?? 'active';
+        $deactivated = !empty($member['deactivated_at']) ? date('d/m/Y', strtotime($member['deactivated_at'])) : null;
+
+        // Comprobar si está al corriente de pagos en la fecha de baja (o actual)
+        $paid = false;
+        $checkDate = $deactivated ? date('Y', strtotime($member['deactivated_at'])) : date('Y');
+        if (!empty($member['id'])) {
+            $query = "SELECT COUNT(*) as count FROM payments WHERE member_id = ? AND payment_type = 'fee' AND fee_year = ? AND status = 'paid'";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(1, $member['id']);
+            $stmt->bindParam(2, $checkDate);
+            $stmt->execute();
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $paid = $row['count'] > 0;
+        }
+
         $html = '<p style="text-align: justify;">';
         $html .= '<strong>' . $orgName . '</strong> certifica que:';
         $html .= '</p>';
-        
+
         $html .= '<p style="text-align: center; margin: 30px 0; font-size: 14px;">';
         $html .= '<strong>' . $name . '</strong>';
         if ($dni) {
             $html .= '<br>DNI: ' . $dni;
         }
         $html .= '</p>';
-        
+
         $html .= '<p style="text-align: justify;">';
-        $html .= 'Es socio/a de esta asociación con número de socio <strong>' . $memberNumber . '</strong>, ';
+        $html .= 'Ha sido socio/a de esta asociación con número de socio <strong>' . $memberNumber . '</strong>, ';
         $html .= 'perteneciente a la categoría <strong>' . $category . '</strong>, ';
-        $html .= 'desde el <strong>' . $joinDate . '</strong>, ';
-        $html .= 'encontrándose al corriente de sus obligaciones como socio/a.';
+        $html .= 'desde el <strong>' . $joinDate . '</strong>';
+        if ($status === 'inactive') {
+            $html .= ', causando baja el <strong>' . $deactivated . '</strong>';
+        }
+        $html .= '. ';
+        if ($status === 'active' && $paid) {
+            $html .= 'Actualmente se encuentra al corriente de sus obligaciones como socio/a.';
+        } elseif ($status === 'inactive') {
+            if ($paid) {
+                $html .= 'En la fecha de baja estaba al corriente de sus obligaciones como socio/a.';
+            } else {
+                $html .= 'En la fecha de baja no estaba al corriente de sus obligaciones como socio/a.';
+            }
+        } else {
+            $html .= 'Actualmente no se encuentra al corriente de sus obligaciones como socio/a.';
+        }
         $html .= '</p>';
-        
+
         $html .= '<p style="text-align: justify; margin-top: 20px;">';
         $html .= 'Se expide el presente certificado a petición del interesado/a para los fines que estime oportunos.';
         $html .= '</p>';
-        
+
         $html .= '<p style="text-align: right; margin-top: 30px;">';
         $html .= date('d') . ' de ' . $this->getSpanishMonth(date('m')) . ' de ' . date('Y');
         $html .= '</p>';
-        
+
         return $html;
     }
     
