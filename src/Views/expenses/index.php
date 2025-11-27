@@ -178,33 +178,6 @@ function buildPageUrl($page, $filters) {
         </div>
     </div>
     <?php endif; ?>
-        <!-- Controles de paginación -->
-        <?php if (isset($totalPages) && $totalPages > 1): ?>
-                <div class="text-center" style="margin-bottom:0.5rem; color:var(--text-muted); font-size:0.95rem;">
-                    Mostrando <?php echo (($page - 1) * 20 + 1); ?> - <?php echo min($page * 20, $totalRecords); ?> de <?php echo $totalRecords; ?> registros
-                </div>
-        <nav aria-label="Paginación de gastos" style="margin-top:2rem;">
-            <ul class="pagination justify-content-center">
-                <!-- Botón anterior -->
-                <li class="page-item<?php echo ($page <= 1) ? ' disabled' : ''; ?>">
-                    <a class="page-link" href="<?php echo buildPageUrl($page - 1, $filters); ?>" tabindex="-1">&laquo; Anterior</a>
-                </li>
-                <!-- Números de página -->
-                <?php for ($p = 1; $p <= $totalPages; $p++): ?>
-                    <li class="page-item<?php echo ($p == $page) ? ' active' : ''; ?>">
-                        <a class="page-link" href="<?php echo buildPageUrl($p, $filters); ?>"><?php echo $p; ?></a>
-                    </li>
-                <?php endfor; ?>
-                <!-- Botón siguiente -->
-                <li class="page-item<?php echo ($page >= $totalPages) ? ' disabled' : ''; ?>">
-                    <a class="page-link" href="<?php echo buildPageUrl($page + 1, $filters); ?>">Siguiente &raquo;</a>
-                </li>
-            </ul>
-            <div class="text-center" style="margin-top:0.5rem; color:var(--text-muted); font-size:0.95rem;">
-                Página <?php echo $page; ?> de <?php echo $totalPages; ?>
-            </div>
-        </nav>
-        <?php endif; ?>
     
 
 </div>
