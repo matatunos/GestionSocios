@@ -1,4 +1,21 @@
 <?php ob_start(); ?>
+<?php
+// Genera la URL de paginación manteniendo los filtros
+function buildPageUrl($page, $filters) {
+    $params = [
+        'page' => 'expenses',
+        'year' => $filters['year'],
+        'month' => $filters['month'],
+        'category_id' => $filters['category_id'],
+        'p' => $page
+    ];
+    // Elimina filtros vacíos
+    foreach ($params as $k => $v) {
+        if ($v === '' || $v === null) unset($params[$k]);
+    }
+    return 'index.php?' . http_build_query($params);
+}
+?>
 
 <style>
 .expense-filters {
@@ -154,6 +171,30 @@
         </div>
     </div>
     <?php endif; ?>
+        <!-- Controles de paginación -->
+        <?php if (isset($totalPages) && $totalPages > 1): ?>
+        <nav aria-label="Paginación de gastos" style="margin-top:2rem;">
+            <ul class="pagination justify-content-center">
+                <!-- Botón anterior -->
+                <li class="page-item<?php echo ($page <= 1) ? ' disabled' : ''; ?>">
+                    <a class="page-link" href="<?php echo buildPageUrl($page - 1, $filters); ?>" tabindex="-1">&laquo; Anterior</a>
+                </li>
+                <!-- Números de página -->
+                <?php for ($p = 1; $p <= $totalPages; $p++): ?>
+                    <li class="page-item<?php echo ($p == $page) ? ' active' : ''; ?>">
+                        <a class="page-link" href="<?php echo buildPageUrl($p, $filters); ?>"><?php echo $p; ?></a>
+                    </li>
+                <?php endfor; ?>
+                <!-- Botón siguiente -->
+                <li class="page-item<?php echo ($page >= $totalPages) ? ' disabled' : ''; ?>">
+                    <a class="page-link" href="<?php echo buildPageUrl($page + 1, $filters); ?>">Siguiente &raquo;</a>
+                </li>
+            </ul>
+            <div class="text-center" style="margin-top:0.5rem; color:var(--text-muted); font-size:0.95rem;">
+                Página <?php echo $page; ?> de <?php echo $totalPages; ?>
+            </div>
+        </nav>
+        <?php endif; ?>
     
     <div class="stat-card" style="border-left-color: #6366f1;">
         <div style="font-size: 2rem; font-weight: 700; color: #6366f1;">
