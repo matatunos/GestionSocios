@@ -196,42 +196,29 @@ class BookExportController {
             $pdf->Cell(0, 15, $year, 0, 1, 'C');
 
             // Pages
-            $count = count($pages);
-            for ($i = 0; $i < $count; $i++) {
-                $page = $pages[$i];
-                if (isset($page['type']) && $page['type'] === 'cover') continue;
+            foreach ($pages as $page) {
+                if (isset($page['type']) && $page['type'] === 'cover') continue; // Skip cover if it's in the list
 
-                $position = $page['position'] ?? 'full';
+                $pdf->AddPage();
+                $pdf->SetFont('helvetica', 'B', 16);
+                $pdf->Cell(0, 10, $page['content'] ?? '', 0, 1);
                 
-                // Logic for merging pages
-                if ($position === 'top') {
-                    // Start a new page
-                    $pdf->AddPage();
-                    
-                    // Render TOP content
-                    $this->renderPageContent($pdf, $page, 'top');
-                    
-                    // Check next page
-                    if ($i + 1 < $count) {
-                        $nextPage = $pages[$i + 1];
-                        $nextPos = $nextPage['position'] ?? 'full';
-                        
-                        if ($nextPos === 'bottom') {
-                            // Render BOTTOM content on same page
-                            $this->renderPageContent($pdf, $nextPage, 'bottom');
-                            // Skip next iteration
-                            $i++;
+                if (!empty($page['image_url'])) {
+                    $imagePath = __DIR__ . '/../../public/' . $page['image_url'];
+                    if (file_exists($imagePath)) {
+                        if (isset($page['position']) && $page['position'] === 'top') {
+                            $pdf->Image($imagePath, 15, $pdf->GetY(), 180, 80, '', '', '', true, 300);
+                        } else if (isset($page['position']) && $page['position'] === 'bottom') {
+                            $pdf->SetY(-100);
+                            $pdf->Image($imagePath, 15, $pdf->GetY(), 180, 80, '', '', '', true, 300);
+                        } else {
+                            $pdf->Image($imagePath, 15, $pdf->GetY(), 180, 0, '', '', '', true, 300);
                         }
+                    } else {
+                        $this->drawDefaultImage($pdf, $page);
                     }
-                } else if ($position === 'bottom') {
-                    // If we are here, it means this bottom page was NOT caught by a previous top page
-                    // So we put it on a new page at the bottom
-                    $pdf->AddPage();
-                    $this->renderPageContent($pdf, $page, 'bottom');
                 } else {
-                    // Full page
-                    $pdf->AddPage();
-                    $this->renderPageContent($pdf, $page, 'full');
+                    $this->drawDefaultImage($pdf, $page);
                 }
             }
 
@@ -248,14 +235,15 @@ class BookExportController {
         }
     }
 
-    private function drawDefaultImage($pdf, $page, $forcePosition = null) {
+    private function drawDefaultImage($pdf, $page) {
         $text = $page['content'] ?? 'Sin imagen';
         $type = $page['type'] ?? 'default';
-        $position = $forcePosition ?? ($page['position'] ?? 'full');
         $height = 180;
         
-        if ($position === 'top' || $position === 'bottom') {
-            $height = 80;
+        if ($type === 'ad') {
+            if (isset($page['position']) && ($page['position'] === 'top' || $page['position'] === 'bottom')) {
+                $height = 80;
+            }
         }
         
         $x = 15;
@@ -366,36 +354,189 @@ class BookExportController {
         $pdf->SetDrawColor(0, 0, 0);
     }
 
-    private function renderPageContent($pdf, $page, $forcePosition = null) {
-        $position = $forcePosition ?? ($page['position'] ?? 'full');
+    public function generateDocx() {
+        $year = $_GET['year'] ?? date('Y');
         
-        // Set Y based on position
-        if ($position === 'bottom') {
-            $pdf->SetY(-100); // Bottom half
-        } else {
-            $pdf->SetY(15); // Top or Full
-        }
+        try {
+            $this->checkAdmin();
+            
+            // Fetch Data (Same logic as PDF)
+            require_once __DIR__ . '/../Models/BookPage.php';
+            $bookPageModel = new BookPage($this->db);
+            
+            $version_id = $_GET['version_id'] ?? null;
+            if ($version_id === '') $version_id = null;
+            
+            // Get book_id
+            $book_id = null;
+            try {
+                $stmt = $this->db->prepare("SELECT id FROM books WHERE year = ?");
+                $stmt->execute([$year]);
+                $book = $stmt->fetch(PDO::FETCH_ASSOC);
+                $book_id = $book['id'] ?? null;
+            } catch (Exception $e) {
+                error_log("Failed to get book_id in generateDocx: " . $e->getMessage());
+            }
 
-        // Title
-        $pdf->SetFont('helvetica', 'B', 16);
-        $pdf->Cell(0, 10, $page['content'] ?? '', 0, 1);
+            if ($version_id) {
+                $pages = $bookPageModel->getAllByVersion($version_id);
+            } elseif ($book_id) {
+                $pages = $bookPageModel->getAllByBook($book_id);
+            } else {
+                $pages = [];
+            }
+
+            // Fallback if no pages (same as PDF)
+            if (empty($pages)) {
+                require_once __DIR__ . '/../Models/BookActivity.php';
+                $activityModel = new BookActivity($this->db);
+                $activitiesStmt = $activityModel->readAllByYear($year);
+                $activities = $activitiesStmt ? $activitiesStmt->fetchAll(PDO::FETCH_ASSOC) : [];
+
+                require_once __DIR__ . '/../Models/BookAd.php';
+                $bookAdModel = new BookAd($this->db);
+                $adsStmt = $bookAdModel->readAllByYear($year);
+                $ads = $adsStmt ? $adsStmt->fetchAll(PDO::FETCH_ASSOC) : [];
+
+                $pages = [];
+                $pages[] = ['content' => 'Portada', 'position' => 'full', 'type' => 'cover'];
+                foreach ($activities as $activity) {
+                    $pages[] = [
+                        'content' => $activity['title'] ?? 'Sin título',
+                        'position' => 'full',
+                        'type' => 'activity',
+                        'image_url' => $activity['image_url'] ?? null
+                    ];
+                }
+                foreach ($ads as $ad) {
+                    if (($ad['status'] ?? '') === 'paid') {
+                        $pages[] = [
+                            'content' => $ad['donor_name'] ?? 'Sin nombre',
+                            'position' => 'full',
+                            'type' => 'ad',
+                            'image_url' => $ad['image_url'] ?? null
+                        ];
+                    }
+                }
+            }
+
+            // Generate HTML for Word
+            $html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">';
+            $html .= '<head><meta charset="utf-8"><title>Libro de Fiestas ' . $year . '</title>';
+            $html .= '<style>
+                body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+                .page-break { page-break-after: always; }
+                .page-full { width: 100%; min-height: 800px; position: relative; border: 1px solid #eee; padding: 20px; box-sizing: border-box; }
+                .page-half { width: 100%; height: 400px; position: relative; border: 1px solid #eee; padding: 15px; box-sizing: border-box; }
+                .page-title { font-size: 20px; font-weight: bold; text-align: center; margin-bottom: 15px; }
+                .page-image { text-align: center; margin: 10px 0; }
+                .page-image img { max-width: 100%; max-height: 300px; }
+                .page-type { font-size: 11px; color: #666; text-align: center; margin-top: 15px; text-transform: uppercase; }
+                .cover-title { font-size: 48px; font-weight: bold; text-align: center; margin-top: 200px; }
+                .cover-year { font-size: 36px; text-align: center; margin-top: 20px; }
+            </style>';
+            $html .= '</head><body>';
+
+            // Cover
+            $html .= '<div class="page-full">';
+            $html .= '<div class="cover-title">Libro de Fiestas</div>';
+            $html .= '<div class="cover-year">' . $year . '</div>';
+            $html .= '</div>';
+
+            // Pages - handle half-page layouts
+            $i = 0;
+            $totalPages = count($pages);
+            
+            while ($i < $totalPages) {
+                $currentPage = $pages[$i];
+                
+                // Skip cover if it appears in the list
+                if (isset($currentPage['type']) && $currentPage['type'] === 'cover') {
+                    $i++;
+                    continue;
+                }
+                
+                $position = $currentPage['position'] ?? 'full';
+                
+                // Page break before starting new page
+                $html .= '<br style="page-break-before: always; clear: both;" />';
+                
+                if ($position === 'full') {
+                    // Full page element
+                    $html .= $this->generatePageHtml($currentPage, 'full');
+                    $i++;
+                } else if ($position === 'top') {
+                    // Top half - check if next element is bottom
+                    $html .= $this->generatePageHtml($currentPage, 'top');
+                    
+                    // Check if next page is bottom positioned
+                    if ($i + 1 < $totalPages) {
+                        $nextPage = $pages[$i + 1];
+                        $nextPosition = $nextPage['position'] ?? 'full';
+                        
+                        if ($nextPosition === 'bottom' && (!isset($nextPage['type']) || $nextPage['type'] !== 'cover')) {
+                            // Add bottom half on same page
+                            $html .= $this->generatePageHtml($nextPage, 'bottom');
+                            $i += 2; // Skip both elements
+                        } else {
+                            // No bottom element, just move to next
+                            $i++;
+                        }
+                    } else {
+                        $i++;
+                    }
+                } else if ($position === 'bottom') {
+                    // Bottom half without top (shouldn't happen often, but handle it)
+                    $html .= $this->generatePageHtml($currentPage, 'bottom');
+                    $i++;
+                } else {
+                    // Unknown position, treat as full
+                    $html .= $this->generatePageHtml($currentPage, 'full');
+                    $i++;
+                }
+            }
+
+            $html .= '</body></html>';
+
+            // Headers for download
+            header("Content-type: application/vnd.ms-word");
+            header("Content-Disposition: attachment;Filename=libro_fiestas_" . $year . ".doc");
+            
+            echo $html;
+            exit;
+
+        } catch (Exception $e) {
+            error_log("BookExportController::generateDocx() error: " . $e->getMessage());
+            http_response_code(500);
+            die("Error generando DOCX: " . $e->getMessage());
+        }
+    }
+
+    private function generatePageHtml($page, $layout = 'full') {
+        $html = '';
+        $containerClass = ($layout === 'full') ? 'page-full' : 'page-half';
         
-        // Image or Default
+        $html .= '<div class="' . $containerClass . '">';
+        $html .= '<div class="page-title">' . htmlspecialchars($page['content'] ?? '') . '</div>';
+        
         if (!empty($page['image_url'])) {
             $imagePath = __DIR__ . '/../../public/' . $page['image_url'];
             if (file_exists($imagePath)) {
-                $y = $pdf->GetY();
-                if ($position === 'top' || $position === 'bottom') {
-                    $pdf->Image($imagePath, 15, $y, 180, 80, '', '', '', true, 300);
-                } else {
-                    $pdf->Image($imagePath, 15, $y, 180, 0, '', '', '', true, 300);
-                }
+                $imageData = base64_encode(file_get_contents($imagePath));
+                $src = 'data:image/' . pathinfo($imagePath, PATHINFO_EXTENSION) . ';base64,' . $imageData;
+                $html .= '<div class="page-image"><img src="' . $src . '"></div>';
             } else {
-                $this->drawDefaultImage($pdf, $page, $position);
+                $html .= '<div style="text-align:center; padding: 30px; background: #f0f0f0;">[Imagen no encontrada]</div>';
             }
         } else {
-            $this->drawDefaultImage($pdf, $page, $position);
+            $html .= '<div style="text-align:center; padding: 30px; background: #f0f0f0;">[Sin imagen]</div>';
         }
+
+        $typeLabel = isset($page['type']) ? ($page['type'] === 'activity' ? 'Actividad' : ($page['type'] === 'ad' ? 'Anuncio' : 'Contenido')) : 'Página';
+        $html .= '<div class="page-type">' . $typeLabel . '</div>';
+        $html .= '</div>';
+        
+        return $html;
     }
 
     private function checkAdmin() {

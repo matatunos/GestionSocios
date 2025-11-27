@@ -14,13 +14,23 @@ function renderPages() {
 
     bookPages.forEach((page, idx) => {
         const div = document.createElement('div');
-        div.className = 'book-page-block';
+        div.className = `book-page-block type-${page.type || 'default'}`;
         div.draggable = true;
         div.dataset.idx = idx;
 
+        // Icono según tipo
+        let icon = '📄';
+        if (page.type === 'activity') icon = '📅';
+        else if (page.type === 'ad') icon = '📢';
+        else if (page.type === 'cover') icon = 'book';
+
         // Contenido HTML
         div.innerHTML = `
-            <span class="page-title">${page.content}</span>
+            <span style="font-size:1.2em; margin-right:8px;">${icon}</span>
+            <span class="page-title">
+                ${page.content}
+                ${page.image_url ? '<i class="fas fa-image" style="font-size:0.8em; color:#aaa; margin-left:5px;" title="Tiene imagen"></i>' : ''}
+            </span>
             <select class="page-type-selector form-select-sm" data-idx="${idx}" style="margin-left:10px; width: auto;">
                 <option value="full" ${page.position === 'full' ? 'selected' : ''}>Completa</option>
                 <option value="top" ${page.position === 'top' ? 'selected' : ''}>Superior</option>
@@ -92,12 +102,6 @@ function handleDragEnd(e) {
     draggedItem = null;
 }
 
-function getPositionLabel(pos) {
-    if (pos === 'top') return 'Superior';
-    if (pos === 'bottom') return 'Inferior';
-    return 'Completa';
-}
-
 function movePage(from, to) {
     if (from === to) return;
     // Mover el elemento en el array
@@ -106,27 +110,129 @@ function movePage(from, to) {
     renderPages();
 }
 
-function addPage() {
-    const name = prompt('Nombre de la nueva página:');
-    if (!name) return;
-    const position = prompt('Posición (completa, superior, inferior):', 'completa');
-    let pos = 'full';
-    if (position && position.toLowerCase().startsWith('s')) pos = 'top';
-    else if (position && position.toLowerCase().startsWith('i')) pos = 'bottom';
+// --- MODAL LOGIC ---
 
-    bookPages.push({ id: Date.now(), content: name, position: pos });
-    renderPages();
+function openAddModal() {
+    const modal = document.getElementById('add-page-modal');
+    if (modal) {
+        modal.classList.add('active');
+        renderActivitiesList();
+        renderAdsList();
+    }
 }
+
+function closeAddModal() {
+    const modal = document.getElementById('add-page-modal');
+    if (modal) modal.classList.remove('active');
+}
+
+function switchTab(tabName) {
+    // Hide all contents
+    document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+    // Deactivate all buttons
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+    // Show selected
+    document.getElementById('tab-' + tabName).style.display = 'block';
+    // Activate button (need to find the button, simple way is by text or order, but let's assume onclick works)
+    // Actually, we can just use event.target if called from click
+    if (event && event.target) {
+        event.target.classList.add('active');
+    }
+}
+
+function addCustomPage() {
+    const titleInput = document.getElementById('new-page-title');
+    const posInput = document.getElementById('new-page-pos');
+
+    const name = titleInput.value.trim();
+    if (!name) {
+        alert('Por favor escribe un título');
+        return;
+    }
+
+    bookPages.push({
+        id: 'custom_' + Date.now(),
+        content: name,
+        position: posInput.value,
+        type: 'custom'
+    });
+
+    titleInput.value = '';
+    renderPages();
+    closeAddModal();
+}
+
+function renderActivitiesList() {
+    const container = document.getElementById('activities-list');
+    if (!container) return;
+
+    const activities = window.availableActivities || [];
+
+    container.innerHTML = activities.map(act => {
+        // Check if used by ID (newly added) or by Content+Type (saved in DB)
+        const isUsed = bookPages.some(p =>
+            (p.id === 'activity_' + act.id) ||
+            (p.type === 'activity' && p.content === act.title)
+        );
+
+        const img = act.image_url ? `<img src="${act.image_url}">` : '<div style="height:80px; background:#eee; display:flex; align-items:center; justify-content:center; margin-bottom:0.5rem;">📅</div>';
+
+        return `
+            <div class="content-item ${isUsed ? 'used' : ''}" onclick="${isUsed ? '' : `addContentPage('activity', '${act.id}', '${act.title.replace(/'/g, "\\'")}', '${act.image_url || ''}')`}">
+                ${img}
+                <div style="font-size:0.9em; font-weight:500;">${act.title}</div>
+                ${isUsed ? '<div style="font-size:0.8em; color:green;">Ya añadido</div>' : ''}
+            </div>
+        `;
+    }).join('');
+}
+
+function renderAdsList() {
+    const container = document.getElementById('ads-list');
+    if (!container) return;
+
+    const ads = window.availableAds || [];
+
+    container.innerHTML = ads.map(ad => {
+        if (ad.status !== 'paid') return ''; // Skip unpaid
+
+        // Check if used by ID (newly added) or by Content+Type (saved in DB)
+        const isUsed = bookPages.some(p =>
+            (p.id === 'ad_' + ad.id) ||
+            (p.type === 'ad' && p.content === ad.donor_name)
+        );
+
+        const img = ad.image_url ? `<img src="${ad.image_url}">` : '<div style="height:80px; background:#eee; display:flex; align-items:center; justify-content:center; margin-bottom:0.5rem;">📢</div>';
+
+        return `
+            <div class="content-item ${isUsed ? 'used' : ''}" onclick="${isUsed ? '' : `addContentPage('ad', '${ad.id}', '${ad.donor_name.replace(/'/g, "\\'")}', '${ad.image_url || ''}')`}">
+                ${img}
+                <div style="font-size:0.9em; font-weight:500;">${ad.donor_name}</div>
+                ${isUsed ? '<div style="font-size:0.8em; color:green;">Ya añadido</div>' : ''}
+            </div>
+        `;
+    }).join('');
+}
+
+function addContentPage(type, id, title, imageUrl) {
+    bookPages.push({
+        id: type + '_' + id,
+        content: title,
+        position: 'full', // Default to full, user can change
+        type: type,
+        image_url: imageUrl || null
+    });
+    renderPages();
+    closeAddModal();
+}
+
+// --- END MODAL LOGIC ---
 
 function editPage(idx) {
     const page = bookPages[idx];
     const name = prompt('Editar nombre de la página:', page.content);
     if (!name) return;
-
-    // Mantener la posición actual si no se quiere cambiar
-    // O preguntar si se quiere cambiar
-    // Simplificado: solo editar nombre por ahora para ser más rápido, 
-    // la posición se cambia con el selector
 
     bookPages[idx] = { ...page, content: name };
     renderPages();
@@ -237,6 +343,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const addBtn = document.getElementById('add-page-btn');
     if (addBtn) {
-        addBtn.onclick = addPage;
+        addBtn.onclick = openAddModal; // Changed to open modal
     }
 });

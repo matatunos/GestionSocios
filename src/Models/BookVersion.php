@@ -28,4 +28,9 @@ class BookVersion {
         $stmt->execute();
         return $this->db->lastInsertId();
     }
+    public function delete($id) {
+        $stmt = $this->db->prepare("DELETE FROM book_versions WHERE id = :id");
+        $stmt->bindParam(':id', $id);
+        return $stmt->execute();
+    }
 }

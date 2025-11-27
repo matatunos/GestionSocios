@@ -23,7 +23,7 @@
         <form action="index.php" method="GET" style="display: inline-flex; align-items: center;">
             <input type="hidden" name="page" value="book_export">
             <input type="hidden" name="year" value="<?php echo $year; ?>">
-            <select name="version_id" onchange="this.form.submit()" class="form-select">
+            <select name="version_id" onchange="this.form.submit()" class="form-select" style="max-width: 200px;">
                 <option value="">Versión Original</option>
                 <?php foreach (($bookVersions ?? []) as $v): ?>
                     <option value="<?php echo $v['id']; ?>" <?php echo ($v['id'] == ($version_id ?? 0)) ? 'selected' : ''; ?>>
@@ -32,6 +32,13 @@
                 <?php endforeach; ?>
             </select>
         </form>
+        
+        <?php if (!empty($version_id)): ?>
+            <button type="button" class="btn btn-danger" onclick="borrarVersion()" style="margin-left: 0.5rem;" title="Borrar esta versión">
+                <i class="fas fa-trash"></i>
+            </button>
+        <?php endif; ?>
+
         <button type="button" class="btn btn-secondary" onclick="crearNuevaVersion()" style="margin-left: 0.5rem;">Nueva versión</button>
     </div>
 </div>
@@ -112,16 +119,20 @@
             <i class="fas fa-arrow-right" style="color: var(--text-muted);"></i>
         </a>
 
-        <div class="card" 
-             style="display: flex; align-items: center; gap: 1rem; padding: 1.5rem; border: 2px solid var(--border-light); opacity: 0.5;">
-            <div style="width: 48px; height: 48px; background: var(--bg-glass); border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                <i class="fas fa-file-word" style="font-size: 1.5rem; color: var(--text-muted);"></i>
+        <a href="index.php?page=book_export&action=generateDocx&year=<?php echo $year; ?>&version_id=<?php echo $version_id ?? ''; ?>" 
+           class="card" 
+           style="text-decoration: none; display: flex; align-items: center; gap: 1rem; padding: 1.5rem; border: 2px solid var(--border-light); transition: all 0.2s; cursor: pointer; opacity: 1; background: white;"
+           onmouseover="this.style.borderColor='var(--primary-600)'; this.style.background='var(--primary-50)';"
+           onmouseout="this.style.borderColor='var(--border-light)'; this.style.background='white';">
+            <div style="width: 48px; height: 48px; background: #dbeafe; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <i class="fas fa-file-word" style="font-size: 1.5rem; color: #2563eb;"></i>
             </div>
             <div style="flex: 1;">
-                <h4 style="margin: 0; color: var(--text-main);">Exportar DOCX</h4>
-                <p style="margin: 0.25rem 0 0 0; font-size: 0.875rem; color: var(--text-muted);">Próximamente</p>
+                <h4 style="margin: 0; color: var(--text-main);">Exportar DOCX (Beta)</h4>
+                <p style="margin: 0.25rem 0 0 0; font-size: 0.875rem; color: var(--text-muted);">Documento editable</p>
             </div>
-        </div>
+            <i class="fas fa-arrow-right" style="color: var(--text-muted);"></i>
+        </a>
     </div>
 </div>
 
@@ -133,14 +144,13 @@
         <button onclick="savePages(<?php echo $book_id ?? 0; ?>)" class="btn btn-primary">
             <i class="fas fa-save" style="margin-right:0.5rem;"></i> Guardar libro
         </button>
-        <button id="add-page-btn" class="btn btn-secondary" type="button">
+        <button id="add-page-btn" class="btn btn-secondary" type="button" onclick="openAddModal()">
             <i class="fas fa-plus" style="margin-right:0.5rem;"></i> Añadir página
         </button>
     </div>
     <p style="color: var(--text-muted); margin-top: 1rem;">Arrastra los bloques para reordenar. Haz clic en ✏️ para editar o 🗑️ para eliminar.</p>
     <div style="color: #888; font-size: 0.95em; margin-top: 0.5rem;">Si no ves bloques, añade una página o revisa que existan páginas en el libro.</div>
 </div>
-
 
 <style>
     .book-page-block {
@@ -185,18 +195,130 @@
     .book-page-block button:hover {
         background: rgba(0,0,0,0.05);
     }
+    
+    /* Tipos de página */
+    .book-page-block.type-activity {
+        border-left: 4px solid #a855f7;
+        background: #faf5ff;
+    }
+    .book-page-block.type-ad {
+        border-left: 4px solid #3b82f6;
+        background: #eff6ff;
+    }
+    .book-page-block.type-cover {
+        border-left: 4px solid #64748b;
+        background: #f1f5f9;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        backdrop-filter: blur(2px);
+    }
+    
+    .modal-overlay.active {
+        display: flex;
+    }
+    
+    .modal-content {
+        background: #fff;
+        padding: 2rem;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 600px;
+        max-height: 85vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    .tab-btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        background: none;
+        border-bottom: 2px solid transparent;
+        cursor: pointer;
+        font-weight: 500;
+        color: var(--text-muted);
+        transition: all 0.2s;
+    }
+    
+    .tab-btn:hover {
+        color: var(--primary-600);
+    }
+    
+    .tab-btn.active {
+        color: var(--primary-600);
+        border-bottom-color: var(--primary-600);
+    }
+
+    .content-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .content-item {
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+    }
+
+    .content-item:hover {
+        border-color: var(--primary-500);
+        background: var(--primary-50);
+        transform: translateY(-2px);
+    }
+
+    .content-item.used {
+        opacity: 0.6;
+        cursor: not-allowed;
+        background: #f1f5f9;
+    }
+    
+    .content-item img {
+        width: 100%;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 4px;
+        margin-bottom: 0.5rem;
+    }
 </style>
+
 <script>
 window.bookPages = <?php echo json_encode($editorBlocks ?? []); ?>;
 window.bookVersions = <?php echo json_encode($bookVersions ?? []); ?>;
 window.versionId = <?php echo json_encode($version_id ?? 0); ?>;
+window.availableActivities = <?php echo json_encode($activities ?? []); ?>;
+window.availableAds = <?php echo json_encode($ads ?? []); ?>;
+
 function crearNuevaVersion() {
     var nombre = prompt('Nombre de la nueva versión:');
     if (!nombre) return;
+    
+    // Pass year to ensure book is created if it doesn't exist
+    const year = <?php echo json_encode($year); ?>;
+    
     fetch('index.php?page=book_page_api&action=createVersion', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ book_id: <?php echo json_encode($book_id ?? 0); ?>, name: nombre })
+        body: JSON.stringify({ 
+            book_id: <?php echo json_encode($book_id ?? 0); ?>, 
+            name: nombre,
+            year: year 
+        })
     })
     .then(res => {
         if (!res.ok) {
@@ -205,11 +327,10 @@ function crearNuevaVersion() {
         return res.json();
     })
     .then(data => {
-        console.log('Response:', data);
         if (data.success && data.version_id) {
-            window.location.href = 'index.php?page=book_export&year=<?php echo $year; ?>&version_id=' + data.version_id;
+            window.location.href = 'index.php?page=book_export&year=' + year + '&version_id=' + data.version_id;
         } else {
-            alert('Error al crear versión: ' + (data.error || 'Desconocido') + (data.details ? '\n\nDetalles: ' + data.details : ''));
+            alert('Error al crear versión: ' + (data.error || 'Desconocido'));
         }
     })
     .catch(err => {
@@ -217,8 +338,79 @@ function crearNuevaVersion() {
         alert('Error de red al crear versión: ' + err.message);
     });
 }
+
+function borrarVersion() {
+    if (!window.versionId) return;
+    
+    if (!confirm('¿Estás seguro de que quieres borrar esta versión? Esta acción no se puede deshacer.')) {
+        return;
+    }
+
+    fetch('index.php?page=book_page_api&action=deleteVersion', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ version_id: window.versionId })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            alert('Versión eliminada correctamente');
+            // Redirect to original version (no version_id)
+            window.location.href = 'index.php?page=book_export&year=<?php echo $year; ?>';
+        } else {
+            alert('Error al borrar versión: ' + (data.error || 'Desconocido'));
+        }
+    })
+    .catch(err => {
+        console.error('Error deleting version:', err);
+        alert('Error de red al borrar versión');
+    });
+}
 </script>
-<script src="/js/book_pages_editor.js"></script>
+
+<!-- Modal para añadir página -->
+<div id="add-page-modal" class="modal-overlay">
+    <div class="modal-content">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+            <h3 style="margin:0;">Añadir Página</h3>
+            <button onclick="closeAddModal()" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+        </div>
+
+        <div style="border-bottom: 1px solid #e2e8f0; margin-bottom: 1rem; display: flex; gap: 1rem;">
+            <button class="tab-btn active" onclick="switchTab('custom')">Personalizada</button>
+            <button class="tab-btn" onclick="switchTab('activities')">Actividades</button>
+            <button class="tab-btn" onclick="switchTab('ads')">Anuncios</button>
+        </div>
+
+        <div id="tab-custom" class="tab-content">
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label style="display:block; margin-bottom:0.5rem;">Título de la página</label>
+                <input type="text" id="new-page-title" class="form-control" placeholder="Ej: Introducción">
+            </div>
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label style="display:block; margin-bottom:0.5rem;">Posición</label>
+                <select id="new-page-pos" class="form-select">
+                    <option value="full">Completa</option>
+                    <option value="top">Superior (Media)</option>
+                    <option value="bottom">Inferior (Media)</option>
+                </select>
+            </div>
+            <button onclick="addCustomPage()" class="btn btn-primary" style="width:100%;">Añadir Página</button>
+        </div>
+
+        <div id="tab-activities" class="tab-content" style="display:none;">
+            <p style="color:var(--text-muted); font-size:0.9em;">Selecciona una actividad para añadirla al libro.</p>
+            <div id="activities-list" class="content-grid"></div>
+        </div>
+
+        <div id="tab-ads" class="tab-content" style="display:none;">
+            <p style="color:var(--text-muted); font-size:0.9em;">Selecciona un anuncio para añadirlo al libro.</p>
+            <div id="ads-list" class="content-grid"></div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/book_pages_editor.js?v=<?php echo time(); ?>"></script>
 
 <?php $content = ob_get_clean(); ?>
 <?php require __DIR__ . '/../layout.php'; ?>
