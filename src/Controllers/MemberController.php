@@ -272,11 +272,10 @@ class MemberController {
             if ($original['status'] !== $_POST['status']) $changedFields[] = 'estado';
             if ($original['category_id'] != (!empty($_POST['category_id']) ? $_POST['category_id'] : null)) $changedFields[] = 'categoría';
             if ($photoUrl !== $original['photo_url']) $changedFields[] = 'imagen';
-            if ($original['created_at'] !== ($_POST['created_at'] ?? $original['created_at'])) $changedFields[] = 'fecha alta';
+            if (isset($_POST['created_at']) && $original['created_at'] !== $_POST['created_at']) $changedFields[] = 'fecha alta';
             $detalle = 'Modificación de socio: ' . $original['first_name'] . ' ' . $original['last_name'] . ' (' . $original['email'] . ') por el usuario ' . ($_SESSION['username'] ?? '');
             if ($changedFields) {
                 $detalle .= ' [Campos modificados: ' . implode(', ', $changedFields) . ']';
-            }
                 require_once __DIR__ . '/../Models/AuditLog.php';
                 $audit = new AuditLog($this->db);
                 $audit->create(
@@ -286,6 +285,7 @@ class MemberController {
                     $id,
                     $detalle
                 );
+            }
                 if ($this->member->update()) {
                     header('Location: index.php?page=members');
                 } else {
