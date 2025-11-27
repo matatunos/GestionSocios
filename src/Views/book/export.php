@@ -121,14 +121,14 @@
 
         <a href="index.php?page=book_export&action=generateDocx&year=<?php echo $year; ?>&version_id=<?php echo $version_id ?? ''; ?>" 
            class="card" 
-           style="text-decoration: none; display: flex; align-items: center; gap: 1rem; padding: 1.5rem; border: 2px solid var(--border-light); transition: all 0.2s; cursor: pointer;"
+           style="text-decoration: none; display: flex; align-items: center; gap: 1rem; padding: 1.5rem; border: 2px solid var(--border-light); transition: all 0.2s; cursor: pointer; opacity: 1; background: white;"
            onmouseover="this.style.borderColor='var(--primary-600)'; this.style.background='var(--primary-50)';"
-           onmouseout="this.style.borderColor='var(--border-light)'; this.style.background='';">
+           onmouseout="this.style.borderColor='var(--border-light)'; this.style.background='white';">
             <div style="width: 48px; height: 48px; background: #dbeafe; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                 <i class="fas fa-file-word" style="font-size: 1.5rem; color: #2563eb;"></i>
             </div>
             <div style="flex: 1;">
-                <h4 style="margin: 0; color: var(--text-main);">Exportar DOCX</h4>
+                <h4 style="margin: 0; color: var(--text-main);">Exportar DOCX (Beta)</h4>
                 <p style="margin: 0.25rem 0 0 0; font-size: 0.875rem; color: var(--text-muted);">Documento editable</p>
             </div>
             <i class="fas fa-arrow-right" style="color: var(--text-muted);"></i>
