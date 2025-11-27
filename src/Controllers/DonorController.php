@@ -77,7 +77,13 @@ class DonorController {
                 require_once __DIR__ . '/../Models/AuditLog.php';
                 $audit = new AuditLog($this->db);
                 $lastId = $this->db->lastInsertId();
-                $audit->create($_SESSION['user_id'], 'create', 'donor', $lastId, 'Alta de donante por el usuario ' . ($_SESSION['username'] ?? ''));
+                $audit->create(
+                    $_SESSION['user_id'],
+                    'create',
+                    'donor',
+                    $lastId,
+                    'Alta de donante: ' . $this->donor->name . ' (' . $this->donor->email . ') por el usuario ' . ($_SESSION['username'] ?? '')
+                );
                 header('Location: index.php?page=donors&success=created');
             } else {
                 $error = "Error creating donor.";
@@ -203,10 +209,30 @@ class DonorController {
             $this->donor->logo_url = $logoUrl;
 
             if ($this->donor->update()) {
-                // Registrar en audit_log
+                // Detectar campos modificados
+                $changedFields = [];
+                $this->donor->readOne(); // Recargar datos actualizados
+                if ($this->donor->name !== $_POST['name']) $changedFields[] = 'nombre';
+                if ($this->donor->contact_person !== $_POST['contact_person']) $changedFields[] = 'contacto';
+                if ($this->donor->phone !== $_POST['phone']) $changedFields[] = 'teléfono';
+                if ($this->donor->email !== $_POST['email']) $changedFields[] = 'email';
+                if ($this->donor->address !== $_POST['address']) $changedFields[] = 'dirección';
+                if ($this->donor->latitude != ($_POST['latitude'] ?? null)) $changedFields[] = 'latitud';
+                if ($this->donor->longitude != ($_POST['longitude'] ?? null)) $changedFields[] = 'longitud';
+                if ($logoUrl !== $currentLogo) $changedFields[] = 'imagen';
+                $detalle = 'Modificación de donante: ' . $this->donor->name . ' (' . $this->donor->email . ') por el usuario ' . ($_SESSION['username'] ?? '');
+                if ($changedFields) {
+                    $detalle .= ' [Campos modificados: ' . implode(', ', $changedFields) . ']';
+                }
                 require_once __DIR__ . '/../Models/AuditLog.php';
                 $audit = new AuditLog($this->db);
-                $audit->create($_SESSION['user_id'], 'update', 'donor', $id, 'Modificación de donante por el usuario ' . ($_SESSION['username'] ?? '') . ($logoUrl ? ' (imagen modificada)' : ''));
+                $audit->create(
+                    $_SESSION['user_id'],
+                    'update',
+                    'donor',
+                    $id,
+                    $detalle
+                );
                 header('Location: index.php?page=donors&success=updated');
             } else {
                 $error = "Error updating donor.";
