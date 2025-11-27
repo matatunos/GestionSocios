@@ -354,6 +354,140 @@ class BookExportController {
         $pdf->SetDrawColor(0, 0, 0);
     }
 
+    public function generateDocx() {
+        $year = $_GET['year'] ?? date('Y');
+        
+        try {
+            $this->checkAdmin();
+            
+            // Fetch Data (Same logic as PDF)
+            require_once __DIR__ . '/../Models/BookPage.php';
+            $bookPageModel = new BookPage($this->db);
+            
+            $version_id = $_GET['version_id'] ?? null;
+            if ($version_id === '') $version_id = null;
+            
+            // Get book_id
+            $book_id = null;
+            try {
+                $stmt = $this->db->prepare("SELECT id FROM books WHERE year = ?");
+                $stmt->execute([$year]);
+                $book = $stmt->fetch(PDO::FETCH_ASSOC);
+                $book_id = $book['id'] ?? null;
+            } catch (Exception $e) {
+                error_log("Failed to get book_id in generateDocx: " . $e->getMessage());
+            }
+
+            if ($version_id) {
+                $pages = $bookPageModel->getAllByVersion($version_id);
+            } elseif ($book_id) {
+                $pages = $bookPageModel->getAllByBook($book_id);
+            } else {
+                $pages = [];
+            }
+
+            // Fallback if no pages (same as PDF)
+            if (empty($pages)) {
+                require_once __DIR__ . '/../Models/BookActivity.php';
+                $activityModel = new BookActivity($this->db);
+                $activitiesStmt = $activityModel->readAllByYear($year);
+                $activities = $activitiesStmt ? $activitiesStmt->fetchAll(PDO::FETCH_ASSOC) : [];
+
+                require_once __DIR__ . '/../Models/BookAd.php';
+                $bookAdModel = new BookAd($this->db);
+                $adsStmt = $bookAdModel->readAllByYear($year);
+                $ads = $adsStmt ? $adsStmt->fetchAll(PDO::FETCH_ASSOC) : [];
+
+                $pages = [];
+                $pages[] = ['content' => 'Portada', 'position' => 'full', 'type' => 'cover'];
+                foreach ($activities as $activity) {
+                    $pages[] = [
+                        'content' => $activity['title'] ?? 'Sin título',
+                        'position' => 'full',
+                        'type' => 'activity',
+                        'image_url' => $activity['image_url'] ?? null
+                    ];
+                }
+                foreach ($ads as $ad) {
+                    if (($ad['status'] ?? '') === 'paid') {
+                        $pages[] = [
+                            'content' => $ad['donor_name'] ?? 'Sin nombre',
+                            'position' => 'full',
+                            'type' => 'ad',
+                            'image_url' => $ad['image_url'] ?? null
+                        ];
+                    }
+                }
+            }
+
+            // Generate HTML for Word
+            $html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">';
+            $html .= '<head><meta charset="utf-8"><title>Libro de Fiestas ' . $year . '</title>';
+            $html .= '<style>
+                body { font-family: Arial, sans-serif; }
+                .page-break { page-break-after: always; }
+                .page-container { width: 100%; height: 100%; position: relative; border: 1px solid #eee; padding: 20px; box-sizing: border-box; }
+                .page-title { font-size: 24px; font-weight: bold; text-align: center; margin-bottom: 20px; }
+                .page-image { text-align: center; margin: 20px 0; }
+                .page-image img { max-width: 100%; max-height: 500px; }
+                .page-type { font-size: 12px; color: #666; text-align: center; margin-top: 20px; text-transform: uppercase; }
+                .cover-title { font-size: 48px; font-weight: bold; text-align: center; margin-top: 200px; }
+                .cover-year { font-size: 36px; text-align: center; margin-top: 20px; }
+            </style>';
+            $html .= '</head><body>';
+
+            // Cover
+            $html .= '<div class="page-container page-break">';
+            $html .= '<div class="cover-title">Libro de Fiestas</div>';
+            $html .= '<div class="cover-year">' . $year . '</div>';
+            $html .= '</div>';
+
+            // Pages
+            $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+            
+            foreach ($pages as $page) {
+                if (isset($page['type']) && $page['type'] === 'cover') continue;
+
+                $html .= '<div class="page-container page-break">';
+                $html .= '<div class="page-title">' . htmlspecialchars($page['content'] ?? '') . '</div>';
+                
+                if (!empty($page['image_url'])) {
+                    // For Word, absolute URLs are better, or base64. 
+                    // Let's try absolute URL if accessible, otherwise relative might fail if not localhost.
+                    // Ideally we embed as base64 for portability.
+                    $imagePath = __DIR__ . '/../../public/' . $page['image_url'];
+                    if (file_exists($imagePath)) {
+                        $imageData = base64_encode(file_get_contents($imagePath));
+                        $src = 'data:image/' . pathinfo($imagePath, PATHINFO_EXTENSION) . ';base64,' . $imageData;
+                        $html .= '<div class="page-image"><img src="' . $src . '"></div>';
+                    } else {
+                        $html .= '<div style="text-align:center; padding: 50px; background: #f0f0f0;">[Imagen no encontrada]</div>';
+                    }
+                } else {
+                    $html .= '<div style="text-align:center; padding: 50px; background: #f0f0f0;">[Sin imagen]</div>';
+                }
+
+                $typeLabel = isset($page['type']) ? ($page['type'] === 'activity' ? 'Actividad' : ($page['type'] === 'ad' ? 'Anuncio' : 'Contenido')) : 'Página';
+                $html .= '<div class="page-type">' . $typeLabel . '</div>';
+                $html .= '</div>';
+            }
+
+            $html .= '</body></html>';
+
+            // Headers for download
+            header("Content-type: application/vnd.ms-word");
+            header("Content-Disposition: attachment;Filename=libro_fiestas_" . $year . ".doc");
+            
+            echo $html;
+            exit;
+
+        } catch (Exception $e) {
+            error_log("BookExportController::generateDocx() error: " . $e->getMessage());
+            http_response_code(500);
+            die("Error generando DOCX: " . $e->getMessage());
+        }
+    }
+
     private function checkAdmin() {
         if (!isset($_SESSION['user_id'])) {
             header('Location: index.php?page=login');

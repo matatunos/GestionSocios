@@ -183,6 +183,7 @@ switch ($page) {
         require_once __DIR__ . '/../src/Controllers/BookExportController.php';
         $controller = new BookExportController();
         if ($action === 'generatePdf') $controller->generatePdf();
+        else if ($action === 'generateDocx') $controller->generateDocx();
         else $controller->index();
         break;
     case 'member_categories':
