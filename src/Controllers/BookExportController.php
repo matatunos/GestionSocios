@@ -437,7 +437,7 @@ class BookExportController {
             $html .= '</head><body>';
 
             // Cover
-            $html .= '<div class="page-container page-break">';
+            $html .= '<div class="page-container">';
             $html .= '<div class="cover-title">Libro de Fiestas</div>';
             $html .= '<div class="cover-year">' . $year . '</div>';
             $html .= '</div>';
@@ -448,7 +448,10 @@ class BookExportController {
             foreach ($pages as $page) {
                 if (isset($page['type']) && $page['type'] === 'cover') continue;
 
-                $html .= '<div class="page-container page-break">';
+                // Explicit page break for Word
+                $html .= '<br style="page-break-before: always; clear: both;" />';
+                
+                $html .= '<div class="page-container">';
                 $html .= '<div class="page-title">' . htmlspecialchars($page['content'] ?? '') . '</div>';
                 
                 if (!empty($page['image_url'])) {
