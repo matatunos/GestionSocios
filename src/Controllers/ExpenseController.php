@@ -13,22 +13,23 @@ class ExpenseController {
     // List all expenses
     public function index() {
         $filters = [
-            'year' => $_GET['year'] ?? date('Y'),
+            'year' => isset($_GET['year']) && $_GET['year'] !== '' ? $_GET['year'] : null,
             'month' => $_GET['month'] ?? null,
             'category_id' => $_GET['category_id'] ?? null
         ];
-        
+        $page = isset($_GET['page_num']) ? max(1, intval($_GET['page_num'])) : 1;
+        $limit = 20;
+        $offset = ($page - 1) * $limit;
         $expenseModel = new Expense($this->db);
-        $expenses = $expenseModel->readAll($filters);
-        
+        $expenses = $expenseModel->readAll($filters, $limit, $offset);
+        $totalRecords = $expenseModel->countAll($filters);
+        $totalPages = ceil($totalRecords / $limit);
         $categoryModel = new ExpenseCategory($this->db);
         $categories = $categoryModel->readAll();
-        
         // Get statistics
         $yearTotal = Expense::getTotalByPeriod($this->db, $filters['year']);
         $monthTotal = $filters['month'] ? Expense::getTotalByPeriod($this->db, $filters['year'], $filters['month']) : 0;
         $byCategory = Expense::getByCategory($this->db, $filters['year']);
-        
         require_once __DIR__ . '/../Views/expenses/index.php';
     }
     
