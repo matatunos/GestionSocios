@@ -14,10 +14,9 @@ class Book {
     }
 
     public function create($data) {
-        $stmt = $this->db->prepare("INSERT INTO books (year, name, created_by) VALUES (:year, :name, :created_by)");
+        $stmt = $this->db->prepare("INSERT INTO books (year, title) VALUES (:year, :title)");
         $stmt->bindParam(':year', $data['year']);
-        $stmt->bindParam(':name', $data['name']);
-        $stmt->bindParam(':created_by', $data['created_by']);
+        $stmt->bindParam(':title', $data['title']);
         $stmt->execute();
         return $this->db->lastInsertId();
     }
