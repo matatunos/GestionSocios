@@ -303,18 +303,6 @@ function crearNuevaVersion() {
         }
     })
     .catch(err => {
-        console.error('Error creating version:', err);
-        alert('Error de red al crear versión: ' + err.message);
-    });
-}
-</script>
-<script src="/js/book_pages_editor.js"></script>
-
-<!-- Modal para añadir página -->
-<div id="add-page-modal" class="modal-overlay">
-    <div class="modal-content">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-            <h3 style="margin:0;">Añadir Página</h3>
             <button onclick="closeAddModal()" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
         </div>
 

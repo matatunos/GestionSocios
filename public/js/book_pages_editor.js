@@ -5,13 +5,6 @@
 let bookPages = window.bookPages ? [...window.bookPages] : [];
 let draggedItem = null;
 
-// Prototipo frontend para gestión de páginas del libro
-// Permite reordenar, añadir y borrar páginas
-// Uso: incluir este script en la página de maquetación/exportación
-
-let bookPages = window.bookPages ? [...window.bookPages] : [];
-let draggedItem = null;
-
 function renderPages() {
     const container = document.getElementById('book-pages-list');
     if (!container) return;
@@ -167,7 +160,58 @@ function addCustomPage() {
 
     titleInput.value = '';
     renderPages();
-    `;
+    closeAddModal();
+}
+
+function renderActivitiesList() {
+    const container = document.getElementById('activities-list');
+    if (!container) return;
+
+    const activities = window.availableActivities || [];
+
+    container.innerHTML = activities.map(act => {
+        // Check if used by ID (newly added) or by Content+Type (saved in DB)
+        const isUsed = bookPages.some(p =>
+            (p.id === 'activity_' + act.id) ||
+            (p.type === 'activity' && p.content === act.title)
+        );
+
+        const img = act.image_url ? `<img src="${act.image_url}">` : '<div style="height:80px; background:#eee; display:flex; align-items:center; justify-content:center; margin-bottom:0.5rem;">📅</div>';
+
+        return `
+            <div class="content-item ${isUsed ? 'used' : ''}" onclick="${isUsed ? '' : `addContentPage('activity', '${act.id}', '${act.title.replace(/'/g, "\\'")}', '${act.image_url || ''}')`}">
+                ${img}
+                <div style="font-size:0.9em; font-weight:500;">${act.title}</div>
+                ${isUsed ? '<div style="font-size:0.8em; color:green;">Ya añadido</div>' : ''}
+            </div>
+        `;
+    }).join('');
+}
+
+function renderAdsList() {
+    const container = document.getElementById('ads-list');
+    if (!container) return;
+
+    const ads = window.availableAds || [];
+
+    container.innerHTML = ads.map(ad => {
+        if (ad.status !== 'paid') return ''; // Skip unpaid
+
+        // Check if used by ID (newly added) or by Content+Type (saved in DB)
+        const isUsed = bookPages.some(p =>
+            (p.id === 'ad_' + ad.id) ||
+            (p.type === 'ad' && p.content === ad.donor_name)
+        );
+
+        const img = ad.image_url ? `<img src="${ad.image_url}">` : '<div style="height:80px; background:#eee; display:flex; align-items:center; justify-content:center; margin-bottom:0.5rem;">📢</div>';
+
+        return `
+            <div class="content-item ${isUsed ? 'used' : ''}" onclick="${isUsed ? '' : `addContentPage('ad', '${ad.id}', '${ad.donor_name.replace(/'/g, "\\'")}', '${ad.image_url || ''}')`}">
+                ${img}
+                <div style="font-size:0.9em; font-weight:500;">${ad.donor_name}</div>
+                ${isUsed ? '<div style="font-size:0.8em; color:green;">Ya añadido</div>' : ''}
+            </div>
+        `;
     }).join('');
 }
 
@@ -185,33 +229,10 @@ function addContentPage(type, id, title, imageUrl) {
 
 // --- END MODAL LOGIC ---
 
-function getPositionLabel(pos) {
-    if (pos === 'top') return 'Superior';
-    if (pos === 'bottom') return 'Inferior';
-    return 'Completa';
-}
-
-function addPage() {
-    const name = prompt('Nombre de la nueva página:');
-    if (!name) return;
-    const position = prompt('Posición (completa, superior, inferior):', 'completa');
-    let pos = 'full';
-    if (position && position.toLowerCase().startsWith('s')) pos = 'top';
-    else if (position && position.toLowerCase().startsWith('i')) pos = 'bottom';
-
-    bookPages.push({ id: Date.now(), content: name, position: pos });
-    renderPages();
-}
-
 function editPage(idx) {
     const page = bookPages[idx];
     const name = prompt('Editar nombre de la página:', page.content);
     if (!name) return;
-
-    // Mantener la posición actual si no se quiere cambiar
-    // O preguntar si se quiere cambiar
-    // Simplificado: solo editar nombre por ahora para ser más rápido, 
-    // la posición se cambia con el selector
 
     bookPages[idx] = { ...page, content: name };
     renderPages();
@@ -239,7 +260,7 @@ function savePages(bookId) {
 
     // Confirm before saving if there's a version selected
     if (versionId) {
-        if (!confirm(`¿Guardar cambios en "${versionName}" ?\n\nEsto sobrescribirá las páginas existentes de esta versión.`)) {
+        if (!confirm(`¿Guardar cambios en "${versionName}"?\n\nEsto sobrescribirá las páginas existentes de esta versión.`)) {
             return;
         }
     }
