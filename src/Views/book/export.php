@@ -303,11 +303,12 @@ function crearNuevaVersion() {
         }
     })
     .catch(err => {
-            <button onclick="closeAddModal()" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
-        </div>
-
-        <div style="border-bottom: 1px solid #e2e8f0; margin-bottom: 1rem; display: flex; gap: 1rem;">
-            <button class="tab-btn active" onclick="switchTab('custom')">Personalizada</button>
+        console.error('Error creating version:', err);
+        alert('Error de red al crear versión: ' + err.message);
+    });
+}
+</script>
+<script src="/js/book_pages_editor.js?v=<?php echo time(); ?>"></script>
             <button class="tab-btn" onclick="switchTab('activities')">Actividades</button>
             <button class="tab-btn" onclick="switchTab('ads')">Anuncios</button>
         </div>
@@ -319,19 +320,6 @@ function crearNuevaVersion() {
             </div>
             <div class="form-group" style="margin-bottom: 1rem;">
                 <label style="display:block; margin-bottom:0.5rem;">Posición</label>
-                <select id="new-page-pos" class="form-select">
-                    <option value="full">Completa</option>
-                    <option value="top">Superior (Media)</option>
-                    <option value="bottom">Inferior (Media)</option>
-                </select>
-            </div>
-            <button onclick="addCustomPage()" class="btn btn-primary" style="width:100%;">Añadir Página</button>
-        </div>
-
-        <div id="tab-activities" class="tab-content" style="display:none;">
-            <p style="color:var(--text-muted); font-size:0.9em;">Selecciona una actividad para añadirla al libro.</p>
-            <div id="activities-list" class="content-grid"></div>
-        </div>
 
         <div id="tab-ads" class="tab-content" style="display:none;">
             <p style="color:var(--text-muted); font-size:0.9em;">Selecciona un anuncio para añadirlo al libro.</p>
