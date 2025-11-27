@@ -217,13 +217,7 @@ if (isset($_SESSION['user_id'])) {
                         <?php endif; ?>
                     </a>
                 </li>
-                <!-- Menú de Auditoría -->
-                <li>
-                    <a href="index.php?page=audit_log" class="nav-link <?php echo ($page === 'audit_log') ? 'active' : ''; ?>">
-                        <i class="fas fa-user-shield"></i>
-                        <span>Auditoría</span>
-                    </a>
-                </li>
+
                 <li>
                     <a href="index.php?page=documents" class="nav-link <?php echo ($page === 'documents') ? 'active' : ''; ?>">
                         <i class="fas fa-folder-open"></i>
@@ -324,6 +318,14 @@ if (isset($_SESSION['user_id'])) {
                             <a href="index.php?page=notifications" class="btn-link">Ver todas <i class="fas fa-arrow-right"></i></a>
                         </div>
                     </div>
+                </div>
+                
+                <!-- Audit Log -->
+                <div class="audit-log-link" style="margin-bottom: 0.75rem;">
+                    <a href="index.php?page=audit_log" class="btn btn-sm w-full" style="display: flex; align-items: center; justify-content: flex-start; gap: 0.5rem; padding: 0.5rem; background: var(--bg-card); border: 1px solid var(--border-light); color: var(--text-main); border-radius: 0.5rem; text-decoration: none;">
+                        <i class="fas fa-user-shield"></i>
+                        <span>Auditoría</span>
+                    </a>
                 </div>
                 
                 <!-- Language Selector -->
