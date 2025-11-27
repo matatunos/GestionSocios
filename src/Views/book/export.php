@@ -183,15 +183,24 @@ function crearNuevaVersion() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ book_id: <?php echo json_encode($book_id ?? 0); ?>, name: nombre })
     })
-    .then(res => res.json())
+    .then(res => {
+        if (!res.ok) {
+            throw new Error('HTTP error! status: ' + res.status);
+        }
+        return res.json();
+    })
     .then(data => {
+        console.log('Response:', data);
         if (data.success && data.version_id) {
             window.location.href = 'index.php?page=book_export&year=<?php echo $year; ?>&version_id=' + data.version_id;
         } else {
-            alert('Error al crear versión: ' + (data.error || 'Desconocido'));
+            alert('Error al crear versión: ' + (data.error || 'Desconocido') + (data.details ? '\n\nDetalles: ' + data.details : ''));
         }
     })
-    .catch(() => alert('Error de red al crear versión'));
+    .catch(err => {
+        console.error('Error creating version:', err);
+        alert('Error de red al crear versión: ' + err.message);
+    });
 }
 </script>
 <script src="/js/book_pages_editor.js"></script>
