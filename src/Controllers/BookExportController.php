@@ -196,29 +196,42 @@ class BookExportController {
             $pdf->Cell(0, 15, $year, 0, 1, 'C');
 
             // Pages
-            foreach ($pages as $page) {
-                if (isset($page['type']) && $page['type'] === 'cover') continue; // Skip cover if it's in the list
+            $count = count($pages);
+            for ($i = 0; $i < $count; $i++) {
+                $page = $pages[$i];
+                if (isset($page['type']) && $page['type'] === 'cover') continue;
 
-                $pdf->AddPage();
-                $pdf->SetFont('helvetica', 'B', 16);
-                $pdf->Cell(0, 10, $page['content'] ?? '', 0, 1);
+                $position = $page['position'] ?? 'full';
                 
-                if (!empty($page['image_url'])) {
-                    $imagePath = __DIR__ . '/../../public/' . $page['image_url'];
-                    if (file_exists($imagePath)) {
-                        if (isset($page['position']) && $page['position'] === 'top') {
-                            $pdf->Image($imagePath, 15, $pdf->GetY(), 180, 80, '', '', '', true, 300);
-                        } else if (isset($page['position']) && $page['position'] === 'bottom') {
-                            $pdf->SetY(-100);
-                            $pdf->Image($imagePath, 15, $pdf->GetY(), 180, 80, '', '', '', true, 300);
-                        } else {
-                            $pdf->Image($imagePath, 15, $pdf->GetY(), 180, 0, '', '', '', true, 300);
+                // Logic for merging pages
+                if ($position === 'top') {
+                    // Start a new page
+                    $pdf->AddPage();
+                    
+                    // Render TOP content
+                    $this->renderPageContent($pdf, $page, 'top');
+                    
+                    // Check next page
+                    if ($i + 1 < $count) {
+                        $nextPage = $pages[$i + 1];
+                        $nextPos = $nextPage['position'] ?? 'full';
+                        
+                        if ($nextPos === 'bottom') {
+                            // Render BOTTOM content on same page
+                            $this->renderPageContent($pdf, $nextPage, 'bottom');
+                            // Skip next iteration
+                            $i++;
                         }
-                    } else {
-                        $this->drawDefaultImage($pdf, $page);
                     }
+                } else if ($position === 'bottom') {
+                    // If we are here, it means this bottom page was NOT caught by a previous top page
+                    // So we put it on a new page at the bottom
+                    $pdf->AddPage();
+                    $this->renderPageContent($pdf, $page, 'bottom');
                 } else {
-                    $this->drawDefaultImage($pdf, $page);
+                    // Full page
+                    $pdf->AddPage();
+                    $this->renderPageContent($pdf, $page, 'full');
                 }
             }
 
@@ -235,15 +248,14 @@ class BookExportController {
         }
     }
 
-    private function drawDefaultImage($pdf, $page) {
+    private function drawDefaultImage($pdf, $page, $forcePosition = null) {
         $text = $page['content'] ?? 'Sin imagen';
         $type = $page['type'] ?? 'default';
+        $position = $forcePosition ?? ($page['position'] ?? 'full');
         $height = 180;
         
-        if ($type === 'ad') {
-            if (isset($page['position']) && ($page['position'] === 'top' || $page['position'] === 'bottom')) {
-                $height = 80;
-            }
+        if ($position === 'top' || $position === 'bottom') {
+            $height = 80;
         }
         
         $x = 15;
@@ -352,6 +364,38 @@ class BookExportController {
         // Reset colors
         $pdf->SetTextColor(0, 0, 0);
         $pdf->SetDrawColor(0, 0, 0);
+    }
+
+    private function renderPageContent($pdf, $page, $forcePosition = null) {
+        $position = $forcePosition ?? ($page['position'] ?? 'full');
+        
+        // Set Y based on position
+        if ($position === 'bottom') {
+            $pdf->SetY(-100); // Bottom half
+        } else {
+            $pdf->SetY(15); // Top or Full
+        }
+
+        // Title
+        $pdf->SetFont('helvetica', 'B', 16);
+        $pdf->Cell(0, 10, $page['content'] ?? '', 0, 1);
+        
+        // Image or Default
+        if (!empty($page['image_url'])) {
+            $imagePath = __DIR__ . '/../../public/' . $page['image_url'];
+            if (file_exists($imagePath)) {
+                $y = $pdf->GetY();
+                if ($position === 'top' || $position === 'bottom') {
+                    $pdf->Image($imagePath, 15, $y, 180, 80, '', '', '', true, 300);
+                } else {
+                    $pdf->Image($imagePath, 15, $y, 180, 0, '', '', '', true, 300);
+                }
+            } else {
+                $this->drawDefaultImage($pdf, $page, $position);
+            }
+        } else {
+            $this->drawDefaultImage($pdf, $page, $position);
+        }
     }
 
     private function checkAdmin() {
