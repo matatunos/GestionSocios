@@ -7,7 +7,7 @@ function buildPageUrl($page, $filters) {
         'year' => $filters['year'],
         'month' => $filters['month'],
         'category_id' => $filters['category_id'],
-        'p' => $page
+        'page_num' => $page
     ];
     // Elimina filtros vacíos
     foreach ($params as $k => $v) {
