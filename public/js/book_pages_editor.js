@@ -167,52 +167,7 @@ function addCustomPage() {
 
     titleInput.value = '';
     renderPages();
-    closeAddModal();
-}
-
-function renderActivitiesList() {
-    const container = document.getElementById('activities-list');
-    if (!container) return;
-
-    const usedIds = bookPages.map(p => p.id);
-    const activities = window.availableActivities || [];
-
-    container.innerHTML = activities.map(act => {
-        const id = 'activity_' + act.id;
-        const isUsed = usedIds.includes(id);
-        const img = act.image_url ? `<img src="${act.image_url}">` : '<div style="height:80px; background:#eee; display:flex; align-items:center; justify-content:center; margin-bottom:0.5rem;">📅</div>';
-
-        return `
-            <div class="content-item ${isUsed ? 'used' : ''}" onclick="${isUsed ? '' : `addContentPage('activity', '${act.id}', '${act.title.replace(/'/g, "\\'")}', '${act.image_url || ''}')`}">
-                ${img}
-                <div style="font-size:0.9em; font-weight:500;">${act.title}</div>
-                ${isUsed ? '<div style="font-size:0.8em; color:green;">Ya añadido</div>' : ''}
-            </div>
-        `;
-    }).join('');
-}
-
-function renderAdsList() {
-    const container = document.getElementById('ads-list');
-    if (!container) return;
-
-    const usedIds = bookPages.map(p => p.id);
-    const ads = window.availableAds || [];
-
-    container.innerHTML = ads.map(ad => {
-        if (ad.status !== 'paid') return ''; // Skip unpaid
-
-        const id = 'ad_' + ad.id;
-        const isUsed = usedIds.includes(id);
-        const img = ad.image_url ? `<img src="${ad.image_url}">` : '<div style="height:80px; background:#eee; display:flex; align-items:center; justify-content:center; margin-bottom:0.5rem;">📢</div>';
-
-        return `
-            <div class="content-item ${isUsed ? 'used' : ''}" onclick="${isUsed ? '' : `addContentPage('ad', '${ad.id}', '${ad.donor_name.replace(/'/g, "\\'")}', '${ad.image_url || ''}')`}">
-                ${img}
-                <div style="font-size:0.9em; font-weight:500;">${ad.donor_name}</div>
-                ${isUsed ? '<div style="font-size:0.8em; color:green;">Ya añadido</div>' : ''}
-            </div>
-        `;
+    `;
     }).join('');
 }
 
@@ -284,7 +239,7 @@ function savePages(bookId) {
 
     // Confirm before saving if there's a version selected
     if (versionId) {
-        if (!confirm(`¿Guardar cambios en "${versionName}"?\n\nEsto sobrescribirá las páginas existentes de esta versión.`)) {
+        if (!confirm(`¿Guardar cambios en "${versionName}" ?\n\nEsto sobrescribirá las páginas existentes de esta versión.`)) {
             return;
         }
     }
