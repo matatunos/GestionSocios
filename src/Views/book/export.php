@@ -140,7 +140,7 @@
         <button onclick="savePages(<?php echo $book_id ?? 0; ?>)" class="btn btn-primary">
             <i class="fas fa-save" style="margin-right:0.5rem;"></i> Guardar libro
         </button>
-        <button id="add-page-btn" class="btn btn-secondary" type="button">
+        <button id="add-page-btn" class="btn btn-secondary" type="button" onclick="openAddModal()">
             <i class="fas fa-plus" style="margin-right:0.5rem;"></i> Añadir página
         </button>
     </div>
@@ -277,7 +277,6 @@ function borrarVersion() {
     });
 }
 </script>
-<script src="/js/book_pages_editor.js?v=<?php echo time(); ?>"></script>
 
 <!-- Modal para añadir página -->
 <div id="add-page-modal" class="modal-overlay">
@@ -320,6 +319,8 @@ function borrarVersion() {
         </div>
     </div>
 </div>
+
+<script src="/js/book_pages_editor.js?v=<?php echo time(); ?>"></script>
 
 <?php $content = ob_get_clean(); ?>
 <?php require __DIR__ . '/../layout.php'; ?>
