@@ -1,9 +1,12 @@
 <?php ob_start(); ?>
 
-<div class="mb-4">
-    <a href="index.php?page=donors" class="btn btn-sm btn-secondary mb-4">
-        <i class="fas fa-arrow-left"></i> Volver al listado
-    <h1>Editar Donante</h1>
+<div class="mb-4 d-flex align-items-center justify-content-between">
+    <div>
+        <a href="index.php?page=donors" class="btn btn-sm btn-secondary">
+            <i class="fas fa-arrow-left"></i> Volver al listado
+        </a>
+    </div>
+    <h1 class="mb-0">Editar Donante</h1>
 </div>
 
 <div class="card" style="max-width: 800px;">
