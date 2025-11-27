@@ -91,6 +91,8 @@ switch ($page) {
         $controller = new BookPageApiController();
         if ($action === 'savePages') {
             $controller->savePages();
+        } else if ($action === 'createVersion') {
+            $controller->createVersion();
         }
         break;
     case 'dashboard':
