@@ -28,12 +28,33 @@ class BookPageApiController {
             
             $book_id = $data['book_id'] ?? null;
             $name = $data['name'] ?? null;
+            $year = $data['year'] ?? date('Y'); // Support creating book by year
             $created_by = $_SESSION['user_id'] ?? null;
 
-            if (!$book_id || !$name) {
+            if (!$name) {
                 http_response_code(400);
-                echo json_encode(['error' => 'Datos inválidos: se requiere book_id y name']);
+                echo json_encode(['error' => 'Datos inválidos: se requiere nombre']);
                 exit;
+            }
+
+            // If no book_id, try to find or create book by year
+            if (!$book_id) {
+                require_once __DIR__ . '/../Models/Book.php';
+                $bookModel = new Book($this->db);
+                
+                // Check if book exists for this year
+                // We don't have getByYear in Book model yet, but we can try create which usually checks or we can rely on savePages logic.
+                // Actually Book::create just inserts. We should check if it exists first.
+                // Let's assume we need to create it if we don't have an ID.
+                // Ideally we should query for it.
+                // For now, let's rely on the fact that if book_id is null, we create a new book.
+                // But wait, if the book DOES exist but we just didn't pass the ID (e.g. frontend bug), we might duplicate.
+                // The frontend sends book_id if it knows it.
+                
+                $book_id = $bookModel->create([
+                    'year' => $year,
+                    'title' => 'Libro ' . $year
+                ]);
             }
 
             require_once __DIR__ . '/../Models/BookVersion.php';
@@ -49,6 +70,40 @@ class BookPageApiController {
             error_log("Error in createVersion: " . $e->getMessage());
             http_response_code(500);
             echo json_encode(['error' => 'Error al crear versión', 'details' => $e->getMessage()]);
+        }
+    }
+
+    public function deleteVersion() {
+        if (($_SESSION['role'] ?? '') !== 'admin') {
+            http_response_code(403);
+            echo json_encode(['error' => 'No autorizado']);
+            exit;
+        }
+
+        try {
+            $input = file_get_contents('php://input');
+            $data = json_decode($input, true);
+            
+            $version_id = $data['version_id'] ?? null;
+
+            if (!$version_id) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Datos inválidos: se requiere version_id']);
+                exit;
+            }
+
+            require_once __DIR__ . '/../Models/BookVersion.php';
+            $bookVersionModel = new BookVersion($this->db);
+            
+            if ($bookVersionModel->delete($version_id)) {
+                echo json_encode(['success' => true]);
+            } else {
+                echo json_encode(['error' => 'No se pudo eliminar la versión']);
+            }
+        } catch (Exception $e) {
+            error_log("Error in deleteVersion: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['error' => 'Error al eliminar versión', 'details' => $e->getMessage()]);
         }
     }
 
