@@ -168,58 +168,6 @@ function buildPageUrl($page, $filters) {
         </div>
     </div>
     
-    <?php if ($filters['month']): ?>
-    <div class="stat-card" style="border-left-color: #f59e0b;">
-        <div style="font-size: 2rem; font-weight: 700; color: #f59e0b;">
-            <?php echo number_format($monthTotal, 2); ?> €
-        </div>
-        <div style="font-size: 0.875rem; color: var(--text-muted); margin-top: 0.25rem;">
-            <?php echo $months[$filters['month'] - 1]; ?> <?php echo $filters['year']; ?>
-        </div>
-    </div>
-    <?php endif; ?>
-    
-
-</div>
-<!-- Paginación: fuera del bloque de estadísticas -->
-
-
-<!-- Expenses by Category Chart -->
-<?php if (!empty($byCategory)): ?>
-<div class="card mb-4">
-    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">
-        <i class="fas fa-chart-pie"></i> Gastos por Categoría (<?php echo $filters['year']; ?>)
-    </h3>
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-        <?php foreach ($byCategory as $cat): ?>
-            <div style="padding: 1rem; background: var(--bg-body); border-radius: var(--radius-md); border-left: 3px solid <?php echo htmlspecialchars($cat['color']); ?>">
-                <div style="font-size: 1.5rem; font-weight: 700; color: <?php echo htmlspecialchars($cat['color']); ?>">
-                    <?php echo number_format($cat['total'], 2); ?> €
-                </div>
-                <div style="font-size: 0.875rem; color: var(--text-muted); margin-top: 0.25rem;">
-                    <?php echo htmlspecialchars($cat['name']); ?>
-                </div>
-                <div style="font-size: 0.75rem; color: var(--text-light); margin-top: 0.25rem;">
-                    <?php echo $cat['count']; ?> registro(s)
-                </div>
-            </div>
-        <?php endforeach; ?>
-    </div>
-</div>
-<?php endif; ?>
-
-<!-- Expenses List -->
-<div class="card">
-    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">
-        <i class="fas fa-list"></i> Listado de Gastos
-    </h3>
-    
-    <?php if (empty($expenses)): ?>
-        <div style="text-align: center; padding: 3rem;">
-            <i class="fas fa-receipt" style="font-size: 3rem; color: var(--text-light); margin-bottom: 1rem;"></i>
-            <p style="color: var(--text-muted);">No hay gastos registrados con los filtros seleccionados</p>
-        </div>
-    <?php else: ?>
         <?php foreach ($expenses as $expense): ?>
             <div class="expense-item">
                 <div style="flex: 1;">
@@ -238,11 +186,103 @@ function buildPageUrl($page, $filters) {
                             | <i class="fas fa-file-invoice"></i> <?php echo htmlspecialchars($expense['invoice_number']); ?>
                         <?php endif; ?>
                     </div>
+                </div>
+                <div style="text-align: right; display: flex; align-items: center; gap: 1rem;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #ef4444;">
+                        <?php echo number_format($expense['amount'], 2); ?> €
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <a href="index.php?page=expenses&action=edit&id=<?php echo $expense['id']; ?>" 
+                           class="btn btn-sm btn-secondary">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="index.php?page=expenses&action=delete&id=<?php echo $expense['id']; ?>" 
+                           class="btn btn-sm btn-danger"
+                           onclick="return confirm('¿Eliminar este gasto?')">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
 
-                        <?php if (isset($totalPages) && $totalPages > 1): ?>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin: 2rem 0 1rem 0; flex-wrap: wrap; gap: 1rem;">
-                            <div style="font-size: 0.95rem; color: var(--text-muted);">
-                                Mostrando <?php echo (($page - 1) * 20 + 1); ?> - <?php echo min($page * 20, $totalRecords); ?> de <?php echo $totalRecords; ?> registros
+        <?php if (isset($totalPages) && $totalPages > 1): ?>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin: 2rem 0 1rem 0; flex-wrap: wrap; gap: 1rem;">
+            <div style="font-size: 0.95rem; color: var(--text-muted);">
+                Mostrando <?php echo (($page - 1) * 20 + 1); ?> - <?php echo min($page * 20, $totalRecords); ?> de <?php echo $totalRecords; ?> registros
+            </div>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <?php if ($page > 1): ?>
+                    <a href="<?php echo buildPageUrl($page - 1, $filters); ?>" class="btn btn-sm btn-secondary">
+                        <i class="fas fa-chevron-left"></i> Anterior
+                    </a>
+                <?php endif; ?>
+                <div style="display: flex; gap: 0.25rem;">
+                    <?php 
+                    $startPage = max(1, $page - 2);
+                    $endPage = min($totalPages, $page + 2);
+                    if ($startPage > 1) {
+                        echo '<span style="padding: 0.25rem 0.5rem;">...</span>';
+                    }
+                    for ($i = $startPage; $i <= $endPage; $i++): ?>
+                        <a href="<?php echo buildPageUrl($i, $filters); ?>" 
+                           class="btn btn-sm <?php echo $i == $page ? 'btn-primary' : 'btn-secondary'; ?>"
+                           style="<?php echo $i == $page ? '' : 'background: white;'; ?>">
+                            <?php echo $i; ?>
+                        </a>
+                    <?php endfor; 
+                    if ($endPage < $totalPages) {
+                        echo '<span style="padding: 0.25rem 0.5rem;">...</span>';
+                    }
+                    ?>
+                </div>
+                <?php if ($page < $totalPages): ?>
+                    <a href="<?php echo buildPageUrl($page + 1, $filters); ?>" class="btn btn-sm btn-secondary">
+                        Siguiente <i class="fas fa-chevron-right"></i>
+                    </a>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <?php if (isset($totalPages) && $totalPages > 1): ?>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin: 2rem 0 1rem 0; flex-wrap: wrap; gap: 1rem;">
+            <div style="font-size: 0.95rem; color: var(--text-muted);">
+                Mostrando <?php echo (($page - 1) * 20 + 1); ?> - <?php echo min($page * 20, $totalRecords); ?> de <?php echo $totalRecords; ?> registros
+            </div>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <?php if ($page > 1): ?>
+                    <a href="<?php echo buildPageUrl($page - 1, $filters); ?>" class="btn btn-sm btn-secondary">
+                        <i class="fas fa-chevron-left"></i> Anterior
+                    </a>
+                <?php endif; ?>
+                <div style="display: flex; gap: 0.25rem;">
+                    <?php 
+                    $startPage = max(1, $page - 2);
+                    $endPage = min($totalPages, $page + 2);
+                    if ($startPage > 1) {
+                        echo '<span style="padding: 0.25rem 0.5rem;">...</span>';
+                    }
+                    for ($i = $startPage; $i <= $endPage; $i++): ?>
+                        <a href="<?php echo buildPageUrl($i, $filters); ?>" 
+                           class="btn btn-sm <?php echo $i == $page ? 'btn-primary' : 'btn-secondary'; ?>"
+                           style="<?php echo $i == $page ? '' : 'background: white;'; ?>">
+                            <?php echo $i; ?>
+                        </a>
+                    <?php endfor; 
+                    if ($endPage < $totalPages) {
+                        echo '<span style="padding: 0.25rem 0.5rem;">...</span>';
+                    }
+                    ?>
+                </div>
+                <?php if ($page < $totalPages): ?>
+                    <a href="<?php echo buildPageUrl($page + 1, $filters); ?>" class="btn btn-sm btn-secondary">
+                        Siguiente <i class="fas fa-chevron-right"></i>
+                    </a>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php endif; ?>
                             </div>
                             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                                 <?php if ($page > 1): ?>
@@ -286,7 +326,7 @@ function buildPageUrl($page, $filters) {
                                             </div>
                                         </div>
                                     </div>
-                                <?php endforeach; ?>
+
 
                                 <!-- Bloque de paginación fuera del foreach -->
                                 <?php if (isset($totalPages) && $totalPages > 1): ?>
