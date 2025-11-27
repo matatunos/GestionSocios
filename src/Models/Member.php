@@ -7,9 +7,12 @@ class Member {
     public $id;
     public $first_name;
     public $last_name;
+    public $dni;
     public $email;
     public $phone;
     public $address;
+    public $latitude;
+    public $longitude;
     public $status;
     public $category_id;
     public $photo_url;

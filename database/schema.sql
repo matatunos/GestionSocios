@@ -428,7 +428,7 @@ CREATE TABLE IF NOT EXISTS audit_log (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NULL,
     action VARCHAR(50) NOT NULL,
-    entity_type VARCHAR(50) NOT NULL,
+    entity VARCHAR(50) NOT NULL,
     entity_id INT,
     old_values JSON,
     new_values JSON,

@@ -126,6 +126,12 @@ class SettingsController {
             $name = $_POST['association_name'] ?? '';
             $stmt = $this->db->prepare("INSERT INTO settings (setting_key, setting_value) VALUES ('association_name', ?) ON DUPLICATE KEY UPDATE setting_value = ?");
             $stmt->execute([$name, $name]);
+            // Auditoría de actualización de datos generales
+            require_once __DIR__ . '/../Models/AuditLog.php';
+            $auditLog = new AuditLog($this->db);
+            $userId = $_SESSION['user_id'] ?? null;
+            $details = json_encode(['association_name' => $name]);
+            $auditLog->create($userId, 'update', 'settings', null, $details);
             header('Location: index.php?page=settings&tab=general&success=1');
         }
     }
@@ -144,6 +150,12 @@ class SettingsController {
             $content .= "define('DB_USER', '" . addslashes($user) . "');\n";
             $content .= "define('DB_PASS', '" . addslashes($pass) . "');\n";
             file_put_contents(__DIR__ . '/../Config/config.php', $content);
+            // Auditoría de actualización de configuración de base de datos
+            require_once __DIR__ . '/../Models/AuditLog.php';
+            $auditLog = new AuditLog($this->db);
+            $userId = $_SESSION['user_id'] ?? null;
+            $details = json_encode(['db_host' => $host, 'db_name' => $name, 'db_user' => $user]);
+            $auditLog->create($userId, 'update', 'db_config', null, $details);
             header('Location: index.php?page=settings&tab=database&success=1');
         }
     }
@@ -202,11 +214,16 @@ class SettingsController {
             }
             
             if ($orgSettings->updateMultiple($settingsToUpdate, $_SESSION['user_id'])) {
+                // Auditoría de actualización de datos de organización
+                require_once __DIR__ . '/../Models/AuditLog.php';
+                $auditLog = new AuditLog($this->db);
+                $userId = $_SESSION['user_id'] ?? null;
+                $details = json_encode($settingsToUpdate);
+                $auditLog->create($userId, 'update', 'organization_settings', null, $details);
                 $_SESSION['success'] = 'Configuración actualizada correctamente';
             } else {
                 $_SESSION['error'] = 'Error al actualizar la configuración';
             }
-            
             header('Location: index.php?page=settings&tab=organization');
             exit;
         }
@@ -221,6 +238,12 @@ class SettingsController {
         if ($logoPath) {
             $orgSettings->deleteLogo($logoPath);
             $orgSettings->set('org_logo', '', $_SESSION['user_id']);
+            // Auditoría de borrado de logo de organización
+            require_once __DIR__ . '/../Models/AuditLog.php';
+            $auditLog = new AuditLog($this->db);
+            $userId = $_SESSION['user_id'] ?? null;
+            $details = json_encode(['org_logo' => $logoPath]);
+            $auditLog->create($userId, 'delete', 'organization_logo', null, $details);
             $_SESSION['success'] = 'Logo eliminado correctamente';
         }
         

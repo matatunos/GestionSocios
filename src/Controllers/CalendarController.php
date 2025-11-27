@@ -174,6 +174,10 @@ class CalendarController {
         $attendanceModel->status = $status;
 
         if ($attendanceModel->updateStatus()) {
+            // Auditoría de cambio de estado de asistencia en calendario
+            require_once __DIR__ . '/../Models/AuditLog.php';
+            $audit = new AuditLog($this->db);
+            $audit->create($_SESSION['user_id'], 'update', 'calendar_attendance', $attendance_id, 'Cambio de estado de asistencia en calendario para el evento ' . $event_id . ', asistencia ' . $attendance_id . ' por el usuario ' . ($_SESSION['username'] ?? ''));
             $_SESSION['success'] = "Estado actualizado correctamente";
         } else {
             $_SESSION['error'] = "Error al actualizar el estado";
@@ -193,6 +197,10 @@ class CalendarController {
         $attendanceModel->id = $_GET['id'];
 
         if ($attendanceModel->delete()) {
+            // Auditoría de borrado de asistencia en calendario
+            require_once __DIR__ . '/../Models/AuditLog.php';
+            $audit = new AuditLog($this->db);
+            $audit->create($_SESSION['user_id'], 'delete', 'calendar_attendance', $attendanceModel->id, 'Eliminación de asistencia en calendario para el evento ' . $_GET['event_id'] . ', asistencia ' . $attendanceModel->id . ' por el usuario ' . ($_SESSION['username'] ?? ''));
             $_SESSION['success'] = "Asistencia eliminada correctamente";
         } else {
             $_SESSION['error'] = "Error al eliminar la asistencia";

@@ -17,6 +17,10 @@ class ExportController {
      * Exportar listado de socios a Excel (CSV)
      */
     public function exportMembersExcel() {
+            require_once __DIR__ . '/../Models/AuditLog.php';
+            $audit = new AuditLog($this->db);
+            $userId = $_SESSION['user_id'] ?? null;
+            $audit->create($userId, 'export', 'members_excel', null, 'Exportación de miembros a Excel por el usuario ' . ($_SESSION['username'] ?? '')); 
         $memberModel = new Member($this->db);
         $stmt = $memberModel->readAll();
         $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -80,6 +84,10 @@ class ExportController {
      * Exportar listado de socios a PDF
      */
     public function exportMembersPDF() {
+            require_once __DIR__ . '/../Models/AuditLog.php';
+            $audit = new AuditLog($this->db);
+            $userId = $_SESSION['user_id'] ?? null;
+            $audit->create($userId, 'export', 'members_pdf', null, 'Exportación de miembros a PDF por el usuario ' . ($_SESSION['username'] ?? '')); 
         try {
             $memberModel = new Member($this->db);
             $stmt = $memberModel->readAll();
