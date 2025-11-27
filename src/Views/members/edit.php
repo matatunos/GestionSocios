@@ -10,7 +10,6 @@
 <div class="card" style="max-width: 800px;">
     <form action="index.php?page=members&action=update&id=<?php echo $member->id; ?>" method="POST" enctype="multipart/form-data">
         <div class="row mb-3">
-            <div class="col-md-6">
                 <div class="form-group">
                     <label class="form-label">Fecha de alta</label>
                     <div style="position: relative; display: flex; align-items: center;">

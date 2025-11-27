@@ -3,7 +3,6 @@
 <div class="mb-4">
     <a href="index.php?page=donors" class="btn btn-sm btn-secondary mb-4">
         <i class="fas fa-arrow-left"></i> Volver al listado
-    </a>
     <h1>Editar Donante</h1>
 </div>
 
