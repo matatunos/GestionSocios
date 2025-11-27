@@ -153,11 +153,24 @@ class MemberController {
         $this->checkAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->member->id = $id;
-            
-            // Read current member data  
+            // Leer datos originales antes de modificar
             $this->member->readOne();
+            $original = [
+                'first_name' => $this->member->first_name,
+                'last_name' => $this->member->last_name,
+                'dni' => $this->member->dni,
+                'email' => $this->member->email,
+                'phone' => $this->member->phone,
+                'address' => $this->member->address,
+                'latitude' => $this->member->latitude,
+                'longitude' => $this->member->longitude,
+                'status' => $this->member->status,
+                'category_id' => $this->member->category_id,
+                'photo_url' => $this->member->photo_url,
+                'created_at' => $this->member->created_at
+            ];
             $currentPhoto = $this->member->photo_url;
-            
+            // Asignar nuevos valores
             $this->member->first_name = $_POST['first_name'];
             $this->member->last_name = $_POST['last_name'];
             $this->member->dni = $_POST['dni'] ?? null;
@@ -171,7 +184,6 @@ class MemberController {
             if (!empty($_POST['created_at'])) {
                 $this->member->created_at = $_POST['created_at'];
             }
-            
             // Handle photo upload
             $photoUrl = $currentPhoto; // Keep current photo by default
             
@@ -247,23 +259,24 @@ class MemberController {
             
             $this->member->photo_url = $photoUrl;
 
-                // Detectar campos modificados antes del update
-                $changedFields = [];
-                if ($original['first_name'] !== $_POST['first_name']) $changedFields[] = 'nombre';
-                if ($original['last_name'] !== $_POST['last_name']) $changedFields[] = 'apellidos';
-                if ($original['dni'] !== ($_POST['dni'] ?? null)) $changedFields[] = 'dni';
-                if ($original['email'] !== $_POST['email']) $changedFields[] = 'email';
-                if ($original['phone'] !== $_POST['phone']) $changedFields[] = 'teléfono';
-                if ($original['address'] !== $_POST['address']) $changedFields[] = 'dirección';
-                if ($original['latitude'] != ($_POST['latitude'] ?? null)) $changedFields[] = 'latitud';
-                if ($original['longitude'] != ($_POST['longitude'] ?? null)) $changedFields[] = 'longitud';
-                if ($original['status'] !== $_POST['status']) $changedFields[] = 'estado';
-                if ($original['category_id'] != (!empty($_POST['category_id']) ? $_POST['category_id'] : null)) $changedFields[] = 'categoría';
-                if ($photoUrl !== $original['photo_url']) $changedFields[] = 'imagen';
-                $detalle = 'Modificación de socio: ' . $_POST['first_name'] . ' ' . $_POST['last_name'] . ' (' . $_POST['email'] . ') por el usuario ' . ($_SESSION['username'] ?? '');
-                if ($changedFields) {
-                    $detalle .= ' [Campos modificados: ' . implode(', ', $changedFields) . ']';
-                }
+            // Detectar campos modificados antes del update
+            $changedFields = [];
+            if ($original['first_name'] !== $_POST['first_name']) $changedFields[] = 'nombre';
+            if ($original['last_name'] !== $_POST['last_name']) $changedFields[] = 'apellidos';
+            if ($original['dni'] !== ($_POST['dni'] ?? null)) $changedFields[] = 'dni';
+            if ($original['email'] !== $_POST['email']) $changedFields[] = 'email';
+            if ($original['phone'] !== $_POST['phone']) $changedFields[] = 'teléfono';
+            if ($original['address'] !== $_POST['address']) $changedFields[] = 'dirección';
+            if ($original['latitude'] != ($_POST['latitude'] ?? null)) $changedFields[] = 'latitud';
+            if ($original['longitude'] != ($_POST['longitude'] ?? null)) $changedFields[] = 'longitud';
+            if ($original['status'] !== $_POST['status']) $changedFields[] = 'estado';
+            if ($original['category_id'] != (!empty($_POST['category_id']) ? $_POST['category_id'] : null)) $changedFields[] = 'categoría';
+            if ($photoUrl !== $original['photo_url']) $changedFields[] = 'imagen';
+            if ($original['created_at'] !== ($_POST['created_at'] ?? $original['created_at'])) $changedFields[] = 'fecha alta';
+            $detalle = 'Modificación de socio: ' . $original['first_name'] . ' ' . $original['last_name'] . ' (' . $original['email'] . ') por el usuario ' . ($_SESSION['username'] ?? '');
+            if ($changedFields) {
+                $detalle .= ' [Campos modificados: ' . implode(', ', $changedFields) . ']';
+            }
                 require_once __DIR__ . '/../Models/AuditLog.php';
                 $audit = new AuditLog($this->db);
                 $audit->create(

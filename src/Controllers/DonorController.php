@@ -107,11 +107,20 @@ class DonorController {
         $this->checkAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->donor->id = $id;
-            
-            // Read current donor data to preserve logo if not updating
+            // Leer datos originales antes de modificar
             $this->donor->readOne();
+            $original = [
+                'name' => $this->donor->name,
+                'contact_person' => $this->donor->contact_person,
+                'phone' => $this->donor->phone,
+                'email' => $this->donor->email,
+                'address' => $this->donor->address,
+                'latitude' => $this->donor->latitude,
+                'longitude' => $this->donor->longitude,
+                'logo_url' => $this->donor->logo_url
+            ];
             $currentLogo = $this->donor->logo_url;
-            
+            // Asignar nuevos valores
             $this->donor->name = $_POST['name'];
             $this->donor->contact_person = $_POST['contact_person'];
             $this->donor->phone = $_POST['phone'];
@@ -119,7 +128,6 @@ class DonorController {
             $this->donor->address = $_POST['address'];
             $this->donor->latitude = $_POST['latitude'] ?? null;
             $this->donor->longitude = $_POST['longitude'] ?? null;
-
             // Handle logo upload
             $logoUrl = $currentLogo; // Keep current logo by default
             
@@ -211,16 +219,15 @@ class DonorController {
             if ($this->donor->update()) {
                 // Detectar campos modificados
                 $changedFields = [];
-                $this->donor->readOne(); // Recargar datos actualizados
-                if ($this->donor->name !== $_POST['name']) $changedFields[] = 'nombre';
-                if ($this->donor->contact_person !== $_POST['contact_person']) $changedFields[] = 'contacto';
-                if ($this->donor->phone !== $_POST['phone']) $changedFields[] = 'teléfono';
-                if ($this->donor->email !== $_POST['email']) $changedFields[] = 'email';
-                if ($this->donor->address !== $_POST['address']) $changedFields[] = 'dirección';
-                if ($this->donor->latitude != ($_POST['latitude'] ?? null)) $changedFields[] = 'latitud';
-                if ($this->donor->longitude != ($_POST['longitude'] ?? null)) $changedFields[] = 'longitud';
-                if ($logoUrl !== $currentLogo) $changedFields[] = 'imagen';
-                $detalle = 'Modificación de donante: ' . $this->donor->name . ' (' . $this->donor->email . ') por el usuario ' . ($_SESSION['username'] ?? '');
+                if ($original['name'] !== $_POST['name']) $changedFields[] = 'nombre';
+                if ($original['contact_person'] !== $_POST['contact_person']) $changedFields[] = 'contacto';
+                if ($original['phone'] !== $_POST['phone']) $changedFields[] = 'teléfono';
+                if ($original['email'] !== $_POST['email']) $changedFields[] = 'email';
+                if ($original['address'] !== $_POST['address']) $changedFields[] = 'dirección';
+                if ($original['latitude'] != ($_POST['latitude'] ?? null)) $changedFields[] = 'latitud';
+                if ($original['longitude'] != ($_POST['longitude'] ?? null)) $changedFields[] = 'longitud';
+                if ($logoUrl !== $original['logo_url']) $changedFields[] = 'imagen';
+                $detalle = 'Modificación de donante: ' . $original['name'] . ' (' . $original['email'] . ') por el usuario ' . ($_SESSION['username'] ?? '');
                 if ($changedFields) {
                     $detalle .= ' [Campos modificados: ' . implode(', ', $changedFields) . ']';
                 }
@@ -293,38 +300,21 @@ class DonorController {
         
         $this->donor->id = $id;
         $this->donor->readOne();
-        
         // Update donor data
         $this->donor->name = $comparison['donor_data']['name'];
         $this->donor->contact_person = $comparison['donor_data']['contact_person'];
         $this->donor->phone = $comparison['donor_data']['phone'];
         $this->donor->email = $comparison['donor_data']['email'];
         $this->donor->address = $comparison['donor_data']['address'];
-        
         if ($choice === 'new') {
             // Move temp image to permanent location
             $tempPath = __DIR__ . '/../../public/' . $comparison['new_image_temp'];
             $extension = pathinfo($tempPath, PATHINFO_EXTENSION);
             $newFileName = 'donor_' . time() . '_' . uniqid() . '.' . $extension;
             $permanentPath = __DIR__ . '/../../public/uploads/donors/' . $newFileName;
-            
-                    $this->donor->readOne();
-                    $currentLogo = $this->donor->logo_url;
-                    $original = [
-                        'name' => $this->donor->name,
-                        'contact_person' => $this->donor->contact_person,
-                        'phone' => $this->donor->phone,
-                        'email' => $this->donor->email,
-                        'address' => $this->donor->address,
-                        'latitude' => $this->donor->latitude,
-                        'longitude' => $this->donor->longitude,
-                        'logo_url' => $this->donor->logo_url
-                    ];
-                
-                // Mark old image as replaced in history
+            if (rename($tempPath, $permanentPath)) {
+                $newLogoUrl = 'uploads/donors/' . $newFileName;
                 $this->imageHistory->markAllAsNotCurrent($id);
-                
-                // Add old image to history if not already there
                 if ($comparison['old_image'] && !$this->imageHistory->imageExists($id, $comparison['old_image'])) {
                     $this->imageHistory->donor_id = $id;
                     $this->imageHistory->image_url = $comparison['old_image'];
@@ -333,32 +323,23 @@ class DonorController {
                     $this->imageHistory->replaced_at = date('Y-m-d H:i:s');
                     $this->imageHistory->create();
                 }
-                
-                // Add new image to history as current
                 $this->imageHistory->donor_id = $id;
                 $this->imageHistory->image_url = $newLogoUrl;
                 $this->imageHistory->is_current = true;
                 $this->imageHistory->uploaded_at = date('Y-m-d H:i:s');
                 $this->imageHistory->replaced_at = null;
                 $this->imageHistory->create();
-                
                 $this->donor->logo_url = $newLogoUrl;
             }
         } else {
-            // Keep old image, delete temp
             $tempPath = __DIR__ . '/../../public/' . $comparison['new_image_temp'];
             if (file_exists($tempPath)) {
                 unlink($tempPath);
             }
             $this->donor->logo_url = $comparison['old_image'];
         }
-        
-        // Update donor
         $this->donor->update();
-        
-        // Clear session data
         unset($_SESSION['image_comparison']);
-        
         header('Location: index.php?page=donors&success=updated');
         exit;
     }
