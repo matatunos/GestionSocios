@@ -173,6 +173,9 @@ function buildPageUrl($page, $filters) {
     <?php endif; ?>
         <!-- Controles de paginación -->
         <?php if (isset($totalPages) && $totalPages > 1): ?>
+                <div class="text-center" style="margin-bottom:0.5rem; color:var(--text-muted); font-size:0.95rem;">
+                    Mostrando <?php echo (($page - 1) * 20 + 1); ?> - <?php echo min($page * 20, $totalRecords); ?> de <?php echo $totalRecords; ?> registros
+                </div>
         <nav aria-label="Paginación de gastos" style="margin-top:2rem;">
             <ul class="pagination justify-content-center">
                 <!-- Botón anterior -->
