@@ -141,60 +141,6 @@
     <div style="color: #888; font-size: 0.95em; margin-top: 0.5rem;">Si no ves bloques, añade una página o revisa que existan páginas en el libro.</div>
 </div>
 
-<!-- Content Preview -->
-<div class="card" style="padding: 0; overflow: hidden;">
-    <div style="padding: 1.5rem; border-bottom: 1px solid var(--border-light);">
-        <h3 style="margin: 0;">Vista Previa del Contenido</h3>
-        <p style="font-size: 0.875rem; color: var(--text-muted); margin: 0.5rem 0 0 0;">El PDF se generará en el siguiente orden:</p>
-    </div>
-    
-    <div style="padding: 1.5rem;">
-        <ol style="list-style: none; padding: 0; margin: 0;">
-            <li style="display: flex; align-items: start; gap: 1rem; padding: 0.75rem; border-bottom: 1px solid var(--border-light);">
-                <span style="flex-shrink: 0; width: 32px; height: 32px; background: var(--primary-100); color: var(--primary-600); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.875rem;">1</span>
-                <div>
-                    <p style="margin: 0; font-weight: 500; color: var(--text-main);">Portada</p>
-                    <p style="margin: 0.25rem 0 0 0; font-size: 0.875rem; color: var(--text-muted);">Título y año del libro</p>
-                </div>
-            </li>
-            
-            <?php $pageNum = 2; ?>
-            <?php foreach (($activities ?? []) as $activity): ?>
-                <li style="display: flex; align-items: start; gap: 1rem; padding: 0.75rem; border-bottom: 1px solid var(--border-light);">
-                    <span style="flex-shrink: 0; width: 32px; height: 32px; background: #f3e8ff; color: #a855f7; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.875rem;"><?php echo $pageNum++; ?></span>
-                    <div style="flex: 1;">
-                        <p style="margin: 0; font-weight: 500; color: var(--text-main);"><?php echo htmlspecialchars($activity['title']); ?></p>
-                        <p style="margin: 0.25rem 0 0 0; font-size: 0.875rem; color: var(--text-muted);">Actividad</p>
-                    </div>
-                    <?php if (!empty($activity['image_url'])): ?>
-                        <i class="fas fa-image" style="color: #a855f7;"></i>
-                    <?php endif; ?>
-                </li>
-            <?php endforeach; ?>
-            
-            <?php foreach (($ads ?? []) as $ad): ?>
-                <li style="display: flex; align-items: start; gap: 1rem; padding: 0.75rem; border-bottom: 1px solid var(--border-light);">
-                    <span style="flex-shrink: 0; width: 32px; height: 32px; background: #dbeafe; color: #3b82f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.875rem;"><?php echo $pageNum++; ?></span>
-                    <div style="flex: 1;">
-                        <p style="margin: 0; font-weight: 500; color: var(--text-main);"><?php echo htmlspecialchars($ad['donor_name']); ?></p>
-                        <p style="margin: 0.25rem 0 0 0; font-size: 0.875rem; color: var(--text-muted);">Anuncio - <?php echo ucfirst($ad['ad_type']); ?></p>
-                    </div>
-                    <?php if (!empty($ad['image_url'])): ?>
-                        <i class="fas fa-image" style="color: #3b82f6;"></i>
-                    <?php endif; ?>
-                </li>
-            <?php endforeach; ?>
-        </ol>
-        
-        <?php if (empty($activities) && empty($ads)): ?>
-            <div style="text-align: center; padding: 3rem; color: var(--text-muted);">
-                <i class="fas fa-inbox" style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;"></i>
-                <p style="margin: 0;">No hay contenido para exportar en este año.</p>
-                <p style="margin: 0.5rem 0 0 0; font-size: 0.875rem;">Añade actividades o anuncios para generar el libro.</p>
-            </div>
-        <?php endif; ?>
-    </div>
-</div>
 
 <style>
     .book-page-block {
