@@ -1,5 +1,12 @@
 <?php ob_start(); ?>
 <?php
+// Inicializar variables de paginación si no existen
+if (!isset($page)) $page = 1;
+if (!isset($totalPages)) $totalPages = 1;
+if (!isset($totalRecords)) $totalRecords = isset($expenses) ? count($expenses) : 0;
+if (!isset($filters)) $filters = [ 'year' => '', 'month' => '', 'category_id' => '' ];
+?>
+<?php
 // Genera la URL de paginación manteniendo los filtros
 function buildPageUrl($page, $filters) {
     $params = [
