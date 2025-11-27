@@ -219,14 +219,14 @@ class DonorController {
             if ($this->donor->update()) {
                 // Detectar campos modificados
                 $changedFields = [];
-                if ($original['name'] !== $_POST['name']) $changedFields[] = 'nombre';
-                if ($original['contact_person'] !== $_POST['contact_person']) $changedFields[] = 'contacto';
-                if ($original['phone'] !== $_POST['phone']) $changedFields[] = 'teléfono';
-                if ($original['email'] !== $_POST['email']) $changedFields[] = 'email';
-                if ($original['address'] !== $_POST['address']) $changedFields[] = 'dirección';
-                if ($original['latitude'] != ($_POST['latitude'] ?? null)) $changedFields[] = 'latitud';
-                if ($original['longitude'] != ($_POST['longitude'] ?? null)) $changedFields[] = 'longitud';
-                if ($logoUrl !== $original['logo_url']) $changedFields[] = 'imagen';
+                if ((string)$original['name'] !== (string)$_POST['name']) $changedFields[] = 'nombre';
+                if ((string)$original['contact_person'] !== (string)$_POST['contact_person']) $changedFields[] = 'contacto';
+                if ((string)$original['phone'] !== (string)$_POST['phone']) $changedFields[] = 'teléfono';
+                if ((string)$original['email'] !== (string)$_POST['email']) $changedFields[] = 'email';
+                if ((string)$original['address'] !== (string)$_POST['address']) $changedFields[] = 'dirección';
+                if ((string)$original['latitude'] !== (string)($_POST['latitude'] ?? '')) $changedFields[] = 'latitud';
+                if ((string)$original['longitude'] !== (string)($_POST['longitude'] ?? '')) $changedFields[] = 'longitud';
+                if ((string)$logoUrl !== (string)$original['logo_url']) $changedFields[] = 'imagen';
                 if ($changedFields) {
                     $detalle = 'Modificación de donante: ' . $original['name'] . ' (' . $original['email'] . ') por el usuario ' . ($_SESSION['username'] ?? '');
                     $detalle .= ' [Campos modificados: ' . implode(', ', $changedFields) . ']';
