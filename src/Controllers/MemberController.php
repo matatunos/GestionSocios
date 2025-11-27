@@ -247,22 +247,20 @@ class MemberController {
             
             $this->member->photo_url = $photoUrl;
 
-            if ($this->member->update()) {
-                // Detectar campos modificados
+                // Detectar campos modificados antes del update
                 $changedFields = [];
-                $this->member->readOne(); // Recargar datos actualizados
-                if ($this->member->first_name !== $_POST['first_name']) $changedFields[] = 'nombre';
-                if ($this->member->last_name !== $_POST['last_name']) $changedFields[] = 'apellidos';
-                if ($this->member->dni !== ($_POST['dni'] ?? null)) $changedFields[] = 'dni';
-                if ($this->member->email !== $_POST['email']) $changedFields[] = 'email';
-                if ($this->member->phone !== $_POST['phone']) $changedFields[] = 'teléfono';
-                if ($this->member->address !== $_POST['address']) $changedFields[] = 'dirección';
-                if ($this->member->latitude != ($_POST['latitude'] ?? null)) $changedFields[] = 'latitud';
-                if ($this->member->longitude != ($_POST['longitude'] ?? null)) $changedFields[] = 'longitud';
-                if ($this->member->status !== $_POST['status']) $changedFields[] = 'estado';
-                if ($this->member->category_id != (!empty($_POST['category_id']) ? $_POST['category_id'] : null)) $changedFields[] = 'categoría';
-                if ($photoUrl !== $currentPhoto) $changedFields[] = 'imagen';
-                $detalle = 'Modificación de socio: ' . $this->member->first_name . ' ' . $this->member->last_name . ' (' . $this->member->email . ') por el usuario ' . ($_SESSION['username'] ?? '');
+                if ($original['first_name'] !== $_POST['first_name']) $changedFields[] = 'nombre';
+                if ($original['last_name'] !== $_POST['last_name']) $changedFields[] = 'apellidos';
+                if ($original['dni'] !== ($_POST['dni'] ?? null)) $changedFields[] = 'dni';
+                if ($original['email'] !== $_POST['email']) $changedFields[] = 'email';
+                if ($original['phone'] !== $_POST['phone']) $changedFields[] = 'teléfono';
+                if ($original['address'] !== $_POST['address']) $changedFields[] = 'dirección';
+                if ($original['latitude'] != ($_POST['latitude'] ?? null)) $changedFields[] = 'latitud';
+                if ($original['longitude'] != ($_POST['longitude'] ?? null)) $changedFields[] = 'longitud';
+                if ($original['status'] !== $_POST['status']) $changedFields[] = 'estado';
+                if ($original['category_id'] != (!empty($_POST['category_id']) ? $_POST['category_id'] : null)) $changedFields[] = 'categoría';
+                if ($photoUrl !== $original['photo_url']) $changedFields[] = 'imagen';
+                $detalle = 'Modificación de socio: ' . $_POST['first_name'] . ' ' . $_POST['last_name'] . ' (' . $_POST['email'] . ') por el usuario ' . ($_SESSION['username'] ?? '');
                 if ($changedFields) {
                     $detalle .= ' [Campos modificados: ' . implode(', ', $changedFields) . ']';
                 }
@@ -275,8 +273,9 @@ class MemberController {
                     $id,
                     $detalle
                 );
-                header('Location: index.php?page=members');
-            } else {
+                if ($this->member->update()) {
+                    header('Location: index.php?page=members');
+                } else {
                 $error = "Error updating member.";
                 // Reload member data to show form again
                 $member = $this->member; 
