@@ -28,7 +28,7 @@ class BookPage {
         $stmt->execute();
 
         // Insertamos las nuevas páginas
-        $insert = $this->db->prepare("INSERT INTO book_pages (version_id, book_id, page_number, content, position) VALUES (:version_id, :book_id, :page_number, :content, :position)");
+        $insert = $this->db->prepare("INSERT INTO book_pages (version_id, book_id, page_number, content, position, type, image_url) VALUES (:version_id, :book_id, :page_number, :content, :position, :type, :image_url)");
         
         foreach ($pages as $idx => $page) {
             $insert->bindParam(':version_id', $version_id);
@@ -38,6 +38,8 @@ class BookPage {
             $insert->bindValue(':page_number', $page['page_number'] ?? ($idx + 1));
             $insert->bindValue(':content', $page['content']);
             $insert->bindValue(':position', $page['position'] ?? 'full');
+            $insert->bindValue(':type', $page['type'] ?? 'custom');
+            $insert->bindValue(':image_url', $page['image_url'] ?? null);
             $insert->execute();
         }
     }
