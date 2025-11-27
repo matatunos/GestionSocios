@@ -285,21 +285,38 @@ function buildPageUrl($page, $filters) {
                     <div style="display: flex; gap: 0.5rem;">
                         <a href="index.php?page=expenses&action=edit&id=<?php echo $expense['id']; ?>" 
                            class="btn btn-sm btn-secondary">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <a href="index.php?page=expenses&action=delete&id=<?php echo $expense['id']; ?>" 
-                           class="btn btn-sm btn-danger"
-                           onclick="return confirm('¿Eliminar este gasto?')">
-                            <i class="fas fa-trash"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        <?php endforeach; ?>
-    <?php endif; ?>
-</div>
-
-<?php
-$content = ob_get_clean();
-require_once __DIR__ . '/../layout.php';
-?>
+                            <div class="expense-item">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                                        <span class="category-badge" style="background: <?php echo htmlspecialchars($expense['category_color']); ?>">
+                                            <?php echo htmlspecialchars($expense['category_name']); ?>
+                                        </span>
+                                        <strong><?php echo htmlspecialchars($expense['description']); ?></strong>
+                                    </div>
+                                    <div style="font-size: 0.875rem; color: var(--text-muted);">
+                                        <i class="fas fa-calendar"></i> <?php echo date('d/m/Y', strtotime($expense['expense_date'])); ?>
+                                        <?php if ($expense['provider']): ?>
+                                            | <i class="fas fa-building"></i> <?php echo htmlspecialchars($expense['provider']); ?>
+                                        <?php endif; ?>
+                                        <?php if ($expense['invoice_number']): ?>
+                                            | <i class="fas fa-file-invoice"></i> <?php echo htmlspecialchars($expense['invoice_number']); ?>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <div style="text-align: right; display: flex; align-items: center; gap: 1rem;">
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: #ef4444;">
+                                        <?php echo number_format($expense['amount'], 2); ?> €
+                                    </div>
+                                    <div style="display: flex; gap: 0.5rem;">
+                                        <a href="index.php?page=expenses&action=edit&id=<?php echo $expense['id']; ?>" 
+                                           class="btn btn-sm btn-secondary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="index.php?page=expenses&action=delete&id=<?php echo $expense['id']; ?>" 
+                                           class="btn btn-sm btn-danger"
+                                           onclick="return confirm('¿Eliminar este gasto?')">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
