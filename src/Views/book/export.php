@@ -331,6 +331,19 @@ function crearNuevaVersion() {
             </div>
             <div class="form-group" style="margin-bottom: 1rem;">
                 <label style="display:block; margin-bottom:0.5rem;">Posición</label>
+                <select id="new-page-pos" class="form-select">
+                    <option value="full">Completa</option>
+                    <option value="top">Superior (Media)</option>
+                    <option value="bottom">Inferior (Media)</option>
+                </select>
+            </div>
+            <button onclick="addCustomPage()" class="btn btn-primary" style="width:100%;">Añadir Página</button>
+        </div>
+
+        <div id="tab-activities" class="tab-content" style="display:none;">
+            <p style="color:var(--text-muted); font-size:0.9em;">Selecciona una actividad para añadirla al libro.</p>
+            <div id="activities-list" class="content-grid"></div>
+        </div>
 
         <div id="tab-ads" class="tab-content" style="display:none;">
             <p style="color:var(--text-muted); font-size:0.9em;">Selecciona un anuncio para añadirlo al libro.</p>
