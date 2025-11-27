@@ -1,4 +1,7 @@
-<?php require __DIR__ . '/../layout.php'; ?>
+<?php
+$content = ob_get_clean();
+require_once __DIR__ . '/../layout.php';
+?>
 <?php ob_start(); ?>
 <?php
 // Inicializar variables de paginación si no existen
