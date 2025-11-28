@@ -249,6 +249,7 @@ switch ($page) {
         else $controller->index();
         break;
     case 'settings':
+        require_once __DIR__ . '/../src/Controllers/SettingsController.php';
         $controller = new SettingsController();
         if ($action === 'updateGeneral') $controller->updateGeneral();
         else if ($action === 'updateDatabase') $controller->updateDatabase();
