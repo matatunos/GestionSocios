@@ -1672,6 +1672,201 @@ h2 {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    min-width: 200px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    padding: 0.5rem 0;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 1rem;
+    color: var(--text-main);
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: var(--transition);
+}
+
+.dropdown-item:hover {
+    background: var(--primary-50);
+    color: var(--primary-700);
+}
+
+.dropdown-item i {
+    width: 1.25rem;
+    font-size: 1rem;
+}
+
+[data-theme="dark"] .dropdown-menu {
+    background: rgba(30, 41, 59, 0.95);
+    border-color: rgba(100, 116, 139, 0.3);
+}
+
+[data-theme="dark"] .dropdown-item:hover {
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--primary-400);
+}
+
+/* Responsive Notifications */
+@media (max-width: 768px) {
+    .notifications-dropdown {
+        width: calc(100vw - 2rem);
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .notification-text {
+        display: none;
+    }
+
+    .btn-notification {
+        justify-content: center;
+    }
+
+    .dropdown-menu {
+        right: auto;
+        left: 0;
+    }
+}
+
+/* ============================================
+   Avatar System
+   ============================================ */
+.avatar {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-initials {
+    font-weight: 600;
+    color: white;
+    user-select: none;
+}
+
+.avatar-xs {
+    width: 24px;
+    height: 24px;
+    font-size: 0.625rem;
+}
+
+.avatar-sm {
+    width: 32px;
+    height: 32px;
+    font-size: 0.75rem;
+}
+
+.avatar-md {
+    width: 40px;
+    height: 40px;
+    font-size: 0.875rem;
+}
+
+.avatar-lg {
+    width: 48px;
+    height: 48px;
+    font-size: 1rem;
+}
+
+.avatar-xl {
+    width: 64px;
+    height: 64px;
+    font-size: 1.25rem;
+}
+
+.avatar-2xl {
+    width: 96px;
+    height: 96px;
+    font-size: 1.875rem;
+}
+
+.avatar-3xl {
+    width: 128px;
+    height: 128px;
+    font-size: 2.5rem;
+}
+
+.avatar-status {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 25%;
+    height: 25%;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.avatar-status-active {
+    background: var(--success-500);
+}
+
+.avatar-status-inactive {
+    background: var(--text-muted);
+}
+
+.avatar-group {
+    display: flex;
+    align-items: center;
+}
+
+.avatar-group .avatar {
+    margin-left: -0.5rem;
+    border: 2px solid white;
+    transition: transform 0.2s ease;
+}
+
+.avatar-group .avatar:first-child {
+    margin-left: 0;
+}
+
+.avatar-group .avatar:hover {
+    transform: translateY(-2px);
+    z-index: 1;
+}
+
+.avatar-upload {
+    position: relative;
+    display: inline-block;
+}
+
+.avatar-upload input[type="file"] {
+    display: none;
+}
+
+.avatar-upload-btn {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 32px;
+    height: 32px;
+    background: var(--primary-600);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
     transition: all 0.2s ease;
     border: 2px solid white;
     color: white;
@@ -1696,10 +1891,104 @@ h2 {
 }
 
 @media (max-width: 768px) {
+
+    /* Map fixes */
     #map {
         height: 400px !important;
+        touch-action: pan-x pan-y pinch-zoom !important;
     }
 
+    .map-container {
+        padding: 0.5rem;
+    }
+
+    .map-controls {
+        padding: 1rem;
+    }
+
+    .filter-buttons .btn {
+        min-width: 100px;
+        font-size: 0.8rem;
+        padding: 0.4rem 0.6rem;
+    }
+
+    /* Members list fixes */
+    .table td {
+        font-size: 0.85rem;
+        padding: 0.75rem 0.5rem;
+    }
+
+    /* Smaller avatars in member list */
+    .table td img,
+    .table td div[style*="width: 40px"] {
+        width: 28px !important;
+        height: 28px !important;
+        font-size: 0.7rem !important;
+    }
+
+    /* Stack action buttons vertically */
+    .table td .btn-sm {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.7rem;
+        margin: 0.1rem 0;
+    }
+
+    /* Hide less important columns on mobile */
+    .table th:nth-child(3),
+    .table td:nth-child(3) {
+        display: none;
+    }
+
+    /* Tasks view fixes */
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.75rem !important;
+    }
+
+    .stat-card {
+        padding: 0.75rem !important;
+    }
+
+    .stat-icon {
+        font-size: 1.25rem !important;
+    }
+
+    .stat-value {
+        font-size: 1.25rem !important;
+    }
+
+    .stat-label {
+        font-size: 0.75rem !important;
+    }
+
+    /* Filter form fixes */
+    .filter-form {
+        padding: 0.75rem;
+    }
+
+    .filter-form>div[style*="flex"] {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+
+    .filter-form>div[style*="flex"]>div {
+        flex: none !important;
+        width: 100% !important;
+        min-width: 100% !important;
+    }
+
+    /* Button groups */
+    .btn-group {
+        flex-wrap: wrap;
+        gap: 0.25rem;
+    }
+
+    .btn-group .btn {
+        font-size: 0.75rem;
+        padding: 0.35rem 0.6rem;
+    }
+
+    /* General button fixes */
     .btn-sm {
         padding: 0.25rem 0.5rem;
         font-size: 0.75rem;
@@ -1715,5 +2004,47 @@ h2 {
     .nav-link {
         padding: 0.75rem 1rem;
         min-height: 44px;
+    }
+
+    /* Table responsiveness */
+    .table-responsive,
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Card padding reduction */
+    .card {
+        padding: 0.75rem !important;
+    }
+
+    .card-body {
+        padding: 0.75rem !important;
+    }
+
+    /* Form groups in members filter */
+    .form-group {
+        margin-bottom: 0.75rem !important;
+    }
+
+    /* Dashboard header */
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 1rem;
+    }
+
+    .dashboard-header h1 {
+        font-size: 1.5rem !important;
+    }
+
+    /* Hide table action text, keep icons only */
+    .btn-sm span:not(.badge) {
+        display: none;
+    }
+
+    /* Ensure icons are visible */
+    .btn-sm i {
+        margin: 0 !important;
     }
 }
