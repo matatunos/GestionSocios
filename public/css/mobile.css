@@ -1884,4 +1884,31 @@
     .btn-sm span:not(.badge) {
         display: none;
     }
+
+    /* Reducir tamaños de fuente en tablas (Socios y Donantes) */
+    .table {
+        font-size: 0.8rem !important;
+    }
+
+    .table th {
+        font-size: 0.75rem !important;
+        padding: 0.5rem 0.25rem !important;
+    }
+
+    .table td {
+        font-size: 0.8rem !important;
+        padding: 0.5rem 0.25rem !important;
+    }
+
+    /* Nombres y títulos en tablas más pequeños */
+    .table td strong,
+    .table td a {
+        font-size: 0.85rem !important;
+    }
+
+    /* Texto secundario aún más pequeño */
+    .table td small,
+    .table td .text-muted {
+        font-size: 0.7rem !important;
+    }
 }
