@@ -171,6 +171,18 @@ if (isset($_SESSION['user_id'])) {
                         </a>
                     </li>
                     <li>
+                        <a href="index.php?page=book" class="nav-link <?php echo ($page === 'book') ? 'active' : ''; ?>">
+                            <i class="fas fa-book-open"></i>
+                            <span>Libro Fiestas</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.php?page=settings" class="nav-link <?php echo ($page === 'settings') ? 'active' : ''; ?>">
+                            <i class="fas fa-cog"></i>
+                            <span>Configuración</span>
+                        </a>
+                    </li>
+                    <li>
                         <a href="logout.php" class="nav-link">
                             <i class="fas fa-sign-out-alt"></i>
                             <span>Cerrar Sesión</span>
@@ -258,12 +270,7 @@ if (isset($_SESSION['user_id'])) {
                             <span>Galería Imágenes</span>
                         </a>
                     </li>
-                    <li>
-                        <a href="index.php?page=donations" class="nav-link <?php echo ($page === 'donations') ? 'active' : ''; ?>">
-                            <i class="fas fa-hand-holding-heart"></i>
-                            <span>Donaciones</span>
-                        </a>
-                    </li>
+
                     <li>
                         <a href="index.php?page=expenses" class="nav-link <?php echo ($page === 'expenses') ? 'active' : ''; ?>">
                             <i class="fas fa-receipt"></i>

@@ -374,6 +374,18 @@ switch ($page) {
         else if ($action === 'export_pdf') $controller->export_pdf();
         else $controller->index();
         break;
+    case 'settings':
+        $controller = new SettingsController();
+        if ($action === 'updateGeneral') $controller->updateGeneral();
+        else if ($action === 'updateDatabase') $controller->updateDatabase();
+        else if ($action === 'resetAdminPassword') $controller->resetAdminPassword();
+        else if ($action === 'updateOrganization') $controller->updateOrganization();
+        else if ($action === 'deleteLogo') $controller->deleteLogo();
+        else if ($action === 'changePassword') $controller->changePassword();
+        else if ($action === 'save_notifications') $controller->save_notifications();
+        else if ($action === 'downloadBackup') $controller->downloadBackup();
+        else $controller->index();
+        break;
     default:
         echo "404 Not Found";
         break;

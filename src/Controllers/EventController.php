@@ -31,15 +31,28 @@ class EventController {
         // Get all active members
         $stmt = $this->member->readAll();
         $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        // Build participants array with payment and attendance info
+
+        // Bulk fetch payments for this event
+        $payStmt = $this->db->prepare("SELECT member_id, id, status FROM payments WHERE event_id = ? AND payment_type = 'event'");
+        $payStmt->execute([$id]);
+        $payments = [];
+        while ($row = $payStmt->fetch(PDO::FETCH_ASSOC)) {
+            $payments[$row['member_id']] = $row;
+        }
+
+        // Bulk fetch attendance for this event
+        $attStmt = $this->db->prepare("SELECT member_id, status FROM event_attendance WHERE event_id = ?");
+        $attStmt->execute([$id]);
+        $attendances = [];
+        while ($row = $attStmt->fetch(PDO::FETCH_ASSOC)) {
+            $attendances[$row['member_id']] = $row;
+        }
+
+        // Build participants array
         $participants = [];
         foreach ($members as $m) {
-            $payStmt = $this->db->prepare("SELECT id, status FROM payments WHERE member_id = ? AND event_id = ? AND payment_type = 'event'");
-            $payStmt->execute([$m['id'], $id]);
-            $pay = $payStmt->fetch(PDO::FETCH_ASSOC);
-            $attStmt = $this->db->prepare("SELECT status FROM event_attendance WHERE member_id = ? AND event_id = ?");
-            $attStmt->execute([$m['id'], $id]);
-            $attendance = $attStmt->fetch(PDO::FETCH_ASSOC);
+            $pay = $payments[$m['id']] ?? null;
+            $attendance = $attendances[$m['id']] ?? null;
             $participants[] = ['member' => $m, 'payment' => $pay, 'attendance' => $attendance];
         }
         require __DIR__ . '/../Views/events/show.php';

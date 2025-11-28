@@ -35,6 +35,21 @@
     </div>
 <?php endif; ?>
 
+<?php
+// Obtener la cuota anual y concepto para el año actual (Optimización: Una sola consulta)
+$currentYear = date('Y');
+$feeAmount = 0;
+$feeConcept = 'Cuota Anual ' . $currentYear;
+try {
+    $feeStmt = $GLOBALS['db']->prepare("SELECT amount FROM annual_fees WHERE year = ?");
+    $feeStmt->execute([$currentYear]);
+    $feeRow = $feeStmt->fetch(PDO::FETCH_ASSOC);
+    if ($feeRow) {
+        $feeAmount = $feeRow['amount'];
+    }
+} catch (Exception $e) {}
+?>
+
 <!-- Advanced Filters -->
 <div class="card" style="margin-bottom: 1.5rem;">
     <form method="GET" action="index.php" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; align-items: end;">
@@ -209,20 +224,6 @@
                                 </div>
                                 
                                 <?php if (empty($row['has_paid_current_year'])): ?>
-                                <?php
-                                // Obtener la cuota anual y concepto para el año actual
-                                $currentYear = date('Y');
-                                $feeAmount = 0;
-                                $feeConcept = 'Cuota Anual ' . $currentYear;
-                                try {
-                                    $feeStmt = $GLOBALS['db']->prepare("SELECT amount FROM annual_fees WHERE year = ?");
-                                    $feeStmt->execute([$currentYear]);
-                                    $feeRow = $feeStmt->fetch(PDO::FETCH_ASSOC);
-                                    if ($feeRow) {
-                                        $feeAmount = $feeRow['amount'];
-                                    }
-                                } catch (Exception $e) {}
-                                ?>
                                 <a href="index.php?page=members&action=markPaid&id=<?php echo $row['id']; ?>"
                                    class="btn btn-sm btn-primary"
                                    onclick="return confirm('¿Marcar la cuota de <?php echo $currentYear; ?> como pagada para este socio?\nImporte: <?php echo number_format($feeAmount, 2); ?> €\nConcepto: <?php echo $feeConcept; ?>');">

@@ -43,7 +43,7 @@ class TreasuryController {
         // Total income for the year
         $query = "SELECT COALESCE(SUM(amount), 0) as total 
                   FROM payments 
-                  WHERE fee_year = :year AND status = 'paid'";
+                  WHERE YEAR(payment_date) = :year AND status = 'paid'";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':year', $year);
         $stmt->execute();
@@ -64,7 +64,7 @@ class TreasuryController {
         // Income for current month
         $query = "SELECT COALESCE(SUM(amount), 0) as total 
                   FROM payments 
-                  WHERE fee_year = :year AND MONTH(payment_date) = :month AND status = 'paid'";
+                  WHERE YEAR(payment_date) = :year AND MONTH(payment_date) = :month AND status = 'paid'";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':year', $year);
         $stmt->bindParam(':month', $month);
@@ -168,7 +168,7 @@ class TreasuryController {
         // Get income by month
         $query = "SELECT MONTH(payment_date) as month, SUM(amount) as total
                   FROM payments
-                  WHERE fee_year = :year AND status = 'paid'
+                  WHERE YEAR(payment_date) = :year AND status = 'paid'
                   GROUP BY MONTH(payment_date)";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':year', $year);

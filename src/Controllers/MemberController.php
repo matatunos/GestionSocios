@@ -89,10 +89,6 @@ class MemberController {
                     $lastId,
                     'Alta de socio: ' . $this->member->first_name . ' ' . $this->member->last_name . ' (' . $this->member->email . ') por el usuario ' . ($_SESSION['username'] ?? '')
                 );
-                require_once __DIR__ . '/../Models/AuditLog.php';
-                $audit = new AuditLog($this->db);
-                $lastId = $this->db->lastInsertId();
-                $audit->create($_SESSION['user_id'], 'create', 'member', $lastId, 'Alta de socio por el usuario ' . ($_SESSION['username'] ?? ''));
                 
                 // Enviar notificación de bienvenida al nuevo socio
                 try {
@@ -337,20 +333,6 @@ class MemberController {
     public function markPaid($id) {
         $this->checkAdmin();
         $currentYear = date('Y');
-        
-                $original = [
-                    'first_name' => $this->member->first_name,
-                    'last_name' => $this->member->last_name,
-                    'dni' => $this->member->dni,
-                    'email' => $this->member->email,
-                    'phone' => $this->member->phone,
-                    'address' => $this->member->address,
-                    'latitude' => $this->member->latitude,
-                    'longitude' => $this->member->longitude,
-                    'status' => $this->member->status,
-                    'category_id' => $this->member->category_id,
-                    'photo_url' => $this->member->photo_url
-                ];
         // Check if fee for current year exists
         $feeStmt = $this->db->prepare("SELECT amount FROM annual_fees WHERE year = ?");
         $feeStmt->execute([$currentYear]);
