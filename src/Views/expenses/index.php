@@ -169,41 +169,56 @@ function buildPageUrl($page, $filters) {
                 <p style="color: var(--text-muted);">No hay gastos registrados con los filtros seleccionados</p>
             </div>
         <?php else: ?>
-            <div class="expenses-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem;">
-                <?php foreach ($expenses as $expense): ?>
-                    <div class="expense-item">
-                        <div style="flex: 1;">
-                            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+            <div class="table-container" style="border: none; border-radius: 0;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Descripción</th>
+                            <th>Categoría</th>
+                            <th>Proveedor</th>
+                            <th>Factura</th>
+                            <th>Fecha</th>
+                            <th style="text-align: right;">Importe</th>
+                            <th style="text-align: right;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($expenses as $expense): ?>
+                        <tr>
+                            <td style="font-weight: 500;">
+                                <?php echo htmlspecialchars($expense['description']); ?>
+                            </td>
+                            <td>
                                 <span class="category-badge" style="background: <?php echo htmlspecialchars($expense['category_color']); ?>;">
                                     <?php echo htmlspecialchars($expense['category_name']); ?>
                                 </span>
-                                <strong><?php echo htmlspecialchars($expense['description']); ?></strong>
-                            </div>
-                            <div style="font-size: 0.875rem; color: var(--text-muted);">
-                                <i class="fas fa-calendar"></i> <?php echo date('d/m/Y', strtotime($expense['expense_date'])); ?>
-                                <?php if ($expense['provider']): ?>
-                                    | <i class="fas fa-building"></i> <?php echo htmlspecialchars($expense['provider']); ?>
-                                <?php endif; ?>
-                                <?php if ($expense['invoice_number']): ?>
-                                    | <i class="fas fa-file-invoice"></i> <?php echo htmlspecialchars($expense['invoice_number']); ?>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                        <div style="text-align: right; display: flex; align-items: center; gap: 1rem;">
-                            <div style="font-size: 1.5rem; font-weight: 700; color: #ef4444;">
+                            </td>
+                            <td>
+                                <?php echo htmlspecialchars($expense['provider']); ?>
+                            </td>
+                            <td>
+                                <?php echo htmlspecialchars($expense['invoice_number']); ?>
+                            </td>
+                            <td>
+                                <?php echo date('d/m/Y', strtotime($expense['expense_date'])); ?>
+                            </td>
+                            <td style="text-align: right; font-weight: 700; color: #ef4444;">
                                 <?php echo number_format($expense['amount'], 2); ?> €
-                            </div>
-                            <div style="display: flex; gap: 0.5rem;">
-                                <a href="index.php?page=expenses&action=edit&id=<?php echo $expense['id']; ?>" class="btn btn-sm btn-secondary">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <a href="index.php?page=expenses&action=delete&id=<?php echo $expense['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este gasto?')">
-                                    <i class="fas fa-trash"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
+                            </td>
+                            <td style="text-align: right;">
+                                <div class="listing-actions">
+                                    <a href="index.php?page=expenses&action=edit&id=<?php echo $expense['id']; ?>" class="btn btn-sm btn-secondary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="index.php?page=expenses&action=delete&id=<?php echo $expense['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este gasto?')">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
             </div>
             <!-- Paginación única al final -->
             <?php if (isset($totalPages) && $totalPages > 1): ?>
