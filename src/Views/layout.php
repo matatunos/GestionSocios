@@ -58,6 +58,13 @@ if (isset($_SESSION['user_id'])) {
 <body>
     
     <div class="app-container">
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-toggle" id="mobileMenuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Mobile Overlay -->
+        <div class="mobile-overlay" id="mobileOverlay"></div>
         <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
 
@@ -652,6 +659,36 @@ if (isset($_SESSION['user_id'])) {
                 loadNotifications();
             }
         }, 120000);
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const sidebar = document.getElementById('sidebar');
+            const mobileOverlay = document.getElementById('mobileOverlay');
+
+            function toggleMenu() {
+                sidebar.classList.toggle('mobile-open');
+                mobileOverlay.classList.toggle('active');
+                
+                // Change icon
+                const icon = mobileMenuToggle.querySelector('i');
+                if (sidebar.classList.contains('mobile-open')) {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                } else {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            }
+
+            if (mobileMenuToggle) {
+                mobileMenuToggle.addEventListener('click', toggleMenu);
+            }
+
+            if (mobileOverlay) {
+                mobileOverlay.addEventListener('click', toggleMenu);
+            }
+        });
     </script>
 </body>
 </html>
