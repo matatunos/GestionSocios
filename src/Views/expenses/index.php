@@ -168,13 +168,15 @@ function buildPageUrl($page, $filters) {
             Total <?php echo $filters['year']; ?>
         </div>
     </div>
-    <?php if ($filters['month']): ?>
+    <?php
+    $monthIdx = is_numeric($filters['month']) ? intval($filters['month']) : 0;
+    if ($monthIdx >= 1 && $monthIdx <= 12): ?>
     <div class="stat-card" style="border-left-color: #f59e0b; min-width: 220px;">
         <div style="font-size: 2rem; font-weight: 700; color: #f59e0b;">
             <?php echo number_format($monthTotal, 2); ?> €
         </div>
         <div style="font-size: 0.875rem; color: var(--text-muted); margin-top: 0.25rem;">
-            <?php echo $months[$filters['month'] - 1]; ?> <?php echo $filters['year']; ?>
+            <?php echo $months[$monthIdx - 1]; ?> <?php echo $filters['year']; ?>
         </div>
     </div>
     <?php endif; ?>
