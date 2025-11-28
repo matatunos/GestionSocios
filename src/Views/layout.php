@@ -108,199 +108,272 @@ if (isset($_SESSION['user_id'])) {
                 <div class="search-results" id="searchResults" style="display: none;"></div>
             </div>
             
-            <ul class="nav-menu">
-                <li class="nav-group">
-                    <a href="#" class="nav-link <?php echo ($page === 'dashboard' || $page === 'treasury' || ($page === 'reports' && $action === 'dashboard_events')) ? 'active' : ''; ?>">
-                        <i class="fas fa-home"></i>
-                        <span>Dashboard</span>
-                        <i class="fas fa-chevron-down" style="margin-left:auto;font-size:0.8em;"></i>
-                    </a>
-                    <ul class="nav-submenu">
-                        <li>
-                            <a href="index.php?page=dashboard" class="nav-link <?php echo ($page === 'dashboard') ? 'active' : ''; ?>">
-                                <i class="fas fa-chart-pie"></i>
-                                <span>General</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="index.php?page=treasury" class="nav-link <?php echo ($page === 'treasury') ? 'active' : ''; ?>">
-                                <i class="fas fa-coins"></i>
-                                <span>Tesorería</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="index.php?page=reports&action=dashboard_events" class="nav-link <?php echo ($page === 'reports' && $action === 'dashboard_events') ? 'active' : ''; ?>">
-                                <i class="fas fa-calendar-alt"></i>
-                                <span>Eventos</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <!-- Menú de Socios -->
-                <li class="nav-group">
-                    <a href="#" class="nav-link <?php echo ($page === 'members' || $page === 'member_categories') ? 'active' : ''; ?>">
-                        <i class="fas fa-users"></i>
-                        <span>Socios</span>
-                        <i class="fas fa-chevron-down" style="margin-left:auto;font-size:0.8em;"></i>
-                    </a>
-                    <ul class="nav-submenu">
-                        <li>
-                            <a href="index.php?page=members" class="nav-link <?php echo ($page === 'members') ? 'active' : ''; ?>">
-                                <i class="fas fa-list"></i>
-                                <span>Listado</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="index.php?page=member_categories" class="nav-link <?php echo ($page === 'member_categories') ? 'active' : ''; ?>">
-                                <i class="fas fa-tags"></i>
-                                <span>Categorías</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <!-- Menú de Donantes -->
-                <li class="nav-group">
-                    <a href="#" class="nav-link <?php echo ($page === 'donors' || $page === 'donations') ? 'active' : ''; ?>">
-                        <i class="fas fa-hand-holding-heart"></i>
-                        <span>Donantes</span>
-                        <i class="fas fa-chevron-down" style="margin-left:auto;font-size:0.8em;"></i>
-                    </a>
-                    <ul class="nav-submenu">
-                        <li>
-                            <a href="index.php?page=donors" class="nav-link <?php echo ($page === 'donors') ? 'active' : ''; ?>">
-                                <i class="fas fa-list"></i>
-                                <span>Listado</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="index.php?page=donations" class="nav-link <?php echo ($page === 'donations') ? 'active' : ''; ?>">
-                                <i class="fas fa-gift"></i>
-                                <span>Donaciones</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
+            <?php if ($is_mobile): ?>
+                <!-- Mobile Menu (Simplified) -->
+                <ul class="nav-menu">
+                    <li>
+                        <a href="index.php?page=dashboard" class="nav-link <?php echo ($page === 'dashboard') ? 'active' : ''; ?>">
+                            <i class="fas fa-home"></i>
+                            <span>Inicio</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.php?page=members" class="nav-link <?php echo ($page === 'members') ? 'active' : ''; ?>">
+                            <i class="fas fa-users"></i>
+                            <span>Socios</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.php?page=donors" class="nav-link <?php echo ($page === 'donors') ? 'active' : ''; ?>">
+                            <i class="fas fa-hand-holding-heart"></i>
+                            <span>Donantes</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.php?page=map" class="nav-link <?php echo ($page === 'map') ? 'active' : ''; ?>">
+                            <i class="fas fa-map-marked-alt"></i>
+                            <span>Mapa</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.php?page=tasks" class="nav-link <?php echo ($page === 'tasks') ? 'active' : ''; ?>">
+                            <i class="fas fa-tasks"></i>
+                            <span>Tareas</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.php?page=calendar" class="nav-link <?php echo ($page === 'calendar') ? 'active' : ''; ?>">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Calendario</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.php?page=messages" class="nav-link <?php echo ($page === 'messages') ? 'active' : ''; ?>">
+                            <i class="fas fa-comments"></i>
+                            <span>Mensajes</span>
+                            <?php
+                            if (isset($_SESSION['user_id'])) {
+                                require_once __DIR__ . '/../Models/Message.php';
+                                $msgModel = new Message($GLOBALS['db'] ?? (new Database())->getConnection());
+                                $unreadMessages = $msgModel->getUnreadCount($_SESSION['user_id']);
+                                if ($unreadMessages > 0):
+                            ?>
+                                <span class="nav-badge"><?php echo $unreadMessages; ?></span>
+                            <?php endif; } ?>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.php?page=notifications" class="nav-link <?php echo ($page === 'notifications') ? 'active' : ''; ?>">
+                            <i class="fas fa-bell"></i>
+                            <span>Notificaciones</span>
+                            <?php if (isset($unreadNotifications) && $unreadNotifications > 0): ?>
+                                <span class="nav-badge"><?php echo $unreadNotifications; ?></span>
+                            <?php endif; ?>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="logout.php" class="nav-link">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Cerrar Sesión</span>
+                        </a>
+                    </li>
+                </ul>
+            <?php else: ?>
+                <!-- Desktop Menu (Full) -->
+                <ul class="nav-menu">
+                    <li class="nav-group">
+                        <a href="#" class="nav-link <?php echo ($page === 'dashboard' || $page === 'treasury' || ($page === 'reports' && $action === 'dashboard_events')) ? 'active' : ''; ?>">
+                            <i class="fas fa-home"></i>
+                            <span>Dashboard</span>
+                            <i class="fas fa-chevron-down" style="margin-left:auto;font-size:0.8em;"></i>
+                        </a>
+                        <ul class="nav-submenu">
+                            <li>
+                                <a href="index.php?page=dashboard" class="nav-link <?php echo ($page === 'dashboard') ? 'active' : ''; ?>">
+                                    <i class="fas fa-chart-pie"></i>
+                                    <span>General</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="index.php?page=treasury" class="nav-link <?php echo ($page === 'treasury') ? 'active' : ''; ?>">
+                                    <i class="fas fa-coins"></i>
+                                    <span>Tesorería</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="index.php?page=reports&action=dashboard_events" class="nav-link <?php echo ($page === 'reports' && $action === 'dashboard_events') ? 'active' : ''; ?>">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>Eventos</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- Menú de Socios -->
+                    <li class="nav-group">
+                        <a href="#" class="nav-link <?php echo ($page === 'members' || $page === 'member_categories') ? 'active' : ''; ?>">
+                            <i class="fas fa-users"></i>
+                            <span>Socios</span>
+                            <i class="fas fa-chevron-down" style="margin-left:auto;font-size:0.8em;"></i>
+                        </a>
+                        <ul class="nav-submenu">
+                            <li>
+                                <a href="index.php?page=members" class="nav-link <?php echo ($page === 'members') ? 'active' : ''; ?>">
+                                    <i class="fas fa-list"></i>
+                                    <span>Listado</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="index.php?page=member_categories" class="nav-link <?php echo ($page === 'member_categories') ? 'active' : ''; ?>">
+                                    <i class="fas fa-tags"></i>
+                                    <span>Categorías</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- Menú de Donantes -->
+                    <li class="nav-group">
+                        <a href="#" class="nav-link <?php echo ($page === 'donors' || $page === 'donations') ? 'active' : ''; ?>">
+                            <i class="fas fa-hand-holding-heart"></i>
+                            <span>Donantes</span>
+                            <i class="fas fa-chevron-down" style="margin-left:auto;font-size:0.8em;"></i>
+                        </a>
+                        <ul class="nav-submenu">
+                            <li>
+                                <a href="index.php?page=donors" class="nav-link <?php echo ($page === 'donors') ? 'active' : ''; ?>">
+                                    <i class="fas fa-list"></i>
+                                    <span>Listado</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="index.php?page=donations" class="nav-link <?php echo ($page === 'donations') ? 'active' : ''; ?>">
+                                    <i class="fas fa-gift"></i>
+                                    <span>Donaciones</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
 
-                <li>
-                    <a href="index.php?page=gallery" class="nav-link <?php echo ($page === 'gallery') ? 'active' : ''; ?>">
-                        <i class="fas fa-images"></i>
-                        <span>Galería Imágenes</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="index.php?page=donations" class="nav-link <?php echo ($page === 'donations') ? 'active' : ''; ?>">
-                        <i class="fas fa-hand-holding-heart"></i>
-                        <span>Donaciones</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="index.php?page=expenses" class="nav-link <?php echo ($page === 'expenses') ? 'active' : ''; ?>">
-                        <i class="fas fa-receipt"></i>
-                        <span>Gastos</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="index.php?page=calendar" class="nav-link <?php echo ($page === 'calendar') ? 'active' : ''; ?>">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>Calendario</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="index.php?page=tasks" class="nav-link <?php echo ($page === 'tasks') ? 'active' : ''; ?>">
-                        <i class="fas fa-tasks"></i>
-                        <span>Tareas</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="index.php?page=analytics" class="nav-link <?php echo ($page === 'analytics') ? 'active' : ''; ?>">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Estadísticas</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="index.php?page=map" class="nav-link <?php echo ($page === 'map') ? 'active' : ''; ?>">
-                        <i class="fas fa-map-marked-alt"></i>
-                        <span>Mapa</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="index.php?page=notifications" class="nav-link <?php echo ($page === 'notifications') ? 'active' : ''; ?>">
-                        <i class="fas fa-bell"></i>
-                        <span>Notificaciones</span>
-                        <?php if (isset($unreadNotifications) && $unreadNotifications > 0): ?>
-                            <span class="nav-badge"><?php echo $unreadNotifications; ?></span>
-                        <?php endif; ?>
-                    </a>
-                </li>
+                    <li>
+                        <a href="index.php?page=gallery" class="nav-link <?php echo ($page === 'gallery') ? 'active' : ''; ?>">
+                            <i class="fas fa-images"></i>
+                            <span>Galería Imágenes</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.php?page=donations" class="nav-link <?php echo ($page === 'donations') ? 'active' : ''; ?>">
+                            <i class="fas fa-hand-holding-heart"></i>
+                            <span>Donaciones</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.php?page=expenses" class="nav-link <?php echo ($page === 'expenses') ? 'active' : ''; ?>">
+                            <i class="fas fa-receipt"></i>
+                            <span>Gastos</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.php?page=calendar" class="nav-link <?php echo ($page === 'calendar') ? 'active' : ''; ?>">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Calendario</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.php?page=tasks" class="nav-link <?php echo ($page === 'tasks') ? 'active' : ''; ?>">
+                            <i class="fas fa-tasks"></i>
+                            <span>Tareas</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.php?page=analytics" class="nav-link <?php echo ($page === 'analytics') ? 'active' : ''; ?>">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Estadísticas</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.php?page=map" class="nav-link <?php echo ($page === 'map') ? 'active' : ''; ?>">
+                            <i class="fas fa-map-marked-alt"></i>
+                            <span>Mapa</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.php?page=notifications" class="nav-link <?php echo ($page === 'notifications') ? 'active' : ''; ?>">
+                            <i class="fas fa-bell"></i>
+                            <span>Notificaciones</span>
+                            <?php if (isset($unreadNotifications) && $unreadNotifications > 0): ?>
+                                <span class="nav-badge"><?php echo $unreadNotifications; ?></span>
+                            <?php endif; ?>
+                        </a>
+                    </li>
 
-                <li>
-                    <a href="index.php?page=documents" class="nav-link <?php echo ($page === 'documents') ? 'active' : ''; ?>">
-                        <i class="fas fa-folder-open"></i>
-                        <span>Documentos</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="index.php?page=polls" class="nav-link <?php echo ($page === 'polls') ? 'active' : ''; ?>">
-                        <i class="fas fa-vote-yea"></i>
-                        <span>Votaciones</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="index.php?page=messages" class="nav-link <?php echo ($page === 'messages') ? 'active' : ''; ?>">
-                        <i class="fas fa-comments"></i>
-                        <span>Mensajes</span>
-                        <?php
-                        if (isset($_SESSION['user_id'])) {
-                            require_once __DIR__ . '/../Models/Message.php';
-                            $msgModel = new Message($GLOBALS['db'] ?? (new Database())->getConnection());
-                            $unreadMessages = $msgModel->getUnreadCount($_SESSION['user_id']);
-                            if ($unreadMessages > 0):
-                        ?>
-                            <span class="nav-badge"><?php echo $unreadMessages; ?></span>
-                        <?php endif; } ?>
-                    </a>
-                </li>
-                <li class="nav-group">
-                    <a href="#" class="nav-link <?php echo ($page === 'book' || $page === 'book_activities' || $page === 'book_export') ? 'active' : ''; ?>">
-                        <i class="fas fa-book-open"></i>
-                        <span>Libro Fiestas</span>
-                        <i class="fas fa-chevron-down" style="margin-left:auto;font-size:0.8em;"></i>
-                    </a>
-                    <ul class="nav-submenu">
-                        <li>
-                            <a href="index.php?page=book&action=dashboard" class="nav-link <?php echo ($page === 'book' && $action === 'dashboard') ? 'active' : ''; ?>">
-                                <i class="fas fa-chart-pie"></i>
-                                <span>Resumen</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="index.php?page=book" class="nav-link <?php echo ($page === 'book' && $action === 'index') ? 'active' : ''; ?>">
-                                <i class="fas fa-ad"></i>
-                                <span>Anunciantes</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="index.php?page=book_activities" class="nav-link <?php echo ($page === 'book_activities') ? 'active' : ''; ?>">
-                                <i class="fas fa-calendar-day"></i>
-                                <span>Actividades</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="index.php?page=book_export" class="nav-link <?php echo ($page === 'book_export') ? 'active' : ''; ?>">
-                                <i class="fas fa-file-pdf"></i>
-                                <span>Maquetación</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
+                    <li>
+                        <a href="index.php?page=documents" class="nav-link <?php echo ($page === 'documents') ? 'active' : ''; ?>">
+                            <i class="fas fa-folder-open"></i>
+                            <span>Documentos</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.php?page=polls" class="nav-link <?php echo ($page === 'polls') ? 'active' : ''; ?>">
+                            <i class="fas fa-vote-yea"></i>
+                            <span>Votaciones</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.php?page=messages" class="nav-link <?php echo ($page === 'messages') ? 'active' : ''; ?>">
+                            <i class="fas fa-comments"></i>
+                            <span>Mensajes</span>
+                            <?php
+                            if (isset($_SESSION['user_id'])) {
+                                require_once __DIR__ . '/../Models/Message.php';
+                                $msgModel = new Message($GLOBALS['db'] ?? (new Database())->getConnection());
+                                $unreadMessages = $msgModel->getUnreadCount($_SESSION['user_id']);
+                                if ($unreadMessages > 0):
+                            ?>
+                                <span class="nav-badge"><?php echo $unreadMessages; ?></span>
+                            <?php endif; } ?>
+                        </a>
+                    </li>
+                    <li class="nav-group">
+                        <a href="#" class="nav-link <?php echo ($page === 'book' || $page === 'book_activities' || $page === 'book_export') ? 'active' : ''; ?>">
+                            <i class="fas fa-book-open"></i>
+                            <span>Libro Fiestas</span>
+                            <i class="fas fa-chevron-down" style="margin-left:auto;font-size:0.8em;"></i>
+                        </a>
+                        <ul class="nav-submenu">
+                            <li>
+                                <a href="index.php?page=book&action=dashboard" class="nav-link <?php echo ($page === 'book' && $action === 'dashboard') ? 'active' : ''; ?>">
+                                    <i class="fas fa-chart-pie"></i>
+                                    <span>Resumen</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="index.php?page=book" class="nav-link <?php echo ($page === 'book' && $action === 'index') ? 'active' : ''; ?>">
+                                    <i class="fas fa-ad"></i>
+                                    <span>Anunciantes</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="index.php?page=book_activities" class="nav-link <?php echo ($page === 'book_activities') ? 'active' : ''; ?>">
+                                    <i class="fas fa-calendar-day"></i>
+                                    <span>Actividades</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="index.php?page=book_export" class="nav-link <?php echo ($page === 'book_export') ? 'active' : ''; ?>">
+                                    <i class="fas fa-file-pdf"></i>
+                                    <span>Maquetación</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
 
-                <li>
-                    <a href="index.php?page=settings" class="nav-link <?php echo ($page === 'settings') ? 'active' : ''; ?>">
-                        <i class="fas fa-cog"></i>
-                        <span>Configuración</span>
-                    </a>
-                </li>
-            </ul>
+                    <li>
+                        <a href="index.php?page=settings" class="nav-link <?php echo ($page === 'settings') ? 'active' : ''; ?>">
+                            <i class="fas fa-cog"></i>
+                            <span>Configuración</span>
+                        </a>
+                    </li>
+                </ul>
+            <?php endif; ?>
             
             <div class="sidebar-footer">
                 <div class="user-info" style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 0.5rem;">
