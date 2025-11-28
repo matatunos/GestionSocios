@@ -81,9 +81,8 @@ function buildPageUrl($page, $filters) {
 </style>
 
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-
-    </div>
-
+    <div>
+        <h1 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">
             <i class="fas fa-receipt"></i> Gestión de Gastos
         </h1>
         <p style="color: var(--text-muted);">Control de gastos y egresos de la asociación</p>
@@ -159,9 +158,9 @@ function buildPageUrl($page, $filters) {
     </button>
 </form>
 
-<!-- Estadísticas Gastos en horizontal -->
-<div class="expense-stats" style="display: flex; gap: 2rem; margin-bottom: 2rem; flex-wrap: wrap; align-items: center;">
-    <div class="stat-card" style="border-left-color: #ef4444; min-width: 220px;">
+<!-- Statistics -->
+<div class="expense-stats">
+    <div class="stat-card" style="border-left-color: #ef4444;">
         <div style="font-size: 2rem; font-weight: 700; color: #ef4444;">
             <?php echo number_format($yearTotal, 2); ?> €
         </div>
@@ -169,105 +168,92 @@ function buildPageUrl($page, $filters) {
             Total <?php echo $filters['year']; ?>
         </div>
     </div>
-    <?php
-    $monthIdx = is_numeric($filters['month']) ? intval($filters['month']) : 0;
-    if ($monthIdx >= 1 && $monthIdx <= 12): ?>
-    <div class="stat-card" style="border-left-color: #f59e0b; min-width: 220px;">
-        <div style="font-size: 2rem; font-weight: 700; color: #f59e0b;">
-            <?php echo number_format($monthTotal, 2); ?> €
-        </div>
-        <div style="font-size: 0.875rem; color: var(--text-muted); margin-top: 0.25rem;">
-            <?php echo $months[$monthIdx - 1]; ?> <?php echo $filters['year']; ?>
-        </div>
-    </div>
-    <?php endif; ?>
-</div>
-
-<!-- Expenses List -->
-<div class="card">
-    <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">
-        <i class="fas fa-list"></i> Listado de Gastos
-    </h3>
-    <?php if (empty($expenses)): ?>
-        <div style="text-align: center; padding: 3rem;">
-            <i class="fas fa-receipt" style="font-size: 3rem; color: var(--text-light); margin-bottom: 1rem;"></i>
-            <p style="color: var(--text-muted);">No hay gastos registrados con los filtros seleccionados</p>
-        </div>
-    <?php else: ?>
-        <div class="expenses-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem;">
-            <?php foreach ($expenses as $expense): ?>
-                <div class="expense-item">
-                    <div style="flex: 1;">
-                        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
-                            <span class="category-badge" style="background: <?php echo htmlspecialchars($expense['category_color']); ?>;">
-                                <?php echo htmlspecialchars($expense['category_name']); ?>
-                            </span>
-                            <strong><?php echo htmlspecialchars($expense['description']); ?></strong>
-                        </div>
-                        <div style="font-size: 0.875rem; color: var(--text-muted);">
-                            <i class="fas fa-calendar"></i> <?php echo date('d/m/Y', strtotime($expense['expense_date'])); ?>
-                            <?php if ($expense['provider']): ?>
-                                | <i class="fas fa-building"></i> <?php echo htmlspecialchars($expense['provider']); ?>
-                            <?php endif; ?>
-                            <?php if ($expense['invoice_number']): ?>
-                                | <i class="fas fa-file-invoice"></i> <?php echo htmlspecialchars($expense['invoice_number']); ?>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                    <div style="text-align: right; display: flex; align-items: center; gap: 1rem;">
-                        <div style="font-size: 1.5rem; font-weight: 700; color: #ef4444;">
-                            <?php echo number_format($expense['amount'], 2); ?> €
-                        </div>
-                        <div style="display: flex; gap: 0.5rem;">
-                            <a href="index.php?page=expenses&action=edit&id=<?php echo $expense['id']; ?>" class="btn btn-sm btn-secondary">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <a href="index.php?page=expenses&action=delete&id=<?php echo $expense['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este gasto?')">
-                                <i class="fas fa-trash"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        </div>
-        <!-- Paginación única al final -->
-        <?php if (isset($totalPages) && $totalPages > 1): ?>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin: 2rem 0 1rem 0; flex-wrap: wrap; gap: 1rem;">
-                <div style="font-size: 0.95rem; color: var(--text-muted);">
-                    Mostrando <?php echo (($page - 1) * 20 + 1); ?> - <?php echo min($page * 20, $totalRecords); ?> de <?php echo $totalRecords; ?> registros
-                </div>
-                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                    <?php if ($page > 1): ?>
-                        <a href="<?php echo buildPageUrl($page - 1, $filters); ?>" class="btn btn-sm btn-secondary">
-                            <i class="fas fa-chevron-left"></i> Anterior
-                        </a>
-                    <?php endif; ?>
-                    <div style="display: flex; gap: 0.25rem;">
-                        <?php 
-                        $startPage = max(1, $page - 2);
-                        $endPage = min($totalPages, $page + 2);
-                        if ($startPage > 1) {
-                            echo '<span style="padding: 0.25rem 0.5rem;">...</span>';
-                        }
-                        for ($i = $startPage; $i <= $endPage; $i++): ?>
-                            <a href="<?php echo buildPageUrl($i, $filters); ?>" class="btn btn-sm <?php echo $i == $page ? 'btn-primary' : 'btn-secondary'; ?>" style="<?php echo $i == $page ? '' : 'background: white;'; ?>">
-                                <?php echo $i; ?>
-                            </a>
-                        <?php endfor; 
-                        if ($endPage < $totalPages) {
-                            echo '<span style="padding: 0.25rem 0.5rem;">...</span>';
-                        }
-                        ?>
-                    </div>
-                    <?php if ($page < $totalPages): ?>
-                        <a href="<?php echo buildPageUrl($page + 1, $filters); ?>" class="btn btn-sm btn-secondary">
-                            Siguiente <i class="fas fa-chevron-right"></i>
-                        </a>
-                    <?php endif; ?>
-                </div>
+    
+    <!-- Expenses List -->
+    <div class="card">
+        <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">
+            <i class="fas fa-list"></i> Listado de Gastos
+        </h3>
+        <?php if (empty($expenses)): ?>
+            <div style="text-align: center; padding: 3rem;">
+                <i class="fas fa-receipt" style="font-size: 3rem; color: var(--text-light); margin-bottom: 1rem;"></i>
+                <p style="color: var(--text-muted);">No hay gastos registrados con los filtros seleccionados</p>
             </div>
+        <?php else: ?>
+            <div class="expenses-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem;">
+                <?php foreach ($expenses as $expense): ?>
+                    <div class="expense-item">
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                                <span class="category-badge" style="background: <?php echo htmlspecialchars($expense['category_color']); ?>;">
+                                    <?php echo htmlspecialchars($expense['category_name']); ?>
+                                </span>
+                                <strong><?php echo htmlspecialchars($expense['description']); ?></strong>
+                            </div>
+                            <div style="font-size: 0.875rem; color: var(--text-muted);">
+                                <i class="fas fa-calendar"></i> <?php echo date('d/m/Y', strtotime($expense['expense_date'])); ?>
+                                <?php if ($expense['provider']): ?>
+                                    | <i class="fas fa-building"></i> <?php echo htmlspecialchars($expense['provider']); ?>
+                                <?php endif; ?>
+                                <?php if ($expense['invoice_number']): ?>
+                                    | <i class="fas fa-file-invoice"></i> <?php echo htmlspecialchars($expense['invoice_number']); ?>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        <div style="text-align: right; display: flex; align-items: center; gap: 1rem;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #ef4444;">
+                                <?php echo number_format($expense['amount'], 2); ?> €
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <a href="index.php?page=expenses&action=edit&id=<?php echo $expense['id']; ?>" class="btn btn-sm btn-secondary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="index.php?page=expenses&action=delete&id=<?php echo $expense['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar este gasto?')">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <!-- Paginación única al final -->
+            <?php if (isset($totalPages) && $totalPages > 1): ?>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin: 2rem 0 1rem 0; flex-wrap: wrap; gap: 1rem;">
+                    <div style="font-size: 0.95rem; color: var(--text-muted);">
+                        Mostrando <?php echo (($page - 1) * 20 + 1); ?> - <?php echo min($page * 20, $totalRecords); ?> de <?php echo $totalRecords; ?> registros
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <?php if ($page > 1): ?>
+                            <a href="<?php echo buildPageUrl($page - 1, $filters); ?>" class="btn btn-sm btn-secondary">
+                                <i class="fas fa-chevron-left"></i> Anterior
+                            </a>
+                        <?php endif; ?>
+                        <div style="display: flex; gap: 0.25rem;">
+                            <?php 
+                            $startPage = max(1, $page - 2);
+                            $endPage = min($totalPages, $page + 2);
+                            if ($startPage > 1) {
+                                echo '<span style="padding: 0.25rem 0.5rem;">...</span>';
+                            }
+                            for ($i = $startPage; $i <= $endPage; $i++): ?>
+                                <a href="<?php echo buildPageUrl($i, $filters); ?>" class="btn btn-sm <?php echo $i == $page ? 'btn-primary' : 'btn-secondary'; ?>" style="<?php echo $i == $page ? '' : 'background: white;'; ?>">
+                                    <?php echo $i; ?>
+                                </a>
+                            <?php endfor; 
+                            if ($endPage < $totalPages) {
+                                echo '<span style="padding: 0.25rem 0.5rem;">...</span>';
+                            }
+                            ?>
+                        </div>
+                        <?php if ($page < $totalPages): ?>
+                            <a href="<?php echo buildPageUrl($page + 1, $filters); ?>" class="btn btn-sm btn-secondary">
+                                Siguiente <i class="fas fa-chevron-right"></i>
+                            </a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
         <?php endif; ?>
     </div>
 </div>
 <?php $content = ob_get_clean(); require_once __DIR__ . '/../layout.php'; ?>
-?>
