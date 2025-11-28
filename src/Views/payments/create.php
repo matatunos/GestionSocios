@@ -3,7 +3,7 @@
 <?php if (isset($_GET['error']) && $_GET['error'] === 'duplicate_fee'): ?>
     <div class="alert alert-error">
         <i class="fas fa-exclamation-circle"></i>
-        El socio ya ha pagado la cuota anual para el año <?php echo $_GET['year'] ?? ''; ?>. No se permiten pagos duplicados.
+        El socio ya ha pagado la cuota anual para el año <?php echo htmlspecialchars($_GET['year'] ?? '', ENT_QUOTES); ?>. No se permiten pagos duplicados.
     </div>
 <?php endif; ?>
 

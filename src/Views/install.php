@@ -69,16 +69,16 @@ if (file_exists($configFile)) {
             <div class="step-title">1. Base de Datos</div>
             <div class="form-group">
                 <label class="form-label">Host</label>
-                <input type="text" name="host" class="form-control" placeholder="localhost" value="<?php echo $_POST['host'] ?? $configDefaults['host']; ?>" required>
+                <input type="text" name="host" class="form-control" placeholder="localhost" value="<?php echo htmlspecialchars($_POST['host'] ?? $configDefaults['host'], ENT_QUOTES); ?>" required>
             </div>
             <div class="form-group">
                 <label class="form-label">Nombre de la Base de Datos</label>
-                <input type="text" name="db_name" class="form-control" placeholder="asociacion_db" value="<?php echo $_POST['db_name'] ?? $configDefaults['db_name']; ?>" required>
+                <input type="text" name="db_name" class="form-control" placeholder="asociacion_db" value="<?php echo htmlspecialchars($_POST['db_name'] ?? $configDefaults['db_name'], ENT_QUOTES); ?>" required>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                 <div class="form-group">
                     <label class="form-label">Usuario DB <span style="color:#888;font-size:0.9em" title="Este debe ser el usuario SQL, no el usuario del sistema">(usuario SQL)</span></label>
-                    <input type="text" name="username" class="form-control" placeholder="root" value="<?php echo $_POST['username'] ?? $configDefaults['username']; ?>" required pattern="^[a-zA-Z0-9_]+$" title="Solo letras, números y guiones bajos">
+                    <input type="text" name="username" class="form-control" placeholder="root" value="<?php echo htmlspecialchars($_POST['username'] ?? $configDefaults['username'], ENT_QUOTES); ?>" required pattern="^[a-zA-Z0-9_]+$" title="Solo letras, números y guiones bajos">
                     <?php if (isset($configDefaults['username'])): ?>
                     <small style="color:#888;">Precargado desde config.php: <b><?php echo htmlspecialchars($configDefaults['username']); ?></b></small>
                     <?php endif; ?>
@@ -91,7 +91,7 @@ if (file_exists($configFile)) {
                 </div>
                 <div class="form-group">
                     <label class="form-label">Contraseña DB</label>
-                    <input type="password" name="password" class="form-control" value="<?php echo $_POST['password'] ?? $configDefaults['password']; ?>">
+                    <input type="password" name="password" class="form-control" value="<?php echo htmlspecialchars($_POST['password'] ?? $configDefaults['password'], ENT_QUOTES); ?>">
                                 <?php if (isset($configDefaults['password']) && $configDefaults['password'] !== ''): ?>
                                 <small style="color:#888;">Precargado desde config.php</small>
                                 <?php endif; ?>
@@ -101,7 +101,7 @@ if (file_exists($configFile)) {
             <div class="step-title" style="margin-top: 2rem;">2. Administrador del Sistema</div>
             <div class="form-group">
                 <label class="form-label">Usuario Admin</label>
-                <input type="text" name="admin_user" class="form-control" placeholder="admin" value="<?php echo $_POST['admin_user'] ?? 'admin'; ?>" required>
+                <input type="text" name="admin_user" class="form-control" placeholder="admin" value="<?php echo htmlspecialchars($_POST['admin_user'] ?? 'admin', ENT_QUOTES); ?>" required>
             </div>
             <div class="form-group">
                 <label class="form-label">Contraseña Admin</label>

@@ -23,6 +23,8 @@ class AuthController {
 
             if ($this->user->findByUsername($username)) {
                 if (password_verify($password, $this->user->password)) {
+                    // Regenerate session ID to prevent session fixation
+                    session_regenerate_id(true);
                     $_SESSION['user_id'] = $this->user->id;
                     $_SESSION['username'] = $this->user->name;
                     $_SESSION['email'] = $this->user->email;

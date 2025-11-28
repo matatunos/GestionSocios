@@ -3,21 +3,21 @@
 <?php if (isset($_GET['success']) && $_GET['success'] === 'generated'): ?>
     <div class="alert alert-success">
         <i class="fas fa-check-circle"></i>
-        Se han generado <?php echo $_GET['count']; ?> pagos pendientes para el año <?php echo $_GET['year'] ?? ''; ?>.
+        Se han generado <?php echo intval($_GET['count'] ?? 0); ?> pagos pendientes para el año <?php echo htmlspecialchars($_GET['year'] ?? '', ENT_QUOTES); ?>.
     </div>
 <?php endif; ?>
 
 <?php if (isset($_GET['success']) && $_GET['success'] === 'created'): ?>
     <div class="alert alert-success">
         <i class="fas fa-check-circle"></i>
-        Cuota para el año <?php echo $_GET['year'] ?? ''; ?> creada correctamente.
+        Cuota para el año <?php echo htmlspecialchars($_GET['year'] ?? '', ENT_QUOTES); ?> creada correctamente.
     </div>
 <?php endif; ?>
 
 <?php if (isset($_GET['success']) && $_GET['success'] === 'updated'): ?>
     <div class="alert alert-success">
         <i class="fas fa-check-circle"></i>
-        Cuota para el año <?php echo $_GET['year'] ?? ''; ?> actualizada correctamente.
+        Cuota para el año <?php echo htmlspecialchars($_GET['year'] ?? '', ENT_QUOTES); ?> actualizada correctamente.
     </div>
 <?php endif; ?>
 

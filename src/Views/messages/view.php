@@ -58,7 +58,7 @@ $title = $conversation_title;
 
     <div class="message-input-area">
         <form method="POST" action="index.php?page=messages&action=send" id="messageForm">
-            <input type="hidden" name="conversation_id" value="<?php echo $_GET['id']; ?>">
+            <input type="hidden" name="conversation_id" value="<?php echo htmlspecialchars($_GET['id'] ?? '', ENT_QUOTES); ?>">
             <div class="input-group">
                 <textarea name="message" id="messageInput" class="form-control" placeholder="Escribe tu mensaje..." rows="2" required></textarea>
                 <button type="submit" class="btn btn-primary">
@@ -263,7 +263,7 @@ messageInput.addEventListener('keydown', function(e) {
 // Polling for new messages every 3 seconds
 <?php if (!empty($messages)): ?>
 let lastMessageId = <?php echo end($messages)['id']; ?>;
-const conversationId = <?php echo $_GET['id']; ?>;
+const conversationId = <?php echo intval($_GET['id'] ?? 0); ?>;
 
 setInterval(function() {
     fetch(`index.php?page=messages&action=poll&conversation_id=${conversationId}&last_message_id=${lastMessageId}`)
