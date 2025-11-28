@@ -158,19 +158,8 @@ function buildPageUrl($page, $filters) {
     </button>
 </form>
 
-<!-- Statistics -->
-<div class="expense-stats">
-    <div class="stat-card" style="border-left-color: #ef4444;">
-        <div style="font-size: 2rem; font-weight: 700; color: #ef4444;">
-            <?php echo number_format($yearTotal, 2); ?> €
-        </div>
-        <div style="font-size: 0.875rem; color: var(--text-muted); margin-top: 0.25rem;">
-            Total <?php echo $filters['year']; ?>
-        </div>
-    </div>
-    
-    <!-- Expenses List -->
-    <div class="card">
+<!-- Expenses List -->
+<div class="card">
         <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem;">
             <i class="fas fa-list"></i> Listado de Gastos
         </h3>
