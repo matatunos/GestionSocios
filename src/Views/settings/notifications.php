@@ -1,6 +1,13 @@
 <?php
 // src/Views/settings/notifications.php
 $config = @include(__DIR__ . '/../../Config/notifications.php');
+if (!is_array($config)) {
+    $config = [
+        'ntfy_topic' => '',
+        'telegram_token' => '',
+        'telegram_chat' => ''
+    ];
+}
 ?>
 <h2>Configuración de Notificaciones</h2>
 <form method="post" action="index.php?page=settings&action=save_notifications">
