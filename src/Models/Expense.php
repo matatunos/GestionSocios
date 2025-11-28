@@ -54,50 +54,59 @@ class Expense {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ? (int)$row['total'] : 0;
     }
-    // Get all expenses with filters
-    public function readAll($filters = []) {
+    // Get all expenses with filters and pagination
+    public function readAll($filters = [], $limit = null, $offset = null) {
         $query = "SELECT e.*, ec.name as category_name, ec.color as category_color,
                          u.name as created_by_name
                   FROM " . $this->table . " e
                   LEFT JOIN expense_categories ec ON e.category_id = ec.id
                   LEFT JOIN users u ON e.created_by = u.id
                   WHERE 1=1";
-        
+
         $params = [];
-        
+
         if (!empty($filters['category_id'])) {
             $query .= " AND e.category_id = :category_id";
             $params[':category_id'] = $filters['category_id'];
         }
-        
+
         if (!empty($filters['start_date'])) {
             $query .= " AND e.expense_date >= :start_date";
             $params[':start_date'] = $filters['start_date'];
         }
-        
+
         if (!empty($filters['end_date'])) {
             $query .= " AND e.expense_date <= :end_date";
             $params[':end_date'] = $filters['end_date'];
         }
-        
+
         if (!empty($filters['year'])) {
             $query .= " AND YEAR(e.expense_date) = :year";
             $params[':year'] = $filters['year'];
         }
-        
+
         if (!empty($filters['month'])) {
             $query .= " AND MONTH(e.expense_date) = :month";
             $params[':month'] = $filters['month'];
         }
-        
+
         $query .= " ORDER BY e.expense_date DESC, e.id DESC";
-        
+
+        // Añadir paginación si se especifica
+        if ($limit !== null && $offset !== null) {
+            $query .= " LIMIT :limit OFFSET :offset";
+        }
+
         $stmt = $this->conn->prepare($query);
-        
+
         foreach ($params as $key => $value) {
             $stmt->bindValue($key, $value);
         }
-        
+        if ($limit !== null && $offset !== null) {
+            $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        }
+
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
