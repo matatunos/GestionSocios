@@ -317,9 +317,6 @@
             <button class="tab-btn" onclick="switchTab('notifications')" id="tab-notifications"><i class="fas fa-bell"></i> Notificaciones</button>
         </div>
         <!-- Organization Tab -->
-                <div id="notifications" class="tab-content">
-                    <?php require __DIR__ . '/notifications.php'; ?>
-                </div>
         <div id="organization" class="tab-content active-tab">
             <div class="settings-section-header">
                 <div>
@@ -816,6 +813,10 @@
         <!-- Administración de Usuarios Tab -->
         <div id="admin_users" class="tab-content">
             <?php include __DIR__ . '/admin_users.php'; ?>
+        </div>
+        <!-- Notifications Tab -->
+        <div id="notifications" class="tab-content">
+            <?php require __DIR__ . '/notifications.php'; ?>
         </div>
     </div>
 </div>
