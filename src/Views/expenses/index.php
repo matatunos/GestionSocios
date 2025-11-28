@@ -81,8 +81,9 @@ function buildPageUrl($page, $filters) {
 </style>
 
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-    <div>
-        <h1 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">
+
+    </div>
+
             <i class="fas fa-receipt"></i> Gestión de Gastos
         </h1>
         <p style="color: var(--text-muted);">Control de gastos y egresos de la asociación</p>
