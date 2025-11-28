@@ -144,25 +144,6 @@
 
 .main-content {
     flex: 1;
-    padding: 2.5rem;
-    background: linear-gradient(to bottom right, #f8fafc, #f1f5f9);
-    min-height: 100vh;
-    width: calc(100vw - 280px);
-    max-width: calc(100vw - 280px);
-    box-sizing: border-box;
-}
-
-.mobile-menu-toggle,
-.mobile-menu-modal,
-.mobile-overlay {
-    display: none !important;
-}
-
-/* Mejoras visuales para Analytics */
-.analytics-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
     margin-bottom: 2rem;
 }
 
