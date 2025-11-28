@@ -50,17 +50,28 @@ class DonorController {
             // Handle logo upload
             $logoUrl = null;
             if (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
-                $uploadDir = __DIR__ . '/../../public/uploads/donors/';
-                if (!is_dir($uploadDir)) {
-                    mkdir($uploadDir, 0777, true);
+                // Validate file size (5MB maximum)
+                if ($_FILES['logo']['size'] > 5 * 1024 * 1024) {
+                    throw new Exception('El archivo es demasiado grande. Máximo 5MB permitido.');
                 }
                 
-                $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                $uploadDir = __DIR__ . '/../../public/uploads/donors/';
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0755, true);
+                }
                 
-                $fileType = $_FILES['logo']['type'];
-
-                if (in_array($fileType, $allowedTypes)) {
-                    $extension = pathinfo($_FILES['logo']['name'], PATHINFO_EXTENSION);
+                // Validate MIME type
+                $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                $mimeType = finfo_file($finfo, $_FILES['logo']['tmp_name']);
+                finfo_close($finfo);
+                
+                if (in_array($mimeType, $allowedMimeTypes)) {
+                    $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                    $extension = strtolower(pathinfo($_FILES['logo']['name'], PATHINFO_EXTENSION));
+                    if (!in_array($extension, $allowedExtensions)) {
+                        throw new Exception('Extensión de archivo no permitida.');
+                    }
                     $fileName = 'donor_' . time() . '_' . uniqid() . '.' . $extension;
                     $targetPath = $uploadDir . $fileName;
 
@@ -154,7 +165,7 @@ class DonorController {
                 // Save the new image temporarily and redirect to comparison
                 $uploadDir = __DIR__ . '/../../public/uploads/donors/temp/';
                 if (!is_dir($uploadDir)) {
-                    mkdir($uploadDir, 0777, true);
+                    mkdir($uploadDir, 0755, true);
                 }
 
                 $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
@@ -188,7 +199,7 @@ class DonorController {
             } elseif (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
                 $uploadDir = __DIR__ . '/../../public/uploads/donors/';
                 if (!is_dir($uploadDir)) {
-                    mkdir($uploadDir, 0777, true);
+                    mkdir($uploadDir, 0755, true);
                 }
 
                 $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];

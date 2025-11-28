@@ -114,12 +114,36 @@ class MemberController {
 
     private function handleUpload() {
         if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
-            $uploadDir = __DIR__ . '/../../public/uploads/members/';
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0777, true);
+            // Validate file size (5MB maximum)
+            $maxSize = 5 * 1024 * 1024; // 5MB
+            if ($_FILES['photo']['size'] > $maxSize) {
+                throw new Exception('El archivo es demasiado grande. Máximo 5MB permitido.');
             }
             
-            $fileName = uniqid() . '_' . basename($_FILES['photo']['name']);
+            // Validate MIME type
+            $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mimeType = finfo_file($finfo, $_FILES['photo']['tmp_name']);
+            finfo_close($finfo);
+            
+            if (!in_array($mimeType, $allowedMimeTypes)) {
+                throw new Exception('Tipo de archivo no permitido. Solo se permiten imágenes JPEG, PNG, GIF y WebP.');
+            }
+            
+            // Validate file extension
+            $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+            $extension = strtolower(pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION));
+            if (!in_array($extension, $allowedExtensions)) {
+                throw new Exception('Extensión de archivo no permitida.');
+            }
+            
+            $uploadDir = __DIR__ . '/../../public/uploads/members/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true); // More restrictive permissions
+            }
+            
+            // Generate secure filename
+            $fileName = uniqid() . '_' . bin2hex(random_bytes(8)) . '.' . $extension;
             $targetPath = $uploadDir . $fileName;
             
             if (move_uploaded_file($_FILES['photo']['tmp_name'], $targetPath)) {
