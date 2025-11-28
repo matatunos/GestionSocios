@@ -1,5 +1,5 @@
 <?php ob_start(); ?>
-<div class="page-content">
+
 <?php
 // Inicializar variables de paginación si no existen
 if (!isset($page)) $page = 1;
@@ -95,6 +95,39 @@ function buildPageUrl($page, $filters) {
             <i class="fas fa-plus"></i> Nuevo Gasto
         </a>
     </div>
+</div>
+
+<!-- Stats Section -->
+<div class="expense-stats">
+    <div class="stat-card" style="border-left-color: var(--primary-600);">
+        <h3 style="margin: 0; font-size: 0.875rem; color: var(--text-muted); text-transform: uppercase;">Total <?php echo $filters['year'] ?? date('Y'); ?></h3>
+        <p style="font-size: 2rem; font-weight: 700; margin: 0.5rem 0 0; color: var(--primary-600);">
+            <?php echo number_format($yearTotal, 2); ?> €
+        </p>
+    </div>
+    
+    <?php if ($filters['month']): ?>
+    <div class="stat-card" style="border-left-color: var(--secondary-600);">
+        <h3 style="margin: 0; font-size: 0.875rem; color: var(--text-muted); text-transform: uppercase;">Total Mes</h3>
+        <p style="font-size: 2rem; font-weight: 700; margin: 0.5rem 0 0; color: var(--secondary-600);">
+            <?php echo number_format($monthTotal, 2); ?> €
+        </p>
+    </div>
+    <?php endif; ?>
+
+    <?php if (!empty($byCategory)): 
+        $topCategory = $byCategory[0];
+    ?>
+    <div class="stat-card" style="border-left-color: <?php echo $topCategory['color']; ?>;">
+        <h3 style="margin: 0; font-size: 0.875rem; color: var(--text-muted); text-transform: uppercase;">Mayor Gasto</h3>
+        <p style="font-size: 1.5rem; font-weight: 700; margin: 0.5rem 0 0; color: var(--text-main);">
+            <?php echo htmlspecialchars($topCategory['name']); ?>
+        </p>
+        <p style="margin: 0; font-size: 0.875rem; color: var(--text-muted);">
+            <?php echo number_format($topCategory['total'], 2); ?> €
+        </p>
+    </div>
+    <?php endif; ?>
 </div>
 
 <?php if (isset($_SESSION['success'])): ?>
@@ -259,5 +292,5 @@ function buildPageUrl($page, $filters) {
             <?php endif; ?>
         <?php endif; ?>
     </div>
-</div>
+
 <?php $content = ob_get_clean(); require_once __DIR__ . '/../layout.php'; ?>
