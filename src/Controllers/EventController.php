@@ -98,34 +98,34 @@ class EventController {
 
     public function store() {
         $this->checkAdmin();
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->event->name = $_POST['name'];
-            $this->event->event_type = $_POST['event_type'] ?? 'other';
-            $this->event->color = $_POST['color'] ?? '#6366f1';
-            $this->event->description = $_POST['description'];
-            $this->event->location = !empty($_POST['location']) ? $_POST['location'] : null;
-            $this->event->date = $_POST['date'];
-            $this->event->start_time = !empty($_POST['start_time']) ? $_POST['start_time'] : null;
-            $this->event->end_time = !empty($_POST['end_time']) ? $_POST['end_time'] : null;
-            $this->event->price = $_POST['price'];
-            $this->event->max_attendees = !empty($_POST['max_attendees']) ? $_POST['max_attendees'] : null;
-            $this->event->requires_registration = isset($_POST['requires_registration']) ? 1 : 0;
-            $this->event->registration_deadline = !empty($_POST['registration_deadline']) ? $_POST['registration_deadline'] : null;
-            $this->event->is_active = isset($_POST['is_active']) ? 1 : 0;
-
-            if ($this->event->create()) {
-                // Auditoría de alta de evento
-                require_once __DIR__ . '/../Models/AuditLog.php';
-                $audit = new AuditLog($this->db);
-                $lastId = $this->db->lastInsertId();
-                $audit->create($_SESSION['user_id'], 'create', 'event', $lastId, 'Alta de evento por el usuario ' . ($_SESSION['username'] ?? ''));
-                $_SESSION['success'] = "Evento creado correctamente";
-                header('Location: index.php?page=calendar');
-            } else {
-                $error = "Error al crear el evento";
-                require __DIR__ . '/../Views/events/create.php';
-            }
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: index.php?page=events');
+            exit;
         }
+
+        $eventModel = new Event($this->db);
+        $eventModel->name = $_POST['name'] ?? '';
+        $eventModel->description = $_POST['description'] ?? '';
+        $eventModel->date = $_POST['event_date'] ?? date('Y-m-d');
+        $eventModel->location = $_POST['location'] ?? '';
+
+        if ($eventModel->create()) {
+            require_once __DIR__ . '/../Models/AuditLog.php';
+            $audit = new AuditLog($this->db);
+            $lastId = $this->db->lastInsertId();
+            $audit->create($_SESSION['user_id'], 'create', 'event', $lastId, 'Alta de evento por el usuario ' . ($_SESSION['username'] ?? ''));
+            // Notificación ntfy y Telegram
+            require_once __DIR__ . '/../Notifications/NotificationManager.php';
+            $notifier = new NotificationManager();
+            $msg = 'Nuevo evento: ' . $eventModel->name . ' (' . $eventModel->date . ')';
+            $notifier->sendNtfy($msg, 'Nuevo Evento');
+            $notifier->sendTelegram($msg);
+            $_SESSION['success'] = 'Evento registrado correctamente.';
+        } else {
+            $_SESSION['error'] = 'Error al registrar el evento.';
+        }
+        header('Location: index.php?page=events');
+        exit;
     }
 
     public function edit($id) {

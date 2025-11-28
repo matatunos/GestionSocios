@@ -81,6 +81,12 @@ class ExpenseController {
             $audit = new AuditLog($this->db);
             $lastId = $this->db->lastInsertId();
             $audit->create($_SESSION['user_id'], 'create', 'expense', $lastId, 'Alta de gasto por el usuario ' . ($_SESSION['username'] ?? ''));
+            // Notificación ntfy y Telegram
+            require_once __DIR__ . '/../Notifications/NotificationManager.php';
+            $notifier = new NotificationManager();
+            $msg = 'Nuevo gasto registrado: ' . $expenseModel->description . ' (' . number_format($expenseModel->amount, 2) . ' €)';
+            $notifier->sendNtfy($msg, 'Nuevo Gasto');
+            $notifier->sendTelegram($msg);
             $_SESSION['success'] = 'Gasto registrado correctamente';
         } else {
             $_SESSION['error'] = 'Error al registrar el gasto';

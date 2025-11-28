@@ -1,3 +1,18 @@
+    public function save_notifications() {
+        $this->checkAdmin();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $config = [
+                'ntfy_topic' => $_POST['ntfy_topic'] ?? '',
+                'telegram_token' => $_POST['telegram_token'] ?? '',
+                'telegram_chat' => $_POST['telegram_chat'] ?? ''
+            ];
+            $phpConfig = "<?php\nreturn " . var_export($config, true) . ";\n";
+            file_put_contents(__DIR__ . '/../Config/notifications.php', $phpConfig);
+            $_SESSION['success'] = 'Configuración de notificaciones guardada correctamente.';
+        }
+        header('Location: index.php?page=settings&tab=notifications');
+        exit;
+    }
 <?php
 
 class SettingsController {

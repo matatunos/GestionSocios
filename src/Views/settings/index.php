@@ -314,6 +314,11 @@
             <button class="tab-btn" onclick="switchTab('ad_prices')" id="tab-ad_prices"><i class="fas fa-tags"></i> Precios Anuncios</button>
             <button class="tab-btn" onclick="switchTab('database')" id="tab-database"><i class="fas fa-database"></i> Base de Datos</button>
             <button class="tab-btn" onclick="switchTab('admin_users')" id="tab-admin_users"><i class="fas fa-user-shield"></i> Administración de Usuarios</button>
+            <button class="tab-btn" onclick="switchTab('notifications')" id="tab-notifications"><i class="fas fa-bell"></i> Notificaciones</button>
+                <!-- Notificaciones Tab -->
+                <div id="notifications" class="tab-content">
+                    <?php require __DIR__ . '/notifications.php'; ?>
+                </div>
         </div>
         <!-- Organization Tab -->
         <div id="organization" class="tab-content active-tab">
