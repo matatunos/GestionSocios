@@ -18,7 +18,7 @@
 <?php endif; ?>
 
 <div class="card">
-    <div class="card-header">
+    <div class="card-header p-3">
         <a href="index.php?page=announcements&action=create" class="btn btn-primary">
             <i class="fas fa-plus"></i> Nuevo Anuncio
         </a>
