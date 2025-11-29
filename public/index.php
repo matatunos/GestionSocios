@@ -219,6 +219,7 @@ switch ($page) {
         else $controller->index();
         break;
     case 'announcements':
+        require_once __DIR__ . '/../src/Controllers/AnnouncementController.php';
         $controller = new AnnouncementController();
         if ($action === 'create') $controller->create();
         else if ($action === 'store') $controller->store();
