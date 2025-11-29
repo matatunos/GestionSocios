@@ -155,6 +155,20 @@ switch ($page) {
         break;
     case 'suppliers':
         $controller = new SupplierController();
+        if ($action === 'create') $controller->create();
+        else if ($action === 'store') $controller->store();
+        else if ($action === 'edit') $controller->edit();
+        else if ($action === 'update') $controller->update();
+        else if ($action === 'delete') $controller->delete();
+        else if ($action === 'show') $controller->show();
+        else if ($action === 'uploadInvoice') $controller->uploadInvoice();
+        else if ($action === 'deleteInvoice') $controller->deleteInvoice();
+        else if ($action === 'dashboard') $controller->dashboard();
+        else $controller->index();
+        break;
+    case 'book':
+        if ($action === 'dashboard') {
+            require_once __DIR__ . '/../src/Controllers/BookDashboardController.php';
             $controller = new BookDashboardController();
             $controller->index();
         } else {
