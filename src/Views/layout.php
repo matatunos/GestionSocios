@@ -260,27 +260,6 @@ if (isset($_SESSION['user_id'])) {
                                     <i class="fas fa-gift"></i>
                                     <span>Donaciones</span>
                                 </a>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <li>
-                        <a href="index.php?page=gallery" class="nav-link <?php echo ($page === 'gallery') ? 'active' : ''; ?>">
-                            <i class="fas fa-images"></i>
-                            <span>Galería Imágenes</span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="index.php?page=expenses" class="nav-link <?php echo ($page === 'expenses') ? 'active' : ''; ?>">
-                            <i class="fas fa-receipt"></i>
-                            <span>Gastos</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="index.php?page=calendar" class="nav-link <?php echo ($page === 'calendar') ? 'active' : ''; ?>">
-                            <i class="fas fa-calendar-alt"></i>
-                            <span>Calendario</span>
                         </a>
                     </li>
                     <li>
