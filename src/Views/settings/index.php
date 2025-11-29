@@ -827,43 +827,43 @@
                         <small class="text-muted">Número mínimo de caracteres (6-32)</small>
                     </div>
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                    <div class="checkbox-grid">
                         <div class="form-group">
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                            <label class="checkbox-label">
                                 <input type="checkbox" name="require_uppercase" <?= $policy['require_uppercase'] ? 'checked' : '' ?>>
                                 <span>Requiere mayúsculas (A-Z)</span>
                             </label>
                         </div>
                         
                         <div class="form-group">
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                            <label class="checkbox-label">
                                 <input type="checkbox" name="require_lowercase" <?= $policy['require_lowercase'] ? 'checked' : '' ?>>
                                 <span>Requiere minúsculas (a-z)</span>
                             </label>
                         </div>
                         
                         <div class="form-group">
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                            <label class="checkbox-label">
                                 <input type="checkbox" name="require_numbers" <?= $policy['require_numbers'] ? 'checked' : '' ?>>
                                 <span>Requiere números (0-9)</span>
                             </label>
                         </div>
                         
                         <div class="form-group">
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                            <label class="checkbox-label">
                                 <input type="checkbox" name="require_special" <?= $policy['require_special'] ? 'checked' : '' ?>>
                                 <span>Requiere caracteres especiales (!@#$%)</span>
                             </label>
                         </div>
                     </div>
                     
-                    <hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--border-light);">
+                    <hr class="section-divider">
                     
-                    <h3 style="margin-bottom: 1.5rem; color: var(--primary-600); font-size: 1.1rem;">
+                    <h3 class="subsection-title">
                         <i class="fas fa-lock"></i> Bloqueo de Cuenta
                     </h3>
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div class="settings-grid-2col">
                         <div class="form-group">
                             <label class="form-label">Máximo de Intentos Fallidos</label>
                             <input type="number" name="max_attempts" min="3" max="10" value="<?= $policy['login_max_attempts'] ?>" class="form-control" required>
@@ -877,14 +877,14 @@
                         </div>
                     </div>
                     
-                    <div style="margin-top: 2rem; padding: 1rem; background: var(--bg-light); border-left: 4px solid var(--primary-500); border-radius: 4px;">
-                        <p style="margin: 0; font-size: 0.9rem; color: var(--text-muted);">
+                    <div class="info-box">
+                        <p>
                             <i class="fas fa-info-circle"></i> <strong>Nota:</strong> Los cambios en la política de contraseñas se aplicarán inmediatamente. 
                             Las contraseñas existentes no se verán afectadas, pero los nuevos cambios de contraseña deberán cumplir con los requisitos actualizados.
                         </p>
                     </div>
                     
-                    <div style="margin-top: 2rem;">
+                    <div class="form-actions">
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-save"></i> Guardar Política de Seguridad
                         </button>
@@ -896,6 +896,76 @@
 </div>
 
 <style>
+    .checkbox-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        cursor: pointer;
+        padding: 0.75rem;
+        background: var(--bg-main);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-md);
+        transition: all 0.2s ease;
+    }
+    
+    .checkbox-label:hover {
+        border-color: var(--primary-300);
+        background: var(--primary-50);
+    }
+    
+    .checkbox-label input[type="checkbox"] {
+        width: 1.25rem;
+        height: 1.25rem;
+        accent-color: var(--primary-600);
+    }
+    
+    .section-divider {
+        margin: 2rem 0;
+        border: none;
+        border-top: 1px solid var(--border-light);
+    }
+    
+    .subsection-title {
+        margin-bottom: 1.5rem;
+        color: var(--primary-700);
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+    
+    .settings-grid-2col {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .info-box {
+        margin-top: 2rem;
+        padding: 1rem 1.5rem;
+        background: var(--primary-50);
+        border-left: 4px solid var(--primary-500);
+        border-radius: var(--radius-md);
+    }
+    
+    .info-box p {
+        margin: 0;
+        font-size: 0.95rem;
+        color: var(--text-main);
+        line-height: 1.5;
+    }
+    
+    .form-actions {
+        margin-top: 2rem;
+        display: flex;
+        justify-content: flex-end;
+    }
+
 
 /* Switch Toggle Styles */
 .switch {
