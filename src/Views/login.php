@@ -51,7 +51,8 @@ try {
         }
         
         .announcements-section {
-            flex: 0 0 450px;
+            flex: 1;
+            max-width: 600px;
             max-height: 600px;
             padding: 2rem;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
