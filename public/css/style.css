@@ -463,22 +463,6 @@
     border-bottom: none;
 }
 
-.table tr:hover td {
-    background: var(--primary-50);
-}
-
-/* Badges */
-.badge {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: var(--radius-full);
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
-.items-center {
-    align-items: center;
-}
 
 .justify-between {
     justify-content: space-between;
