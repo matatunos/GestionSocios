@@ -16,6 +16,24 @@ class OrganizationSettings {
         if (self::$cache !== null) {
             return self::$cache;
         }
+        
+        $query = "SELECT setting_key, setting_value, setting_type, description, category 
+                  FROM " . $this->table_name . " 
+                  ORDER BY category, setting_key";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        
+        $settings = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $settings[$row['setting_key']] = [
+                'value' => $row['setting_value'],
+                'type' => $row['setting_type'],
+                'description' => $row['description'],
+                'category' => $row['category']
+            ];
+        }
+        
         self::$cache = $settings;
         return $settings;
     }
