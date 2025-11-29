@@ -16,8 +16,8 @@
                     <?php echo $activeMembers; ?>
                 </p>
             </div>
-            <div style="background: var(--primary-50); padding: 1rem; border-radius: 50%;">
-                <i class="fas fa-users" style="font-size: 1.5rem; color: var(--primary-600);"></i>
+            <div class="stat-icon primary">
+                <i class="fas fa-users"></i>
             </div>
         </div>
     </div>
@@ -29,8 +29,8 @@
                     <?php echo number_format($yearlyIncome, 2); ?> €
                 </p>
             </div>
-            <div style="background: #dcfce7; padding: 1rem; border-radius: 50%;">
-                <i class="fas fa-euro-sign" style="font-size: 1.5rem; color: var(--secondary-600);"></i>
+            <div class="stat-icon success">
+                <i class="fas fa-euro-sign"></i>
             </div>
         </div>
     </div>
@@ -42,8 +42,8 @@
                     <?php echo isset($pendingCobros) ? $pendingCobros : 0; ?>
                 </p>
             </div>
-            <div style="background: #fee2e2; padding: 1rem; border-radius: 50%;">
-                <i class="fas fa-exclamation-circle" style="font-size: 1.5rem; color: var(--danger-600);"></i>
+            <div class="stat-icon danger">
+                <i class="fas fa-exclamation-circle"></i>
             </div>
         </div>
     </div>
