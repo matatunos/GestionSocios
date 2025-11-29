@@ -1,16 +1,28 @@
+/* Navigation Groups and Submenus */
+.nav-group {
+    position: relative;
+}
+
+.nav-group>.nav-link {
+    cursor: pointer;
+}
+
+.nav-submenu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
     display: none;
-    }
+}
 
-    .nav-group:hover .nav-submenu {
-        display: block;
-    }
+.nav-group:hover .nav-submenu {
+    display: block;
+}
 
-    .nav-submenu .nav-link {
-        padding-left: 3rem;
-        font-size: 0.9rem;
-        text-decoration: none;
-    }
+.nav-submenu .nav-link {
+    padding-left: 3rem;
+    font-size: 0.9rem;
+}
 
-    .nav-submenu .nav-link i {
-        font-size: 1rem;
-    }
+.nav-submenu .nav-link i {
+    font-size: 1rem;
+}
