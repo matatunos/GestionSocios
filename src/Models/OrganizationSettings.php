@@ -16,19 +16,6 @@ class OrganizationSettings {
         if (self::$cache !== null) {
             return self::$cache;
         }
-
-        $query = "SELECT setting_key, setting_value, setting_type 
-                  FROM " . $this->table_name . " 
-                  ORDER BY category, setting_key";
-        
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        
-        $settings = [];
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $settings[$row['setting_key']] = $this->castValue($row['setting_value'], $row['setting_type']);
-        }
-        
         self::$cache = $settings;
         return $settings;
     }
@@ -254,6 +241,112 @@ class OrganizationSettings {
             'phone' => $settings['org_phone'] ?? '',
             'address' => $settings['org_address'] ?? '',
             'website' => $settings['org_website'] ?? '',
+        ];
+    }
+    
+    /**
+     * Get password policy settings
+     */
+    public function getPasswordPolicy() {
+        $query = "SELECT password_min_length, password_require_uppercase, 
+                         password_require_lowercase, password_require_numbers, 
+                         password_require_special, login_max_attempts, 
+                         login_lockout_duration 
+                  FROM " . $this->table_name . " 
+                  LIMIT 1";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($row) {
+            return [
+                'min_length' => (int)$row['password_min_length'],
+                'require_uppercase' => (bool)$row['password_require_uppercase'],
+                'require_lowercase' => (bool)$row['password_require_lowercase'],
+                'require_numbers' => (bool)$row['password_require_numbers'],
+                'require_special' => (bool)$row['password_require_special'],
+                'login_max_attempts' => (int)$row['login_max_attempts'],
+                'login_lockout_duration' => (int)$row['login_lockout_duration']
+            ];
+        }
+        
+        // Default policy if not set
+        return [
+            'min_length' => 8,
+            'require_uppercase' => false,
+            'require_lowercase' => true,
+            'require_numbers' => true,
+            'require_special' => false,
+            'login_max_attempts' => 5,
+            'login_lockout_duration' => 15
+        ];
+    }
+    
+    /**
+     * Update password policy settings
+     */
+    public function updatePasswordPolicy($minLength, $requireUpper, $requireLower, $requireNumbers, $requireSpecial, $maxAttempts, $lockoutDuration) {
+        $query = "UPDATE " . $this->table_name . " 
+                  SET password_min_length = :min_length,
+                      password_require_uppercase = :require_uppercase,
+                      password_require_lowercase = :require_lowercase,
+                      password_require_numbers = :require_numbers,
+                      password_require_special = :require_special,
+                      login_max_attempts = :max_attempts,
+                      login_lockout_duration = :lockout_duration";
+        
+        $stmt = $this->conn->prepare($query);
+        
+        $stmt->bindParam(':min_length', $minLength, PDO::PARAM_INT);
+        $stmt->bindParam(':require_uppercase', $requireUpper, PDO::PARAM_BOOL);
+        $stmt->bindParam(':require_lowercase', $requireLower, PDO::PARAM_BOOL);
+        $stmt->bindParam(':require_numbers', $requireNumbers, PDO::PARAM_BOOL);
+        $stmt->bindParam(':require_special', $requireSpecial, PDO::PARAM_BOOL);
+        $stmt->bindParam(':max_attempts', $maxAttempts, PDO::PARAM_INT);
+        $stmt->bindParam(':lockout_duration', $lockoutDuration, PDO::PARAM_INT);
+        
+        // Clear cache
+        self::$cache = null;
+        
+        return $stmt->execute();
+    }
+    
+    /**
+     * Validate password against policy
+     */
+    public static function validatePassword($password, $policy) {
+        $errors = [];
+        
+        // Check minimum length
+        if (strlen($password) < $policy['min_length']) {
+            $errors[] = "La contraseña debe tener al menos {$policy['min_length']} caracteres";
+        }
+        
+        // Check uppercase requirement
+        if ($policy['require_uppercase'] && !preg_match('/[A-Z]/', $password)) {
+            $errors[] = "La contraseña debe contener al menos una letra mayúscula";
+        }
+        
+        // Check lowercase requirement
+        if ($policy['require_lowercase'] && !preg_match('/[a-z]/', $password)) {
+            $errors[] = "La contraseña debe contener al menos una letra minúscula";
+        }
+        
+        // Check numbers requirement
+        if ($policy['require_numbers'] && !preg_match('/[0-9]/', $password)) {
+            $errors[] = "La contraseña debe contener al menos un número";
+        }
+        
+        // Check special characters requirement
+        if ($policy['require_special'] && !preg_match('/[^a-zA-Z0-9]/', $password)) {
+            $errors[] = "La contraseña debe contener al menos un carácter especial";
+        }
+        
+        return [
+            'valid' => empty($errors),
+            'errors' => $errors
         ];
     }
 }

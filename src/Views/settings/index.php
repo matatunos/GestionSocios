@@ -1,4 +1,4 @@
-
+<?php ob_start(); ?>
 
 <style>
 .tab-content { display: none; }
