@@ -44,14 +44,21 @@ try {
             display: flex;
             min-height: 100vh;
             background-color: var(--bg-body);
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            gap: 2rem;
         }
         
         .announcements-section {
-            flex: 1;
+            flex: 0 0 450px;
+            max-height: 600px;
             padding: 2rem;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             color: #2d3748;
             overflow-y: auto;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
         
         .login-section {
@@ -59,25 +66,28 @@ try {
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2rem;
-            background: white;
         }
         
         .announcements-header {
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
         
         .announcements-header h2 {
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .announcements-header p {
+            font-size: 0.9rem;
+            opacity: 0.8;
         }
         
         .announcement-card {
             background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
             border-left: 4px solid;
             transition: transform 0.2s, box-shadow 0.2s;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -94,7 +104,7 @@ try {
         .announcement-card.danger { border-left-color: #ef4444; }
         
         .announcement-card h3 {
-            font-size: 1.25rem;
+            font-size: 1rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
             display: flex;
@@ -103,30 +113,34 @@ try {
         }
         
         .announcement-card p {
-            font-size: 0.95rem;
-            line-height: 1.6;
-            opacity: 0.95;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            opacity: 0.9;
+            margin: 0;
         }
         
         .empty-announcements {
             text-align: center;
-            padding: 3rem 1rem;
+            padding: 2rem 1rem;
             opacity: 0.7;
         }
         
         .empty-announcements i {
-            font-size: 3rem;
+            font-size: 2.5rem;
             margin-bottom: 1rem;
         }
         
         @media (max-width: 968px) {
             .login-container {
                 flex-direction: column;
+                padding: 1rem;
             }
             
             .announcements-section {
                 flex: none;
-                min-height: 40vh;
+                width: 100%;
+                max-width: 400px;
+                max-height: 300px;
             }
             
             .login-section {
