@@ -183,6 +183,12 @@ if (isset($_SESSION['user_id'])) {
                         </a>
                     </li>
                     <li>
+                        <a href="index.php?page=announcements" class="nav-link <?php echo ($page === 'announcements') ? 'active' : ''; ?>">
+                            <i class="fas fa-bullhorn"></i>
+                            <span>Anuncios Públicos</span>
+                        </a>
+                    </li>
+                    <li>
                         <a href="index.php?page=settings" class="nav-link <?php echo ($page === 'settings') ? 'active' : ''; ?>">
                             <i class="fas fa-cog"></i>
                             <span>Configuración</span>
@@ -373,6 +379,12 @@ if (isset($_SESSION['user_id'])) {
                         </ul>
                     </li>
 
+                    <li>
+                        <a href="index.php?page=announcements" class="nav-link <?php echo ($page === 'announcements') ? 'active' : ''; ?>">
+                            <i class="fas fa-bullhorn"></i>
+                            <span>Anuncios Públicos</span>
+                        </a>
+                    </li>
                     <li>
                         <a href="index.php?page=settings" class="nav-link <?php echo ($page === 'settings') ? 'active' : ''; ?>">
                             <i class="fas fa-cog"></i>
