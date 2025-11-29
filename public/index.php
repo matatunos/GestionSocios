@@ -154,6 +154,7 @@ switch ($page) {
         else $controller->index();
         break;
     case 'suppliers':
+        require_once __DIR__ . '/../src/Controllers/SupplierController.php';
         $controller = new SupplierController();
         if ($action === 'create') $controller->create();
         else if ($action === 'store') $controller->store();

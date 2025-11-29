@@ -1,5 +1,23 @@
 <?php
 $pageTitle = 'Proveedores';
+ob_start();
+?>
+
+<div class="page-header">
+    <h1><i class="fas fa-truck"></i> Proveedores</h1>
+    <div class="header-actions">
+        <a href="index.php?page=suppliers&action=dashboard" class="btn btn-secondary">
+            <i class="fas fa-chart-pie"></i> Dashboard
+        </a>
+        <a href="index.php?page=suppliers&action=create" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Nuevo Proveedor
+        </a>
+    </div>
+</div>
+
+<?php if (isset($_SESSION['success'])): ?>
+    <div class="alert alert-success">
+        <i class="fas fa-check-circle"></i>
         <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
     </div>
 <?php endif; ?>
