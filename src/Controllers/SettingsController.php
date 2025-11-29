@@ -128,7 +128,14 @@ class SettingsController {
         // Do not expose password
         // Capture view content
         ob_start();
-        require __DIR__ . '/../Views/settings/index.php';
+        try {
+            require __DIR__ . '/../Views/settings/index.php';
+        } catch (Throwable $e) {
+            ob_end_clean(); // Clean buffer
+            $content = '<div class="alert alert-danger">Error loading settings: ' . htmlspecialchars($e->getMessage()) . '</div>';
+            require __DIR__ . '/../Views/layout.php';
+            return;
+        }
         $content = ob_get_clean();
 
         // Include layout
