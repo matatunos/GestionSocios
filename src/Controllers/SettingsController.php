@@ -1,4 +1,4 @@
-
+<?php
 
 class SettingsController {
         public function save_notifications() {
@@ -334,6 +334,64 @@ class SettingsController {
         }
 
         header('Location: index.php?page=settings&tab=security');
+        exit;
+    }
+    
+    /**
+     * Update password policy settings
+     */
+    public function updatePasswordPolicy() {
+        $this->checkAdmin();
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Validate CSRF token
+            require_once __DIR__ . '/../Helpers/CsrfHelper.php';
+            CsrfHelper::validateRequest();
+            
+            $minLength = intval($_POST['min_length'] ?? 8);
+            $requireUpper = isset($_POST['require_uppercase']) ? 1 : 0;
+            $requireLower = isset($_POST['require_lowercase']) ? 1 : 0;
+            $requireNumbers = isset($_POST['require_numbers']) ? 1 : 0;
+            $requireSpecial = isset($_POST['require_special']) ? 1 : 0;
+            $maxAttempts = intval($_POST['max_attempts'] ?? 5);
+            $lockoutDuration = intval($_POST['lockout_duration'] ?? 15);
+            
+            // Validate inputs
+            if ($minLength < 6 || $minLength > 32) {
+                $_SESSION['error'] = 'La longitud mínima debe estar entre 6 y 32 caracteres';
+                header('Location: index.php?page=settings&tab=password-policy');
+                exit;
+            }
+            
+            if ($maxAttempts < 3 || $maxAttempts > 10) {
+                $_SESSION['error'] = 'Los intentos máximos deben estar entre 3 y 10';
+                header('Location: index.php?page=settings&tab=password-policy');
+                exit;
+            }
+            
+            if ($lockoutDuration < 5 || $lockoutDuration > 120) {
+                $_SESSION['error'] = 'La duración del bloqueo debe estar entre 5 y 120 minutos';
+                header('Location: index.php?page=settings&tab=password-policy');
+                exit;
+            }
+            
+            require_once __DIR__ . '/../Models/OrganizationSettings.php';
+            $settings = new OrganizationSettings($this->db);
+            
+            if ($settings->updatePasswordPolicy($minLength, $requireUpper, $requireLower, $requireNumbers, $requireSpecial, $maxAttempts, $lockoutDuration)) {
+                // Audit log
+                require_once __DIR__ . '/../Models/AuditLog.php';
+                $audit = new AuditLog($this->db);
+                $userId = $_SESSION['user_id'] ?? null;
+                $audit->create($userId, 'update', 'password_policy', null, 'Política de contraseñas actualizada');
+                
+                $_SESSION['success'] = 'Política de contraseñas actualizada correctamente';
+            } else {
+                $_SESSION['error'] = 'Error al actualizar la política de contraseñas';
+            }
+        }
+        
+        header('Location: index.php?page=settings&tab=password-policy');
         exit;
     }
 }

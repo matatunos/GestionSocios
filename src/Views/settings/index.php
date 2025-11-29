@@ -315,6 +315,7 @@
             <button class="tab-btn" onclick="switchTab('database')" id="tab-database"><i class="fas fa-database"></i> Base de Datos</button>
             <button class="tab-btn" onclick="switchTab('admin_users')" id="tab-admin_users"><i class="fas fa-user-shield"></i> Administración de Usuarios</button>
             <button class="tab-btn" onclick="switchTab('notifications')" id="tab-notifications"><i class="fas fa-bell"></i> Notificaciones</button>
+            <button class="tab-btn" onclick="switchTab('password-policy')" id="tab-password-policy"><i class="fas fa-shield-alt"></i> Política de Contraseñas</button>
         </div>
         <!-- Organization Tab -->
         <div id="organization" class="tab-content active-tab">
@@ -817,6 +818,11 @@
         <!-- Notifications Tab -->
         <div id="notifications" class="tab-content">
             <?php require __DIR__ . '/notifications.php'; ?>
+        </div>
+        
+        <!-- Password Policy Tab -->
+        <div id="password-policy" class="tab-content">
+            <?php require __DIR__ . '/password_policy.php'; ?>
         </div>
     </div>
 </div>
