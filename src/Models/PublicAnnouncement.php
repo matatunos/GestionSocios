@@ -33,7 +33,7 @@ class PublicAnnouncement {
 
     // Get all announcements (for admin)
     public function readAll() {
-        $query = "SELECT a.*, u.username as creator_name 
+        $query = "SELECT a.*, u.name as creator_name 
                   FROM " . $this->table . " a
                   LEFT JOIN users u ON a.created_by = u.id
                   ORDER BY a.priority DESC, a.created_at DESC";
