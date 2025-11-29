@@ -17,18 +17,24 @@ class AuditLog {
     }
 
     public function create($user_id, $action, $entity, $entity_id = null, $details = null) {
-        $query = "INSERT INTO " . $this->table_name . " (user_id, action, entity, entity_id, details) VALUES (:user_id, :action, :entity, :entity_id, :details)";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(":user_id", $user_id);
-        $stmt->bindParam(":action", $action);
-        $stmt->bindParam(":entity", $entity);
-        $stmt->bindParam(":entity_id", $entity_id);
-        $stmt->bindParam(":details", $details);
-        return $stmt->execute();
+        try {
+            $query = "INSERT INTO " . $this->table_name . " (user_id, action, entity, entity_id, details) VALUES (:user_id, :action, :entity, :entity_id, :details)";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(":user_id", $user_id);
+            $stmt->bindParam(":action", $action);
+            $stmt->bindParam(":entity", $entity);
+            $stmt->bindParam(":entity_id", $entity_id);
+            $stmt->bindParam(":details", $details);
+            return $stmt->execute();
+        } catch (Exception $e) {
+            // Silently fail if audit log fails (e.g. null user_id) to not block the main action
+            error_log("AuditLog Error: " . $e->getMessage());
+            return false;
+        }
     }
 
     public function readRecent($limit = 20) {
-        $query = "SELECT a.*, u.name AS username FROM " . $this->table_name . " a JOIN users u ON a.user_id = u.id ORDER BY a.created_at DESC LIMIT :limit";
+        $query = "SELECT a.*, u.name AS username FROM " . $this->table_name . " a LEFT JOIN users u ON a.user_id = u.id ORDER BY a.created_at DESC LIMIT :limit";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":limit", $limit, PDO::PARAM_INT);
         $stmt->execute();
@@ -36,7 +42,7 @@ class AuditLog {
     }
 
     public function readFiltered($filters = [], $limit = 50, $offset = 0) {
-        $query = "SELECT a.*, u.name AS username FROM " . $this->table_name . " a JOIN users u ON a.user_id = u.id WHERE 1=1";
+        $query = "SELECT a.*, u.name AS username FROM " . $this->table_name . " a LEFT JOIN users u ON a.user_id = u.id WHERE 1=1";
         $params = [];
         if (!empty($filters['user_id'])) {
             $query .= " AND a.user_id = :user_id";
