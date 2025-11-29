@@ -50,7 +50,7 @@ if (isset($_SESSION['user_id'])) {
         <link rel="stylesheet" href="/css/mobile.css?v=<?php echo time(); ?>">
     <?php endif; ?>
     <link rel="stylesheet" href="/css/listings.css?v=<?php echo time(); ?>">
-    <link rel="stylesheet" href="/css/nav-submenu.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="/css/nav-submenu.css?v=<?php echo filemtime(__DIR__ . '/../../public/css/nav-submenu.css'); ?>">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
