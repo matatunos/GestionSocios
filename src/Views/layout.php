@@ -229,6 +229,12 @@ if (isset($_SESSION['user_id'])) {
                                     <span>Eventos</span>
                                 </a>
                             </li>
+                            <li>
+                                <a href="index.php?page=suppliers&action=dashboard" class="nav-link <?php echo ($page === 'suppliers' && $action === 'dashboard') ? 'active' : ''; ?>">
+                                    <i class="fas fa-truck"></i>
+                                    <span>Proveedores</span>
+                                </a>
+                            </li>
                         </ul>
                     </li>
                     <!-- Menú de Socios -->
@@ -283,11 +289,26 @@ if (isset($_SESSION['user_id'])) {
                         </a>
                     </li>
 
-                    <li>
-                        <a href="index.php?page=suppliers" class="nav-link <?php echo ($page === 'suppliers') ? 'active' : ''; ?>">
+                    <li class="nav-group">
+                        <a href="#" class="nav-link <?php echo ($page === 'suppliers') ? 'active' : ''; ?>">
                             <i class="fas fa-truck"></i>
                             <span>Proveedores</span>
+                            <i class="fas fa-chevron-down" style="margin-left:auto;font-size:0.8em;"></i>
                         </a>
+                        <ul class="nav-submenu">
+                            <li>
+                                <a href="index.php?page=suppliers" class="nav-link <?php echo ($page === 'suppliers' && $action !== 'dashboard') ? 'active' : ''; ?>">
+                                    <i class="fas fa-list"></i>
+                                    <span>Listado</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="index.php?page=suppliers&action=dashboard" class="nav-link <?php echo ($page === 'suppliers' && $action === 'dashboard') ? 'active' : ''; ?>">
+                                    <i class="fas fa-chart-pie"></i>
+                                    <span>Dashboard</span>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
 
                     <li>
