@@ -129,6 +129,12 @@ if (isset($_SESSION['user_id'])) {
                         </a>
                     </li>
                     <li>
+                        <a href="index.php?page=suppliers" class="nav-link <?php echo ($page === 'suppliers') ? 'active' : ''; ?>">
+                            <i class="fas fa-truck"></i>
+                            <span>Proveedores</span>
+                        </a>
+                    </li>
+                    <li>
                         <a href="index.php?page=map" class="nav-link <?php echo ($page === 'map') ? 'active' : ''; ?>">
                             <i class="fas fa-map-marked-alt"></i>
                             <span>Mapa</span>
@@ -260,8 +266,24 @@ if (isset($_SESSION['user_id'])) {
                                     <i class="fas fa-gift"></i>
                                     <span>Donaciones</span>
                                 </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a href="index.php?page=gallery" class="nav-link <?php echo ($page === 'gallery') ? 'active' : ''; ?>">
+                            <i class="fas fa-images"></i>
+                            <span>Galería Imágenes</span>
                         </a>
                     </li>
+
+                    <li>
+                        <a href="index.php?page=suppliers" class="nav-link <?php echo ($page === 'suppliers') ? 'active' : ''; ?>">
+                            <i class="fas fa-truck"></i>
+                            <span>Proveedores</span>
+                        </a>
+                    </li>
+
                     <li>
                         <a href="index.php?page=tasks" class="nav-link <?php echo ($page === 'tasks') ? 'active' : ''; ?>">
                             <i class="fas fa-tasks"></i>
