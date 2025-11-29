@@ -61,6 +61,7 @@
     <div class="card">
         <h2 class="text-lg font-semibold mb-4">Definir Nueva Cuota</h2>
         <form action="index.php?page=fees&action=store" method="POST">
+            <?php require_once __DIR__ . '/../../Helpers/CsrfHelper.php'; echo CsrfHelper::getTokenField(); ?>
             <div class="form-group">
                 <label class="form-label">Año</label>
                 <input type="number" name="year" class="form-control" value="<?php echo date('Y'); ?>" required>

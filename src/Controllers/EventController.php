@@ -115,6 +115,10 @@ class EventController {
             header('Location: index.php?page=events');
             exit;
         }
+        
+        // Validate CSRF token
+        require_once __DIR__ . '/../Helpers/CsrfHelper.php';
+        CsrfHelper::validateRequest();
 
         $eventModel = new Event($this->db);
         $eventModel->name = $_POST['name'] ?? '';
@@ -152,6 +156,9 @@ class EventController {
     public function update($id) {
         $this->checkAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Validate CSRF token
+            require_once __DIR__ . '/../Helpers/CsrfHelper.php';
+            CsrfHelper::validateRequest();
             $this->event->id = $id;
             $this->event->name = $_POST['name'];
             $this->event->event_type = $_POST['event_type'] ?? 'other';

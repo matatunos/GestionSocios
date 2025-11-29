@@ -9,6 +9,7 @@
 
 <div class="card" style="max-width: 900px;">
     <form action="index.php?page=events&action=store" method="POST">
+        <?php require_once __DIR__ . '/../../Helpers/CsrfHelper.php'; echo CsrfHelper::getTokenField(); ?>
         <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
             <div class="form-group">
                 <label class="form-label">Nombre del Evento</label>

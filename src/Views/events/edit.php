@@ -9,6 +9,7 @@
 
 <div class="card" style="max-width: 800px;">
     <form action="index.php?page=events&action=update&id=<?php echo $event->id; ?>" method="POST">
+        <?php require_once __DIR__ . '/../../Helpers/CsrfHelper.php'; echo CsrfHelper::getTokenField(); ?>
         <div class="form-group">
             <label class="form-label">Nombre del Evento</label>
             <input type="text" name="name" class="form-control" required value="<?php echo htmlspecialchars($event->name); ?>">

@@ -27,6 +27,10 @@ class FeeController {
     public function store() {
         $this->checkAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Validate CSRF token
+            require_once __DIR__ . '/../Helpers/CsrfHelper.php';
+            CsrfHelper::validateRequest();
+            
             try {
                 $year = $_POST['year'];
                 $this->fee->year = $year;
