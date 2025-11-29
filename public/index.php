@@ -218,6 +218,16 @@ switch ($page) {
         else if ($action === 'delete') $controller->delete();
         else $controller->index();
         break;
+    case 'announcements':
+        $controller = new AnnouncementController();
+        if ($action === 'create') $controller->create();
+        else if ($action === 'store') $controller->store();
+        else if ($action === 'edit') $controller->edit();
+        else if ($action === 'update') $controller->update();
+        else if ($action === 'delete') $controller->delete();
+        else if ($action === 'toggleActive') $controller->toggleActive();
+        else $controller->index();
+        break;
     case 'treasury':
         $controller = new TreasuryController($db);
         $controller->dashboard();
