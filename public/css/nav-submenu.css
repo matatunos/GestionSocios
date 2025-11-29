@@ -5,25 +5,24 @@
 
 .nav-group>.nav-link {
     cursor: pointer;
+    text-decoration: none;
 }
 
 .nav-submenu {
     list-style: none;
     padding: 0;
     margin: 0;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease;
+    display: none;
 }
 
-.nav-group:hover .nav-submenu,
-.nav-group.active .nav-submenu {
-    max-height: 500px;
+.nav-group:hover .nav-submenu {
+    display: block;
 }
 
 .nav-submenu .nav-link {
     padding-left: 3rem;
     font-size: 0.9rem;
+    text-decoration: none;
 }
 
 .nav-submenu .nav-link i {
