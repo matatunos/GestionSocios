@@ -16,6 +16,10 @@ class AuthController {
 
     public function login() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Validate CSRF token
+            require_once __DIR__ . '/../Helpers/CsrfHelper.php';
+            CsrfHelper::validateRequest();
+            
             $username = $_POST['username'] ?? '';
             $password = $_POST['password'] ?? '';
             require_once __DIR__ . '/../Models/AuditLog.php';

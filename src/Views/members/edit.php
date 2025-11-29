@@ -9,6 +9,7 @@
 
 <div class="card" style="max-width: 800px;">
     <form action="index.php?page=members&action=update&id=<?php echo $member->id; ?>" method="POST" enctype="multipart/form-data">
+        <?php require_once __DIR__ . '/../../Helpers/CsrfHelper.php'; echo CsrfHelper::getTokenField(); ?>
         <div class="row mb-3">
                 <div class="form-group">
                     <label class="form-label">Fecha de alta</label>

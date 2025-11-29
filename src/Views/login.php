@@ -46,6 +46,7 @@ if (!isset($associationName)) {
         <?php endif; ?>
 
         <form action="index.php?page=login&action=login" method="POST">
+            <?php require_once __DIR__ . '/../Helpers/CsrfHelper.php'; echo CsrfHelper::getTokenField(); ?>
             <div class="form-group">
                 <label class="form-label">Usuario</label>
                 <div style="position: relative;">

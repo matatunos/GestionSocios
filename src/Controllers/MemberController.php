@@ -67,6 +67,9 @@ class MemberController {
     public function store() {
         $this->checkAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Validate CSRF token
+            require_once __DIR__ . '/../Helpers/CsrfHelper.php';
+            CsrfHelper::validateRequest();
             $this->member->first_name = $_POST['first_name'];
             $this->member->last_name = $_POST['last_name'];
             $this->member->dni = $_POST['dni'] ?? null;
@@ -172,6 +175,10 @@ class MemberController {
     public function update($id) {
         $this->checkAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Validate CSRF token
+            require_once __DIR__ . '/../Helpers/CsrfHelper.php';
+            CsrfHelper::validateRequest();
+            
             $this->member->id = $id;
             // Leer datos originales antes de modificar
             $this->member->readOne();
