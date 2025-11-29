@@ -49,8 +49,8 @@ try {
         .announcements-section {
             flex: 1;
             padding: 2rem;
-            background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
-            color: white;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #2d3748;
             overflow-y: auto;
         }
         
@@ -74,18 +74,18 @@ try {
         }
         
         .announcement-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+            background: white;
             border-radius: 12px;
             padding: 1.5rem;
             margin-bottom: 1rem;
             border-left: 4px solid;
             transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
         
         .announcement-card:hover {
-            transform: translateX(5px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
         }
         
         .announcement-card.info { border-left-color: #3b82f6; }
