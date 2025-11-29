@@ -91,12 +91,12 @@
                                    class="btn btn-sm btn-info" title="Editar">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <a href="index.php?page=announcements&action=delete&id=<?php echo $ann['id']; ?>" 
-                                   class="btn btn-sm btn-danger" 
-                                   onclick="return confirm('¿Estás seguro de eliminar este anuncio?')"
-                                   title="Eliminar">
-                                    <i class="fas fa-trash"></i>
-                                </a>
+                                <form action="index.php?page=announcements&action=delete&id=<?php echo $ann['id']; ?>" method="POST" style="display:inline;" onsubmit="return confirm('¿Estás seguro de eliminar este anuncio?');">
+                                    <?php echo CsrfHelper::getTokenField(); ?>
+                                    <button type="submit" class="btn btn-sm btn-danger" title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>
