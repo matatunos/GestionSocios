@@ -158,23 +158,6 @@
     .category-badge {
         display: inline-block;
         padding: 0.25rem 0.75rem;
-        border-radius: var(--radius-full);
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: white;
-    }
-    .category-inactive { opacity: 0.6; }
-    .category-stats {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 1rem;
-        margin-top: 1rem;
-        padding-top: 1rem;
-        border-top: 1px solid var(--border-light);
-    }
-    .stat-item { text-align: center; }
-    .stat-value {
-        font-size: 1.5rem;
         font-weight: 700;
         color: var(--primary-600);
     }
