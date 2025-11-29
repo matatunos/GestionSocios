@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "Dashboard de Proveedores";
-require_once __DIR__ . '/../layout.php';
+ob_start();
 
 // Prepare chart data
 $months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
@@ -258,3 +258,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
+<?php
+$content = ob_get_clean();
+require __DIR__ . '/../layout.php';
+?>
