@@ -100,5 +100,83 @@ class SupplierInvoice {
 
         return false;
     }
+
+    // Statistics Methods
+
+    public function getTotalAmount($year = null) {
+        $query = "SELECT SUM(amount) as total FROM " . $this->table_name;
+        if ($year) {
+            $query .= " WHERE YEAR(invoice_date) = :year";
+        }
+        
+        $stmt = $this->conn->prepare($query);
+        if ($year) {
+            $stmt->bindParam(':year', $year);
+        }
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row['total'] ?? 0;
+    }
+
+    public function getPendingAmount() {
+        $query = "SELECT SUM(amount) as total FROM " . $this->table_name . " WHERE status = 'pending'";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row['total'] ?? 0;
+    }
+
+    public function getTopSuppliers($limit = 5, $year = null) {
+        $query = "SELECT s.name, SUM(i.amount) as total_amount, COUNT(i.id) as invoice_count 
+                  FROM " . $this->table_name . " i
+                  JOIN suppliers s ON i.supplier_id = s.id";
+        
+        if ($year) {
+            $query .= " WHERE YEAR(i.invoice_date) = :year";
+        }
+        
+        $query .= " GROUP BY s.id ORDER BY total_amount DESC LIMIT :limit";
+        
+        $stmt = $this->conn->prepare($query);
+        if ($year) {
+            $stmt->bindParam(':year', $year);
+        }
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getMonthlyStats($year) {
+        $query = "SELECT MONTH(invoice_date) as month, SUM(amount) as total 
+                  FROM " . $this->table_name . " 
+                  WHERE YEAR(invoice_date) = :year 
+                  GROUP BY MONTH(invoice_date) 
+                  ORDER BY month ASC";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':year', $year);
+        $stmt->execute();
+        
+        $results = $stmt->fetchAll(PDO::FETCH_KEY_PAIR); // Returns [month => total]
+        
+        // Fill missing months with 0
+        $stats = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $stats[$i] = $results[$i] ?? 0;
+        }
+        return $stats;
+    }
+
+    public function getRecentInvoices($limit = 5) {
+        $query = "SELECT i.*, s.name as supplier_name 
+                  FROM " . $this->table_name . " i
+                  JOIN suppliers s ON i.supplier_id = s.id
+                  ORDER BY i.created_at DESC LIMIT :limit";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 ?>

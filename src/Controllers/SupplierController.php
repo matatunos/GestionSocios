@@ -322,5 +322,22 @@ class SupplierController {
         header("Location: index.php?page=suppliers&action=show&id=" . $supplierId);
         exit;
     }
+
+    public function dashboard() {
+        $year = isset($_GET['year']) ? intval($_GET['year']) : date('Y');
+        
+        // Fetch stats
+        $totalAmount = $this->invoice->getTotalAmount($year);
+        $pendingAmount = $this->invoice->getPendingAmount();
+        $topSuppliers = $this->invoice->getTopSuppliers(5, $year);
+        $monthlyStats = $this->invoice->getMonthlyStats($year);
+        $recentInvoices = $this->invoice->getRecentInvoices(5);
+        
+        // Total suppliers count
+        $stmt = $this->supplier->readAll();
+        $totalSuppliers = $stmt->rowCount();
+        
+        require __DIR__ . '/../Views/suppliers/dashboard.php';
+    }
 }
 ?>

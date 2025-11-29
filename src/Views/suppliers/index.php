@@ -1,23 +1,5 @@
 <?php
 $pageTitle = 'Proveedores';
-ob_start();
-?>
-
-<div class="page-header">
-    <div>
-        <h1><i class="fas fa-truck"></i> Proveedores</h1>
-        <p class="text-muted">Gestión de proveedores y facturas</p>
-    </div>
-    <div class="header-actions">
-        <a href="index.php?page=suppliers&action=create" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Nuevo Proveedor
-        </a>
-    </div>
-</div>
-
-<?php if (isset($_SESSION['success'])): ?>
-    <div class="alert alert-success">
-        <i class="fas fa-check-circle"></i>
         <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
     </div>
 <?php endif; ?>
