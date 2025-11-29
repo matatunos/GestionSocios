@@ -41,6 +41,11 @@ class SupplierController {
             // Handle Logo Upload
             if (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
                 try {
+                    // Validate file size (5MB maximum)
+                    if ($_FILES['logo']['size'] > 5 * 1024 * 1024) {
+                        throw new Exception('El archivo es demasiado grande. Máximo 5MB permitido.');
+                    }
+
                     $uploadDir = 'public/uploads/suppliers/logos/';
                     if (!file_exists($uploadDir)) {
                         mkdir($uploadDir, 0755, true);
@@ -54,7 +59,17 @@ class SupplierController {
                         throw new Exception('Formato de imagen no válido');
                     }
 
-                    $fileName = uniqid() . '.' . $extension;
+                    // Validate MIME type using finfo
+                    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                    $mimeType = finfo_file($finfo, $_FILES['logo']['tmp_name']);
+                    finfo_close($finfo);
+                    
+                    $allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
+                    if (!in_array($mimeType, $allowedMimes)) {
+                        throw new Exception('Tipo de archivo no permitido.');
+                    }
+
+                    $fileName = uniqid() . '_' . bin2hex(random_bytes(8)) . '.' . $extension;
                     $targetPath = $uploadDir . $fileName;
 
                     if (move_uploaded_file($_FILES['logo']['tmp_name'], $targetPath)) {
@@ -83,7 +98,7 @@ class SupplierController {
     }
 
     public function show() {
-        $id = isset($_GET['id']) ? $_GET['id'] : die('ERROR: ID no encontrado.');
+        $id = isset($_GET['id']) ? intval($_GET['id']) : die('ERROR: ID no encontrado.');
         $this->supplier->id = $id;
         $this->supplier->readOne();
 
@@ -94,7 +109,7 @@ class SupplierController {
     }
 
     public function edit() {
-        $id = isset($_GET['id']) ? $_GET['id'] : die('ERROR: ID no encontrado.');
+        $id = isset($_GET['id']) ? intval($_GET['id']) : die('ERROR: ID no encontrado.');
         $this->supplier->id = $id;
         $this->supplier->readOne();
         require __DIR__ . '/../Views/suppliers/edit.php';
@@ -115,16 +130,42 @@ class SupplierController {
 
             // Handle Logo Update
             if (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
-                // Logic similar to store, potentially deleting old logo
-                $uploadDir = 'public/uploads/suppliers/logos/';
-                if (!file_exists($uploadDir)) {
-                    mkdir($uploadDir, 0755, true);
-                }
-                $extension = strtolower(pathinfo($_FILES['logo']['name'], PATHINFO_EXTENSION));
-                $fileName = uniqid() . '.' . $extension;
-                $targetPath = $uploadDir . $fileName;
-                if (move_uploaded_file($_FILES['logo']['tmp_name'], $targetPath)) {
-                    $this->supplier->logo_path = $targetPath;
+                try {
+                    // Validate file size (5MB maximum)
+                    if ($_FILES['logo']['size'] > 5 * 1024 * 1024) {
+                        throw new Exception('El archivo es demasiado grande. Máximo 5MB permitido.');
+                    }
+
+                    $uploadDir = 'public/uploads/suppliers/logos/';
+                    if (!file_exists($uploadDir)) {
+                        mkdir($uploadDir, 0755, true);
+                    }
+                    
+                    $extension = strtolower(pathinfo($_FILES['logo']['name'], PATHINFO_EXTENSION));
+                    $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+                    
+                    if (!in_array($extension, $allowedExtensions)) {
+                        throw new Exception('Formato de imagen no válido');
+                    }
+
+                    // Validate MIME type
+                    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                    $mimeType = finfo_file($finfo, $_FILES['logo']['tmp_name']);
+                    finfo_close($finfo);
+                    
+                    $allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
+                    if (!in_array($mimeType, $allowedMimes)) {
+                        throw new Exception('Tipo de archivo no permitido.');
+                    }
+
+                    $fileName = uniqid() . '_' . bin2hex(random_bytes(8)) . '.' . $extension;
+                    $targetPath = $uploadDir . $fileName;
+                    
+                    if (move_uploaded_file($_FILES['logo']['tmp_name'], $targetPath)) {
+                        $this->supplier->logo_path = $targetPath;
+                    }
+                } catch (Exception $e) {
+                    $_SESSION['error'] = "Error al subir logo: " . $e->getMessage();
                 }
             } else {
                 // Keep existing logo if not updated
@@ -146,9 +187,15 @@ class SupplierController {
     }
 
     public function delete() {
-        // Implement delete logic (check for dependencies/invoices first?)
-        // For now basic delete
-        $id = $_GET['id'];
+        CsrfHelper::validateRequest();
+        
+        $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+        if ($id <= 0) {
+            $_SESSION['error'] = "ID inválido.";
+            header("Location: index.php?page=suppliers");
+            exit;
+        }
+        
         $this->supplier->id = $id;
         if ($this->supplier->delete()) {
             $_SESSION['success'] = "Proveedor eliminado.";
@@ -183,7 +230,12 @@ class SupplierController {
             // File Upload Logic
             if (isset($_FILES['invoice_file']) && $_FILES['invoice_file']['error'] === UPLOAD_ERR_OK) {
                 try {
-                    $supplierDir = 'public/uploads/suppliers/' . $supplierId . '/';
+                    // Validate file size (10MB maximum for invoices)
+                    if ($_FILES['invoice_file']['size'] > 10 * 1024 * 1024) {
+                        throw new Exception('El archivo es demasiado grande. Máximo 10MB permitido.');
+                    }
+
+                    $supplierDir = 'public/uploads/suppliers/' . intval($supplierId) . '/';
                     if (!file_exists($supplierDir)) {
                         mkdir($supplierDir, 0755, true);
                     }
@@ -243,8 +295,15 @@ class SupplierController {
     }
     
     public function deleteInvoice() {
-        // Check admin?
-        $id = $_GET['id'];
+        CsrfHelper::validateRequest();
+        
+        $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+        if ($id <= 0) {
+            $_SESSION['error'] = "ID inválido.";
+            header("Location: index.php?page=suppliers");
+            exit;
+        }
+        
         $this->invoice->id = $id;
         $this->invoice->readOne();
         
