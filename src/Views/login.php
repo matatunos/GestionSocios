@@ -47,30 +47,42 @@ try {
             align-items: center;
             justify-content: center;
             padding: 2rem;
+        }
+
+        .login-wrapper {
+            display: flex;
+            width: 100%;
+            max-width: 1000px;
             gap: 2rem;
+            align-items: stretch;
         }
         
         .announcements-section {
             flex: 1;
-            max-width: 600px;
-            max-height: 600px;
             padding: 2rem;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             color: #2d3748;
             overflow-y: auto;
             border-radius: 16px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
         }
         
         .login-section {
-            flex: 0 0 450px;
+            flex: 0 0 400px;
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
         }
         
         .announcements-header {
             margin-bottom: 1.5rem;
+            flex-shrink: 0;
         }
         
         .announcements-header h2 {
@@ -82,6 +94,12 @@ try {
         .announcements-header p {
             font-size: 0.9rem;
             opacity: 0.8;
+        }
+        
+        .announcements-content {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 0.5rem;
         }
         
         .announcement-card {
@@ -124,6 +142,11 @@ try {
             text-align: center;
             padding: 2rem 1rem;
             opacity: 0.7;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
         }
         
         .empty-announcements i {
@@ -132,64 +155,65 @@ try {
         }
         
         @media (max-width: 968px) {
-            .login-container {
+            .login-wrapper {
                 flex-direction: column;
-                padding: 1rem;
+                align-items: center;
+                gap: 1rem;
+            }
+            
+            .announcements-section, .login-section {
+                width: 100%;
+                max-width: 400px;
+                flex: none;
             }
             
             .announcements-section {
-                flex: none;
-                width: 100%;
-                max-width: 400px;
-                max-height: 300px;
-            }
-            
-            .login-section {
-                flex: none;
-                width: 100%;
+                height: 300px;
             }
         }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <!-- Announcements Section -->
-        <div class="announcements-section">
-            <div class="announcements-header">
-                <h2><i class="fas fa-bullhorn"></i> Tablón de Anuncios</h2>
-                <p>Información importante y novedades</p>
+        <div class="login-wrapper">
+            <!-- Announcements Section -->
+            <div class="announcements-section">
+                <div class="announcements-header">
+                    <h2><i class="fas fa-bullhorn"></i> Tablón de Anuncios</h2>
+                    <p>Información importante y novedades</p>
+                </div>
+                
+                <div class="announcements-content">
+                    <?php if (empty($announcements)): ?>
+                        <div class="empty-announcements">
+                            <i class="fas fa-info-circle"></i>
+                            <p>No hay anuncios en este momento</p>
+                        </div>
+                    <?php else: ?>
+                        <?php foreach ($announcements as $ann): ?>
+                            <div class="announcement-card <?php echo htmlspecialchars($ann['type']); ?>">
+                                <h3>
+                                    <?php
+                                    $icons = [
+                                        'info' => 'fa-info-circle',
+                                        'success' => 'fa-check-circle',
+                                        'warning' => 'fa-exclamation-triangle',
+                                        'danger' => 'fa-exclamation-circle'
+                                    ];
+                                    $icon = $icons[$ann['type']] ?? 'fa-info-circle';
+                                    ?>
+                                    <i class="fas <?php echo $icon; ?>"></i>
+                                    <?php echo htmlspecialchars($ann['title']); ?>
+                                </h3>
+                                <p><?php echo nl2br(htmlspecialchars($ann['content'])); ?></p>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
             </div>
             
-            <?php if (empty($announcements)): ?>
-                <div class="empty-announcements">
-                    <i class="fas fa-info-circle"></i>
-                    <p>No hay anuncios en este momento</p>
-                </div>
-            <?php else: ?>
-                <?php foreach ($announcements as $ann): ?>
-                    <div class="announcement-card <?php echo htmlspecialchars($ann['type']); ?>">
-                        <h3>
-                            <?php
-                            $icons = [
-                                'info' => 'fa-info-circle',
-                                'success' => 'fa-check-circle',
-                                'warning' => 'fa-exclamation-triangle',
-                                'danger' => 'fa-exclamation-circle'
-                            ];
-                            $icon = $icons[$ann['type']] ?? 'fa-info-circle';
-                            ?>
-                            <i class="fas <?php echo $icon; ?>"></i>
-                            <?php echo htmlspecialchars($ann['title']); ?>
-                        </h3>
-                        <p><?php echo nl2br(htmlspecialchars($ann['content'])); ?></p>
-                    </div>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </div>
-        
-        <!-- Login Section -->
-        <div class="login-section">
-            <div class="card" style="width: 100%; max-width: 400px; padding: 2rem; box-sizing: border-box;">
+            <!-- Login Section -->
+            <div class="login-section">
                 <div style="text-align: center; margin-bottom: 2rem;">
                     <div style="font-size: 3rem; color: var(--primary-600); margin-bottom: 1rem;">
                         <i class="fas fa-users-rectangle"></i>
