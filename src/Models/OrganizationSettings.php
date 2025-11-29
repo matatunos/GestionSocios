@@ -67,7 +67,7 @@ class OrganizationSettings {
      */
     public function get($key, $default = null) {
         $settings = $this->getAll();
-        return $settings[$key] ?? $default;
+        return $settings[$key]['value'] ?? $default;
     }
 
     /**
@@ -251,14 +251,14 @@ class OrganizationSettings {
         $settings = $this->getAll();
         
         return [
-            'name' => $settings['org_name'] ?? 'Mi Asociación',
-            'short_name' => $settings['org_short_name'] ?? 'MA',
-            'logo' => $settings['org_logo'] ?? '',
-            'logo_width' => $settings['org_logo_width'] ?? 180,
-            'email' => $settings['org_email'] ?? '',
-            'phone' => $settings['org_phone'] ?? '',
-            'address' => $settings['org_address'] ?? '',
-            'website' => $settings['org_website'] ?? '',
+            'name' => $settings['org_name']['value'] ?? 'Mi Asociación',
+            'short_name' => $settings['org_short_name']['value'] ?? 'MA',
+            'logo' => $settings['org_logo']['value'] ?? '',
+            'logo_width' => $settings['org_logo_width']['value'] ?? 180,
+            'email' => $settings['org_email']['value'] ?? '',
+            'phone' => $settings['org_phone']['value'] ?? '',
+            'address' => $settings['org_address']['value'] ?? '',
+            'website' => $settings['org_website']['value'] ?? '',
         ];
     }
     
