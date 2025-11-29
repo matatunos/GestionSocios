@@ -15,6 +15,7 @@
     <?php endif; ?>
 
     <form method="POST" action="index.php?page=donors&action=store" enctype="multipart/form-data">
+        <?php require_once __DIR__ . '/../../Helpers/CsrfHelper.php'; echo CsrfHelper::getTokenField(); ?>
         <div class="form-group mb-3">
             <label class="form-label">Nombre del Negocio / Donante</label>
             <input type="text" id="name" name="name" class="form-control" required>

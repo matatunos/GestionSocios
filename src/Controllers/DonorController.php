@@ -41,6 +41,9 @@ class DonorController {
     public function store() {
         $this->checkAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Validate CSRF token
+            require_once __DIR__ . '/../Helpers/CsrfHelper.php';
+            CsrfHelper::validateRequest();
             $this->donor->name = $_POST['name'];
             $this->donor->contact_person = $_POST['contact_person'];
             $this->donor->phone = $_POST['phone'];
@@ -117,6 +120,10 @@ class DonorController {
     public function update($id) {
         $this->checkAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Validate CSRF token
+            require_once __DIR__ . '/../Helpers/CsrfHelper.php';
+            CsrfHelper::validateRequest();
+            
             $this->donor->id = $id;
             // Leer datos originales antes de modificar
             $this->donor->readOne();

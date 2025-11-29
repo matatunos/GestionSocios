@@ -28,6 +28,7 @@ const annualFees = <?php echo json_encode($fees ?? []); ?>;
 
 <div class="card" style="max-width: 800px;">
     <form action="index.php?page=payments&action=store" method="POST">
+        <?php require_once __DIR__ . '/../../Helpers/CsrfHelper.php'; echo CsrfHelper::getTokenField(); ?>
         <div class="form-group">
             <label class="form-label">Socio</label>
             <select name="member_id" class="form-control" required>

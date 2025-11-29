@@ -48,6 +48,10 @@ class PaymentController {
     public function store() {
         $this->checkAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Validate CSRF token
+            require_once __DIR__ . '/../Helpers/CsrfHelper.php';
+            CsrfHelper::validateRequest();
+            
             try {
                 $member_id = $_POST['member_id'];
                 $payment_type = $_POST['payment_type'] ?? 'fee';
@@ -114,6 +118,9 @@ class PaymentController {
     public function update($id) {
         $this->checkAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Validate CSRF token
+            require_once __DIR__ . '/../Helpers/CsrfHelper.php';
+            CsrfHelper::validateRequest();
             $this->payment->id = $id;
             $this->payment->member_id = $_POST['member_id'];
             $this->payment->amount = $_POST['amount'];
