@@ -149,7 +149,7 @@ INSERT INTO members (first_name, last_name, dni, email, phone, address, category
 -- EVENTOS
 -- ============================================
 
-INSERT INTO events (name, event_type, color, description, location, date, start_time, end_time, price, max_attendees, requires_registration, registration_deadline, is_active) VALUES
+INSERT INTO events (title, event_type, color, description, location, date, start_time, end_time, price, max_attendees, requires_registration, registration_deadline, is_active) VALUES
 ('Fiesta de Primavera', 'social', '#4caf50', 'Celebración anual de la primavera con música y comida.', 'Parque Central', '2025-04-12', '18:00', '23:00', 5.00, 100, 1, '2025-04-10', 1),
 ('Taller de Fotografía', 'formativo', '#2196f3', 'Aprende técnicas básicas de fotografía con expertos.', 'Centro Cultural', '2025-05-05', '10:00', '14:00', 0.00, 30, 1, '2025-05-03', 1),
 ('Excursión a la Montaña', 'ocio', '#ff9800', 'Ruta de senderismo y picnic en la montaña.', 'Sierra Local', '2025-06-20', '08:00', '17:00', 10.00, 50, 1, '2025-06-15', 1),
