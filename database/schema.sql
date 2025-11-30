@@ -284,7 +284,6 @@ CREATE TABLE IF NOT EXISTS document_permissions (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Índice para permisos de documentos
-CREATE INDEX idx_document_member ON document_permissions(document_id, member_id);
 
 -- Tabla de encuestas
 CREATE TABLE IF NOT EXISTS polls (
