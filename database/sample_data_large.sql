@@ -9,18 +9,15 @@ INSERT INTO public_announcements (title, content, type, is_active, priority, cre
 ('Bienvenida a nuevos socios', 'Damos la bienvenida a todos los nuevos miembros de la asociación.', 'success', 1, 1, 1, '2023-01-05', '2023-01-05', '2023-02-01'),
 ('Recordatorio de cuota', 'Recuerda realizar el pago de la cuota anual antes del 31 de enero.', 'info', 1, 2, 1, '2023-01-10', '2023-01-10', '2023-01-31'),
 ('Evento primavera', 'No olvides inscribirte en la Fiesta de Primavera.', 'warning', 1, 3, 1, '2023-03-01', '2023-03-01', '2023-03-21');
--- Registro de actividad (audit log) ficticio para desarrollo/test
 INSERT INTO audit_log (user_id, action, entity_type, entity_id, old_values, new_values, ip_address, user_agent, created_at) VALUES
 (1, 'create', 'expense', 1, NULL, '{"amount":1200.00}', '192.168.1.10', 'Mozilla/5.0', '2023-01-15 10:00:00'),
 (1, 'update', 'event', 1, '{"title":"Fiesta"}', '{"title":"Fiesta de Primavera"}', '192.168.1.11', 'Mozilla/5.0', '2023-03-21 12:00:00'),
 (1, 'delete', 'donation', 2, '{"amount":250.00}', NULL, '192.168.1.12', 'Mozilla/5.0', '2023-02-20 15:00:00');
--- Historial de imágenes de socios ficticio para desarrollo/test
 INSERT INTO member_image_history (member_id, image_url, is_current, uploaded_at, uploaded_by, replaced_at) VALUES
 (1, '/members/img1.png', 1, '2023-01-10', 1, NULL),
 (2, '/members/img2.png', 0, '2023-02-15', 1, '2023-03-01'),
 (3, '/members/img3.png', 1, '2023-03-20', 1, NULL);
 
--- Historial de imágenes de donantes ficticio para desarrollo/test
 INSERT INTO donor_image_history (donor_id, image_url, is_current, uploaded_at, uploaded_by, replaced_at) VALUES
 (1, '/donors/img1.png', 1, '2023-01-10', 1, NULL),
 (2, '/donors/img2.png', 0, '2023-02-15', 1, '2023-03-01'),
@@ -50,7 +47,6 @@ INSERT INTO conversations (subject, created_at, updated_at) VALUES
 ('Organización de evento primavera', '2023-02-01', '2023-02-01'),
 ('Actualización de inventario', '2023-03-01', '2023-03-01');
 
--- Mensajes ficticios para desarrollo/test
 INSERT INTO messages (conversation_id, sender_id, receiver_id, subject, body, message, is_read, sent_at) VALUES
 (1, 1, 1, 'Evento primavera', '¿Quién se encarga de la logística?', '¿Quién se encarga de la logística?', 1, '2023-02-01 10:00:00'),
 (1, 1, 1, 'Evento primavera', 'Yo puedo ayudar con los materiales.', 'Yo puedo ayudar con los materiales.', 0, '2023-02-01 10:05:00'),
@@ -60,13 +56,11 @@ INSERT INTO messages (conversation_id, sender_id, receiver_id, subject, body, me
 INSERT INTO conversation_participants (conversation_id, user_id, member_id, joined_at, last_read_at) VALUES
 (1, 1, 1, '2023-02-01 10:00:00', '2023-02-01 10:05:00'),
 (2, 1, 2, '2023-03-01 09:00:00', '2023-03-01 09:05:00');
--- Documentos ficticios para desarrollo/test
 INSERT INTO documents (title, description, file_name, file_path, file_size, file_type, uploaded_by, is_public, downloads, created_at, updated_at) VALUES
 ('Reglamento Interno', 'Documento con las normas internas de la asociación.', 'reglamento.pdf', '/docs/reglamento.pdf', 102400, 'application/pdf', 1, TRUE, 10, '2023-01-10', '2023-01-10'),
 ('Acta Asamblea', 'Acta de la última asamblea general.', 'acta_asamblea.pdf', '/docs/acta_asamblea.pdf', 204800, 'application/pdf', 1, FALSE, 5, '2023-02-15', '2023-02-15'),
 ('Informe de Actividades', 'Resumen de actividades realizadas en el año.', 'informe_actividades.pdf', '/docs/informe_actividades.pdf', 307200, 'application/pdf', 1, TRUE, 8, '2023-03-20', '2023-03-20');
 
--- Permisos de documentos ficticios para desarrollo/test
 INSERT INTO document_permissions (document_id, member_id, created_at) VALUES
 (1, 1, '2023-01-10'),
 (2, 2, '2023-02-15'),
@@ -78,7 +72,6 @@ INSERT INTO tasks (title, description, assigned_to, category_id, created_by, pri
 ('Enviar notificaciones', 'Enviar notificaciones a los socios sobre el torneo deportivo.', 1, 3, 1, 3, 'pending', '2023-06-05', NULL, NULL, '2023-05-01', '2023-05-01'),
 ('Reservar catering', 'Gestionar la reserva de catering para la cena de Navidad.', 1, 4, 1, 2, 'completed', '2023-12-10', '2023-12-15 20:00:00', 1, '2023-11-01', '2023-12-15'),
 ('Limpiar instalaciones', 'Coordinar limpieza después de eventos.', 1, 5, 1, 1, 'pending', '2023-05-31', NULL, NULL, '2023-05-10', '2023-05-10');
--- Notificaciones ficticias para desarrollo/test
 INSERT INTO notifications (user_id, title, message, type, link, is_read, created_at) VALUES
 (1, 'Nuevo gasto registrado', 'Se ha registrado un nuevo gasto en la plataforma.', 'info', '/expenses/1', 0, '2023-01-15'),
 (1, 'Evento creado', 'Se ha creado el evento "Fiesta de Primavera".', 'success', '/events/1', 0, '2023-03-21'),
@@ -92,7 +85,6 @@ INSERT INTO payments (amount, payment_date, payment_type, description, member_id
 (100.00, '2023-03-20', 'evento', 'Pago por evento deportivo', 3, '2023-03-20'),
 (60.00, '2023-04-25', 'cuota', 'Pago de cuota anual', 4, '2023-04-25'),
 (80.00, '2023-05-30', 'donación', 'Donación voluntaria', 5, '2023-05-30');
--- Anuncios del libro de fiestas ficticios para desarrollo/test
 INSERT INTO book_ads (donor_id, year, ad_type, amount, status, image_url, created_at) VALUES
 (1, 2023, 'media', 200.00, 'paid', '/ads/ad1.png', '2023-01-20'),
 (2, 2023, 'full', 400.00, 'pending', '/ads/ad2.png', '2023-02-25'),
@@ -114,7 +106,6 @@ INSERT INTO donations (donor_id, amount, donation_date, method, notes, created_a
 (3, 1000.00, '2023-03-25', 'tarjeta', 'Donación para mantenimiento web', '2023-03-25'),
 (4, 750.00, '2023-04-30', 'transferencia', 'Donación para catering', '2023-04-30'),
 (5, 300.00, '2023-05-10', 'efectivo', 'Donación para limpieza', '2023-05-10');
--- Eventos ficticios para desarrollo/test
 INSERT INTO events (title, description, event_date, location, created_at, updated_at) VALUES
 ('Fiesta de Primavera', 'Evento anual de bienvenida a la primavera', '2023-03-21 18:00:00', 'Centro Cultural', '2023-02-01', '2023-02-01'),
 ('Torneo Deportivo', 'Competencia deportiva entre socios', '2023-06-10 10:00:00', 'Polideportivo Municipal', '2023-05-01', '2023-05-01'),
@@ -122,7 +113,6 @@ INSERT INTO events (title, description, event_date, location, created_at, update
 ('Cena de Navidad', 'Cena de fin de año para socios', '2023-12-20 21:00:00', 'Restaurante El Buen Sabor', '2023-11-01', '2023-11-01'),
 ('Excursión Cultural', 'Visita guiada a museo local', '2024-04-05 09:00:00', 'Museo de la Ciudad', '2024-03-01', '2024-03-01');
 
--- Asistencias ficticias a eventos para desarrollo/test
 INSERT INTO event_attendance (event_id, member_id, status, attended, attended_at, registered_at, registration_date, notes) VALUES
 (1, 1, 'attended', 1, '2023-03-21 18:30:00', '2023-03-01 10:00:00', '2023-03-01 10:00:00', 'Participó activamente'),
 (1, 2, 'attended', 1, '2023-03-21 18:35:00', '2023-03-01 10:05:00', '2023-03-01 10:05:00', 'Ayudó en la organización'),
@@ -131,20 +121,12 @@ INSERT INTO event_attendance (event_id, member_id, status, attended, attended_at
 (3, 5, 'registered', 0, NULL, '2023-08-20 18:00:00', '2023-08-20 18:00:00', 'Registrado para charla'),
 (4, 6, 'attended', 1, '2023-12-20 22:00:00', '2023-11-15 20:00:00', '2023-11-15 20:00:00', 'Disfrutó la cena'),
 (5, 7, 'cancelled', 0, NULL, '2024-03-20 08:00:00', '2024-03-20 08:00:00', 'Canceló por motivos personales');
--- Gastos ficticios para desarrollo/test
 INSERT INTO expenses (category_id, description, amount, expense_date, payment_method, invoice_number, provider, notes, receipt_file, created_by, created_at) VALUES
 (1, 'Compra material deportivo', 1200.00, '2023-01-15', 'transferencia', 'INV-2023-001', 'Proveedor Uno S.L.', 'Pago de material para evento', '/receipts/rec-2023-001.pdf', 1, '2023-01-15'),
 (2, 'Compra papelería', 450.50, '2023-02-20', 'efectivo', 'INV-2023-002', 'Proveedor Dos S.A.', 'Material de oficina', '/receipts/rec-2023-002.pdf', 1, '2023-02-20'),
 (3, 'Servicios informáticos', 980.75, '2023-03-25', 'tarjeta', 'INV-2023-003', 'Proveedor Tres SLU', 'Mantenimiento web', '/receipts/rec-2023-003.pdf', 1, '2023-03-25'),
 (4, 'Catering evento', 650.00, '2023-04-30', 'transferencia', 'INV-2023-004', 'Proveedor Cuatro S.L.', 'Comida para evento anual', '/receipts/rec-2023-004.pdf', 1, '2023-04-30'),
 (5, 'Limpieza mensual', 300.00, '2023-05-10', 'efectivo', 'INV-2023-005', 'Proveedor Cinco S.A.', 'Limpieza de instalaciones', '/receipts/rec-2023-005.pdf', 1, '2023-05-10');
--- Facturas de proveedores ficticias para desarrollo/test
-INSERT INTO supplier_invoices (supplier_id, invoice_number, invoice_date, amount, status, file_path, notes, created_at) VALUES
-(1, 'INV-2023-001', '2023-01-15', 1200.00, 'paid', '/invoices/inv-2023-001.pdf', 'Material deportivo', '2023-01-15'),
-(2, 'INV-2023-002', '2023-02-20', 450.50, 'pending', '/invoices/inv-2023-002.pdf', 'Papelería', '2023-02-20'),
-(3, 'INV-2023-003', '2023-03-25', 980.75, 'paid', '/invoices/inv-2023-003.pdf', 'Servicios informáticos', '2023-03-25'),
-(4, 'INV-2023-004', '2023-04-30', 650.00, 'cancelled', '/invoices/inv-2023-004.pdf', 'Catering evento', '2023-04-30'),
-(5, 'INV-2023-005', '2023-05-10', 300.00, 'paid', '/invoices/inv-2023-005.pdf', 'Limpieza mensual', '2023-05-10');
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- Limpiar tablas existentes
@@ -167,8 +149,6 @@ TRUNCATE TABLE category_fee_history;
 TRUNCATE TABLE member_categories;
 TRUNCATE TABLE expense_categories;
 TRUNCATE TABLE task_categories;
-TRUNCATE TABLE ad_prices;
-TRUNCATE TABLE annual_fees;
 TRUNCATE TABLE organization_settings;
 
 SET FOREIGN_KEY_CHECKS = 1;
@@ -194,8 +174,6 @@ INSERT INTO organization_settings (category, setting_key, setting_value, setting
 
 -- Cuotas anuales
 INSERT INTO annual_fees (year, amount) VALUES
-(2020, 15.00),
-(2021, 16.00),
 (2022, 17.00),
 (2023, 18.00),
 (2024, 19.00),
@@ -204,7 +182,6 @@ INSERT INTO annual_fees (year, amount) VALUES
 -- Miembros de ejemplo
 INSERT INTO members (first_name, last_name, dni, email, phone, address, category_id, status, join_date, deactivated_at, latitude, longitude) VALUES
 ('Teresa', 'García Sanz', '31538609C', 'teresa.garcía569@demo.com', '6389646295', 'Calle Principal 155', 5, 'active', '2023-04-26', NULL, 43.425008, -5.629036),
-('Rocío', 'Alonso Sanz', '87017614N', 'rocío.alonso717@demo.com', '6714806118', 'Calle Mayor 188', 5, 'active', '2021-11-22', NULL, 43.457842, -5.674219),
 ('Sofía', 'Ramos Serrano', '74015716Z', 'sofía.ramos265@demo.com', '6921538003', 'Calle Principal 155', 7, 'active', '2020-07-28', NULL, 43.52559, -5.723909),
 ('Juan', 'Sanz Márquez', '96357358P', 'juan.sanz857@demo.com', '6369042556', 'Calle Central 39', 5, 'active', '2023-02-21', NULL, 43.445639, -5.699307),
 ('Pilar', 'Vázquez Díaz', '92491921C', 'pilar.vázquez791@demo.com', '6170340501', 'Calle Real 138', 5, 'active', '2023-08-20', NULL, 43.36802, -5.922655),
@@ -212,7 +189,6 @@ INSERT INTO members (first_name, last_name, dni, email, phone, address, category
 ('Luis', 'González Cruz', '96134858X', 'luis.gonzález416@demo.com', '6061838323', 'Calle Principal 145', 2, 'active', '2021-10-23', NULL, 43.487031, -5.854628),
 ('Marcos', 'Cano Gutiérrez', '14524956L', 'marcos.cano614@demo.com', '6564903979', 'Calle Central 181', 2, 'active', '2021-11-09', NULL, 43.328362, -5.9366),
 ('Eva', 'Ruiz Gutiérrez', '47280337L', 'eva.ruiz745@demo.com', '6792171399', 'Calle Real 107', 7, 'active', '2025-01-14', NULL, 43.591219, -5.739007),
-('Josefa', 'Calvo Cano', '75441490H', 'josefa.calvo201@demo.com', '6658659475', 'Calle Principal 186', 7, 'active', '2024-07-02', NULL, 43.455465, -5.629216),
 ('Pablo', 'Moreno Muñoz', '69038193J', 'pablo.moreno34@demo.com', '6087272609', 'Calle Nueva 38', 4, 'active', '2022-03-10', NULL, 43.561513, -5.771924),
 ('Antonia', 'Gallego Prieto', '68152961M', 'antonia.gallego695@demo.com', '6340760604', 'Calle Central 58', 5, 'inactive', '2022-05-09', '2022-11-01', 43.41688, -5.613483),
 ('Alberto', 'Flores León', '87788360M', 'alberto.flores676@demo.com', '6141818642', 'Calle Central 25', 3, 'active', '2022-12-09', NULL, 43.480002, -5.693999),
@@ -220,24 +196,20 @@ INSERT INTO members (first_name, last_name, dni, email, phone, address, category
 ('Pilar', 'Flores Ramírez', '45513947Y', 'pilar.flores135@demo.com', '6616894818', 'Calle Central 40', 1, 'active', '2023-10-10', NULL, 43.381948, -5.709958),
 ('José', 'Jiménez González', '18097812D', 'josé.jiménez579@demo.com', '6017908524', 'Calle Central 12', 6, 'active', '2021-05-08', NULL, 43.409844, -5.721572),
 ('Adrián', 'Fernández Cano', '42136317H', 'adrián.fernández17@demo.com', '6090405067', 'Calle Mayor 185', 7, 'active', '2022-04-11', NULL, 43.576583, -5.718848),
-('Manuel', 'Domínguez Fernández', '24023490J', 'manuel.domínguez588@demo.com', '6461005353', 'Calle Principal 29', 2, 'active', '2024-03-06', NULL, 43.461547, -5.881392),
 ('Miguel', 'Hernández Gil', '55221923G', 'miguel.hernández490@demo.com', '6443957526', 'Calle Mayor 84', 5, 'active', '2022-06-18', NULL, 43.443089, -5.760952),
 ('Víctor', 'Guerrero Santos', '37260805T', 'víctor.guerrero849@demo.com', '6445295526', 'Calle Real 177', 7, 'active', '2021-07-22', NULL, 43.432771, -5.758897),
-('Beatriz', 'Torres León', '20706175B', 'beatriz.torres999@demo.com', '6355740845', 'Calle Nueva 119', 2, 'active', '2025-01-02', NULL, 43.403302, -5.822846),
 ('María', 'Hernández Navarro', '33013625T', 'maría.hernández642@demo.com', '6325980091', 'Calle Nueva 198', 7, 'active', '2024-06-18', NULL, 43.553466, -5.728227),
 ('Marcos', 'Calvo Herrera', '52221574M', 'marcos.calvo678@demo.com', '6479180644', 'Calle Principal 70', 2, 'active', '2023-10-30', NULL, 43.579804, -5.980519),
 ('Fernando', 'Cano Blanco', '34750682M', 'fernando.cano172@demo.com', '6333290012', 'Calle Central 87', 3, 'active', '2022-01-12', NULL, 43.535747, -5.649133),
 ('María', 'Gómez Guerrero', '55536744R', 'maría.gómez286@demo.com', '6819869935', 'Calle Real 26', 3, 'active', '2023-05-14', NULL, 43.550095, -5.910571),
 ('Silvia', 'Jiménez González', '74955941E', 'silvia.jiménez323@demo.com', '6172138417', 'Calle Mayor 171', 3, 'active', '2025-05-13', NULL, 43.560181, -5.993343),
 ('Álvaro', 'Navarro Herrera', '19359316D', 'álvaro.navarro687@demo.com', '6861332826', 'Calle Central 65', 4, 'active', '2023-12-03', NULL, 43.592907, -5.767272),
-('Diego', 'Moreno Fernández', '70110960Z', 'diego.moreno393@demo.com', '6225936494', 'Calle Central 43', 6, 'active', '2024-09-18', NULL, 43.514657, -5.606282),
 ('Luis', 'Serrano Gallego', '17684367N', 'luis.serrano8@demo.com', '6635734224', 'Calle Real 37', 2, 'active', '2023-07-23', NULL, 43.353185, -5.800875),
 ('María', 'Cruz Hernández', '72281546K', 'maría.cruz904@demo.com', '6868048289', 'Calle Nueva 14', 2, 'inactive', '2023-07-30', '2023-02-26', 43.505984, -5.694469),
 ('Marcos', 'Santos Garrido', '11803493P', 'marcos.santos811@demo.com', '6314062979', 'Calle Principal 144', 2, 'active', '2024-03-20', NULL, 43.318432, -5.807275),
 ('Andrea', 'Domínguez Díaz', '99450101X', 'andrea.domínguez346@demo.com', '6271911132', 'Calle Central 161', 2, 'active', '2022-12-18', NULL, 43.311101, -5.895295),
 ('Alejandro', 'Rodríguez Blanco', '55516533F', 'alejandro.rodríguez98@demo.com', '6639769408', 'Calle Real 52', 1, 'active', '2024-11-29', NULL, 43.448804, -5.925527),
 ('Luis', 'Rubio Cortés', '63869769B', 'luis.rubio846@demo.com', '6045637359', 'Calle Principal 117', 4, 'active', '2020-02-24', NULL, 43.465796, -5.815776),
-('Víctor', 'Lozano Ramos', '36005097T', 'víctor.lozano359@demo.com', '6458976934', 'Calle Central 148', 3, 'active', '2020-08-24', NULL, 43.348069, -5.660596),
 ('Carlos', 'Cortés Medina', '28573662A', 'carlos.cortés689@demo.com', '6298712461', 'Calle Nueva 92', 6, 'active', '2025-12-08', NULL, 43.35194, -5.909394),
 ('Raúl', 'Cabrera Alonso', '79220378Y', 'raúl.cabrera748@demo.com', '6445920829', 'Calle Nueva 113', 7, 'inactive', '2025-03-13', '2024-04-14', 43.598845, -5.9388),
 ('Óscar', 'Sánchez León', '85161040K', 'óscar.sánchez390@demo.com', '6531735478', 'Calle Principal 64', 3, 'active', '2022-02-13', NULL, 43.332805, -5.88613),
@@ -393,6 +365,12 @@ INSERT INTO suppliers (name, cif_nif, email, phone, address, website, logo_path,
 ('Proveedor Tres SLU', 'B11223344', 'ventas@proveedortres.com', '933333333', 'Plaza Proveedor 3', 'https://proveedortres.com', '/logos/proveedortres.png', 'Proveedor de servicios informáticos', '2023-03-20', '2023-03-20'),
 ('Proveedor Cuatro S.L.', 'B55667788', 'soporte@proveedorcuatro.com', '944444444', 'Calle Proveedor 4', 'https://proveedorcuatro.com', '/logos/proveedorcuatro.png', 'Proveedor de catering', '2023-04-25', '2023-04-25'),
 ('Proveedor Cinco S.A.', 'A99887766', 'admin@proveedorcinco.com', '955555555', 'Avenida Proveedor 5', 'https://proveedorcinco.com', '/logos/proveedorcinco.png', 'Proveedor de limpieza', '2023-05-30', '2023-05-30');
+INSERT INTO supplier_invoices (supplier_id, invoice_number, invoice_date, amount, status, file_path, notes, created_at) VALUES
+(1, 'INV-2023-001', '2023-01-15', 1200.00, 'paid', '/invoices/inv-2023-001.pdf', 'Material deportivo', '2023-01-15'),
+(2, 'INV-2023-002', '2023-02-20', 450.50, 'pending', '/invoices/inv-2023-002.pdf', 'Papelería', '2023-02-20'),
+(3, 'INV-2023-003', '2023-03-25', 980.75, 'paid', '/invoices/inv-2023-003.pdf', 'Servicios informáticos', '2023-03-25'),
+(4, 'INV-2023-004', '2023-04-30', 650.00, 'cancelled', '/invoices/inv-2023-004.pdf', 'Catering evento', '2023-04-30'),
+(5, 'INV-2023-005', '2023-05-10', 300.00, 'paid', '/invoices/inv-2023-005.pdf', 'Limpieza mensual', '2023-05-10');
 ('Gonzalo', 'León Ramos', '23317153Y', 'gonzalo.león449@demo.com', '6496205296', 'Calle Mayor 184', 4, 'active', '2022-04-29', NULL, 43.433339, -5.830299),
 ('Pilar', 'Márquez Calvo', '97308456X', 'pilar.márquez260@demo.com', '6977820599', 'Calle Central 41', 1, 'active', '2022-05-26', NULL, 43.456203, -5.863646),
 ('Rubén', 'Blanco Moreno', '42219554H', 'rubén.blanco426@demo.com', '6225700148', 'Calle Central 145', 4, 'active', '2024-02-11', NULL, 43.453394, -5.857711),
