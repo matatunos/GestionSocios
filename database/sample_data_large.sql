@@ -1,8 +1,5 @@
--- ============================================
--- Datos Masivos de Ejemplo para Sistema de Gestión de Socios
--- ============================================
 -- 2000 socios, 500 donantes, 50 eventos, 5 años de actividad
--- IMPORTANTE: Este archivo debe ejecutarse DESPUÉS de schema.sql
+(50, 133, 'confirmed', 0, NULL, '2022-09-15 00:00:00', '2022-09-15 00:00:00'),
 
 SET FOREIGN_KEY_CHECKS = 0;
 
