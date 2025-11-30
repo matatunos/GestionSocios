@@ -1,9 +1,9 @@
 <?php
 require_once __DIR__ . '/../../../Models/EventPayment.php';
-$events = $db->query("SELECT id, name, date FROM events WHERE date >= CURDATE() ORDER BY date ASC")->fetchAll(PDO::FETCH_ASSOC);
+$events = $db->query("SELECT id, title, event_date FROM events WHERE event_date >= CURDATE() ORDER BY event_date ASC")->fetchAll(PDO::FETCH_ASSOC);
 foreach ($events as $event) {
     echo "<div class='card' style='margin-bottom:1.5rem;'>";
-    echo "<h4 style='font-size:1.1rem;font-weight:600;margin-bottom:1rem;'><i class='fas fa-calendar-alt' style='margin-right:0.5rem;color:var(--primary-600);'></i>{$event['name']} (" . date('d/m/Y', strtotime($event['date'])) . ")</h4>";
+    echo "<h4 style='font-size:1.1rem;font-weight:600;margin-bottom:1rem;'><i class='fas fa-calendar-alt' style='margin-right:0.5rem;color:var(--primary-600);'></i>{$event['title']} (" . date('d/m/Y', strtotime($event['event_date'])) . ")</h4>";
     // Solo asistentes pendientes de pago
     $pendingStmt = $db->prepare("SELECT ea.id, m.first_name, m.last_name, ea.status FROM event_attendance ea INNER JOIN members m ON ea.member_id = m.id WHERE ea.event_id = :event_id AND ea.status = 'registered'");
     $pendingStmt->bindParam(':event_id', $event['id']);
