@@ -161,7 +161,7 @@ CREATE TABLE IF NOT EXISTS donors (
 -- Tabla de anuncios del libro de fiestas
 CREATE TABLE IF NOT EXISTS book_ads (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    donor_id INT NOT NULL,
+    donor_id INT UNSIGNED NOT NULL,
     year YEAR NOT NULL,
     ad_type ENUM('media', 'full', 'cover', 'back_cover') NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,
