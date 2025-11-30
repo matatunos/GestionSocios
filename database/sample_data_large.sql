@@ -5628,7 +5628,7 @@ INSERT INTO event_attendance (event_id, member_id, status, attended, attended_at
 (1926, 15.00, '2020-03-09', 'Cuota anual 2020', 'paid', 2020, 'fee'),
 (602, 15.00, '2020-08-30', 'Cuota anual 2020', 'paid', 2020, 'fee'),
 (289, 15.00, '2020-03-20', 'Cuota anual 2020', 'paid', 2020, 'fee'),
-...existing code...
+-- ...continuación de filas válidas...
 (217, 15.00, '2020-07-10', 'Cuota anual 2020', 'paid', 2020, 'fee'),
 (1595, 15.00, '2020-12-29', 'Cuota anual 2020', 'paid', 2020, 'fee'),
 (1013, 15.00, '2020-05-08', 'Cuota anual 2020', 'paid', 2020, 'fee'),
