@@ -2107,9 +2107,6 @@ INSERT INTO members (first_name, last_name, dni, email, phone, address, category
 ('Javier', 'Márquez Marín', '89742421D', 'javier.márquez2@demo.com', '6413097575', 'Calle Central 6', 2, 'inactive', '2025-01-07', '2021-10-17', 43.309242, -5.926234),
 ('Juan', 'León Blanco', '99878981D', 'juan.león14@demo.com', '6880232013', 'Calle Principal 81', 4, 'inactive', '2021-09-23', '2021-06-09', 43.407622, -5.754763);
 
--- ============================================
--- DONANTES (500 registros)
--- ============================================
 
 INSERT INTO donors (name, contact_person, phone, email, address, latitude, longitude) VALUES
 ('Asesoría Los Amigos', 'Daniel Marín', '6367994135', 'contacto1@losamigos.com', 'Calle Vázquez 40', 43.568283, -5.812171),
@@ -2118,7 +2115,6 @@ INSERT INTO donors (name, contact_person, phone, email, address, latitude, longi
 ('Frutería Moderno', 'Hugo Prieto', '6231151329', 'contacto4@moderno.com', 'Calle Medina 27', 43.539199, -5.796021),
 ('Muebles Tradicional', 'Francisco López', '6797747914', 'contacto5@tradicional.com', 'Calle Hernández 33', 43.394078, -5.97301),
 ('Electrodomésticos La Fuente', 'Marta Domínguez', '6317833611', 'contacto6@lafuente.com', 'Calle Domínguez 61', 43.441236, -5.772074),
-('Construcciones El Puerto', 'Miguel Garrido', '6281416397', 'contacto7@elpuerto.com', 'Plaza Ortega 97', 43.479471, -5.851799),
 ('Pescadería Premium', 'María Domínguez', '6877779440', 'contacto8@premium.com', 'Avenida Cortés 63', 43.354389, -5.76636),
 ('Tienda de Ropa La Fuente', 'Josefa López', '6884349523', 'contacto9@lafuente.com', 'Plaza Medina 31', 43.494762, -5.817784),
 ('Muebles Familiar', 'Gonzalo Navarro', '6475281089', 'contacto10@familiar.com', 'Plaza Gómez 97', 43.492643, -5.848005),
@@ -2127,7 +2123,6 @@ INSERT INTO donors (name, contact_person, phone, email, address, latitude, longi
 ('Muebles Principal', 'Natalia Gil', '6147375820', 'contacto13@principal.com', 'Plaza Gallego 51', 43.420262, -5.838741),
 ('Panadería Royal', 'Antonia Vázquez', '6794364769', 'contacto14@royal.com', 'Avenida Hernández 90', 43.316507, -5.672613),
 ('Restaurante La Perla', 'Pedro López', '6881902632', 'contacto15@laperla.com', 'Plaza Cabrera 35', 43.42692, -5.79364),
-('Electrodomésticos Los Amigos', 'Dolores Prieto', '6199312487', 'contacto16@losamigos.com', 'Avenida León 16', 43.564376, -5.677256),
 ('Carnicería Clásico', 'Andrea Marín', '6881238887', 'contacto17@clásico.com', 'Avenida Blanco 75', 43.425474, -5.66766),
 ('Autoescuela El Valle', 'Cristina Jiménez', '6588963180', 'contacto18@elvalle.com', 'Calle Ramos 24', 43.500427, -5.960829),
 ('Supermercado El Centro', 'Sara Rubio', '6084726453', 'contacto19@elcentro.com', 'Calle Medina 40', 43.322466, -5.760452),
@@ -2154,7 +2149,6 @@ INSERT INTO donors (name, contact_person, phone, email, address, latitude, longi
 ('Librería La Montaña', 'Rafael Guerrero', '6835696543', 'contacto40@lamontaña.com', 'Calle Ramírez 42', 43.492864, -5.832972),
 ('Peluquería Imperial', 'Marcos Peña', '6330046224', 'contacto41@imperial.com', 'Avenida León 94', 43.407737, -5.681708),
 ('Juguetería La Plaza', 'Laura Garrido', '6976665674', 'contacto42@laplaza.com', 'Avenida Ramos 72', 43.40601, -5.634765),
-('Autoescuela La Esquina', 'Mercedes Blanco', '6662107599', 'contacto43@laesquina.com', 'Plaza Hernández 66', 43.419176, -5.651117),
 ('Frutería Imperial', 'Ángel Romero', '6490013132', 'contacto44@imperial.com', 'Avenida Lozano 13', 43.456575, -5.66393),
 ('Ferretería Central', 'Natalia Díaz', '6272449091', 'contacto45@central.com', 'Plaza Díaz 20', 43.331678, -5.939959),
 ('Tienda de Ropa El Paraíso', 'Marta Garrido', '6726461680', 'contacto46@elparaíso.com', 'Plaza Cruz 47', 43.384503, -5.940344),
@@ -2164,7 +2158,6 @@ INSERT INTO donors (name, contact_person, phone, email, address, latitude, longi
 ('Agencia de Seguros La Esquina', 'Miguel Serrano', '6739009679', 'contacto50@laesquina.com', 'Plaza Ortega 13', 43.313986, -5.978692),
 ('Papelería La Fuente', 'Antonia Domínguez', '6314977783', 'contacto51@lafuente.com', 'Calle Gutiérrez 24', 43.594504, -5.927056),
 ('Ferretería Principal', 'Mercedes Castro', '6492016513', 'contacto52@principal.com', 'Calle García 60', 43.395234, -5.600883),
-('Electrodomésticos Elite', 'Alberto García', '6368906305', 'contacto53@elite.com', 'Avenida Jiménez 45', 43.483415, -5.997573),
 ('Agencia de Seguros Top', 'Eva León', '6363990723', 'contacto54@top.com', 'Avenida García 65', 43.446255, -5.891815),
 ('Juguetería Nuevo', 'Pablo Hernández', '6888433249', 'contacto55@nuevo.com', 'Plaza Alonso 59', 43.495833, -5.840528),
 ('Gimnasio Nuevo', 'Carlos Domínguez', '6772914991', 'contacto56@nuevo.com', 'Avenida Sanz 82', 43.567045, -5.907277),
@@ -2174,14 +2167,10 @@ INSERT INTO donors (name, contact_person, phone, email, address, latitude, longi
 ('Gimnasio La Fuente', 'Luis Castro', '6475490967', 'contacto60@lafuente.com', 'Calle Gómez 68', 43.541246, -5.681519),
 ('Taller Mecánico El Paraíso', 'Nuria Márquez', '6910685038', 'contacto61@elparaíso.com', 'Calle Jiménez 15', 43.491546, -5.705576),
 ('Peluquería La Fuente', 'Iván Torres', '6575478063', 'contacto62@lafuente.com', 'Avenida Flores 100', 43.397398, -5.77248),
-('Librería Tradicional', 'Álvaro Cortés', '6485510478', 'contacto63@tradicional.com', 'Avenida Medina 42', 43.460426, -5.648058),
-('Muebles La Montaña', 'Iván Cano', '6099784910', 'contacto64@lamontaña.com', 'Avenida Álvarez 76', 43.55298, -5.805044),
-('Zapatería Clásico', 'Juan Muñoz', '6333787574', 'contacto65@clásico.com', 'Calle Gutiérrez 100', 43.306735, -5.956115),
 ('Taller Mecánico La Plaza', 'Jorge Ortega', '6963362442', 'contacto66@laplaza.com', 'Avenida Gallego 39', 43.349436, -5.721913),
 ('Taller Mecánico Familiar', 'Pilar Calvo', '6952896847', 'contacto67@familiar.com', 'Plaza López 31', 43.455764, -5.866676),
 ('Asesoría Imperial', 'Natalia Pérez', '6649739639', 'contacto68@imperial.com', 'Plaza Martínez 65', 43.306636, -5.827216),
 ('Muebles Central', 'Juan Marín', '6824587815', 'contacto69@central.com', 'Calle Muñoz 83', 43.405538, -5.619585),
-('Frutería Familiar', 'Víctor León', '6398505947', 'contacto70@familiar.com', 'Calle Guerrero 32', 43.345928, -5.820011),
 ('Taller Mecánico Principal', 'Adrián Cano', '6710174721', 'contacto71@principal.com', 'Calle Gil 5', 43.571249, -5.796266),
 ('Gestoría Real', 'Ángel Lozano', '6688109555', 'contacto72@real.com', 'Plaza Vázquez 36', 43.307074, -5.777318),
 ('Gestoría Principal', 'Alicia Romero', '6051658454', 'contacto73@principal.com', 'Plaza Ramos 19', 43.537434, -5.616058),
