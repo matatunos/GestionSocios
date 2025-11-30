@@ -149,17 +149,17 @@ INSERT INTO members (first_name, last_name, dni, email, phone, address, category
 -- EVENTOS
 -- ============================================
 
-INSERT INTO events (title, event_type, color, description, location, date, start_time, end_time, price, max_attendees, requires_registration, registration_deadline, is_active) VALUES
-('Fiesta de Primavera', 'social', '#4caf50', 'Celebración anual de la primavera con música y comida.', 'Parque Central', '2025-04-12', '18:00', '23:00', 5.00, 100, 1, '2025-04-10', 1),
-('Taller de Fotografía', 'formativo', '#2196f3', 'Aprende técnicas básicas de fotografía con expertos.', 'Centro Cultural', '2025-05-05', '10:00', '14:00', 0.00, 30, 1, '2025-05-03', 1),
-('Excursión a la Montaña', 'ocio', '#ff9800', 'Ruta de senderismo y picnic en la montaña.', 'Sierra Local', '2025-06-20', '08:00', '17:00', 10.00, 50, 1, '2025-06-15', 1),
-('Concierto Solidario', 'solidario', '#e91e63', 'Concierto benéfico para recaudar fondos.', 'Auditorio Municipal', '2025-07-18', '20:00', '22:30', 15.00, 200, 1, '2025-07-15', 1),
-('Charla sobre Salud', 'formativo', '#9c27b0', 'Charla informativa sobre hábitos saludables.', 'Salón de Actos', '2025-03-10', '19:00', '20:30', 0.00, 80, 1, '2025-03-08', 1),
-('Torneo de Ajedrez', 'deportivo', '#795548', 'Competición abierta de ajedrez para socios.', 'Sala Polivalente', '2025-09-05', '16:00', '20:00', 3.00, 40, 1, '2025-09-03', 1),
-('Cena de Navidad', 'social', '#f44336', 'Cena de fin de año para todos los socios.', 'Restaurante El Encuentro', '2025-12-19', '21:00', '00:00', 25.00, 120, 1, '2025-12-15', 1),
-('Mercadillo Solidario', 'solidario', '#009688', 'Venta de productos donados para recaudar fondos.', 'Plaza Mayor', '2025-11-22', '10:00', '18:00', 0.00, 300, 0, NULL, 1),
-('Curso de Primeros Auxilios', 'formativo', '#607d8b', 'Formación básica en primeros auxilios.', 'Centro de Salud', '2025-10-10', '09:00', '13:00', 8.00, 25, 1, '2025-10-08', 1),
-('Fiesta de Verano', 'social', '#ffeb3b', 'Fiesta temática para celebrar el verano.', 'Piscina Municipal', '2025-08-15', '17:00', '22:00', 12.00, 150, 1, '2025-08-12', 1);
+INSERT INTO events (title, description, event_date, location) VALUES
+('Fiesta de Primavera', 'Celebración anual de la primavera con música y comida.', '2025-04-12', 'Parque Central'),
+('Taller de Fotografía', 'Aprende técnicas básicas de fotografía con expertos.', '2025-05-05', 'Centro Cultural'),
+('Excursión a la Montaña', 'Ruta de senderismo y picnic en la montaña.', '2025-06-20', 'Sierra Local'),
+('Concierto Solidario', 'Concierto benéfico para recaudar fondos.', '2025-07-18', 'Auditorio Municipal'),
+('Charla sobre Salud', 'Charla informativa sobre hábitos saludables.', '2025-03-10', 'Salón de Actos'),
+('Torneo de Ajedrez', 'Competición abierta de ajedrez para socios.', '2025-09-05', 'Sala Polivalente'),
+('Cena de Navidad', 'Cena de fin de año para todos los socios.', '2025-12-19', 'Restaurante El Encuentro'),
+('Mercadillo Solidario', 'Venta de productos donados para recaudar fondos.', '2025-11-22', 'Plaza Mayor'),
+('Curso de Primeros Auxilios', 'Formación básica en primeros auxilios.', '2025-10-10', 'Centro de Salud'),
+('Fiesta de Verano', 'Fiesta temática para celebrar el verano.', '2025-08-15', 'Piscina Municipal');
 
 -- ============================================
 -- ASISTENCIAS A EVENTOS
