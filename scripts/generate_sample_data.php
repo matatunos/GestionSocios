@@ -1,10 +1,11 @@
 <?php
 
 // Configuración
-$NUM_MEMBERS = 200;
-$NUM_PAYMENTS = 600;
-$NUM_ATTENDANCE = 400;
-$NUM_EXPENSES = 50;
+// Configuración
+$NUM_MEMBERS = 100;
+$NUM_PAYMENTS = 300;
+$NUM_ATTENDANCE = 200;
+$NUM_EXPENSES = 25;
 
 // Arrays de datos aleatorios
 $firstNames = ['Antonio', 'Maria', 'Jose', 'Ana', 'Francisco', 'Isabel', 'David', 'Carmen', 'Javier', 'Laura', 'Manuel', 'Elena', 'Carlos', 'Sara', 'Miguel', 'Raquel', 'Pablo', 'Patricia', 'Alejandro', 'Marta', 'Daniel', 'Lucia', 'Jorge', 'Cristina', 'Alberto', 'Beatriz', 'Roberto', 'Julia', 'Fernando', 'Teresa'];
