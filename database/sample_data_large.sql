@@ -2663,7 +2663,7 @@ INSERT INTO events (title, event_type, color, description, location, date, start
 ('Visita de Teatro', 'Evento ocio organizado por la asociación.', '2022-03-09', 'Salón de Actos'),
 ('Excursión de Teatro', 'Evento ocio organizado por la asociación.', '2021-11-28', 'Auditorio'),
 ('Mercadillo Senior', 'Evento solidario organizado por la asociación.', '2021-08-31', 'Polideportivo'),
-('Mercadillo Gastronómico', 'Evento solidario organizado por la asociación.', '2021-06-26', 'Centro Cultural'),
+('Mercadillo Gastronómico', 'Evento solidario organizado por la asociación.', '2021-06-26', 'Centro Cultural');
 
 -- ============================================
 -- ASISTENCIAS A EVENTOS
