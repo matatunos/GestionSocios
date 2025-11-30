@@ -199,6 +199,24 @@ cd GestionSocios
 
 #### 2. Instalar Base de Datos
 
+**Opción A: Script automático (Recomendado)**
+
+```bash
+cd database
+chmod +x install.sh
+./install.sh
+```
+
+El script te guiará paso a paso y:
+- Creará la base de datos
+- Importará el schema completo
+- Opcionalmente creará un usuario específico para la aplicación
+- Generará el archivo `config.php` automáticamente
+- Creará los directorios necesarios
+- Opcionalmente importará datos de ejemplo
+
+**Opción B: Instalación manual**
+
 ```bash
 # Acceder a MySQL
 mysql -u root -p
@@ -219,7 +237,9 @@ mysql -u gestion_user -p asociacion_db < schema.sql
 
 #### 3. Configurar Aplicación
 
-Edita `src/Config/config.php` con tus credenciales de base de datos:
+**Si usaste el script de instalación**, este paso ya está hecho. Salta al paso 4.
+
+**Si instalaste manualmente**, edita `src/Config/config.php` con tus credenciales de base de datos:
 
 ```php
 <?php
