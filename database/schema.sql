@@ -99,6 +99,7 @@ CREATE TABLE IF NOT EXISTS members (
     status ENUM('active', 'inactive') DEFAULT 'active',
     photo_url VARCHAR(255) DEFAULT NULL,
     join_date DATE DEFAULT NULL,
+    deactivated_at DATE DEFAULT NULL,
     amount DECIMAL(10, 2) NOT NULL,
     is_active TINYINT(1) DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
