@@ -2623,7 +2623,7 @@ INSERT INTO donors (name, contact_person, phone, email, address, latitude, longi
 -- EVENTOS (50 registros)
 -- ============================================
 
-INSERT INTO events (title, event_type, color, description, location, date, start_time, end_time, price, max_attendees, requires_registration, registration_deadline, is_active) VALUES
+INSERT INTO events (title, description, event_date, location) VALUES
 ('Mercadillo de Senderismo', 'Evento solidario organizado por la asociación.', '2022-12-06', 'Centro Cultural'),
 ('Carrera de Ajedrez', 'Evento deportivo organizado por la asociación.', '2023-09-09', 'Centro Cultural'),
 ('Excursión Juvenil', 'Evento ocio organizado por la asociación.', '2021-07-23', 'Salón de Actos'),
