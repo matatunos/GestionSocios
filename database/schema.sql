@@ -198,6 +198,7 @@ CREATE TABLE IF NOT EXISTS payments (
     payment_date DATE NULL,
     payment_type VARCHAR(20),
     description TEXT,
+    status ENUM('paid', 'pending', 'cancelled') DEFAULT 'paid',
     member_id INT DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE SET NULL
