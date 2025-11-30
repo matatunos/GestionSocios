@@ -188,7 +188,7 @@ php-xml (para exportación DOCX)
 
 ## 🛠️ Instalación
 
-### Método Rápido (Recomendado para v1.0+)
+### Método Rápido          
 
 #### 1. Clonar el Repositorio
 
@@ -200,20 +200,37 @@ cd GestionSocios
 #### 2. Instalar Base de Datos
 
 ```bash
+# Acceder a MySQL
+mysql -u root -p
+
+# Crear base de datos y usuario
+CREATE DATABASE asociacion_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'gestion_user'@'localhost' IDENTIFIED BY 'tu_password_segura';
+GRANT ALL PRIVILEGES ON asociacion_db.* TO 'gestion_user'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+
+# Importar schema
 cd database
-chmod +x install_v1.0.sh
-./install_v1.0.sh
+mysql -u gestion_user -p asociacion_db < schema.sql
 ```
 
-El script te pedirá:
-- Nombre de la base de datos (default: `asociacion_db`)
-- Usuario MySQL (default: `root`)
-- Contraseña MySQL
-- Host MySQL (default: `localhost`)
+**Nota**: El archivo `schema.sql` contiene la estructura completa de la base de datos.
 
-**¡Importante!** Este script instala TODO el schema v1.0 de una vez. **NO necesitas ejecutar migraciones adicionales**.
+#### 3. Configurar Aplicación
 
-#### 3. Configurar Servidor Web Apache
+Edita `src/Config/config.php` con tus credenciales de base de datos:
+
+```php
+<?php
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'asociacion_db');
+define('DB_USER', 'gestion_user');
+define('DB_PASS', 'tu_password_segura');
+?>
+```
+
+#### 4. Configurar Servidor Web Apache
 
 ##### En Linux:
 ```bash
@@ -265,169 +282,6 @@ sudo chmod -R 775 /var/www/GestionSocios/src/Config
 </VirtualHost>
 ```
 3. Agregar a `C:\Windows\System32\drivers\etc\hosts`:
-```
-127.0.0.1 gestion-socios.local
-```
-4. Reiniciar Apache desde el panel de XAMPP
-
-#### 4. Acceder al Sistema
-
-1. Abrir navegador: `http://gestion-socios.local`
-2. **Usuario**: `admin`
-3. **Contraseña**: `admin123`
-
-**⚠️ IMPORTANTE**: Cambia la contraseña por defecto inmediatamente desde **Configuración → Administración de Usuarios**.
-
-## 📂 Estructura del Proyecto
-
-```
-GestionSocios/
-├── database/                      # Migraciones SQL
-│   ├── schema_v1.0.sql           # Schema completo v1.0
-│   ├── migration_*.sql           # Archivos de migración
-│   ├── sample_data_large.sql     # Datos de ejemplo
-│   └── install_v1.0.sh           # Script de instalación
-├── public/                        # Archivos públicos (punto de entrada)
-│   ├── index.php                 # Router principal
-│   ├── css/                      # Estilos CSS
-│   │   ├── style.css            # Estilos principales
-│   │   ├── mobile.css           # Estilos móvil
-│   │   └── nav-submenu.css      # Navegación
-│   ├── js/                       # JavaScript
-│   └── uploads/                  # Archivos subidos
-│       ├── members/              # Fotos de socios
-│       ├── donors/               # Logos de donantes
-│       ├── organization/         # Logo institucional
-│       ├── receipts/             # Comprobantes
-│       └── documents/            # Documentos
-├── src/
-│   ├── Config/                   # Configuración
-│   │   ├── config.php           # Configuración DB
-│   │   └── database.php         # Clase Database
-│   ├── Controllers/              # Controladores MVC
-│   │   ├── MemberController.php
-│   │   ├── MemberCategoryController.php
-│   │   ├── DonorController.php
-│   │   ├── PaymentController.php
-│   │   ├── ExpenseController.php
-│   │   ├── SupplierController.php
-│   │   ├── EventController.php
-│   │   ├── BookAdController.php
-│   │   ├── BookActivityController.php
-│   │   ├── BookExportController.php
-│   │   ├── BookDashboardController.php
-│   │   ├── CertificateController.php
-│   │   ├── TaskController.php
-│   │   ├── SettingsController.php
-│   │   ├── DashboardController.php
-│   │   ├── TreasuryController.php
-│   │   ├── AnalyticsController.php
-│   │   ├── AnnouncementController.php
-│   │   ├── GalleryController.php
-│   │   ├── NotificationsController.php
-│   │   ├── MessageController.php
-│   │   ├── PollController.php
-│   │   ├── DocumentController.php
-│   │   ├── AuditLogController.php
-│   │   ├── SearchController.php
-│   │   └── ExportController.php
-│   ├── Models/                   # Modelos de datos
-│   │   ├── Member.php
-│   │   ├── MemberCategory.php
-│   │   ├── Donor.php
-│   │   ├── Payment.php
-│   │   ├── Expense.php
-│   │   ├── ExpenseCategory.php
-│   │   ├── Supplier.php
-│   │   ├── SupplierInvoice.php
-│   │   ├── Event.php
-│   │   ├── BookAd.php
-│   │   ├── BookActivity.php
-│   │   ├── BookPage.php
-│   │   ├── AdPrice.php
-│   │   ├── Task.php
-│   │   ├── Analytics.php
-│   │   ├── PublicAnnouncement.php
-│   │   ├── Notification.php
-│   │   ├── Message.php
-│   │   ├── Poll.php
-│   │   ├── Document.php
-│   │   ├── AuditLog.php
-│   │   └── OrganizationSettings.php
-│   ├── Views/                    # Vistas (plantillas PHP)
-│   │   ├── layout.php           # Plantilla principal
-│   │   ├── dashboard.php        # Dashboard principal
-│   │   ├── members/             # Vistas de socios
-│   │   ├── donors/              # Vistas de donantes
-│   │   ├── payments/            # Vistas de pagos
-│   │   ├── expenses/            # Vistas de gastos
-│   │   ├── suppliers/           # Vistas de proveedores
-│   │   ├── events/              # Vistas de eventos
-│   │   ├── book/                # Vistas del libro de fiestas
-│   │   ├── tasks/               # Vistas de tareas
-│   │   ├── analytics/           # Vistas de analíticas
-│   │   ├── announcements/       # Vistas de anuncios
-│   │   ├── gallery/             # Galería de imágenes
-│   │   ├── notifications/       # Notificaciones
-│   │   ├── messages/            # Mensajería
-│   │   ├── polls/               # Votaciones
-│   │   ├── documents/           # Documentos
-│   │   ├── audit_log/           # Auditoría
-│   │   └── settings/            # Configuración
-│   └── Helpers/                  # Utilidades
-│       ├── AvatarHelper.php     # Generador de avatares
-│       ├── CsrfHelper.php       # Protección CSRF
-│       └── Lang.php             # Internacionalización
-└── README.md                     # Este archivo
-```
-
-## 🗺️ Uso del Sistema de Geolocalización
-
-### Captura de GPS desde Móvil (requiere HTTPS)
-
-1. **En formulario de crear/editar socio o donante:**
-   - Localizar el campo "Dirección"
-   - Hacer clic en el botón **📍 GPS** (esquina inferior derecha del campo)
-   - Autorizar acceso a ubicación cuando el navegador lo solicite
-   - Las coordenadas se capturarán automáticamente
-
-2. **Entrada Manual (funciona en HTTP):**
-   - Si no tienes HTTPS o prefieres introducir coordenadas manualmente:
-   - Buscar la ubicación en Google Maps
-   - Hacer clic derecho en el punto exacto → "¿Qué hay aquí?"
-   - Copiar las coordenadas (formato: 40.4168, -3.7038)
-   - Pegar en los campos "Latitud" y "Longitud"
-
-### Ver Mapa de Ubicaciones
-
-1. **Acceder al mapa:**
-   - Menú lateral → "Mapa"
-   - O directamente: `index.php?page=map`
-
-2. **Filtros disponibles:**
-   - **Todos**: Muestra socios (azul) y donantes (verde)
-   - **Solo Socios**: Muestra únicamente marcadores azules
-   - **Solo Donantes**: Muestra únicamente marcadores verdes
-
-3. **Interacción:**
-   - Clic en marcador: ver información detallada
-   - Botón "Editar": ir al formulario de edición
-   - Botón "Maps": abrir ubicación en Google Maps
-   - Botón "🎯": centrar mapa en esa ubicación
-   - Zoom con scroll o botones +/-
-   - Arrastrar para mover el mapa
-   - **Etiquetas con nombres** aparecen al hacer zoom nivel 14+
-
-## 📖 Gestión del Libro de Fiestas
-
-### Configurar Precios
-1. Menú → "Configuración" → Pestaña "Precios Anuncios"
-2. Definir precios para cada tipo de anuncio:
-   - Media página
-   - Página completa
-   - Portada
-   - Contraportada
-3. Los precios se guardan por año
 
 ### Gestionar Anunciantes
 1. Menú → "Libro Fiestas" → "Anunciantes"
