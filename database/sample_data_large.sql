@@ -48,7 +48,7 @@ INSERT INTO annual_fees (year, amount) VALUES
 (2025, 20.00);
 
 -- Miembros de ejemplo
-INSERT INTO members (first_name, last_name, dni, email, phone, address, category_id, status, joined_at, left_at, latitude, longitude) VALUES
+INSERT INTO members (first_name, last_name, dni, email, phone, address, category_id, status, join_date, left_at, latitude, longitude) VALUES
 ('Teresa', 'García Sanz', '31538609C', 'teresa.garcía569@demo.com', '6389646295', 'Calle Principal 155', 5, 'active', '2023-04-26', NULL, 43.425008, -5.629036),
 ('Rocío', 'Alonso Sanz', '87017614N', 'rocío.alonso717@demo.com', '6714806118', 'Calle Mayor 188', 5, 'active', '2021-11-22', NULL, 43.457842, -5.674219),
 ('Sofía', 'Ramos Serrano', '74015716Z', 'sofía.ramos265@demo.com', '6921538003', 'Calle Principal 155', 7, 'active', '2020-07-28', NULL, 43.52559, -5.723909),
