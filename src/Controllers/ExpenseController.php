@@ -13,7 +13,7 @@ class ExpenseController {
     // List all expenses
     public function index() {
         $filters = [
-            'year' => isset($_GET['year']) && $_GET['year'] !== '' ? $_GET['year'] : null,
+            'year' => isset($_GET['year']) && $_GET['year'] !== '' ? $_GET['year'] : date('Y'),
             'month' => $_GET['month'] ?? null,
             'category_id' => $_GET['category_id'] ?? null
         ];
