@@ -2664,16 +2664,6 @@ INSERT INTO events (title, event_type, color, description, location, date, start
 ('Excursión de Teatro', 'Evento ocio organizado por la asociación.', '2021-11-28', 'Auditorio'),
 ('Mercadillo Senior', 'Evento solidario organizado por la asociación.', '2021-08-31', 'Polideportivo'),
 ('Mercadillo Gastronómico', 'Evento solidario organizado por la asociación.', '2021-06-26', 'Centro Cultural'),
-('Excursión de Navidad', 'ocio', '#ff9800', 'Evento ocio organizado por la asociación.', 'Parque Municipal', '2022-02-25', '09:00', '22:00', 0.00, 100, 1, '2022-02-19', 0),
-('Carrera de Fin de Año', 'deportivo', '#795548', 'Evento deportivo organizado por la asociación.', 'Plaza Mayor', '2025-02-01', '11:00', '23:00', 12.00, 80, 1, '2025-01-29', 1),
-('Taller Anual', 'formativo', '#2196f3', 'Evento formativo organizado por la asociación.', 'Centro Cultural', '2023-07-04', '20:00', '22:00', 15.00, 150, 1, '2023-06-29', 0),
-('Taller Gastronómico', 'formativo', '#2196f3', 'Evento formativo organizado por la asociación.', 'Plaza Mayor', '2022-10-20', '10:00', '13:00', 3.00, 50, 0, NULL, 0),
-('Torneo Musical', 'deportivo', '#795548', 'Evento deportivo organizado por la asociación.', 'Parque Municipal', '2022-06-14', '15:00', '22:00', 5.00, 50, 1, '2022-06-10', 0),
-('Charla Infantil', 'formativo', '#2196f3', 'Evento formativo organizado por la asociación.', 'Auditorio', '2022-12-30', '16:00', '23:00', 0.00, 200, 1, '2022-12-24', 0),
-('Torneo Infantil', 'deportivo', '#795548', 'Evento deportivo organizado por la asociación.', 'Auditorio', '2024-04-26', '20:00', '21:00', 5.00, 100, 1, '2024-04-20', 1),
-('Torneo Senior', 'deportivo', '#795548', 'Evento deportivo organizado por la asociación.', 'Polideportivo', '2022-06-30', '14:00', '15:00', 8.00, 100, 0, NULL, 0),
-('Fiesta Benéfico', 'social', '#4caf50', 'Evento social organizado por la asociación.', 'Polideportivo', '2021-08-01', '16:00', '21:00', 15.00, 150, 1, '2021-07-30', 0),
-('Taller de Cocina', 'formativo', '#2196f3', 'Evento formativo organizado por la asociación.', 'Plaza Mayor', '2023-09-23', '12:00', '22:00', 3.00, 150, 1, '2023-09-16', 0);
 
 -- ============================================
 -- ASISTENCIAS A EVENTOS
