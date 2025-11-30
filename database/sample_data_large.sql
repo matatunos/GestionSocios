@@ -5631,9 +5631,6 @@ INSERT INTO event_attendance (event_id, member_id, status, attended, attended_at
 (50, 790, 'registered', 0, NULL, '2025-12-12 00:00:00', '2025-12-12 00:00:00'),
 (50, 1476, 'confirmed', 1, '2023-01-09 00:00:00', '2022-12-12 00:00:00', '2022-12-12 00:00:00'),
 (50, 750, 'attended', 1, '2021-05-12 00:00:00', '2021-04-25 00:00:00', '2021-04-25 00:00:00'),
-(50, 1673, 'cancelled', 0, NULL, '2025-03-15 00:00:00', '2025-03-15 00:00:00'),
-(50, 133, 'confirmed', 0, NULL, '2022-09-15 00:00:00', '2022-09-15 00:00:00');
--- ============================================
 -- ============================================
 
 INSERT INTO payments (member_id, amount, payment_date, concept, status, fee_year, payment_type) VALUES
