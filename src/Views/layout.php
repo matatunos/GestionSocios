@@ -311,6 +311,13 @@ if (isset($_SESSION['user_id'])) {
                     </li>
 
                     <li>
+                        <a href="index.php?page=expenses" class="nav-link <?php echo ($page === 'expenses') ? 'active' : ''; ?>">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                            <span>Gastos</span>
+                        </a>
+                    </li>
+
+                    <li>
                         <a href="index.php?page=tasks" class="nav-link <?php echo ($page === 'tasks') ? 'active' : ''; ?>">
                             <i class="fas fa-tasks"></i>
                             <span>Tareas</span>
