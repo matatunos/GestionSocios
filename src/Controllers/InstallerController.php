@@ -7,12 +7,13 @@ class InstallerController {
 
     public function install() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $host = $_POST['host'] ?? '';
-            $db_name = $_POST['db_name'] ?? '';
-            $username = $_POST['username'] ?? '';
-            $password = $_POST['password'] ?? '';
-            $admin_user = $_POST['admin_user'] ?? '';
-            $admin_pass = $_POST['admin_pass'] ?? '';
+                $host = $_POST['host'] ?? '';
+                $db_name = $_POST['db_name'] ?? '';
+                $username = $_POST['username'] ?? '';
+                $password = $_POST['password'] ?? '';
+                $admin_user = $_POST['admin_user'] ?? '';
+                $admin_pass = $_POST['admin_pass'] ?? '';
+
 
             // 1. Test Connection
             // 1. Test Connection & Create DB
