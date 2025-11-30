@@ -10,6 +10,13 @@ CREATE TABLE IF NOT EXISTS organization_settings (
     setting_key VARCHAR(100) NOT NULL,
     setting_value TEXT,
     setting_type VARCHAR(50) DEFAULT NULL,
+    password_min_length INT DEFAULT 8,
+    password_require_uppercase BOOLEAN DEFAULT 0,
+    password_require_lowercase BOOLEAN DEFAULT 1,
+    password_require_numbers BOOLEAN DEFAULT 1,
+    password_require_special BOOLEAN DEFAULT 0,
+    login_max_attempts INT DEFAULT 5,
+    login_lockout_duration INT DEFAULT 15,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -40,6 +47,8 @@ CREATE TABLE IF NOT EXISTS users (
     role ENUM('admin', 'member') DEFAULT 'member',
     active TINYINT(1) DEFAULT 1,
     status ENUM('active', 'inactive') DEFAULT 'active',
+    locked_until DATETIME NULL,
+    failed_attempts INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -428,7 +437,7 @@ CREATE TABLE IF NOT EXISTS audit_log (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NULL,
     action VARCHAR(50) NOT NULL,
-    entity VARCHAR(50) NOT NULL,
+    entity_type VARCHAR(50) NOT NULL,
     entity_id INT,
     old_values JSON,
     new_values JSON,
@@ -436,6 +445,66 @@ CREATE TABLE IF NOT EXISTS audit_log (
     user_agent VARCHAR(255),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de proveedores
+CREATE TABLE IF NOT EXISTS suppliers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    cif_nif VARCHAR(20),
+    email VARCHAR(255),
+    phone VARCHAR(20),
+    address TEXT,
+    website VARCHAR(255),
+    logo_path VARCHAR(255),
+    notes TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de facturas de proveedores
+CREATE TABLE IF NOT EXISTS supplier_invoices (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    supplier_id INT NOT NULL,
+    invoice_number VARCHAR(50) NOT NULL,
+    invoice_date DATE NOT NULL,
+    amount DECIMAL(10, 2),
+    status ENUM('paid', 'pending', 'cancelled') DEFAULT 'pending',
+    file_path VARCHAR(255),
+    notes TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (supplier_id) REFERENCES suppliers(id) ON DELETE CASCADE,
+    INDEX idx_supplier (supplier_id),
+    INDEX idx_invoice_number (invoice_number),
+    INDEX idx_invoice_date (invoice_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de anuncios públicos
+CREATE TABLE IF NOT EXISTS public_announcements (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    type ENUM('info', 'warning', 'success', 'danger') DEFAULT 'info',
+    is_active BOOLEAN DEFAULT 1,
+    priority INT DEFAULT 0,
+    created_by INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP NULL,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_active_priority (is_active, priority, created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de intentos de login
+CREATE TABLE IF NOT EXISTS login_attempts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100) NOT NULL,
+    ip_address VARCHAR(45) NOT NULL,
+    attempted_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    success BOOLEAN DEFAULT 0,
+    INDEX idx_username (username),
+    INDEX idx_ip (ip_address),
+    INDEX idx_attempted_at (attempted_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================
