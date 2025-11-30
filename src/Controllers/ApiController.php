@@ -2,12 +2,17 @@
 
 class ApiController {
     private $db;
-    private $secretKey = 'gestion_socios_secret_key_2025'; // En producción usar una variable de entorno
+    
+    private $secretKey;
     
     public function __construct() {
         $this->db = (new Database())->getConnection();
+        $this->secretKey = defined('JWT_SECRET') ? JWT_SECRET : 'default_secret_key_change_me';
     }
     
+    /**
+     * Main API router
+     */
     /**
      * Main API router
      */
@@ -24,10 +29,32 @@ class ApiController {
             exit;
         }
         
+        // Parse URI
+        $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        $uriParts = explode('/', trim($uri, '/'));
+        
+        // Find 'api' in the path and get the next segments
+        $apiIndex = array_search('api', $uriParts);
+        
+        if ($apiIndex !== false && isset($uriParts[$apiIndex + 1])) {
+            // Check for version (e.g., v1)
+            if (preg_match('/^v\d+$/', $uriParts[$apiIndex + 1])) {
+                $version = $uriParts[$apiIndex + 1];
+                $resource = $uriParts[$apiIndex + 2] ?? null;
+                $id = $uriParts[$apiIndex + 3] ?? null;
+            } else {
+                // No version, assume resource is next
+                $resource = $uriParts[$apiIndex + 1];
+                $id = $uriParts[$apiIndex + 2] ?? null;
+            }
+        } else {
+            // Fallback to query params if not found in path
+            $resource = $_GET['resource'] ?? null;
+            $id = $_GET['id'] ?? null;
+        }
+        
         // Get request details
         $method = $_SERVER['REQUEST_METHOD'];
-        $resource = $_GET['resource'] ?? null;
-        $id = $_GET['id'] ?? null;
         
         // Validate token (except for login endpoint)
         if ($resource !== 'auth') {
@@ -54,8 +81,17 @@ class ApiController {
             case 'fees':
                 $this->handleFees($method, $id);
                 break;
+            case 'suppliers':
+                $this->handleSuppliers($method, $id);
+                break;
+            case 'expenses':
+                $this->handleExpenses($method, $id);
+                break;
+            case 'tasks':
+                $this->handleTasks($method, $id);
+                break;
             default:
-                $this->sendResponse(404, ['error' => 'Recurso no encontrado']);
+                $this->sendResponse(404, ['error' => 'Recurso no encontrado: ' . $resource]);
         }
     }
     
@@ -345,6 +381,86 @@ class ApiController {
         }
     }
     
+    /**
+     * Handle suppliers CRUD operations
+     */
+    private function handleSuppliers($method, $id) {
+        require_once __DIR__ . '/../Models/Supplier.php';
+        $supplierModel = new Supplier($this->db);
+        
+        switch ($method) {
+            case 'GET':
+                if ($id) {
+                    $supplierModel->id = $id;
+                    $supplierModel->readOne();
+                    if ($supplierModel->name) {
+                        $this->sendResponse(200, $supplierModel);
+                    } else {
+                        $this->sendResponse(404, ['error' => 'Proveedor no encontrado']);
+                    }
+                } else {
+                    $stmt = $supplierModel->readAll();
+                    $suppliers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    $this->sendResponse(200, ['data' => $suppliers, 'total' => count($suppliers)]);
+                }
+                break;
+            default:
+                $this->sendResponse(405, ['error' => 'Método no permitido']);
+        }
+    }
+
+    /**
+     * Handle expenses CRUD operations
+     */
+    private function handleExpenses($method, $id) {
+        require_once __DIR__ . '/../Models/Expense.php';
+        $expenseModel = new Expense($this->db);
+        
+        switch ($method) {
+            case 'GET':
+                if ($id) {
+                    $expense = $expenseModel->read($id);
+                    if ($expense) {
+                        $this->sendResponse(200, $expense);
+                    } else {
+                        $this->sendResponse(404, ['error' => 'Gasto no encontrado']);
+                    }
+                } else {
+                    $expenses = $expenseModel->readAll();
+                    $this->sendResponse(200, ['data' => $expenses, 'total' => count($expenses)]);
+                }
+                break;
+            default:
+                $this->sendResponse(405, ['error' => 'Método no permitido']);
+        }
+    }
+
+    /**
+     * Handle tasks CRUD operations
+     */
+    private function handleTasks($method, $id) {
+        require_once __DIR__ . '/../Models/Task.php';
+        $taskModel = new Task($this->db);
+        
+        switch ($method) {
+            case 'GET':
+                if ($id) {
+                    $task = $taskModel->read($id);
+                    if ($task) {
+                        $this->sendResponse(200, $task);
+                    } else {
+                        $this->sendResponse(404, ['error' => 'Tarea no encontrada']);
+                    }
+                } else {
+                    $tasks = $taskModel->readAll();
+                    $this->sendResponse(200, ['data' => $tasks, 'total' => count($tasks)]);
+                }
+                break;
+            default:
+                $this->sendResponse(405, ['error' => 'Método no permitido']);
+        }
+    }
+
     /**
      * Generate JWT token
      */

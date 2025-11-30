@@ -59,6 +59,7 @@ echo "  Host: $DB_HOST"
 echo ""
 
 read -p "¿Es correcta esta configuración? (s/n): " CONFIRM
+CONFIRM=${CONFIRM:-s}
 if [ "$CONFIRM" != "s" ] && [ "$CONFIRM" != "S" ]; then
     error "Instalación cancelada por el usuario"
 fi
@@ -101,6 +102,7 @@ fi
 # Preguntar si quiere importar datos de ejemplo
 echo ""
 read -p "¿Deseas importar datos de ejemplo? (s/n): " IMPORT_SAMPLE
+IMPORT_SAMPLE=${IMPORT_SAMPLE:-s}
 if [ "$IMPORT_SAMPLE" = "s" ] || [ "$IMPORT_SAMPLE" = "S" ]; then
     if [ -f "sample_data_large.sql" ]; then
         echo "Importando datos de ejemplo..."
@@ -126,6 +128,7 @@ mkdir -p "$CONFIG_DIR"
 
 # Generar contraseña segura para el usuario de la BD (opcional)
 read -p "¿Deseas crear un usuario específico para la aplicación? (s/n): " CREATE_USER
+CREATE_USER=${CREATE_USER:-s}
 if [ "$CREATE_USER" = "s" ] || [ "$CREATE_USER" = "S" ]; then
     read -p "Nombre del usuario de la aplicación [gestion_user]: " APP_USER
     APP_USER=${APP_USER:-gestion_user}

@@ -24,7 +24,15 @@ require_once __DIR__ . '/../src/Helpers/Lang.php';
 $lang = Lang::getInstance();
 
 // Determine page
-$page = $_GET['page'] ?? 'dashboard';
+$requestUri = $_SERVER['REQUEST_URI'];
+$basePath = str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']);
+
+// Check if it's an API request
+if (strpos($requestUri, '/api/') === 0 || strpos($requestUri, $basePath . '/api/') === 0) {
+    $page = 'api';
+} else {
+    $page = $_GET['page'] ?? 'dashboard';
+}
 
 // Check Installation & DB Connection
 if (!file_exists(__DIR__ . '/../src/Config/config.php')) {
