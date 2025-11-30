@@ -205,6 +205,7 @@ CREATE TABLE IF NOT EXISTS payments (
 -- Tabla de categorías de tareas
 CREATE TABLE IF NOT EXISTS task_categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    deactivated_at DATE DEFAULT NULL,
     name VARCHAR(100) NOT NULL,
     color VARCHAR(30),
     icon VARCHAR(50) DEFAULT NULL,
