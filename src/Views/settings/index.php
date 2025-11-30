@@ -705,6 +705,31 @@
                         </div>
                     <?php endforeach; ?>
                 </div>
+                
+                <hr style="margin: 3rem 0; border-color: var(--border-light);">
+                
+                <!-- Generate Payments Widget -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2 class="section-title" style="margin: 0;">Generar Pagos de Cuotas</h2>
+                </div>
+                
+                <div class="card" style="max-width: 600px;">
+                    <h3 class="text-md font-semibold mb-4">Generar Pagos Pendientes</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+                        Esta acción creará pagos pendientes para todos los socios activos según la cuota predeterminada de su categoría.
+                    </p>
+                    <form action="index.php?page=fees&action=generate" method="GET" onsubmit="return confirm('¿Generar pagos pendientes para todos los socios activos del año seleccionado? Se usará la cuota predeterminada de cada categoría.');">
+                        <input type="hidden" name="page" value="fees">
+                        <input type="hidden" name="action" value="generate">
+                        <div class="form-group">
+                            <label class="form-label" for="generate_year">Año</label>
+                            <input type="number" name="year" id="generate_year" class="form-control" value="<?php echo date('Y'); ?>" required min="2000" max="2100">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-full">
+                            <i class="fas fa-file-invoice-dollar"></i> Generar Pagos
+                        </button>
+                    </form>
+                </div>
         </div>  <!-- End of members tab -->
         <!-- Database Tab -->
         <div id="database" class="tab-content">
