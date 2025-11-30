@@ -417,7 +417,7 @@ CREATE TABLE IF NOT EXISTS task_comments (
 -- Tabla de historial de imágenes de donantes
 CREATE TABLE IF NOT EXISTS donor_image_history (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    donor_id INT NOT NULL,
+    donor_id INT UNSIGNED NOT NULL,
     image_url VARCHAR(255) NOT NULL,
     is_current TINYINT(1) DEFAULT 1,
     uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
