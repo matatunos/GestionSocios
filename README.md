@@ -7,56 +7,142 @@
 
 # Gestión de Socios - Asociación
 
-Sistema web integral para la gestión de socios, pagos, donaciones, tareas y geolocalización de una asociación. Desarrollado en PHP nativo con MySQL.
+Sistema web integral para la gestión completa de asociaciones y entidades sin ánimo de lucro. Desarrollado en PHP nativo con MySQL, incluye gestión de socios, donantes, eventos, finanzas, proveedores, libro de fiestas y mucho más.
 
 ## 🚀 Características Principales
 
-### Gestión de Socios
-- Alta, baja, edición y listado de socios con foto de perfil
+### 👥 Gestión de Socios
+- **Categorías de socios** con cuotas personalizadas por categoría
+- Alta, baja, edición y listado con foto de perfil
 - Campo DNI/NIE para identificación oficial
-- Geolocalización GPS con captura desde móvil o entrada manual
+- **Geolocalización GPS** con captura desde móvil o entrada manual
 - Generación automática de número de socio
-- Búsqueda avanzada y filtrado
+- **Historial de imágenes** con comparación y restauración
+- Búsqueda avanzada y filtrado por categoría, estado, etc.
 - Exportación a Excel y PDF
+- **Generación masiva de pagos** por categoría y año
 
-### Gestión de Donantes
+### 💰 Gestión Financiera
+- **Dashboard de Tesorería** con KPIs en tiempo real
+- **Gestión de Pagos** con estados (pendiente, pagado, vencido)
+- **Gestión de Gastos** con categorías personalizables
+- **Proveedores** con seguimiento de facturas y pagos
+- Gráficos de evolución de ingresos y gastos
+- Reportes financieros exportables
+- Control de morosos y pagos vencidos
+
+### 🎁 Gestión de Donantes
 - Registro de empresas y particulares donantes
+- **Galería de imágenes** con historial y comparación
 - Geolocalización de donantes con GPS
 - Seguimiento de contactos y donaciones
 - Gestión de logos y datos de contacto
+- Exportación de datos
 
-### Certificados
-- Generación de certificados de socio en PDF
-- Certificados de pago con desglose de cuotas
-- Nombres de archivo descriptivos (DNI-Nombre)
+### 📅 Gestión de Eventos
+- Creación y edición de eventos
+- **Dashboard de eventos** con estadísticas
+- Control de asistencia y participantes
+- Gestión de pagos por evento
+- Calendario interactivo
+- Reportes de eventos
 
-### Geolocalización y Mapas
-- Mapa interactivo con Leaflet.js y OpenStreetMap
+### 📖 Libro de Fiestas
+- **Gestión de anunciantes** con diferentes tipos de anuncios
+- **Precios por año** configurables (media página, página completa, portada, contraportada)
+- **Actividades** del programa de fiestas
+- **Dashboard del libro** con estadísticas de ventas
+- **Maquetación y exportación** a PDF y DOCX
+- **Sistema de versiones** para guardar diferentes ediciones
+- **Editor visual** con arrastrar y soltar páginas
+- Generación automática de contenido
+
+### 🗺️ Geolocalización y Mapas
+- **Mapa interactivo** con Leaflet.js y OpenStreetMap
 - Captura de coordenadas GPS desde dispositivos móviles
 - Entrada manual de coordenadas (compatible con HTTP)
 - Visualización combinada de socios y donantes
+- **Etiquetas con nombres** al hacer zoom
 - Filtros: mostrar todos, solo socios, solo donantes
-- Marcadores diferenciados por color (azul: socios, verde: donantes)
+- Marcadores diferenciados por color
 - Enlaces directos a Google Maps
 - Diseño responsive para móvil y desktop
 
-### Gestión de Tareas
+### 📋 Gestión de Tareas
 - Crear, editar y asignar tareas
 - Estados: pendiente, en progreso, completada, cancelada
 - Prioridades: baja, normal, alta, urgente
 - Fechas de vencimiento y seguimiento
 - Historial de cambios
+- Comentarios y notas
 
-### Analíticas y Reportes
-- Dashboard con estadísticas en tiempo real
-- Gráficos de evolución de socios
+### 📊 Analíticas y Reportes
+- **Dashboard principal** con estadísticas en tiempo real
+- **Dashboard de tesorería** con KPIs financieros
+- **Dashboard de eventos** con métricas de participación
+- **Dashboard de proveedores** con estado de facturas
+- Gráficos de evolución de socios, ingresos y gastos
 - Reportes de pagos y morosos
-- Exportación de datos
+- Exportación de datos a Excel y PDF
 
-### Configuración
-- Gestión centralizada de la organización
-- Logo y datos institucionales personalizables
-- Copias de seguridad de base de datos
+### 📢 Anuncios Públicos
+- Creación de anuncios para la web pública
+- Gestión de visibilidad (activo/inactivo)
+- Fechas de publicación y caducidad
+- Editor de contenido enriquecido
+
+### 🖼️ Galería de Imágenes
+- Galería unificada de fotos de socios y logos de donantes
+- Navegación por pestañas
+- Vista en cuadrícula responsive
+- Visualización ampliada de imágenes
+
+### 📄 Documentos y Certificados
+- **Gestión de documentos** con categorías
+- Generación de certificados de socio en PDF
+- Certificados de pago con desglose de cuotas
+- Nombres de archivo descriptivos (DNI-Nombre)
+- Almacenamiento organizado
+
+### 🔔 Sistema de Notificaciones
+- Notificaciones en tiempo real
+- Contador de notificaciones no leídas
+- Marcado como leído individual o masivo
+- Tipos: info, éxito, advertencia, error
+
+### 💬 Mensajería Interna
+- Sistema de mensajes entre usuarios
+- Conversaciones directas
+- Contador de mensajes no leídos
+- Historial de conversaciones
+
+### 🗳️ Votaciones
+- Creación de encuestas y votaciones
+- Opciones múltiples
+- Resultados en tiempo real
+- Control de cierre de votaciones
+
+### 🔍 Búsqueda Global
+- Búsqueda unificada en toda la aplicación
+- Resultados categorizados
+- Búsqueda rápida desde cualquier página
+
+### 🔐 Seguridad y Auditoría
+- **Registro de auditoría** completo de todas las acciones
+- Exportación de logs a Excel y PDF
+- Control de acceso por roles (admin, usuario)
+- **Política de contraseñas** configurable
+- Protección CSRF en formularios
+- Sesiones seguras
+
+### ⚙️ Configuración Avanzada
+- **Gestión de la organización** (nombre, CIF, dirección, contacto)
+- **Logo y colores corporativos** personalizables
+- **Junta directiva** configurable
+- **Administración de usuarios** del sistema
+- **Configuración de notificaciones**
+- **Copias de seguridad** de base de datos
+- **Configuración de base de datos**
 - Interfaz moderna con modo claro/oscuro
 
 ## 📋 Requisitos del Sistema
@@ -76,6 +162,7 @@ php-json
 php-curl
 php-gd (para procesamiento de imágenes)
 php-zip (para exportaciones)
+php-xml (para exportación DOCX)
 ```
 
 ### Permisos del Sistema
@@ -85,6 +172,8 @@ php-zip (para exportaciones)
   - `public/uploads/members/` (fotos de socios)
   - `public/uploads/donors/` (logos de donantes)
   - `public/uploads/organization/` (logo institucional)
+  - `public/uploads/receipts/` (comprobantes de gastos)
+  - `public/uploads/documents/` (documentos)
 
 ### Navegadores Compatibles
 - Chrome/Edge 90+
@@ -126,7 +215,7 @@ El script te pedirá:
 
 #### 3. Configurar Servidor Web Apache
 
-#### En Linux:
+##### En Linux:
 ```bash
 # Crear virtual host
 sudo nano /etc/apache2/sites-available/gestion-socios.conf
@@ -162,7 +251,7 @@ sudo chmod -R 775 /var/www/GestionSocios/public/uploads
 sudo chmod -R 775 /var/www/GestionSocios/src/Config
 ```
 
-#### En Windows (XAMPP/WAMP):
+##### En Windows (XAMPP/WAMP):
 1. Copiar la carpeta del proyecto a `C:\xampp\htdocs\GestionSocios`
 2. Editar `C:\xampp\apache\conf\extra\httpd-vhosts.conf`:
 ```apache
@@ -181,141 +270,114 @@ sudo chmod -R 775 /var/www/GestionSocios/src/Config
 ```
 4. Reiniciar Apache desde el panel de XAMPP
 
-### 3. Crear Base de Datos MySQL
-
-```bash
-# Acceder a MySQL
-mysql -u root -p
-
-# Crear base de datos y usuario
-CREATE DATABASE asociacion_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'gestion_user'@'localhost' IDENTIFIED BY 'tu_password_segura';
-GRANT ALL PRIVILEGES ON asociacion_db.* TO 'gestion_user'@'localhost';
-FLUSH PRIVILEGES;
-EXIT;
-```
-
-### 4. Configurar Aplicación
-
-Edita `src/Config/config.php` con tus credenciales de base de datos:
-
-```php
-<?php
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'asociacion_db');
-define('DB_USER', 'gestion_user');
-define('DB_PASS', 'tu_password_segura');
-?>
-```
-
-### 5. Acceder al Sistema
+#### 4. Acceder al Sistema
 
 1. Abrir navegador: `http://gestion-socios.local`
 2. **Usuario**: `admin`
 3. **Contraseña**: `admin123`
 
-**⚠️ IMPORTANTE**: Cambia la contraseña por defecto inmediatamente desde **Configuración → Seguridad**.
-
----
-
-### 📦 Instalación Antigua (Solo para versiones < 1.0)
-
-<details>
-<summary>Ver instrucciones de migración desde versiones anteriores</summary>
-
-Si vienes de una instalación anterior a v1.0, **NO uses `schema_v1.0.sql`**. En su lugar:
-
-```bash
-cd database
-./apply_all_migrations.sh
-```
-
-Este script aplicará las migraciones incrementales una por una.
-
-</details>
-
-### 5. Aplicar Migraciones (Opcional - si ya existe BD)
-
-Si ya tienes una base de datos existente y necesitas aplicar las nuevas funcionalidades:
-
-```bash
-# Aplicar todas las migraciones
-mysql -u gestion_user -p asociacion_db < database/migration_add_dni.sql
-mysql -u gestion_user -p asociacion_db < database/migration_add_geolocation.sql
-mysql -u gestion_user -p asociacion_db < database/migration_add_donor_geolocation.sql
-mysql -u gestion_user -p asociacion_db < database/migration_add_member_number.sql
-mysql -u gestion_user -p asociacion_db < database/migration_member_profile_images.sql
-mysql -u gestion_user -p asociacion_db < database/migration_organization_settings.sql
-mysql -u gestion_user -p asociacion_db < database/migration_tasks.sql
-```
-
-O ejecutar todas de una vez (Linux):
-```bash
-cd database
-chmod +x apply_all_migrations.sh
-./apply_all_migrations.sh
-```
-
-### 6. Acceso Inicial
-
-**Credenciales por defecto:**
-- **Usuario**: `admin`
-- **Contraseña**: `admin123`
-
-⚠️ **IMPORTANTE**: Cambiar la contraseña inmediatamente después del primer acceso desde:
-- Perfil de usuario → Cambiar contraseña
-- O directamente en la base de datos con hash bcrypt
+**⚠️ IMPORTANTE**: Cambia la contraseña por defecto inmediatamente desde **Configuración → Administración de Usuarios**.
 
 ## 📂 Estructura del Proyecto
 
 ```
 GestionSocios/
 ├── database/                      # Migraciones SQL
+│   ├── schema_v1.0.sql           # Schema completo v1.0
 │   ├── migration_*.sql           # Archivos de migración
-│   └── apply_all_migrations.sh   # Script para aplicar todas
+│   ├── sample_data_large.sql     # Datos de ejemplo
+│   └── install_v1.0.sh           # Script de instalación
 ├── public/                        # Archivos públicos (punto de entrada)
 │   ├── index.php                 # Router principal
 │   ├── css/                      # Estilos CSS
-│   │   └── style.css            # Estilos principales
+│   │   ├── style.css            # Estilos principales
+│   │   ├── mobile.css           # Estilos móvil
+│   │   └── nav-submenu.css      # Navegación
 │   ├── js/                       # JavaScript
 │   └── uploads/                  # Archivos subidos
 │       ├── members/              # Fotos de socios
 │       ├── donors/               # Logos de donantes
-│       └── organization/         # Logo institucional
+│       ├── organization/         # Logo institucional
+│       ├── receipts/             # Comprobantes
+│       └── documents/            # Documentos
 ├── src/
 │   ├── Config/                   # Configuración
-│   │   └── config.php           # Archivo de configuración (generado)
+│   │   ├── config.php           # Configuración DB
+│   │   └── database.php         # Clase Database
 │   ├── Controllers/              # Controladores MVC
 │   │   ├── MemberController.php
+│   │   ├── MemberCategoryController.php
 │   │   ├── DonorController.php
+│   │   ├── PaymentController.php
+│   │   ├── ExpenseController.php
+│   │   ├── SupplierController.php
+│   │   ├── EventController.php
+│   │   ├── BookAdController.php
+│   │   ├── BookActivityController.php
+│   │   ├── BookExportController.php
+│   │   ├── BookDashboardController.php
 │   │   ├── CertificateController.php
 │   │   ├── TaskController.php
 │   │   ├── SettingsController.php
 │   │   ├── DashboardController.php
+│   │   ├── TreasuryController.php
 │   │   ├── AnalyticsController.php
+│   │   ├── AnnouncementController.php
+│   │   ├── GalleryController.php
+│   │   ├── NotificationsController.php
+│   │   ├── MessageController.php
+│   │   ├── PollController.php
+│   │   ├── DocumentController.php
+│   │   ├── AuditLogController.php
 │   │   ├── SearchController.php
 │   │   └── ExportController.php
 │   ├── Models/                   # Modelos de datos
 │   │   ├── Member.php
+│   │   ├── MemberCategory.php
 │   │   ├── Donor.php
-│   │   ├── Certificate.php
+│   │   ├── Payment.php
+│   │   ├── Expense.php
+│   │   ├── ExpenseCategory.php
+│   │   ├── Supplier.php
+│   │   ├── SupplierInvoice.php
+│   │   ├── Event.php
+│   │   ├── BookAd.php
+│   │   ├── BookActivity.php
+│   │   ├── BookPage.php
+│   │   ├── AdPrice.php
 │   │   ├── Task.php
 │   │   ├── Analytics.php
+│   │   ├── PublicAnnouncement.php
+│   │   ├── Notification.php
+│   │   ├── Message.php
+│   │   ├── Poll.php
+│   │   ├── Document.php
+│   │   ├── AuditLog.php
 │   │   └── OrganizationSettings.php
 │   ├── Views/                    # Vistas (plantillas PHP)
 │   │   ├── layout.php           # Plantilla principal
-│   │   ├── dashboard.php        # Dashboard
+│   │   ├── dashboard.php        # Dashboard principal
 │   │   ├── members/             # Vistas de socios
-│   │   │   ├── list.php
-│   │   │   ├── create.php
-│   │   │   ├── edit.php
-│   │   │   └── map.php          # Mapa interactivo
 │   │   ├── donors/              # Vistas de donantes
+│   │   ├── payments/            # Vistas de pagos
+│   │   ├── expenses/            # Vistas de gastos
+│   │   ├── suppliers/           # Vistas de proveedores
+│   │   ├── events/              # Vistas de eventos
+│   │   ├── book/                # Vistas del libro de fiestas
 │   │   ├── tasks/               # Vistas de tareas
 │   │   ├── analytics/           # Vistas de analíticas
-│   │   └── settings/            # Vistas de configuración
+│   │   ├── announcements/       # Vistas de anuncios
+│   │   ├── gallery/             # Galería de imágenes
+│   │   ├── notifications/       # Notificaciones
+│   │   ├── messages/            # Mensajería
+│   │   ├── polls/               # Votaciones
+│   │   ├── documents/           # Documentos
+│   │   ├── audit_log/           # Auditoría
+│   │   └── settings/            # Configuración
 │   └── Helpers/                  # Utilidades
-│       └── AvatarHelper.php     # Generador de avatares
+│       ├── AvatarHelper.php     # Generador de avatares
+│       ├── CsrfHelper.php       # Protección CSRF
+│       └── Lang.php             # Internacionalización
 └── README.md                     # Este archivo
 ```
 
@@ -339,8 +401,8 @@ GestionSocios/
 ### Ver Mapa de Ubicaciones
 
 1. **Acceder al mapa:**
-   - Menú lateral → "Socios" → "Mapa"
-   - O directamente: `index.php?page=members&action=map`
+   - Menú lateral → "Mapa"
+   - O directamente: `index.php?page=map`
 
 2. **Filtros disponibles:**
    - **Todos**: Muestra socios (azul) y donantes (verde)
@@ -354,93 +416,97 @@ GestionSocios/
    - Botón "🎯": centrar mapa en esa ubicación
    - Zoom con scroll o botones +/-
    - Arrastrar para mover el mapa
+   - **Etiquetas con nombres** aparecen al hacer zoom nivel 14+
 
-## 📜 Generación de Certificados
+## 📖 Gestión del Libro de Fiestas
 
-### Certificado de Socio
-1. Ir a "Socios" → Lista de socios
-2. Clic en el icono **📄** junto al socio
-3. Se genera PDF con formato: `certificado_socio_DNI_Nombre.pdf`
+### Configurar Precios
+1. Menú → "Configuración" → Pestaña "Precios Anuncios"
+2. Definir precios para cada tipo de anuncio:
+   - Media página
+   - Página completa
+   - Portada
+   - Contraportada
+3. Los precios se guardan por año
 
-### Certificado de Pagos
-1. Acceder al perfil del socio
-2. Sección "Pagos" → Botón "Generar Certificado"
-3. PDF incluye desglose de todas las cuotas pagadas
+### Gestionar Anunciantes
+1. Menú → "Libro Fiestas" → "Anunciantes"
+2. Crear nuevo anuncio con:
+   - Anunciante (nombre de la empresa/persona)
+   - Tipo de anuncio
+   - Año
+   - Estado de pago
+3. El precio se asigna automáticamente según el tipo
 
-Los certificados se descargan automáticamente al navegador.
+### Gestionar Actividades
+1. Menú → "Libro Fiestas" → "Actividades"
+2. Crear actividades del programa:
+   - Título
+   - Descripción
+   - Fecha y hora
+   - Ubicación
 
-## 👥 Gestión de Socios
+### Maquetación y Exportación
+1. Menú → "Libro Fiestas" → "Maquetación"
+2. **Editor visual** con arrastrar y soltar
+3. **Sistema de versiones** para guardar diferentes ediciones
+4. Exportar a PDF o DOCX
+5. Vista previa antes de exportar
 
-### Crear Nuevo Socio
-1. Menú → "Socios" → "Nuevo Socio"
-2. Completar formulario:
-   - Nombre y apellidos (obligatorio)
-   - DNI/NIE (opcional pero recomendado)
-   - Email, teléfono
-   - Dirección + GPS (opcional)
-   - Foto (opcional, formatos: JPG, PNG, GIF, máx 5MB)
-3. El número de socio se asigna automáticamente
-4. Guardar
+## 💰 Gestión Financiera
 
-### Editar Socio
-- Lista de socios → Clic en icono **✏️**
-- Modificar campos necesarios
-- Si se sube nueva foto, reemplaza la anterior
-- Actualizar coordenadas GPS si ha cambiado de ubicación
+### Dashboard de Tesorería
+- Acceso: Menú → "Dashboard" → "Tesorería"
+- KPIs: Ingresos totales, gastos totales, balance
+- Gráficos de evolución mensual
+- Desglose por tipo de ingreso/gasto
 
-### Búsqueda Avanzada
-- Campo de búsqueda en lista de socios
-- Busca por: nombre, apellidos, DNI, email, teléfono
-- Filtros adicionales: estado, tipo de cuota
+### Generar Pagos de Cuotas
+1. Menú → "Configuración" → Pestaña "Socios"
+2. Sección "Generar Pagos de Cuotas"
+3. Seleccionar año
+4. Clic en "Generar Pagos"
+5. Se crearán pagos pendientes para todos los socios activos según la cuota de su categoría
 
-## 🎯 Gestión de Tareas
+### Gestión de Gastos
+1. Menú → "Gastos"
+2. Crear nuevo gasto:
+   - Categoría
+   - Descripción
+   - Importe
+   - Proveedor
+   - Número de factura
+   - Comprobante (opcional)
+3. Filtrar por año, mes, categoría
+4. Exportar a Excel
 
-### Crear Tarea
-1. Menú → "Tareas" → "Nueva Tarea"
-2. Completar:
-   - Título descriptivo
-   - Descripción detallada
-   - Asignar a usuario
-   - Prioridad (baja, normal, alta, urgente)
-   - Fecha de vencimiento
-3. Estado inicial: "Pendiente"
+### Gestión de Proveedores
+1. Menú → "Proveedores"
+2. Crear proveedor con datos de contacto
+3. Subir facturas asociadas
+4. Dashboard con estado de facturas y pagos
 
-### Estados de Tarea
-- **Pendiente**: Recién creada, sin empezar
-- **En Progreso**: Se está trabajando en ella
-- **Completada**: Finalizada exitosamente
-- **Cancelada**: Descartada o ya no aplica
+## 📊 Analíticas y Reportes
 
-### Ver Historial
-- Cada tarea registra automáticamente:
-  - Cambios de estado
-  - Modificaciones de campos
-  - Fecha y hora de cada cambio
+### Dashboard Principal
+- Estadísticas de socios (total, activos, inactivos)
+- Últimos pagos y próximos vencimientos
+- Eventos próximos
+- Tareas pendientes
+- Gráficos de evolución
 
-## ⚙️ Configuración del Sistema
+### Dashboard de Eventos
+- Menú → "Dashboard" → "Eventos"
+- Estadísticas de asistencia
+- Ingresos por eventos
+- Eventos más populares
 
-### Datos de la Organización
-1. Menú → "Configuración"
-2. Pestaña "Organización"
-3. Configurar:
-   - Nombre de la asociación
-   - CIF/NIF
-   - Dirección, teléfono, email
-   - Subir logo (aparecerá en certificados y cabecera)
+### Exportaciones
+- **Excel**: Socios, donantes, pagos, gastos, eventos
+- **PDF**: Certificados, reportes
+- Todos los listados tienen botón de exportación
 
-### Copias de Seguridad
-1. Menú → "Configuración"
-2. Pestaña "Copias de Seguridad"
-3. Clic en "Generar Copia de Seguridad"
-4. Descarga archivo SQL completo de la base de datos
-5. Guardar en lugar seguro
-
-### Restaurar Copia de Seguridad
-```bash
-mysql -u gestion_user -p asociacion_db < backup_20251122_120000.sql
-```
-
-## 🔒 Seguridad
+## 🔐 Seguridad
 
 ### Recomendaciones
 - ✅ Cambiar contraseña de `admin` inmediatamente
@@ -448,21 +514,21 @@ mysql -u gestion_user -p asociacion_db < backup_20251122_120000.sql
 - ✅ Configurar HTTPS para proteger datos (especialmente para GPS)
 - ✅ Realizar copias de seguridad semanales
 - ✅ Mantener PHP y MySQL actualizados
-- ✅ Revisar logs de Apache regularmente
+- ✅ Revisar logs de auditoría regularmente
+- ✅ Configurar política de contraseñas desde Configuración
 - ✅ Limitar acceso SSH solo a IPs conocidas
 
-### Permisos de Archivos (Linux)
-```bash
-# Archivos: 644 (lectura general, escritura propietario)
-find /var/www/GestionSocios -type f -exec chmod 644 {} \;
+### Auditoría
+- Menú → "Auditoría"
+- Registro completo de todas las acciones
+- Filtros por usuario, acción, fecha
+- Exportación a Excel y PDF
 
-# Directorios: 755 (lectura/ejecución general, escritura propietario)
-find /var/www/GestionSocios -type d -exec chmod 755 {} \;
-
-# Uploads y Config: 775 (escritura para grupo www-data)
-chmod -R 775 /var/www/GestionSocios/public/uploads
-chmod -R 775 /var/www/GestionSocios/src/Config
-```
+### Política de Contraseñas
+- Menú → "Configuración" → "Política de Contraseñas"
+- Configurar longitud mínima
+- Requerir mayúsculas, minúsculas, números, símbolos
+- Expiración de contraseñas
 
 ## 🐛 Solución de Problemas
 
@@ -538,12 +604,25 @@ Este proyecto está bajo licencia MIT. Ver archivo `LICENSE` para más detalles.
 
 ## 🙏 Créditos
 
-- **Desarrollador**: Nacho (matatunos)
+- **Desarrollador**: Nacho (matatunos) - nacho@favala.es
 - **Mapas**: Leaflet.js + OpenStreetMap
 - **Iconos**: Font Awesome
 - **PDF**: TCPDF
+- **Gráficos**: Chart.js
 
 ---
 
-**Versión**: 1.0.0  
+**Versión**: 1.5.0  
 **Última actualización**: Noviembre 2025
+
+## 🎯 Roadmap
+
+### Próximas Funcionalidades
+- [ ] API REST para integración con otras aplicaciones
+- [ ] App móvil nativa (Android/iOS)
+- [ ] Sistema de reservas online
+- [ ] Pasarela de pago integrada
+- [ ] Firma digital de documentos
+- [ ] Integración con redes sociales
+- [ ] Sistema de newsletters
+- [ ] Módulo de contabilidad avanzada
