@@ -466,7 +466,6 @@ CREATE TABLE IF NOT EXISTS audit_log (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabla de proveedores
 CREATE TABLE IF NOT EXISTS suppliers (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -480,8 +479,13 @@ CREATE TABLE IF NOT EXISTS suppliers (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- Tabla de cuotas anuales
+CREATE TABLE IF NOT EXISTS annual_fees (
+     year INT PRIMARY KEY,
+     amount DECIMAL(10,2) NOT NULL,
+     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabla de facturas de proveedores
 CREATE TABLE IF NOT EXISTS supplier_invoices (
     id INT AUTO_INCREMENT PRIMARY KEY,
     supplier_id INT NOT NULL,
