@@ -207,6 +207,7 @@ CREATE TABLE IF NOT EXISTS task_categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     color VARCHAR(30),
+    icon VARCHAR(50) DEFAULT NULL,
     is_active TINYINT(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
