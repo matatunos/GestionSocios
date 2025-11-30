@@ -5620,10 +5620,9 @@ INSERT INTO event_attendance (event_id, member_id, status, attended, attended_at
 (50, 790, 'registered', 0, NULL, '2025-12-12 00:00:00', '2025-12-12 00:00:00'),
 (50, 1476, 'confirmed', 1, '2023-01-09 00:00:00', '2022-12-12 00:00:00', '2022-12-12 00:00:00'),
 (50, 750, 'attended', 1, '2021-05-12 00:00:00', '2021-04-25 00:00:00', '2021-04-25 00:00:00'),
+...existing code...
+(50, 750, 'attended', 1, '2021-05-12 00:00:00', '2021-04-25 00:00:00', '2021-04-25 00:00:00');
 -- ============================================
-
-INSERT INTO payments (member_id, amount, payment_date, concept, status, fee_year, payment_type) VALUES
-(304, 15.00, '2020-09-18', 'Cuota anual 2020', 'paid', 2020, 'fee'),
 (1641, 15.00, '2020-04-13', 'Cuota anual 2020', 'paid', 2020, 'fee'),
 (1129, 15.00, '2020-11-14', 'Cuota anual 2020', 'paid', 2020, 'fee'),
 (112, 15.00, '2020-01-01', 'Cuota anual 2020', 'paid', 2020, 'fee'),
