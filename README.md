@@ -612,8 +612,9 @@ Este proyecto está bajo licencia MIT. Ver archivo `LICENSE` para más detalles.
 
 ---
 
-**Versión**: 1.5.0  
-**Última actualización**: Noviembre 2025
+**Versión**: 0.5 beta  
+**Última actualización**: Noviembre 2025  
+**Estado**: En desarrollo activo - No se recomienda para producción sin pruebas exhaustivas
 
 ## 🎯 Roadmap
 
