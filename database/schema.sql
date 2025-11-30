@@ -1,7 +1,7 @@
 -- Tabla de donaciones
 CREATE TABLE IF NOT EXISTS donations (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    donor_id INT DEFAULT NULL,
+    donor_id INT UNSIGNED DEFAULT NULL,
     amount DECIMAL(10,2) NOT NULL,
     donation_date DATE NOT NULL,
     method VARCHAR(50) DEFAULT NULL,
@@ -147,7 +147,7 @@ CREATE TABLE IF NOT EXISTS event_attendance (
 
 -- Tabla de donantes
 CREATE TABLE IF NOT EXISTS donors (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(150) NOT NULL,
     contact_person VARCHAR(100),
     phone VARCHAR(20),
