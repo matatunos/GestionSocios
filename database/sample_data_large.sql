@@ -1,6 +1,7 @@
--- 2000 socios, 500 donantes, 50 eventos, 5 años de actividad
 (50, 133, 'confirmed', 0, NULL, '2022-09-15 00:00:00', '2022-09-15 00:00:00'),
-
+	(50, 133, 'confirmed', 0, NULL, '2022-09-15 00:00:00', '2022-09-15 00:00:00'),
+	(51, 134, 'pending', 1, NULL, '2022-09-16 00:00:00', '2022-09-16 00:00:00'),
+	(52, 135, 'rejected', 0, NULL, '2022-09-17 00:00:00', '2022-09-17 00:00:00'),
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- Limpiar tablas existentes
