@@ -179,11 +179,10 @@ INSERT INTO annual_fees (year, amount) VALUES
 (2024, 19.00),
 (2025, 20.00);
 
--- Miembros de ejemplo
 INSERT INTO members (first_name, last_name, dni, email, phone, address, category_id, status, join_date, deactivated_at, latitude, longitude) VALUES
 ('Teresa', 'García Sanz', '31538609C', 'teresa.garcía569@demo.com', '6389646295', 'Calle Principal 155', 5, 'active', '2023-04-26', NULL, 43.425008, -5.629036),
 ('Sofía', 'Ramos Serrano', '74015716Z', 'sofía.ramos265@demo.com', '6921538003', 'Calle Principal 155', 7, 'active', '2020-07-28', NULL, 43.52559, -5.723909),
-('Juan', 'Sanz Márquez', '96357358P', 'juan.sanz857@demo.com', '6369042556', 'Calle Central 39', 5, 'active', '2023-02-21', NULL, 43.445639, -5.699307),
+('Juan', 'Sanz Márquez', '96357358P', 'juan.sanz857@demo.com', '6369042556', 'Calle Central 39', 5, 'active', '2023-02-21', NULL, 43.445639, -5.699307);
 ('Pilar', 'Vázquez Díaz', '92491921C', 'pilar.vázquez791@demo.com', '6170340501', 'Calle Real 138', 5, 'active', '2023-08-20', NULL, 43.36802, -5.922655),
 ('Elena', 'Lozano Navarro', '41189586J', 'elena.lozano121@demo.com', '6360679212', 'Calle Real 5', 6, 'inactive', '2023-12-17', '2023-10-24', 43.570296, -5.80996),
 ('Luis', 'González Cruz', '96134858X', 'luis.gonzález416@demo.com', '6061838323', 'Calle Principal 145', 2, 'active', '2021-10-23', NULL, 43.487031, -5.854628),
