@@ -26,9 +26,16 @@ TRUNCATE TABLE organization_settings;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
--- ============================================
--- CONFIGURACIÓN
--- ============================================
+
+-- Categorías de miembros necesarias para los datos de ejemplo
+INSERT INTO member_categories (id, name) VALUES
+	(1, 'Categoría 1'),
+	(2, 'Categoría 2'),
+	(3, 'Categoría 3'),
+	(4, 'Categoría 4'),
+	(5, 'Categoría 5'),
+	(6, 'Categoría 6'),
+	(7, 'Categoría 7');
 
 INSERT INTO organization_settings (category, setting_key, setting_value, setting_type, description) VALUES
 ('general', 'org_name', 'Asociación Cultural y Deportiva Gran Ciudad', 'string', 'Nombre completo de la organización'),
