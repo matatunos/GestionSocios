@@ -181,6 +181,12 @@ if (isset($_SESSION['user_id'])) {
                             <?php endif; } ?>
                         </a>
                     </li>
+                        <li>
+                            <a href="index.php?page=calendar" class="nav-link <?php echo ($page === 'calendar') ? 'active' : ''; ?>">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Calendario</span>
+                            </a>
+                        </li>
                     <li>
                         <a href="index.php?page=notifications" class="nav-link <?php echo ($page === 'notifications') ? 'active' : ''; ?>">
                             <i class="fas fa-bell"></i>

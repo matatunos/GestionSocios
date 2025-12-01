@@ -17,6 +17,9 @@ $title = 'Gestión de Documentos';
                 <i class="fas fa-cloud-upload-alt"></i> Subir Documento
             </a>
         <?php endif; ?>
+        <a href="index.php?page=document_categories" class="btn btn-secondary" style="margin-left:0.5em;">
+            <i class="fas fa-tags"></i> Categorías de Documentos
+        </a>
     </div>
 </div>
 
