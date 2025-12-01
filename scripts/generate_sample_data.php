@@ -183,7 +183,7 @@ echo implode(",\n", $settings) . ";\n\n";
 echo "INSERT INTO annual_fees (year, amount) VALUES\n";
 for ($year = 2020; $year <= 2026; $year++) {
     $amount = 15 + ($year - 2020) * 2;
-    $fees[] = "($year, $amount.00)";
+    $fees[] = "($year, " . number_format($amount, 2, '.', '') . ")";
 }
 echo implode(",\n", $fees) . ";\n\n";
 
@@ -192,10 +192,10 @@ echo "INSERT INTO ad_prices (year, type, amount) VALUES\n";
 $adPrices = [];
 for ($year = 2023; $year <= 2026; $year++) {
     $base = 40 + ($year - 2023) * 5;
-    $adPrices[] = "($year, 'media', " . $base . ".00)";
-    $adPrices[] = "($year, 'full', " . ($base * 2) . ".00)";
-    $adPrices[] = "($year, 'cover', " . ($base * 3) . ".00)";
-    $adPrices[] = "($year, 'back_cover', " . ($base * 2.5) . ".00)";
+    $adPrices[] = "($year, 'media', " . number_format($base, 2, '.', '') . ")";
+    $adPrices[] = "($year, 'full', " . number_format($base * 2, 2, '.', '') . ")";
+    $adPrices[] = "($year, 'cover', " . number_format($base * 3, 2, '.', '') . ")";
+    $adPrices[] = "($year, 'back_cover', " . number_format($base * 2.5, 2, '.', '') . ")";
 }
 echo implode(",\n", $adPrices) . ";\n\n";
 
