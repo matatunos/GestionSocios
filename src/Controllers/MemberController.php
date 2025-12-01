@@ -76,7 +76,7 @@ class MemberController {
             $this->member->email = $_POST['email'];
             $this->member->phone = $_POST['phone'];
             $this->member->address = $_POST['address'];
-            $this->member->status = $_POST['status'];
+            $this->member->status = $_POST['status'] ?? 'active';
             $this->member->category_id = !empty($_POST['category_id']) ? $_POST['category_id'] : null;
             $this->member->photo_url = $this->handleUpload();
 
