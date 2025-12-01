@@ -160,6 +160,12 @@ if (isset($_SESSION['user_id'])) {
                             <span>Calendario</span>
                         </a>
                     </li>
+                       <li>
+                           <a href="index.php?page=events" class="nav-link <?php echo ($page === 'events') ? 'active' : ''; ?>">
+                               <i class="fas fa-calendar-check"></i>
+                               <span>Eventos</span>
+                           </a>
+                       </li>
                     <li>
                         <a href="index.php?page=messages" class="nav-link <?php echo ($page === 'messages') ? 'active' : ''; ?>">
                             <i class="fas fa-comments"></i>
@@ -302,6 +308,12 @@ if (isset($_SESSION['user_id'])) {
                             <span>Galería Imágenes</span>
                         </a>
                     </li>
+                       <li>
+                           <a href="index.php?page=events" class="nav-link <?php echo ($page === 'events') ? 'active' : ''; ?>">
+                               <i class="fas fa-calendar-check"></i>
+                               <span>Eventos</span>
+                           </a>
+                       </li>
 
                     <li>
                         <a href="index.php?page=suppliers" class="nav-link <?php echo ($page === 'suppliers') ? 'active' : ''; ?>">
