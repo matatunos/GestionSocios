@@ -18,6 +18,43 @@
         overflow-y: auto;
         overflow-x: hidden;
     }
+    /* Socios: Formulario de alta - mobile fix */
+    .card form[action*="members&action=store"] {
+        display: block !important;
+        padding: 0.5rem 0.25rem !important;
+    }
+
+    .card form[action*="members&action=store"] .form-group {
+        width: 100% !important;
+        margin-bottom: 1rem !important;
+        display: block !important;
+    }
+
+    .card form[action*="members&action=store"] label.form-label {
+        font-size: 1rem !important;
+        margin-bottom: 0.25rem !important;
+    }
+
+    .card form[action*="members&action=store"] input,
+    .card form[action*="members&action=store"] textarea {
+        font-size: 1rem !important;
+        padding: 0.5rem !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .card form[action*="members&action=store"] [style*="grid-template-columns"] {
+        display: block !important;
+        grid-template-columns: none !important;
+        gap: 0 !important;
+    }
+
+    .card form[action*="members&action=store"] .btn {
+        width: 100% !important;
+        margin-top: 1rem !important;
+        font-size: 1rem !important;
+        padding: 0.75rem !important;
+    }
 
     .sidebar.mobile-open {
         left: 0 !important;
