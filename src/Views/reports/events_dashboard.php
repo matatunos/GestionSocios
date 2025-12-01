@@ -16,18 +16,18 @@ $from = $_GET['from'] ?? '';
 $to = $_GET['to'] ?? '';
 $estado = $_GET['estado'] ?? '';
 $filteredEvents = array_filter($events, function($e) use ($from, $to, $estado) {
-    $date = strtotime($e['date']);
+    $date = strtotime($e['event_date']);
     $ok = true;
     if ($from) $ok = $ok && ($date >= strtotime($from));
     if ($to) $ok = $ok && ($date <= strtotime($to));
-    if ($estado === 'activo') $ok = $ok && ($e['is_active']);
-    if ($estado === 'inactivo') $ok = $ok && (!$e['is_active']);
+    if ($estado === 'activo') $ok = $ok && ($e['is_active'] ?? true);
+    if ($estado === 'inactivo') $ok = $ok && (!($e['is_active'] ?? true));
     return $ok;
 });
 // KPIs
 $totalEventos = count($filteredEvents);
-$proximosEventos = count(array_filter($filteredEvents, function($e) { return strtotime($e['date']) > time(); }));
-$eventosHoy = count(array_filter($filteredEvents, function($e) { return date('Y-m-d', strtotime($e['date'])) === date('Y-m-d'); }));
+$proximosEventos = count(array_filter($filteredEvents, function($e) { return strtotime($e['event_date']) > time(); }));
+$eventosHoy = count(array_filter($filteredEvents, function($e) { return date('Y-m-d', strtotime($e['event_date'])) === date('Y-m-d'); }));
 $ocupacionMedia = $totalEventos ? round(array_sum(array_map(function($e) use ($attendanceModel) {
     $stats = $attendanceModel->getStatsByEvent($e['id']);
     $max = $e['max_attendees'] ?? 0;
@@ -180,7 +180,7 @@ $ingresosTotales = array_sum(array_map(function($e) use ($attendanceModel) {
         <h2 style="margin-bottom: 0.5rem;">Próximos Eventos</h2>
         <?php 
         $upcomingEvents = array_filter($filteredEvents, function($e) { 
-            return strtotime($e['date']) > time(); 
+            return strtotime($e['event_date']) > time(); 
         });
         ?>
         <?php if (empty($upcomingEvents)): ?>
@@ -189,10 +189,10 @@ $ingresosTotales = array_sum(array_map(function($e) use ($attendanceModel) {
             <?php foreach ($upcomingEvents as $e): ?>
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid var(--border-light);">
                     <span style="font-weight: 500; color: var(--text-main);">
-                        <?= htmlspecialchars($e['name']) ?>
+                        <?= htmlspecialchars($e['title']) ?>
                     </span>
                     <span style="font-size: 0.95em; color: var(--secondary-600);">
-                        <i class="fas fa-calendar"></i> <?= date('d/m/Y', strtotime($e['date'])) ?>
+                        <i class="fas fa-calendar"></i> <?= date('d/m/Y', strtotime($e['event_date'])) ?>
                     </span>
                 </div>
             <?php endforeach; ?>
@@ -220,7 +220,7 @@ $ingresosTotales = array_sum(array_map(function($e) use ($attendanceModel) {
                     $benef = ($e['price'] ?? 0) * ($attendanceModel->getStatsByEvent($e['id'])['confirmed'] ?? 0);
                 ?>
                     <div style="padding: 0.5rem 0; display: flex; justify-content: space-between;">
-                        <span style="color: var(--text-main);"><?= htmlspecialchars($e['name']) ?></span>
+                        <span style="color: var(--text-main);"><?= htmlspecialchars($e['title']) ?></span>
                         <span style="font-weight: 600; color: var(--secondary-600);"><?= number_format($benef, 2) ?> €</span>
                     </div>
                 <?php endforeach; ?>
@@ -242,7 +242,7 @@ $ingresosTotales = array_sum(array_map(function($e) use ($attendanceModel) {
                     $conf = $attendanceModel->getStatsByEvent($e['id'])['confirmed'] ?? 0;
                 ?>
                     <div style="padding: 0.5rem 0; display: flex; justify-content: space-between;">
-                        <span style="color: var(--text-main);"><?= htmlspecialchars($e['name']) ?></span>
+                        <span style="color: var(--text-main);"><?= htmlspecialchars($e['title']) ?></span>
                         <span style="font-weight: 600; color: var(--primary-600);"><?= $conf ?> confirmados</span>
                     </div>
                 <?php endforeach; ?>
@@ -274,7 +274,7 @@ $ingresosTotales = array_sum(array_map(function($e) use ($attendanceModel) {
                     $ocupacion_real = $max ? round((($confirmados + $asistidos) / $max) * 100, 1) : 0;
                 ?>
                     <div style="padding: 0.5rem 0; display: flex; flex-direction: column;">
-                        <span style="color: var(--text-main); font-weight: 500;"><?= htmlspecialchars($e['name']) ?></span>
+                        <span style="color: var(--text-main); font-weight: 500;"><?= htmlspecialchars($e['title']) ?></span>
                         <span style="font-size: 0.95em; color: var(--secondary-600);">Ocupación real: <?= $ocupacion_real ?>%</span>
                         <span style="font-size: 0.85em; color: var(--primary-600);">Confirmados: <?= $confirmados ?>, Asistidos: <?= $asistidos ?>, Plazas: <?= $max ?></span>
                     </div>
@@ -288,7 +288,7 @@ $ingresosTotales = array_sum(array_map(function($e) use ($attendanceModel) {
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
 const eventos = <?= json_encode(array_values($filteredEvents)) ?>;
-const labels = eventos.map(e => e.name);
+const labels = eventos.map(e => e.title);
 const statsArr = <?= json_encode(array_map(function($e) use ($attendanceModel) { return $attendanceModel->getStatsByEvent($e['id']); }, array_values($filteredEvents))) ?>;
 const asistencia = statsArr.map(s => s.confirmed ?? 0);
 const ingresos = eventos.map((e, i) => (e.price ?? 0) * (statsArr[i].confirmed ?? 0));
