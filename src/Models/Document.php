@@ -67,6 +67,7 @@ class Document {
                              WHEN d.is_public = 1 THEN TRUE
                              WHEN d.uploaded_by = :member_id THEN TRUE
                              WHEN EXISTS (
+                                 SELECT 1 FROM document_permissions dp 
                                  WHERE dp.document_id = d.id 
                                  AND dp.member_id = :member_id 
                              ) THEN TRUE
@@ -132,6 +133,7 @@ class Document {
                         WHEN d.is_public = 1 THEN TRUE
                         WHEN d.uploaded_by = :member_id THEN TRUE
                         WHEN EXISTS (
+                            SELECT 1 FROM document_permissions dp 
                             WHERE dp.document_id = :document_id 
                             AND dp.member_id = :member_id 
                         ) THEN TRUE
