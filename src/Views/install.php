@@ -109,23 +109,13 @@ if (file_exists($configFile)) {
             </div>
 
             <div class="form-group" style="margin-top:1.5rem;">
-                <label class="form-label">Datos de Ejemplo</label>
-                <div style="margin-top:0.75rem;">
-                    <label style="display:block;margin-bottom:0.5rem;">
-                        <input type="radio" name="sample_data_option" value="none" <?php echo (!isset($_POST['sample_data_option']) || $_POST['sample_data_option'] === 'none') ? 'checked' : ''; ?>>
-                        No importar datos de ejemplo
-                    </label>
-                    <label style="display:block;margin-bottom:0.5rem;">
-                        <input type="radio" name="sample_data_option" value="small" <?php echo (isset($_POST['sample_data_option']) && $_POST['sample_data_option'] === 'small') ? 'checked' : ''; ?>>
-                        Datos reducidos (25 socios, 10 donantes, 10 eventos)
-                    </label>
-                    <label style="display:block;margin-bottom:0.5rem;">
-                        <input type="radio" name="sample_data_option" value="large" <?php echo (isset($_POST['sample_data_option']) && $_POST['sample_data_option'] === 'large') ? 'checked' : ''; ?>>
-                        Datos extensos (2000 socios, 500 donantes, 50 eventos, 5 años de actividad)
-                    </label>
-                </div>
-                <small style="color:#888;display:block;margin-top:0.5rem;">Los datos de ejemplo son útiles para probar el sistema. Los datos extensos simulan una asociación grande con mucha actividad.</small>
+                <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;">
+                    <input type="checkbox" name="load_sample_data" value="1" <?php echo (isset($_POST['load_sample_data']) && $_POST['load_sample_data'] === '1') ? 'checked' : ''; ?>>
+                    <span class="form-label" style="margin:0;">Cargar datos de ejemplo</span>
+                </label>
+                <small style="color:#888;display:block;margin-top:0.5rem;margin-left:1.5rem;">Incluye socios, donantes, eventos, pagos y otros datos de prueba para familiarizarse con el sistema.</small>
             </div>
+
 
             <button type="submit" class="btn btn-primary w-full" style="margin-top: 1.5rem;">
                 Instalar y Configurar <i class="fas fa-rocket" style="margin-left: 0.5rem;"></i>

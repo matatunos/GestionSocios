@@ -65,18 +65,12 @@ class InstallerController {
             }
 
             // 4. Import sample data if requested
-            $sampleDataOption = $_POST['sample_data_option'] ?? 'none';
+            $loadSampleData = isset($_POST['load_sample_data']) && $_POST['load_sample_data'] === '1';
             
-            if ($sampleDataOption !== 'none') {
-                $sampleFile = '';
+            if ($loadSampleData) {
+                $sampleFile = __DIR__ . '/../../database/sample_data.sql';
                 
-                if ($sampleDataOption === 'small') {
-                    $sampleFile = __DIR__ . '/../../database/sample_data.sql';
-                } elseif ($sampleDataOption === 'large') {
-                    $sampleFile = __DIR__ . '/../../database/sample_data_large.sql';
-                }
-                
-                if ($sampleFile && file_exists($sampleFile)) {
+                if (file_exists($sampleFile)) {
                     $sampleSql = file_get_contents($sampleFile);
                     try {
                         $conn->exec($sampleSql);
@@ -85,12 +79,13 @@ class InstallerController {
                         require __DIR__ . '/../Views/install.php';
                         return;
                     }
-                } elseif ($sampleFile) {
-                    $error = "Archivo de datos de ejemplo no encontrado: " . basename($sampleFile);
+                } else {
+                    $error = "Archivo de datos de ejemplo no encontrado: sample_data.sql";
                     require __DIR__ . '/../Views/install.php';
                     return;
                 }
             }
+
 
             // 5. Create/Update Admin User
             $password_hash = password_hash($admin_pass, PASSWORD_DEFAULT);
