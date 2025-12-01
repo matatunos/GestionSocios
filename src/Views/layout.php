@@ -352,12 +352,6 @@ if (isset($_SESSION['user_id'])) {
                         </a>
                     </li>
                     <li>
-                        <a href="index.php?page=polls" class="nav-link <?php echo ($page === 'polls') ? 'active' : ''; ?>">
-                            <i class="fas fa-vote-yea"></i>
-                            <span>Votaciones</span>
-                        </a>
-                    </li>
-                    <li>
                         <a href="index.php?page=messages" class="nav-link <?php echo ($page === 'messages') ? 'active' : ''; ?>">
                             <i class="fas fa-comments"></i>
                             <span>Mensajes</span>
