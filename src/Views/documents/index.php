@@ -81,13 +81,24 @@ $title = 'Gestión de Documentos';
 <div class="card filter-card" style="margin-bottom: 1.5rem;">
     <form method="GET" action="index.php" class="filter-form">
         <input type="hidden" name="page" value="documents">
-        
         <div class="filter-row">
             <div class="filter-group">
                 <label>Buscar</label>
                 <input type="text" name="search" class="form-input" placeholder="Título o descripción..." value="<?php echo htmlspecialchars($_GET['search'] ?? ''); ?>">
             </div>
-            
+            <div class="filter-group">
+                <label>Categoría</label>
+                <select name="category_id" class="form-control">
+                    <option value="">Todas</option>
+                    <?php if (isset($categories) && is_array($categories)): ?>
+                        <?php foreach ($categories as $cat): ?>
+                            <option value="<?php echo $cat['id']; ?>" <?php echo (isset($_GET['category_id']) && $_GET['category_id'] == $cat['id']) ? 'selected' : ''; ?> style="color:<?php echo htmlspecialchars($cat['color']); ?>;">
+                                <?php echo htmlspecialchars($cat['name']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </select>
+            </div>
             <div class="filter-actions">
                 <button type="submit" class="btn btn-primary btn-sm">
                     <i class="fas fa-filter"></i> Filtrar
@@ -146,6 +157,11 @@ $title = 'Gestión de Documentos';
                 
                 <div class="document-content">
                     <h3 class="document-title"><?php echo htmlspecialchars($doc['title']); ?></h3>
+                    <?php if (!empty($doc['category_name'])): ?>
+                        <span class="badge" style="background:<?php echo htmlspecialchars($doc['category_color']); ?>;color:#fff;margin-bottom:0.5em;display:inline-block;">
+                            <i class="fas fa-tag"></i> <?php echo htmlspecialchars($doc['category_name']); ?>
+                        </span>
+                    <?php endif; ?>
                     <?php if ($doc['description']): ?>
                         <p class="document-description"><?php echo htmlspecialchars($doc['description']); ?></p>
                     <?php endif; ?>

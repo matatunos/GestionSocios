@@ -14,6 +14,7 @@ class Document {
     public $uploaded_by;
     public $is_public;
     public $downloads;
+    public $category_id;
     public $created_at;
     public $updated_at;
     
@@ -26,11 +27,9 @@ class Document {
      */
     public function create() {
         $query = "INSERT INTO " . $this->table . " 
-                  (title, description, file_name, file_path, file_size, file_type, uploaded_by, is_public) 
-                  VALUES (:title, :description, :file_name, :file_path, :file_size, :file_type, :uploaded_by, :is_public)";
-        
+                  (title, description, file_name, file_path, file_size, file_type, uploaded_by, is_public, category_id) 
+                  VALUES (:title, :description, :file_name, :file_path, :file_size, :file_type, :uploaded_by, :is_public, :category_id)";
         $stmt = $this->conn->prepare($query);
-        
         $stmt->bindParam(':title', $this->title);
         $stmt->bindParam(':description', $this->description);
         $stmt->bindParam(':file_name', $this->file_name);
@@ -40,7 +39,7 @@ class Document {
         $stmt->bindParam(':uploaded_by', $this->uploaded_by, PDO::PARAM_INT);
         $is_public = $this->is_public ?? true;
         $stmt->bindParam(':is_public', $is_public, PDO::PARAM_BOOL);
-        
+        $stmt->bindParam(':category_id', $this->category_id, PDO::PARAM_INT);
         if ($stmt->execute()) {
             $this->id = $this->conn->lastInsertId();
             return true;
@@ -54,6 +53,7 @@ class Document {
     public function read($member_id = null) {
         $query = "SELECT d.*, 
                          m.first_name, m.last_name,
+                         dc.name AS category_name, dc.color AS category_color,
                          CASE 
                              WHEN d.is_public = 1 THEN TRUE
                              WHEN d.uploaded_by = :member_id THEN TRUE
@@ -65,8 +65,11 @@ class Document {
                              ELSE FALSE
                          END as can_access
                   FROM " . $this->table . " d
-                  JOIN members m ON d.uploaded_by = m.id";
-        
+                  JOIN members m ON d.uploaded_by = m.id
+                  LEFT JOIN document_categories dc ON d.category_id = dc.id";
+        if (func_num_args() > 1 && func_get_arg(1)) {
+            $query .= " WHERE d.category_id = " . intval(func_get_arg(1));
+        }
         $query .= " ORDER BY d.created_at DESC";
         
         $stmt = $this->conn->prepare($query);

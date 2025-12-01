@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../Models/Document.php';
 require_once __DIR__ . '/../Models/Member.php';
+    require_once __DIR__ . '/../Models/DocumentCategory.php';
 
 class DocumentController {
     private $db;
@@ -19,11 +20,16 @@ class DocumentController {
         $member_id = $_SESSION['user_id'];
         
         // Buscar documentos
-        if (isset($_GET['search']) && !empty($_GET['search'])) {
-            $documents = $this->documentModel->search($_GET['search'], $member_id);
-        } else {
-            $documents = $this->documentModel->read($member_id);
-        }
+            $category_id = isset($_GET['category_id']) ? (int)$_GET['category_id'] : null;
+            // Obtener categorías para el filtro
+            $categoryModel = new DocumentCategory($this->db);
+            $categories = $categoryModel->readAll();
+            // Buscar documentos
+            if (isset($_GET['search']) && !empty($_GET['search'])) {
+                $documents = $this->documentModel->search($_GET['search'], $member_id, $category_id);
+            } else {
+                $documents = $this->documentModel->read($member_id, $category_id);
+            }
         
         // Obtener estadísticas
         $stats = $this->documentModel->getStats();
@@ -44,6 +50,9 @@ class DocumentController {
         // Obtener lista de socios para permisos
         $memberModel = new Member($this->db);
         $members = $memberModel->readActive();
+            // Obtener categorías de documentos
+            $categoryModel = new DocumentCategory($this->db);
+            $categories = $categoryModel->readAll();
         
         require_once __DIR__ . '/../Views/documents/create.php';
     }
@@ -66,6 +75,7 @@ class DocumentController {
         $title = $_POST['title'] ?? '';
         $description = $_POST['description'] ?? '';
         $is_public = isset($_POST['is_public']) ? 1 : 0;
+            $category_id = isset($_POST['category_id']) ? (int)$_POST['category_id'] : null;
         
         if (empty($title)) {
             $_SESSION['error'] = 'El título es obligatorio';
@@ -123,6 +133,7 @@ class DocumentController {
         $this->documentModel->file_type = $file['type'];
         $this->documentModel->uploaded_by = $_SESSION['user_id'];
         $this->documentModel->is_public = $is_public;
+            $this->documentModel->category_id = $category_id;
         
         if ($this->documentModel->create()) {
             // Auditoría de alta de documento
