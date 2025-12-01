@@ -99,8 +99,8 @@ class TreasuryController {
         
         // Count pending book ad payments (all years)
         $query = "SELECT COUNT(*) as total
-                  FROM payments
-                  WHERE payment_type = 'book_ad' AND status = 'pending'";
+                  FROM book_ads
+                  WHERE status = 'pending'";
         $stmt = $this->db->prepare($query);
         $stmt->execute();
         $bookAdsPending = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
@@ -123,8 +123,8 @@ class TreasuryController {
         
         // Add book_ad pending payments (all years, not just current year)
         $query = "SELECT COALESCE(SUM(amount), 0) as total
-                  FROM payments
-                  WHERE payment_type = 'book_ad' AND status = 'pending'";
+                  FROM book_ads
+                  WHERE status = 'pending'";
         $stmt = $this->db->prepare($query);
         $stmt->execute();
         $bookAdPending = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
@@ -193,15 +193,13 @@ class TreasuryController {
     }
     
     private function getPendingBookAds($year) {
-        $query = "SELECT p.id, p.amount, p.concept, p.created_at, p.fee_year,
-                         ba.id as book_ad_id, ba.ad_type, ba.year as book_year,
+        $query = "SELECT ba.id as book_ad_id, ba.amount, ba.year as fee_year, ba.created_at,
+                         ba.ad_type, ba.year as book_year,
                          d.name as donor_name, d.email as donor_email, d.phone as donor_phone
-                  FROM payments p
-                  INNER JOIN book_ads ba ON p.book_ad_id = ba.id
+                  FROM book_ads ba
                   INNER JOIN donors d ON ba.donor_id = d.id
-                  WHERE p.payment_type = 'book_ad' 
-                    AND p.status = 'pending'
-                  ORDER BY p.fee_year DESC, p.created_at DESC";
+                  WHERE ba.status = 'pending'
+                  ORDER BY ba.year DESC, ba.created_at DESC";
         $stmt = $this->db->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
