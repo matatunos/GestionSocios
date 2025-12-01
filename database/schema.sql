@@ -104,6 +104,7 @@ CREATE TABLE IF NOT EXISTS members (
     deactivated_at DATE DEFAULT NULL,
     amount DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
     is_active TINYINT(1) DEFAULT 1,
+    member_number INT(11) DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (category_id) REFERENCES member_categories(id) ON DELETE SET NULL
@@ -130,7 +131,8 @@ CREATE TABLE IF NOT EXISTS events (
     location VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    discarded TINYINT(1) DEFAULT 0
+    discarded TINYINT(1) DEFAULT 0,
+    price DECIMAL(10,2) DEFAULT 0.00
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabla de estados de asistencia a eventos

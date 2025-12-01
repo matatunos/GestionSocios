@@ -61,7 +61,7 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem;">
             <div class="form-group">
                 <label class="form-label">Precio (€)</label>
-                <input type="number" step="0.01" name="price" class="form-control" value="0.00">
+                <input type="number" name="price" class="form-control" min="0" step="0.01" value="0.00" placeholder="Ej: 15.00">
             </div>
             <div class="form-group">
                 <label class="form-label">Plazas Máximas</label>

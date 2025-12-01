@@ -155,6 +155,7 @@ class EventController {
         $eventModel->description = $_POST['description'] ?? '';
         $eventModel->date = $_POST['event_date'] ?? date('Y-m-d');
         $eventModel->location = $_POST['location'] ?? '';
+        $eventModel->price = isset($_POST['price']) ? floatval($_POST['price']) : 0.00;
 
         if ($eventModel->create()) {
             require_once __DIR__ . '/../Models/AuditLog.php';
@@ -198,7 +199,7 @@ class EventController {
             $this->event->date = $_POST['date'];
             $this->event->start_time = !empty($_POST['start_time']) ? $_POST['start_time'] : null;
             $this->event->end_time = !empty($_POST['end_time']) ? $_POST['end_time'] : null;
-            $this->event->price = $_POST['price'];
+            $this->event->price = isset($_POST['price']) ? floatval($_POST['price']) : 0.00;
             $this->event->max_attendees = !empty($_POST['max_attendees']) ? $_POST['max_attendees'] : null;
             $this->event->requires_registration = isset($_POST['requires_registration']) ? 1 : 0;
             $this->event->registration_deadline = !empty($_POST['registration_deadline']) ? $_POST['registration_deadline'] : null;
