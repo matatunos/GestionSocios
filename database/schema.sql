@@ -1,15 +1,9 @@
-CREATE TABLE IF NOT EXISTS donations (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    donor_id INT UNSIGNED DEFAULT NULL,
-    amount DECIMAL(10,2) NOT NULL,
-    donation_date DATE NOT NULL,
-    type VARCHAR(50) DEFAULT NULL,
-    year INT DEFAULT NULL,
-    method VARCHAR(50) DEFAULT NULL,
-    notes TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- ============================================
+-- Schema para Sistema de Gestión de Socios
+-- ============================================
+-- IMPORTANTE: Las tablas están ordenadas por dependencias
+-- Las tablas independientes se crean primero
+
 -- Tabla de categorías de gastos
 CREATE TABLE IF NOT EXISTS expense_categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -20,9 +14,6 @@ CREATE TABLE IF NOT EXISTS expense_categories (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
--- ============================================
--- Schema para Sistema de Gestión de Socios
--- ============================================
 
 -- Tabla de configuración de la organización
 CREATE TABLE IF NOT EXISTS organization_settings (
@@ -183,6 +174,21 @@ CREATE TABLE IF NOT EXISTS book_ads (
     CONSTRAINT fk_book_ads_donor FOREIGN KEY (donor_id) REFERENCES donors(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Tabla de donaciones
+CREATE TABLE IF NOT EXISTS donations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    donor_id INT UNSIGNED DEFAULT NULL,
+    amount DECIMAL(10,2) NOT NULL,
+    donation_date DATE NOT NULL,
+    type VARCHAR(50) DEFAULT NULL,
+    year INT DEFAULT NULL,
+    method VARCHAR(50) DEFAULT NULL,
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (donor_id) REFERENCES donors(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS ad_prices (
     id INT AUTO_INCREMENT PRIMARY KEY,
     year YEAR NOT NULL,
@@ -203,8 +209,10 @@ CREATE TABLE IF NOT EXISTS payments (
     status ENUM('paid', 'pending', 'cancelled') DEFAULT 'paid',
     fee_year INT DEFAULT NULL,
     member_id INT DEFAULT NULL,
+    event_id INT DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE SET NULL
+    FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE SET NULL,
+    FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabla de categorías de tareas
