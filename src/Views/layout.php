@@ -369,6 +369,12 @@ if (isset($_SESSION['user_id'])) {
                             <span>Documentos</span>
                         </a>
                     </li>
+                        <li>
+                            <a href="index.php?page=calendar" class="nav-link <?php echo ($page === 'calendar') ? 'active' : ''; ?>">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Calendario</span>
+                            </a>
+                        </li>
                     <li>
                         <a href="index.php?page=messages" class="nav-link <?php echo ($page === 'messages') ? 'active' : ''; ?>">
                             <i class="fas fa-comments"></i>
