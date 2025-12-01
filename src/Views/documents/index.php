@@ -39,10 +39,10 @@ $title = 'Gestión de Documentos';
     $total_docs = 0;
     $total_size = 0;
     $total_downloads = 0;
-    foreach ($stats as $stat) {
-        $total_docs += $stat['count_by_category'];
-        $total_size += $stat['total_size'];
-        $total_downloads += $stat['total_downloads'];
+    if (isset($stats[0])) {
+        $total_docs = $stats[0]['total_documents'];
+        $total_size = $stats[0]['total_size'];
+        $total_downloads = $stats[0]['total_downloads'];
     }
     ?>
     <div class="stat-card">
@@ -86,18 +86,6 @@ $title = 'Gestión de Documentos';
             <div class="filter-group">
                 <label>Buscar</label>
                 <input type="text" name="search" class="form-input" placeholder="Título o descripción..." value="<?php echo htmlspecialchars($_GET['search'] ?? ''); ?>">
-            </div>
-            
-            <div class="filter-group">
-                <label>Categoría</label>
-                <select name="category" class="form-select">
-                    <option value="">Todas las categorías</option>
-                    <option value="general" <?php echo (($_GET['category'] ?? '') === 'general') ? 'selected' : ''; ?>>General</option>
-                    <option value="actas" <?php echo (($_GET['category'] ?? '') === 'actas') ? 'selected' : ''; ?>>Actas</option>
-                    <option value="estatutos" <?php echo (($_GET['category'] ?? '') === 'estatutos') ? 'selected' : ''; ?>>Estatutos</option>
-                    <option value="facturas" <?php echo (($_GET['category'] ?? '') === 'facturas') ? 'selected' : ''; ?>>Facturas</option>
-                    <option value="otros" <?php echo (($_GET['category'] ?? '') === 'otros') ? 'selected' : ''; ?>>Otros</option>
-                </select>
             </div>
             
             <div class="filter-actions">
@@ -163,9 +151,6 @@ $title = 'Gestión de Documentos';
                     <?php endif; ?>
                     
                     <div class="document-meta">
-                        <span class="badge" style="background: var(--primary-100); color: var(--primary-700);">
-                            <?php echo ucfirst($doc['category']); ?>
-                        </span>
                         <span class="document-meta-item">
                             <i class="fas fa-user"></i>
                             <?php echo htmlspecialchars($doc['first_name'] . ' ' . $doc['last_name']); ?>

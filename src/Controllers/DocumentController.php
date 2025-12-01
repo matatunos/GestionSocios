@@ -18,14 +18,11 @@ class DocumentController {
     public function index() {
         $member_id = $_SESSION['user_id'];
         
-        // Filtrar por categoría si se especifica
-        $category = $_GET['category'] ?? null;
-        
         // Buscar documentos
         if (isset($_GET['search']) && !empty($_GET['search'])) {
             $documents = $this->documentModel->search($_GET['search'], $member_id);
         } else {
-            $documents = $this->documentModel->read($member_id, $category);
+            $documents = $this->documentModel->read($member_id);
         }
         
         // Obtener estadísticas
@@ -68,7 +65,6 @@ class DocumentController {
         
         $title = $_POST['title'] ?? '';
         $description = $_POST['description'] ?? '';
-        $category = $_POST['category'] ?? Document::CATEGORY_GENERAL;
         $is_public = isset($_POST['is_public']) ? 1 : 0;
         
         if (empty($title)) {
@@ -125,7 +121,6 @@ class DocumentController {
         $this->documentModel->file_path = 'uploads/documents/' . $fileName;
         $this->documentModel->file_size = $file['size'];
         $this->documentModel->file_type = $file['type'];
-        $this->documentModel->category = $category;
         $this->documentModel->uploaded_by = $_SESSION['user_id'];
         $this->documentModel->is_public = $is_public;
         
@@ -265,7 +260,6 @@ class DocumentController {
         $this->documentModel->id = $id;
         $this->documentModel->title = $_POST['title'] ?? $document['title'];
         $this->documentModel->description = $_POST['description'] ?? $document['description'];
-        $this->documentModel->category = $_POST['category'] ?? $document['category'];
         $this->documentModel->is_public = isset($_POST['is_public']) ? 1 : 0;
         
         if ($this->documentModel->update()) {

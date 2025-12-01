@@ -26,27 +26,11 @@
             <textarea name="description" id="description" class="form-control" rows="4" placeholder="Descripción detallada del contenido"></textarea>
         </div>
 
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="category" class="form-label">Categoría <span class="text-danger">*</span></label>
-                    <select name="category" id="category" class="form-control" required>
-                        <option value="general">General</option>
-                        <option value="actas">Actas</option>
-                        <option value="estatutos">Estatutos</option>
-                        <option value="facturas">Facturas</option>
-                        <option value="otros">Otros</option>
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label class="form-label">Visibilidad</label>
-                    <div class="form-check form-switch mt-2">
-                        <input class="form-check-input" type="checkbox" id="is_public" name="is_public" checked onchange="togglePermissions()">
-                        <label class="form-check-label" for="is_public">Documento público (visible para todos)</label>
-                    </div>
-                </div>
+        <div class="form-group mb-3">
+            <label class="form-label">Visibilidad</label>
+            <div class="form-check form-switch mt-2">
+                <input class="form-check-input" type="checkbox" id="is_public" name="is_public" checked onchange="togglePermissions()">
+                <label class="form-check-label" for="is_public">Documento público (visible para todos)</label>
             </div>
         </div>
 
