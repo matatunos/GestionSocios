@@ -571,3 +571,28 @@ ON DUPLICATE KEY UPDATE setting_key=setting_key;
 INSERT INTO users (email, name, password, role, active, status) 
 VALUES ('admin@admin.com', 'Administrador', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 1, 'active') 
 ON DUPLICATE KEY UPDATE id=id;
+
+-- Migración para añadir el campo 'discarded' a la tabla 'events'
+ALTER TABLE events ADD COLUMN discarded TINYINT(1) DEFAULT 0 AFTER updated_at;
+-- Migración para añadir categorías a documentos
+CREATE TABLE IF NOT EXISTS document_categories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    color VARCHAR(20) DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Categorías típicas de asociación
+INSERT INTO document_categories (name, description, color) VALUES
+('Estatutos', 'Documentos legales y estatutos de la asociación', '#6366f1'),
+('Actas', 'Actas de reuniones y asambleas', '#10b981'),
+('Informes', 'Informes de gestión, económicos, etc.', '#f59e0b'),
+('Convocatorias', 'Convocatorias a reuniones y eventos', '#ef4444'),
+('Certificados', 'Certificados y acreditaciones', '#3b82f6'),
+('Comunicados', 'Comunicados oficiales y notas informativas', '#8b5cf6'),
+('Otros', 'Otros documentos relevantes', '#94a3b8');
+
+ALTER TABLE documents ADD COLUMN category_id INT DEFAULT NULL AFTER title;
+ALTER TABLE documents ADD CONSTRAINT fk_document_category FOREIGN KEY (category_id) REFERENCES document_categories(id) ON DELETE SET NULL;
