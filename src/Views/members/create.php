@@ -61,6 +61,10 @@
                 </a>
             </div>
         </div>
+        <div class="form-group">
+            <label class="form-label">Coordenadas (lat,lon)</label>
+            <input type="text" name="coords" id="coords" class="form-control" placeholder="Ej: 43.30886520392798, -5.913371370241108" oninput="coordsToFields(this.value)">
+        </div>
         <button type="submit" class="btn btn-primary">Registrar Socio</button>
     </form>
 </div>
@@ -93,7 +97,19 @@ function setLocation(lat, lng, btn) {
     btn.classList.add('btn-primary');
     const addressField = document.getElementById('address');
     if (!addressField.value || addressField.value.trim() === '') {
-        addressField.placeholder = `Ubicación capturada: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+        // Geolocalización inversa
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.display_name) {
+                    addressField.value = data.display_name;
+                } else {
+                    addressField.placeholder = `Ubicación capturada: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                }
+            })
+            .catch(() => {
+                addressField.placeholder = `Ubicación capturada: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+            });
     }
     // Mostrar link al mapa
     const mapLink = document.getElementById('mapLink');
@@ -103,6 +119,35 @@ function setLocation(lat, lng, btn) {
         btn.innerHTML = '<i class="fas fa-location-arrow"></i> Capturar ubicación';
         btn.disabled = false;
     }, 2000);
+}
+function coordsToFields(val) {
+    const parts = val.split(',').map(x => x.trim());
+    if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+        document.getElementById('latitude').value = parts[0];
+        document.getElementById('longitude').value = parts[1];
+        document.getElementById('latitudeDisplay').value = parseFloat(parts[0]).toFixed(6);
+        document.getElementById('longitudeDisplay').value = parseFloat(parts[1]).toFixed(6);
+        // Actualizar link al mapa
+        const mapLink = document.getElementById('mapLink');
+        mapLink.href = `https://www.google.com/maps?q=${parts[0]},${parts[1]}`;
+        mapLink.style.display = 'inline-block';
+        // Geolocalización inversa si dirección está vacía
+        const addressField = document.getElementById('address');
+        if (!addressField.value || addressField.value.trim() === '') {
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${parts[0]}&lon=${parts[1]}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.display_name) {
+                        addressField.value = data.display_name;
+                    } else {
+                        addressField.placeholder = `Ubicación capturada: ${parts[0]}, ${parts[1]}`;
+                    }
+                })
+                .catch(() => {
+                    addressField.placeholder = `Ubicación capturada: ${parts[0]}, ${parts[1]}`;
+                });
+        }
+    }
 }
 </script>
 
