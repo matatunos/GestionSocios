@@ -35,21 +35,16 @@
                 <?php foreach ($events as $row): ?>
                     <tr>
                         <td style="font-weight: 500;">
-                            <?php if ($row['is_active']): ?>
-                                <i class="fas fa-circle" style="color: #22c55e; font-size: 0.8rem; margin-right: 0.3rem;"></i>
-                            <?php else: ?>
-                                <i class="fas fa-circle" style="color: #ef4444; font-size: 0.8rem; margin-right: 0.3rem;"></i>
-                            <?php endif; ?>
-                            <?php echo htmlspecialchars($row['name']); ?>
                             <?php if (!empty($row['discarded']) && $row['discarded']): ?>
-                                <span class="badge badge-danger" style="margin-left: 0.5rem;">Descartado</span>
+                                <span class="badge badge-danger" style="margin-right: 0.5rem;">Descartado</span>
                             <?php endif; ?>
+                            <?php echo htmlspecialchars($row['title']); ?>
                         </td>
-                        <td><?php echo htmlspecialchars($row['date']); ?></td>
-                        <td><?php echo number_format($row['price'], 2); ?> €</td>
+                        <td><?php echo htmlspecialchars($row['event_date']); ?></td>
+                        <td><?php echo isset($row['price']) ? number_format($row['price'], 2) . ' €' : '-'; ?></td>
                         <td>
-                            <span class="badge <?php echo $row['is_active'] ? 'badge-active' : 'badge-inactive'; ?>">
-                                <?php echo $row['is_active'] ? 'Activo' : 'Inactivo'; ?>
+                            <span class="badge <?php echo (!isset($row['discarded']) || !$row['discarded']) ? 'badge-active' : 'badge-inactive'; ?>">
+                                <?php echo (!isset($row['discarded']) || !$row['discarded']) ? 'Activo' : 'Descartado'; ?>
                             </span>
                         </td>
                         <td>
