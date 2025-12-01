@@ -254,7 +254,7 @@ class ExportController {
     public function exportEventsExcel() {
         $eventModel = new Event($this->db);
         
-        $query = "SELECT * FROM events ORDER BY date DESC";
+        $query = "SELECT * FROM events ORDER BY event_date DESC";
         $stmt = $this->db->prepare($query);
         $stmt->execute();
         $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
