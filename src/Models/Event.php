@@ -116,7 +116,7 @@ class Event {
     public function create() {
         $query = "INSERT INTO " . $this->table_name . " 
                   SET title=:title, description=:description, 
-                      location=:location, event_date=:event_date";
+                      location=:location, event_date=:event_date, price=:price";
         
         $stmt = $this->conn->prepare($query);
 
@@ -124,11 +124,13 @@ class Event {
         $this->description = htmlspecialchars(strip_tags($this->description));
         $this->location = $this->location ? htmlspecialchars(strip_tags($this->location)) : null;
         $this->date = htmlspecialchars(strip_tags($this->date));
+        $this->price = htmlspecialchars(strip_tags($this->price));
 
         $stmt->bindParam(":title", $this->name);
         $stmt->bindParam(":description", $this->description);
         $stmt->bindParam(":location", $this->location);
         $stmt->bindParam(":event_date", $this->date);
+        $stmt->bindParam(":price", $this->price);
 
         if ($stmt->execute()) {
             $this->id = $this->conn->lastInsertId();
@@ -140,7 +142,7 @@ class Event {
     public function update() {
         $query = "UPDATE " . $this->table_name . " 
                   SET title=:title, description=:description,
-                      location=:location, event_date=:event_date
+                      location=:location, event_date=:event_date, price=:price
                   WHERE id=:id";
         
         $stmt = $this->conn->prepare($query);
@@ -150,12 +152,14 @@ class Event {
         $this->location = $this->location ? htmlspecialchars(strip_tags($this->location)) : null;
         $this->date = htmlspecialchars(strip_tags($this->date));
         $this->id = htmlspecialchars(strip_tags($this->id));
+        $this->price = htmlspecialchars(strip_tags($this->price));
 
         $stmt->bindParam(":title", $this->name);
         $stmt->bindParam(":description", $this->description);
         $stmt->bindParam(":location", $this->location);
         $stmt->bindParam(":event_date", $this->date);
         $stmt->bindParam(":id", $this->id);
+        $stmt->bindParam(":price", $this->price);
 
         if ($stmt->execute()) {
             return true;
