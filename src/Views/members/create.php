@@ -43,56 +43,33 @@
         </div>
 
         <div class="form-group">
+
             <label class="form-label">Dirección</label>
             <textarea name="address" id="address" class="form-control" rows="3"></textarea>
         </div>
+        <!-- ...otros campos del formulario aquí... -->
+        <button type="submit" class="btn btn-primary">Registrar Socio</button>
+    </form>
+</div>
 
-
-            document.getElementById('latitude').value = lat;
-            document.getElementById('longitude').value = lng;
-            document.getElementById('latitudeDisplay').value = lat.toFixed(6);
-            document.getElementById('longitudeDisplay').value = lng.toFixed(6);
-            
-            // Update button
-            btn.innerHTML = '<i class="fas fa-check"></i> ¡Ubicación capturada!';
-            btn.classList.remove('btn-success');
-            btn.classList.add('btn-primary');
-            
-            // Show success message
-            const addressField = document.getElementById('address');
-            if (!addressField.value || addressField.value.trim() === '') {
-                addressField.placeholder = `Ubicación capturada: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-            }
-            
-            setTimeout(() => {
-                btn.innerHTML = originalHTML;
-                btn.disabled = false;
-            }, 2000);
-        },
-        function(error) {
-            btn.innerHTML = originalHTML;
-            btn.disabled = false;
-            
-            let errorMsg = 'Error al obtener ubicación';
-            switch(error.code) {
-                case error.PERMISSION_DENIED:
-                    errorMsg = 'Permiso de ubicación denegado. Actívalo en la configuración del navegador.';
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    errorMsg = 'Ubicación no disponible';
-                    break;
-                case error.TIMEOUT:
-                    errorMsg = 'Tiempo de espera agotado';
-                    break;
-            }
-            alert(errorMsg);
-        },
-        {
-            enableHighAccuracy: true,
-            timeout: 10000,
-            maximumAge: 0
-        }
-    );
+<script>
+// JS para geolocalización (ubicación)
+function setLocation(lat, lng, btn) {
+    document.getElementById('latitude').value = lat;
+    document.getElementById('longitude').value = lng;
+    document.getElementById('latitudeDisplay').value = lat.toFixed(6);
+    document.getElementById('longitudeDisplay').value = lng.toFixed(6);
+    btn.innerHTML = '<i class="fas fa-check"></i> ¡Ubicación capturada!';
+    btn.classList.remove('btn-success');
+    btn.classList.add('btn-primary');
+    const addressField = document.getElementById('address');
+    if (!addressField.value || addressField.value.trim() === '') {
+        addressField.placeholder = `Ubicación capturada: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+    }
+    setTimeout(() => {
+        btn.innerHTML = 'Capturar ubicación';
+        btn.disabled = false;
+    }, 2000);
 }
 </script>
 
