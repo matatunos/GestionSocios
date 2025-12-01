@@ -24,11 +24,28 @@ class Event {
         $this->conn = $db;
     }
 
-    public function readAll() {
-        $query = "SELECT * FROM " . $this->table_name . " ORDER BY event_date DESC";
+    public function readAll($includeDiscarded = false) {
+        $query = "SELECT * FROM " . $this->table_name;
+        if (!$includeDiscarded) {
+            $query .= " WHERE discarded = 0";
+        }
+        $query .= " ORDER BY event_date DESC";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt;
+    }
+    public function discard($id) {
+        $query = "UPDATE " . $this->table_name . " SET discarded = 1 WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":id", $id);
+        return $stmt->execute();
+    }
+
+    public function restore($id) {
+        $query = "UPDATE " . $this->table_name . " SET discarded = 0 WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":id", $id);
+        return $stmt->execute();
     }
 
     public function readActive() {
@@ -67,9 +84,13 @@ class Event {
     }
     
     public function readByMonth($year, $month) {
-        $query = "SELECT * FROM " . $this->table_name . " 
-                  WHERE YEAR(event_date) = :year AND MONTH(event_date) = :month 
-                  ORDER BY event_date ASC";
+        $query = "SELECT * FROM " . $this->table_name . " WHERE YEAR(event_date) = :year AND MONTH(event_date) = :month";
+        if (func_num_args() > 2 && func_get_arg(2) === true) {
+            // Incluir descartados
+        } else {
+            $query .= " AND discarded = 0";
+        }
+        $query .= " ORDER BY event_date ASC";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':year', $year);
         $stmt->bindParam(':month', $month);
@@ -78,9 +99,13 @@ class Event {
     }
     
     public function readByDateRange($start_date, $end_date) {
-        $query = "SELECT * FROM " . $this->table_name . " 
-                  WHERE event_date BETWEEN :start_date AND :end_date 
-                  ORDER BY event_date ASC";
+        $query = "SELECT * FROM " . $this->table_name . " WHERE event_date BETWEEN :start_date AND :end_date";
+        if (func_num_args() > 2 && func_get_arg(2) === true) {
+            // Incluir descartados
+        } else {
+            $query .= " AND discarded = 0";
+        }
+        $query .= " ORDER BY event_date ASC";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':start_date', $start_date);
         $stmt->bindParam(':end_date', $end_date);

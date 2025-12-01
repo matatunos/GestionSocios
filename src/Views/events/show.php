@@ -19,6 +19,16 @@
     <p><strong>Descripción:</strong> <?= nl2br(htmlspecialchars($event->description)) ?></p>
     <p><strong>Fecha:</strong> <?= htmlspecialchars($event->date) ?></p>
     <p><strong>Precio:</strong> <?= number_format($event->price, 2) ?> €</p>
+    <?php if (!empty($event->discarded) && $event->discarded): ?>
+        <span class="badge badge-danger" style="margin-left: 0.5rem;">Descartado</span>
+        <a href="index.php?page=events&action=restore&id=<?= $event->id ?>" class="btn btn-sm btn-success" onclick="return confirm('¿Restaurar este evento?')" style="margin-left:1rem;">
+            <i class="fas fa-undo"></i> Restaurar
+        </a>
+    <?php else: ?>
+        <a href="index.php?page=events&action=discard&id=<?= $event->id ?>" class="btn btn-sm btn-danger" onclick="return confirm('¿Descartar este evento?')" style="margin-left:1rem;">
+            <i class="fas fa-trash"></i> Descartar
+        </a>
+    <?php endif; ?>
 </div>
 
 <div class="card" style="padding: 0; overflow: hidden;">

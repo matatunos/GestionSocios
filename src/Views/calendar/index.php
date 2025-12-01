@@ -16,6 +16,13 @@ ob_start();
 </div>
 
 <!-- Calendar Card -->
+<form method="GET" style="margin-bottom: 1rem;">
+    <input type="hidden" name="page" value="calendar">
+    <label style="font-weight: 500; margin-right: 1rem;">
+        <input type="checkbox" name="show_discarded" value="1" <?php if (!empty($_GET['show_discarded'])) echo 'checked'; ?>> Mostrar eventos descartados
+    </label>
+    <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-filter"></i> Filtrar</button>
+</form>
 <div class="card" style="padding: 1.5rem;">
     <div id="calendar"></div>
 </div>

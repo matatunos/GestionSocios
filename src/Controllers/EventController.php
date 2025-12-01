@@ -1,6 +1,35 @@
 <?php
 
 class EventController {
+        public function discard($id) {
+            $this->checkAdmin();
+            $eventModel = new Event($this->db);
+            if ($eventModel->discard($id)) {
+                require_once __DIR__ . '/../Models/AuditLog.php';
+                $audit = new AuditLog($this->db);
+                $audit->create($_SESSION['user_id'], 'discard', 'event', $id, 'Evento descartado por el usuario ' . ($_SESSION['username'] ?? ''));
+                $_SESSION['success'] = 'Evento descartado correctamente.';
+            } else {
+                $_SESSION['error'] = 'Error al descartar el evento.';
+            }
+            header('Location: index.php?page=events');
+            exit;
+        }
+
+        public function restore($id) {
+            $this->checkAdmin();
+            $eventModel = new Event($this->db);
+            if ($eventModel->restore($id)) {
+                require_once __DIR__ . '/../Models/AuditLog.php';
+                $audit = new AuditLog($this->db);
+                $audit->create($_SESSION['user_id'], 'restore', 'event', $id, 'Evento restaurado por el usuario ' . ($_SESSION['username'] ?? ''));
+                $_SESSION['success'] = 'Evento restaurado correctamente.';
+            } else {
+                $_SESSION['error'] = 'Error al restaurar el evento.';
+            }
+            header('Location: index.php?page=events');
+            exit;
+        }
     private $db;
     private $event;
     private $member;
@@ -99,7 +128,8 @@ class EventController {
 
     public function index() {
         $this->checkAdmin();
-        $stmt = $this->event->readAll();
+        $includeDiscarded = !empty($_GET['show_discarded']) && $_GET['show_discarded'] == '1';
+        $stmt = $this->event->readAll($includeDiscarded);
         $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
         require __DIR__ . '/../Views/events/index.php';
     }

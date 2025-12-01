@@ -58,14 +58,15 @@ class CalendarController {
             
             $eventModel = new Event($this->db);
             
+            $includeDiscarded = !empty($_GET['show_discarded']) && $_GET['show_discarded'] == '1';
             // If start and end are provided, use date range
             if ($start && $end) {
-                $stmt = $eventModel->readByDateRange($start, $end);
+                $stmt = $eventModel->readByDateRange($start, $end, $includeDiscarded);
             } else {
                 // Fallback to month-based query
                 $year = isset($_GET['year']) ? (int)$_GET['year'] : date('Y');
                 $month = isset($_GET['month']) ? (int)$_GET['month'] : date('n');
-                $stmt = $eventModel->readByMonth($year, $month);
+                $stmt = $eventModel->readByMonth($year, $month, $includeDiscarded);
             }
             
             $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
