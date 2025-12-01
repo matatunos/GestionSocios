@@ -43,17 +43,46 @@
         </div>
 
         <div class="form-group">
-
             <label class="form-label">Dirección</label>
             <textarea name="address" id="address" class="form-control" rows="3"></textarea>
         </div>
-        <!-- ...otros campos del formulario aquí... -->
+        <div class="form-group">
+            <label class="form-label">Ubicación GPS</label>
+            <div style="display: flex; gap: 0.5em; align-items: center; flex-wrap: wrap;">
+                <button type="button" class="btn btn-success" id="getLocationBtn" onclick="getLocation(this)">
+                    <i class="fas fa-location-arrow"></i> Capturar ubicación
+                </button>
+                <input type="hidden" name="latitude" id="latitude">
+                <input type="hidden" name="longitude" id="longitude">
+                <input type="text" id="latitudeDisplay" class="form-control" style="width: 120px;" placeholder="Latitud" readonly>
+                <input type="text" id="longitudeDisplay" class="form-control" style="width: 120px;" placeholder="Longitud" readonly>
+                <a href="#" id="mapLink" class="btn btn-info" style="margin-left:0.5em;display:none;" target="_blank">
+                    <i class="fas fa-map-marked-alt"></i> Ver en mapa
+                </a>
+            </div>
+        </div>
         <button type="submit" class="btn btn-primary">Registrar Socio</button>
     </form>
 </div>
 
 <script>
-// JS para geolocalización (ubicación)
+function getLocation(btn) {
+    if (!navigator.geolocation) {
+        alert('Geolocalización no soportada por este navegador.');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-location-arrow"></i> Capturar ubicación';
+        return false;
+    }
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Localizando...';
+    navigator.geolocation.getCurrentPosition(function(position) {
+        setLocation(position.coords.latitude, position.coords.longitude, btn);
+    }, function(error) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-location-arrow"></i> Capturar ubicación';
+        alert('No se pudo obtener la ubicación: ' + error.message);
+    }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
+}
 function setLocation(lat, lng, btn) {
     document.getElementById('latitude').value = lat;
     document.getElementById('longitude').value = lng;
@@ -66,8 +95,12 @@ function setLocation(lat, lng, btn) {
     if (!addressField.value || addressField.value.trim() === '') {
         addressField.placeholder = `Ubicación capturada: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
     }
+    // Mostrar link al mapa
+    const mapLink = document.getElementById('mapLink');
+    mapLink.href = `https://www.google.com/maps?q=${lat},${lng}`;
+    mapLink.style.display = 'inline-block';
     setTimeout(() => {
-        btn.innerHTML = 'Capturar ubicación';
+        btn.innerHTML = '<i class="fas fa-location-arrow"></i> Capturar ubicación';
         btn.disabled = false;
     }, 2000);
 }
