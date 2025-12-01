@@ -65,6 +65,13 @@
             <label class="form-label">Coordenadas (lat,lon)</label>
             <input type="text" name="coords" id="coords" class="form-control" placeholder="Ej: 43.30886520392798, -5.913371370241108" oninput="coordsToFields(this.value)">
         </div>
+        <div class="form-group">
+            <label class="form-label">Estado</label>
+            <select name="status" class="form-control" required>
+                <option value="active" selected>Activo</option>
+                <option value="inactive">Inactivo</option>
+            </select>
+        </div>
         <button type="submit" class="btn btn-primary">Registrar Socio</button>
     </form>
 </div>
