@@ -60,11 +60,7 @@ ob_start();
                                    value="<?= $task['due_date'] ?>">
                         </div>
                         
-                        <div class="col-md-6 mb-3">
-                            <label for="due_time" class="form-label">Hora de Vencimiento</label>
-                            <input type="time" class="form-control" id="due_time" name="due_time" 
-                                   value="<?= $task['due_time'] ?>">
-                        </div>
+
                     </div>
                     
                     <div class="row">

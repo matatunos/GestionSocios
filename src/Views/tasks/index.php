@@ -192,13 +192,25 @@ ob_start();
                                     'urgent' => 'danger',
                                     'high' => 'warning',
                                     'medium' => 'info',
-                                    'low' => 'secondary'
+                                    'medium' => 'info',
+                                    'low' => 'secondary',
+                                    1 => 'danger',
+                                    2 => 'warning',
+                                    3 => 'info',
+                                    0 => 'secondary'
                                 ];
                                 $priorityLabels = [
                                     'urgent' => 'Urgente',
                                     'high' => 'Alta',
                                     'medium' => 'Media',
-                                    'low' => 'Baja'
+                                    'urgent' => 'Urgente',
+                                    'high' => 'Alta',
+                                    'medium' => 'Media',
+                                    'low' => 'Baja',
+                                    1 => 'Urgente',
+                                    2 => 'Alta',
+                                    3 => 'Media',
+                                    0 => 'Baja'
                                 ];
                                 ?>
                                 <span class="badge bg-<?= $priorityColors[$task['priority']] ?>">
@@ -212,7 +224,7 @@ ob_start();
                                 <?php if ($task['due_date']): ?>
                                     <span class="<?= $isOverdue ? 'text-danger fw-bold' : ($isDueToday ? 'text-warning fw-bold' : '') ?>">
                                         <i class="far fa-calendar"></i> <?= date('d/m/Y', strtotime($task['due_date'])) ?>
-                                        <?php if ($task['due_time']): ?>
+                                        <?php if (isset($task['due_time']) && $task['due_time']): ?>
                                             <br><small><i class="far fa-clock"></i> <?= date('H:i', strtotime($task['due_time'])) ?></small>
                                         <?php endif; ?>
                                     </span>

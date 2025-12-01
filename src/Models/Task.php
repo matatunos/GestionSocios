@@ -123,9 +123,9 @@ class Task {
      */
     public function create() {
         $query = "INSERT INTO " . $this->table_name . "
-                  (title, description, category_id, priority, status, due_date, due_time, 
+                  (title, description, category_id, priority, status, due_date, 
                    assigned_to, created_by, related_entity_type, related_entity_id, notes)
-                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         $stmt = $this->conn->prepare($query);
         
@@ -136,7 +136,6 @@ class Task {
             $this->priority,
             $this->status ?? 'pending',
             $this->due_date,
-            $this->due_time,
             $this->assigned_to,
             $this->created_by,
             $this->related_entity_type,
@@ -151,7 +150,7 @@ class Task {
     public function update() {
         $query = "UPDATE " . $this->table_name . "
                   SET title = ?, description = ?, category_id = ?, priority = ?, 
-                      status = ?, due_date = ?, due_time = ?, assigned_to = ?, 
+                      status = ?, due_date = ?, assigned_to = ?, 
                       related_entity_type = ?, related_entity_id = ?, notes = ?
                   WHERE id = ?";
         
@@ -164,7 +163,6 @@ class Task {
             $this->priority,
             $this->status,
             $this->due_date,
-            $this->due_time,
             $this->assigned_to,
             $this->related_entity_type,
             $this->related_entity_id,

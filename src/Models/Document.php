@@ -67,10 +67,8 @@ class Document {
                              WHEN d.is_public = 1 THEN TRUE
                              WHEN d.uploaded_by = :member_id THEN TRUE
                              WHEN EXISTS (
-                                 SELECT 1 FROM document_permissions dp 
                                  WHERE dp.document_id = d.id 
                                  AND dp.member_id = :member_id 
-                                 AND dp.can_view = 1
                              ) THEN TRUE
                              ELSE FALSE
                          END as can_access
@@ -134,10 +132,8 @@ class Document {
                         WHEN d.is_public = 1 THEN TRUE
                         WHEN d.uploaded_by = :member_id THEN TRUE
                         WHEN EXISTS (
-                            SELECT 1 FROM document_permissions dp 
                             WHERE dp.document_id = :document_id 
                             AND dp.member_id = :member_id 
-                            AND dp.can_view = 1
                         ) THEN TRUE
                         ELSE FALSE
                     END as can_access
@@ -261,15 +257,13 @@ class Document {
      * Otorgar permisos a un documento privado
      */
     public function grantPermission($document_id, $member_id, $granted_by) {
-        $query = "INSERT INTO document_permissions 
-                  (document_id, member_id, granted_by, can_view, can_download) 
-                  VALUES (:document_id, :member_id, :granted_by, 1, 1)
-                  ON DUPLICATE KEY UPDATE can_view = 1, can_download = 1";
+        $query = "INSERT IGNORE INTO document_permissions 
+                  (document_id, member_id) 
+                  VALUES (:document_id, :member_id)";
         
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':document_id', $document_id, PDO::PARAM_INT);
         $stmt->bindParam(':member_id', $member_id, PDO::PARAM_INT);
-        $stmt->bindParam(':granted_by', $granted_by, PDO::PARAM_INT);
         
         return $stmt->execute();
     }

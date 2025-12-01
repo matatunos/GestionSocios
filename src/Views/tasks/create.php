@@ -58,10 +58,7 @@ ob_start();
                             <input type="date" class="form-control" id="due_date" name="due_date">
                         </div>
                         
-                        <div class="col-md-6 mb-3">
-                            <label for="due_time" class="form-label">Hora de Vencimiento</label>
-                            <input type="time" class="form-control" id="due_time" name="due_time">
-                        </div>
+
                     </div>
                     
                     <div class="row">
