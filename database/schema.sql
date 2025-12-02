@@ -78,6 +78,15 @@ CREATE TABLE IF NOT EXISTS users (
     active TINYINT(1) DEFAULT 1,
     status ENUM('active', 'inactive') DEFAULT 'active',
     locked_until DATETIME NULL,
+-- ============================================
+-- Tabla relacional documentos-categorías (muchos a muchos)
+CREATE TABLE IF NOT EXISTS document_category_rel (
+    document_id INT NOT NULL,
+    category_id INT NOT NULL,
+    PRIMARY KEY (document_id, category_id),
+    FOREIGN KEY (document_id) REFERENCES documents(id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES document_categories(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     failed_attempts INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
