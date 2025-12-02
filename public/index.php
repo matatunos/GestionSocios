@@ -36,50 +36,39 @@ if (strpos($requestUri, '/api/') === 0 || strpos($requestUri, $basePath . '/api/
 
 // Check Installation & DB Connection
 if (!file_exists(__DIR__ . '/../src/Config/config.php')) {
-    $page = 'install';
-} else {
-    // Config exists, verify connection if not already in install mode
-    if ($page !== 'install') {
-        require_once __DIR__ . '/../src/Config/database.php';
-        $dbTest = new Database();
-        $conn = $dbTest->getConnection();
-        if ($conn === null) {
-            $page = 'db_error';
-        } else {
-            // Check if main tables exist (users)
-            try {
-                $result = $conn->query("SHOW TABLES LIKE 'users'");
-                if ($result->rowCount() === 0) {
-                    $page = 'install';
-                } else {
-                    // Initialize $db for controllers
-                    $db = $conn;
-                }
-            } catch (Exception $e) {
-                $page = 'install';
-            }
-        }
+    die('<h1>Error de Configuración</h1><p>No se encontró el archivo de configuración. Por favor, ejecuta el script de instalación:<br><code>bash database/install.sh</code></p>');
+}
+
+require_once __DIR__ . '/../src/Config/database.php';
+$dbTest = new Database();
+$conn = $dbTest->getConnection();
+
+if ($conn === null) {
+    die('<h1>Error de Conexión</h1><p>No se pudo conectar a la base de datos. Verifica la configuración en <code>src/Config/config.php</code></p><p>Si necesitas reinstalar, ejecuta:<br><code>bash database/install.sh</code></p>');
+}
+
+// Check if main tables exist (users)
+try {
+    $result = $conn->query("SHOW TABLES LIKE 'users'");
+    if ($result->rowCount() === 0) {
+        die('<h1>Error: Base de Datos Vacía</h1><p>La base de datos no contiene las tablas necesarias. Por favor, ejecuta el script de instalación:<br><code>bash database/install.sh</code></p>');
     }
+    // Initialize $db for controllers
+    $db = $conn;
+} catch (Exception $e) {
+    die('<h1>Error de Base de Datos</h1><p>Error al verificar las tablas: ' . htmlspecialchars($e->getMessage()) . '</p><p>Ejecuta el script de instalación:<br><code>bash database/install.sh</code></p>');
 }
 
 $action = $_GET['action'] ?? 'index';
 
-// Check Auth (skip for login, install, update, and db_error)
-if (!isset($_SESSION['user_id']) && $page !== 'login' && $page !== 'install' && $page !== 'update' && $page !== 'db_error') {
+// Check Auth (skip for login and update)
+if (!isset($_SESSION['user_id']) && $page !== 'login' && $page !== 'update') {
     header('Location: index.php?page=login');
     exit;
 }
 
 // Routing Logic
 switch ($page) {
-    case 'db_error':
-        require __DIR__ . '/../src/Views/install/db_error.php';
-        break;
-    case 'install':
-        $controller = new InstallerController();
-        if ($action === 'run') $controller->install();
-        else $controller->index();
-        break;
     case 'update':
         $controller = new UpdateController();
         $controller->index();
