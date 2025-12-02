@@ -161,6 +161,13 @@ switch ($page) {
         else if ($action === 'restoreImage') $controller->restoreImage($_GET['id'], $_GET['historyId']);
         else $controller->index();
         break;
+        case 'document_categories':
+            require_once __DIR__ . '/../src/Controllers/DocumentCategoryController.php';
+            $controller = new DocumentCategoryController($db);
+            if ($action === 'create') $controller->create();
+            else if ($action === 'delete') $controller->delete();
+            else $controller->index();
+            break;
     case 'suppliers':
         require_once __DIR__ . '/../src/Controllers/SupplierController.php';
         $controller = new SupplierController();
