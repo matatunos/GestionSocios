@@ -428,6 +428,22 @@ switch ($page) {
         else if ($action === 'downloadBackup') $controller->downloadBackup();
         else $controller->index();
         break;
+    case 'accounting':
+        $controller = new AccountingController();
+        if ($action === 'accounts') $controller->accounts();
+        else if ($action === 'createAccount') $controller->createAccount();
+        else if ($action === 'storeAccount') $controller->storeAccount();
+        else if ($action === 'editAccount') $controller->editAccount();
+        else if ($action === 'updateAccount') $controller->updateAccount();
+        else if ($action === 'entries') $controller->entries();
+        else if ($action === 'createEntry') $controller->createEntry();
+        else if ($action === 'storeEntry') $controller->storeEntry();
+        else if ($action === 'viewEntry') $controller->viewEntry();
+        else if ($action === 'postEntry') $controller->postEntry();
+        else if ($action === 'generalLedger') $controller->generalLedger();
+        else if ($action === 'trialBalance') $controller->trialBalance();
+        else $controller->dashboard();
+        break;
     default:
         echo "404 Not Found";
         break;

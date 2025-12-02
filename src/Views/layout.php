@@ -335,6 +335,47 @@ if (isset($_SESSION['user_id'])) {
                         </a>
                     </li>
 
+                    <!-- Menú de Contabilidad -->
+                    <li class="nav-group">
+                        <a href="#" class="nav-link <?php echo ($page === 'accounting') ? 'active' : ''; ?>">
+                            <i class="fas fa-calculator"></i>
+                            <span>Contabilidad</span>
+                            <i class="fas fa-chevron-down" style="margin-left:auto;font-size:0.8em;"></i>
+                        </a>
+                        <ul class="nav-submenu">
+                            <li>
+                                <a href="index.php?page=accounting&action=dashboard" class="nav-link <?php echo ($page === 'accounting' && $action === 'dashboard') ? 'active' : ''; ?>">
+                                    <i class="fas fa-home"></i>
+                                    <span>Dashboard</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="index.php?page=accounting&action=accounts" class="nav-link <?php echo ($page === 'accounting' && $action === 'accounts') ? 'active' : ''; ?>">
+                                    <i class="fas fa-book"></i>
+                                    <span>Plan de Cuentas</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="index.php?page=accounting&action=entries" class="nav-link <?php echo ($page === 'accounting' && $action === 'entries') ? 'active' : ''; ?>">
+                                    <i class="fas fa-file-invoice"></i>
+                                    <span>Libro Diario</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="index.php?page=accounting&action=generalLedger" class="nav-link <?php echo ($page === 'accounting' && $action === 'generalLedger') ? 'active' : ''; ?>">
+                                    <i class="fas fa-book-open"></i>
+                                    <span>Libro Mayor</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="index.php?page=accounting&action=trialBalance" class="nav-link <?php echo ($page === 'accounting' && $action === 'trialBalance') ? 'active' : ''; ?>">
+                                    <i class="fas fa-balance-scale"></i>
+                                    <span>Balance de Sumas</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
                     <li>
                         <a href="index.php?page=tasks" class="nav-link <?php echo ($page === 'tasks') ? 'active' : ''; ?>">
                             <i class="fas fa-tasks"></i>
