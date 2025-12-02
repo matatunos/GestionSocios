@@ -127,7 +127,7 @@ class MemberController {
             $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
             $mimeType = finfo_file($finfo, $_FILES['photo']['tmp_name']);
-            finfo_close($finfo);
+            // finfo_close is deprecated and not needed in modern PHP
             
             if (!in_array($mimeType, $allowedMimeTypes)) {
                 throw new Exception('Tipo de archivo no permitido. Solo se permiten imágenes JPEG, PNG, GIF y WebP.');
