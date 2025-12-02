@@ -36,7 +36,8 @@ if (strpos($requestUri, '/api/') === 0 || strpos($requestUri, $basePath . '/api/
 
 // Check Installation & DB Connection
 if (!file_exists(__DIR__ . '/../src/Config/config.php')) {
-    die('<h1>Error de Configuración</h1><p>No se encontró el archivo de configuración. Por favor, ejecuta el script de instalación:<br><code>bash database/install.sh</code></p>');
+    require __DIR__ . '/../src/Views/install/setup_required.php';
+    exit;
 }
 
 require_once __DIR__ . '/../src/Config/database.php';
@@ -44,19 +45,23 @@ $dbTest = new Database();
 $conn = $dbTest->getConnection();
 
 if ($conn === null) {
-    die('<h1>Error de Conexión</h1><p>No se pudo conectar a la base de datos. Verifica la configuración en <code>src/Config/config.php</code></p><p>Si necesitas reinstalar, ejecuta:<br><code>bash database/install.sh</code></p>');
+    require __DIR__ . '/../src/Views/install/connection_error.php';
+    exit;
 }
 
 // Check if main tables exist (users)
 try {
     $result = $conn->query("SHOW TABLES LIKE 'users'");
     if ($result->rowCount() === 0) {
-        die('<h1>Error: Base de Datos Vacía</h1><p>La base de datos no contiene las tablas necesarias. Por favor, ejecuta el script de instalación:<br><code>bash database/install.sh</code></p>');
+        require __DIR__ . '/../src/Views/install/tables_missing.php';
+        exit;
     }
     // Initialize $db for controllers
     $db = $conn;
 } catch (Exception $e) {
-    die('<h1>Error de Base de Datos</h1><p>Error al verificar las tablas: ' . htmlspecialchars($e->getMessage()) . '</p><p>Ejecuta el script de instalación:<br><code>bash database/install.sh</code></p>');
+    $errorMessage = $e->getMessage();
+    require __DIR__ . '/../src/Views/install/database_error.php';
+    exit;
 }
 
 $action = $_GET['action'] ?? 'index';
