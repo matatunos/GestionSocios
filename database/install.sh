@@ -58,9 +58,9 @@ echo "  Usuario: $DB_USER"
 echo "  Host: $DB_HOST"
 echo ""
 
-read -p "¿Es correcta esta configuración? (s/n): " CONFIRM
+read -p "¿Es correcta esta configuración? (S/n): " CONFIRM
 CONFIRM=${CONFIRM:-s}
-if [ "$CONFIRM" != "s" ] && [ "$CONFIRM" != "S" ]; then
+if [ "$CONFIRM" != "s" ] && [ "$CONFIRM" != "S" ] && [ "$CONFIRM" != "" ]; then
     error "Instalación cancelada por el usuario"
 fi
 
@@ -81,13 +81,33 @@ if [ $? -ne 0 ]; then
 fi
 success "Conexión a MySQL exitosa"
 
+# Verificar si la base de datos existe y advertir antes de dropear
+DB_EXISTS=$(mysql -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" -e "SHOW DATABASES LIKE '$DB_NAME';" 2>/dev/null | grep -c "$DB_NAME")
+if [ "$DB_EXISTS" -eq 1 ]; then
+    echo ""
+    warning "La base de datos '$DB_NAME' ya existe y será ELIMINADA con todos sus datos."
+    read -p "¿Deseas continuar y ELIMINAR la base de datos existente? (S/n): " DROP_CONFIRM
+    DROP_CONFIRM=${DROP_CONFIRM:-s}
+    if [ "$DROP_CONFIRM" != "s" ] && [ "$DROP_CONFIRM" != "S" ] && [ "$DROP_CONFIRM" != "" ]; then
+        error "Instalación cancelada. La base de datos existente no fue modificada."
+    fi
+    
+    echo "Eliminando base de datos existente..."
+    mysql -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" -e "DROP DATABASE $DB_NAME;" 2>/dev/null
+    if [ $? -eq 0 ]; then
+        success "Base de datos existente eliminada"
+    else
+        error "Error al eliminar la base de datos existente"
+    fi
+fi
+
 # Crear base de datos
 echo "Creando base de datos '$DB_NAME'..."
-mysql -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" -e "CREATE DATABASE IF NOT EXISTS $DB_NAME CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" 2>/dev/null
+mysql -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" -e "CREATE DATABASE $DB_NAME CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" 2>/dev/null
 if [ $? -eq 0 ]; then
     success "Base de datos creada"
 else
-    warning "La base de datos ya existe o hubo un error al crearla"
+    error "Error al crear la base de datos"
 fi
 
 # Importar schema
@@ -101,9 +121,9 @@ fi
 
 # Preguntar si quiere importar datos de ejemplo
 echo ""
-read -p "¿Deseas importar datos de ejemplo? (s/n): " IMPORT_SAMPLE
+read -p "¿Deseas importar datos de ejemplo? (S/n): " IMPORT_SAMPLE
 IMPORT_SAMPLE=${IMPORT_SAMPLE:-s}
-if [ "$IMPORT_SAMPLE" = "s" ] || [ "$IMPORT_SAMPLE" = "S" ]; then
+if [ "$IMPORT_SAMPLE" = "s" ] || [ "$IMPORT_SAMPLE" = "S" ] || [ "$IMPORT_SAMPLE" = "" ]; then
     if [ -f "sample_data_large.sql" ]; then
         echo "Importando datos de ejemplo..."
         mysql -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" "$DB_NAME" < sample_data_large.sql
@@ -127,9 +147,9 @@ CONFIG_FILE="$CONFIG_DIR/config.php"
 mkdir -p "$CONFIG_DIR"
 
 # Generar contraseña segura para el usuario de la BD (opcional)
-read -p "¿Deseas crear un usuario específico para la aplicación? (s/n): " CREATE_USER
+read -p "¿Deseas crear un usuario específico para la aplicación? (S/n): " CREATE_USER
 CREATE_USER=${CREATE_USER:-s}
-if [ "$CREATE_USER" = "s" ] || [ "$CREATE_USER" = "S" ]; then
+if [ "$CREATE_USER" = "s" ] || [ "$CREATE_USER" = "S" ] || [ "$CREATE_USER" = "" ]; then
     read -p "Nombre del usuario de la aplicación [gestion_user]: " APP_USER
     APP_USER=${APP_USER:-gestion_user}
     
