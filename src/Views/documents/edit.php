@@ -39,7 +39,7 @@
             <label for="category_ids" class="form-label">Categorías</label>
             <select name="category_ids[]" id="category_ids" class="form-control" multiple>
                 <?php if (isset($categories) && is_array($categories)): ?>
-                    <?php $selected = isset($document['id']) ? $documentModel->getCategoryIds($document['id']) : []; ?>
+                    <?php $selected = isset($document['category_ids']) ? $document['category_ids'] : []; ?>
                     <?php foreach ($categories as $cat): ?>
                         <option value="<?php echo $cat['id']; ?>" style="color:<?php echo htmlspecialchars($cat['color']); ?>;" <?php echo in_array($cat['id'], $selected) ? 'selected' : ''; ?>>
                             <?php echo htmlspecialchars($cat['name']); ?>
