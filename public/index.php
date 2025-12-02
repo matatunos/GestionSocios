@@ -436,7 +436,23 @@ switch ($page) {
         else if ($action === 'postEntry') $controller->postEntry();
         else if ($action === 'generalLedger') $controller->generalLedger();
         else if ($action === 'trialBalance') $controller->trialBalance();
+        else if ($action === 'periods') $controller->periods();
+        else if ($action === 'createPeriod') $controller->createPeriod();
+        else if ($action === 'storePeriod') $controller->storePeriod();
+        else if ($action === 'editPeriod') $controller->editPeriod();
+        else if ($action === 'updatePeriod') $controller->updatePeriod();
+        else if ($action === 'closePeriod') $controller->closePeriod();
         else $controller->dashboard();
+        break;
+    case 'budget':
+        $controller = new BudgetController();
+        if ($action === 'create') $controller->create();
+        else if ($action === 'store') $controller->store();
+        else if ($action === 'edit') $controller->edit();
+        else if ($action === 'update') $controller->update();
+        else if ($action === 'delete') $controller->delete();
+        else if ($action === 'report') $controller->report();
+        else $controller->index();
         break;
     default:
         echo "404 Not Found";

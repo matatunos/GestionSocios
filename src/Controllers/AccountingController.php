@@ -369,4 +369,137 @@ class AccountingController {
         
         return $stats;
     }
+    
+    // ========== ACCOUNTING PERIODS MANAGEMENT ==========
+    
+    // List periods
+    public function periods() {
+        $filters = [
+            'fiscal_year' => $_GET['fiscal_year'] ?? '',
+            'status' => $_GET['status'] ?? ''
+        ];
+        
+        $periodModel = new AccountingPeriod($this->db);
+        $periods = $periodModel->readAll($filters);
+        
+        require_once __DIR__ . '/../Views/accounting/periods/index.php';
+    }
+    
+    // Create period form
+    public function createPeriod() {
+        require_once __DIR__ . '/../Views/accounting/periods/create.php';
+    }
+    
+    // Store period
+    public function storePeriod() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: index.php?page=accounting&action=periods');
+            exit;
+        }
+        
+        $periodModel = new AccountingPeriod($this->db);
+        $periodModel->name = $_POST['name'] ?? '';
+        $periodModel->start_date = $_POST['start_date'] ?? '';
+        $periodModel->end_date = $_POST['end_date'] ?? '';
+        $periodModel->fiscal_year = $_POST['fiscal_year'] ?? date('Y');
+        $periodModel->status = $_POST['status'] ?? 'open';
+        $periodModel->created_by = $_SESSION['user_id'];
+        
+        if ($periodModel->create()) {
+            require_once __DIR__ . '/../Models/AuditLog.php';
+            $audit = new AuditLog($this->db);
+            $audit->create($_SESSION['user_id'], 'create', 'accounting_period', $this->db->lastInsertId(), 'Periodo contable creado');
+            
+            $_SESSION['success'] = 'Periodo contable creado correctamente';
+        } else {
+            $_SESSION['error'] = 'Error al crear el periodo contable';
+        }
+        
+        header('Location: index.php?page=accounting&action=periods');
+        exit;
+    }
+    
+    // Edit period form
+    public function editPeriod() {
+        $id = $_GET['id'] ?? 0;
+        
+        $periodModel = new AccountingPeriod($this->db);
+        if (!$periodModel->readOne($id)) {
+            $_SESSION['error'] = 'Periodo no encontrado';
+            header('Location: index.php?page=accounting&action=periods');
+            exit;
+        }
+        
+        $period = [
+            'id' => $periodModel->id,
+            'name' => $periodModel->name,
+            'start_date' => $periodModel->start_date,
+            'end_date' => $periodModel->end_date,
+            'fiscal_year' => $periodModel->fiscal_year,
+            'status' => $periodModel->status
+        ];
+        
+        require_once __DIR__ . '/../Views/accounting/periods/edit.php';
+    }
+    
+    // Update period
+    public function updatePeriod() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: index.php?page=accounting&action=periods');
+            exit;
+        }
+        
+        $id = $_POST['id'] ?? 0;
+        
+        $periodModel = new AccountingPeriod($this->db);
+        if (!$periodModel->readOne($id)) {
+            $_SESSION['error'] = 'Periodo no encontrado';
+            header('Location: index.php?page=accounting&action=periods');
+            exit;
+        }
+        
+        $periodModel->name = $_POST['name'] ?? '';
+        $periodModel->start_date = $_POST['start_date'] ?? '';
+        $periodModel->end_date = $_POST['end_date'] ?? '';
+        $periodModel->fiscal_year = $_POST['fiscal_year'] ?? date('Y');
+        $periodModel->status = $_POST['status'] ?? 'open';
+        
+        if ($periodModel->update()) {
+            require_once __DIR__ . '/../Models/AuditLog.php';
+            $audit = new AuditLog($this->db);
+            $audit->create($_SESSION['user_id'], 'update', 'accounting_period', $id, 'Periodo contable actualizado');
+            
+            $_SESSION['success'] = 'Periodo actualizado correctamente';
+        } else {
+            $_SESSION['error'] = 'Error al actualizar el periodo';
+        }
+        
+        header('Location: index.php?page=accounting&action=periods');
+        exit;
+    }
+    
+    // Close period
+    public function closePeriod() {
+        $id = $_GET['id'] ?? 0;
+        
+        $periodModel = new AccountingPeriod($this->db);
+        if (!$periodModel->readOne($id)) {
+            $_SESSION['error'] = 'Periodo no encontrado';
+            header('Location: index.php?page=accounting&action=periods');
+            exit;
+        }
+        
+        if ($periodModel->close()) {
+            require_once __DIR__ . '/../Models/AuditLog.php';
+            $audit = new AuditLog($this->db);
+            $audit->create($_SESSION['user_id'], 'update', 'accounting_period', $id, 'Periodo contable cerrado');
+            
+            $_SESSION['success'] = 'Periodo cerrado correctamente';
+        } else {
+            $_SESSION['error'] = 'Error al cerrar el periodo';
+        }
+        
+        header('Location: index.php?page=accounting&action=periods');
+        exit;
+    }
 }

@@ -13,17 +13,13 @@ class BudgetController {
     // List budgets
     public function index() {
         $filters = [
-            'fiscal_year' => $_GET['fiscal_year'] ?? date('Y'),
+            'fiscal_year' => $_GET['fiscal_year'] ?? '',
             'status' => $_GET['status'] ?? '',
-            'account_id' => $_GET['account_id'] ?? ''
+            'period_type' => $_GET['period_type'] ?? ''
         ];
         
         $budgetModel = new Budget($this->db);
         $budgets = $budgetModel->readAll($filters);
-        
-        // Get accounts for filter
-        $accountModel = new AccountingAccount($this->db);
-        $accounts = $accountModel->readAll(['is_active' => 1]);
         
         require_once __DIR__ . '/../Views/accounting/budgets/index.php';
     }
@@ -39,7 +35,7 @@ class BudgetController {
     // Store budget
     public function store() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: index.php?page=budgets');
+            header('Location: index.php?page=budget');
             exit;
         }
         
@@ -64,7 +60,7 @@ class BudgetController {
             $_SESSION['error'] = 'Error al crear el presupuesto';
         }
         
-        header('Location: index.php?page=budgets');
+        header('Location: index.php?page=budget');
         exit;
     }
     
@@ -75,9 +71,22 @@ class BudgetController {
         $budgetModel = new Budget($this->db);
         if (!$budgetModel->readOne($id)) {
             $_SESSION['error'] = 'Presupuesto no encontrado';
-            header('Location: index.php?page=budgets');
+            header('Location: index.php?page=budget');
             exit;
         }
+        
+        // Convert model object to array for view
+        $budget = [
+            'id' => $budgetModel->id,
+            'name' => $budgetModel->name,
+            'description' => $budgetModel->description,
+            'fiscal_year' => $budgetModel->fiscal_year,
+            'account_id' => $budgetModel->account_id,
+            'amount' => $budgetModel->amount,
+            'period_type' => $budgetModel->period_type,
+            'period_number' => $budgetModel->period_number,
+            'status' => $budgetModel->status
+        ];
         
         $accountModel = new AccountingAccount($this->db);
         $accounts = $accountModel->readAll(['is_active' => 1]);
@@ -88,16 +97,16 @@ class BudgetController {
     // Update budget
     public function update() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: index.php?page=budgets');
+            header('Location: index.php?page=budget');
             exit;
         }
         
-        $id = $_GET['id'] ?? 0;
+        $id = $_POST['id'] ?? 0;
         
         $budgetModel = new Budget($this->db);
         if (!$budgetModel->readOne($id)) {
             $_SESSION['error'] = 'Presupuesto no encontrado';
-            header('Location: index.php?page=budgets');
+            header('Location: index.php?page=budget');
             exit;
         }
         
@@ -120,7 +129,7 @@ class BudgetController {
             $_SESSION['error'] = 'Error al actualizar el presupuesto';
         }
         
-        header('Location: index.php?page=budgets');
+        header('Location: index.php?page=budget');
         exit;
     }
     
@@ -139,16 +148,27 @@ class BudgetController {
             $_SESSION['error'] = 'Error al eliminar el presupuesto';
         }
         
-        header('Location: index.php?page=budgets');
+        header('Location: index.php?page=budget');
         exit;
     }
     
     // Budget vs Actual Report
     public function report() {
-        $fiscalYear = $_GET['fiscal_year'] ?? date('Y');
-        $accountId = $_GET['account_id'] ?? null;
+        $selectedYear = $_GET['fiscal_year'] ?? date('Y');
+        $selectedAccountId = $_GET['account_id'] ?? null;
         
-        $comparison = Budget::getBudgetVsActual($this->db, $fiscalYear, $accountId);
+        $budgetData = Budget::getBudgetVsActual($this->db, $selectedYear, $selectedAccountId);
+        
+        // Calculate totals
+        $totalBudget = 0;
+        $totalActual = 0;
+        foreach ($budgetData as $row) {
+            $totalBudget += $row['budget_amount'];
+            $totalActual += $row['actual_amount'];
+        }
+        $totalVariance = $totalBudget - $totalActual;
+        $totalVariancePercent = $totalBudget > 0 ? ($totalVariance / $totalBudget * 100) : 0;
+        $totalExecutionPercent = $totalBudget > 0 ? ($totalActual / $totalBudget * 100) : 0;
         
         // Get accounts for filter
         $accountModel = new AccountingAccount($this->db);
