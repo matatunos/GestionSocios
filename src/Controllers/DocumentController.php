@@ -214,32 +214,29 @@ class DocumentController {
      */
     public function edit() {
         $id = $_GET['id'] ?? null;
-        
         if (!$id) {
             $_SESSION['error'] = 'ID de documento no proporcionado';
             header('Location: index.php?page=documents');
             exit;
         }
-        
         $document = $this->documentModel->readOne($id);
-        
         if (!$document) {
             $_SESSION['error'] = 'Documento no encontrado';
             header('Location: index.php?page=documents');
             exit;
         }
-        
         // Solo el creador o admin puede editar
         if ($document['uploaded_by'] != $_SESSION['user_id'] && !Auth::hasPermission('documents_edit')) {
             $_SESSION['error'] = 'No tienes permisos para editar este documento';
             header('Location: index.php?page=documents');
             exit;
         }
-        
         // Obtener lista de socios
         $memberModel = new Member($this->db);
         $members = $memberModel->readActive();
-        
+        // Obtener categorías de documentos
+        $categoryModel = new DocumentCategory($this->db);
+        $categories = $categoryModel->readAll();
         require_once __DIR__ . '/../Views/documents/edit.php';
     }
     
