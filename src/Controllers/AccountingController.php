@@ -629,4 +629,113 @@ class AccountingController {
         
         require_once __DIR__ . '/../Views/accounting/reports/income_statement.php';
     }
+    
+    /**
+     * Exporta reportes contables a Excel
+     */
+    public function exportReport() {
+        Auth::requireLogin();
+        
+        require_once __DIR__ . '/../Helpers/ExportHelper.php';
+        
+        $reportType = $_GET['type'] ?? '';
+        
+        switch ($reportType) {
+            case 'trial_balance':
+                $startDate = $_GET['start_date'] ?? date('Y-01-01');
+                $endDate = $_GET['end_date'] ?? date('Y-m-d');
+                
+                $accounts = AccountingAccount::getAll();
+                $trialBalanceData = [];
+                
+                foreach ($accounts as $account) {
+                    $balance = AccountingAccount::getBalance($account['id'], $startDate, $endDate);
+                    $totals = AccountingAccount::getTotals($account['id'], $startDate, $endDate);
+                    
+                    if ($totals['total_debit'] > 0 || $totals['total_credit'] > 0) {
+                        $trialBalanceData[] = [
+                            'code' => $account['code'],
+                            'name' => $account['name'],
+                            'total_debit' => $totals['total_debit'],
+                            'total_credit' => $totals['total_credit'],
+                            'balance' => $balance,
+                            'balance_type' => $account['balance_type']
+                        ];
+                    }
+                }
+                
+                ExportHelper::exportTrialBalance($trialBalanceData, $startDate, $endDate);
+                break;
+                
+            case 'general_ledger':
+                $accountId = $_GET['account_id'] ?? 0;
+                $startDate = $_GET['start_date'] ?? date('Y-01-01');
+                $endDate = $_GET['end_date'] ?? date('Y-m-d');
+                
+                $account = AccountingAccount::getById($accountId);
+                if (!$account) {
+                    $_SESSION['error'] = Lang::get('account_not_found');
+                    header('Location: index.php?action=accounts');
+                    exit;
+                }
+                
+                $ledgerData = AccountingAccount::getLedger($accountId, $startDate, $endDate);
+                ExportHelper::exportGeneralLedger($account, $ledgerData, $startDate, $endDate);
+                break;
+                
+            case 'balance_sheet':
+                $endDate = $_GET['end_date'] ?? date('Y-m-d');
+                
+                $assets = AccountingAccount::getByCodeRange('1', '5999');
+                $liabilities = AccountingAccount::getByCodeRange('4', '4999');
+                $equity = AccountingAccount::getByCodeRange('10', '1999');
+                
+                foreach ($assets as &$account) {
+                    $account['balance'] = AccountingAccount::getBalance($account['id'], null, $endDate);
+                }
+                
+                foreach ($liabilities as &$account) {
+                    $account['balance'] = abs(AccountingAccount::getBalance($account['id'], null, $endDate));
+                }
+                
+                foreach ($equity as &$account) {
+                    $account['balance'] = abs(AccountingAccount::getBalance($account['id'], null, $endDate));
+                }
+                
+                $assets = array_filter($assets, function($acc) { return $acc['balance'] != 0; });
+                $liabilities = array_filter($liabilities, function($acc) { return $acc['balance'] != 0; });
+                $equity = array_filter($equity, function($acc) { return $acc['balance'] != 0; });
+                
+                ExportHelper::exportBalanceSheet($assets, $liabilities, $equity, $endDate);
+                break;
+                
+            case 'income_statement':
+                $startDate = $_GET['start_date'] ?? date('Y-01-01');
+                $endDate = $_GET['end_date'] ?? date('Y-m-d');
+                
+                $incomeAccounts = AccountingAccount::getByCodeRange('7', '7999');
+                $expenseAccounts = AccountingAccount::getByCodeRange('6', '6999');
+                
+                foreach ($incomeAccounts as &$account) {
+                    $balance = AccountingAccount::getBalance($account['id'], $startDate, $endDate);
+                    $account['balance'] = abs($balance);
+                }
+                
+                foreach ($expenseAccounts as &$account) {
+                    $balance = AccountingAccount::getBalance($account['id'], $startDate, $endDate);
+                    $account['balance'] = abs($balance);
+                }
+                
+                $incomeAccounts = array_filter($incomeAccounts, function($acc) { return $acc['balance'] > 0; });
+                $expenseAccounts = array_filter($expenseAccounts, function($acc) { return $acc['balance'] > 0; });
+                
+                ExportHelper::exportIncomeStatement($incomeAccounts, $expenseAccounts, $startDate, $endDate);
+                break;
+                
+            default:
+                $_SESSION['error'] = 'Tipo de reporte no válido';
+                header('Location: index.php?action=accounting');
+                exit;
+        }
+    }
 }

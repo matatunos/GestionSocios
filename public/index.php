@@ -444,6 +444,7 @@ switch ($page) {
         else if ($action === 'closePeriod') $controller->closePeriod();
         else if ($action === 'balanceSheet') $controller->balanceSheet();
         else if ($action === 'incomeStatement') $controller->incomeStatement();
+        else if ($action === 'exportReport') $controller->exportReport();
         else $controller->dashboard();
         break;
     case 'budget':

@@ -6,12 +6,16 @@ require_once __DIR__ . '/../../layout.php';
     <div class="content-header">
         <h1><i class="fas fa-balance-scale"></i> Balance de Situación</h1>
         <div class="header-actions">
-            <a href="index.php?page=accounting&action=dashboard" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Volver
+            <a href="index.php?page=accounting&action=exportReport&type=balance_sheet&end_date=<?php echo urlencode($endDate ?? date('Y-12-31')); ?>" 
+               class="btn btn-success">
+                <i class="fas fa-file-excel"></i> Exportar Excel
             </a>
             <button onclick="window.print()" class="btn btn-primary">
                 <i class="fas fa-print"></i> Imprimir
             </button>
+            <a href="index.php?page=accounting&action=dashboard" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
         </div>
     </div>
 

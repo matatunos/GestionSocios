@@ -6,6 +6,12 @@ require_once __DIR__ . '/../../layout.php';
     <div class="content-header">
         <h1><i class="fas fa-book-open"></i> Libro Mayor</h1>
         <div class="header-actions">
+            <?php if (isset($accountId) && $accountId): ?>
+            <a href="index.php?page=accounting&action=exportReport&type=general_ledger&account_id=<?php echo $accountId; ?>&start_date=<?php echo urlencode($startDate ?? date('Y-01-01')); ?>&end_date=<?php echo urlencode($endDate ?? date('Y-12-31')); ?>" 
+               class="btn btn-success">
+                <i class="fas fa-file-excel"></i> Exportar Excel
+            </a>
+            <?php endif; ?>
             <a href="index.php?page=accounting&action=dashboard" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Volver
             </a>
