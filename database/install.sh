@@ -93,30 +93,33 @@ if [ "$DB_EXISTS" -eq 1 ]; then
     fi
     
     echo "Eliminando base de datos existente..."
-    mysql -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" -e "DROP DATABASE $DB_NAME;" 2>/dev/null
+    DROP_OUTPUT=$(mysql -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" -e "DROP DATABASE $DB_NAME;" 2>&1)
     if [ $? -eq 0 ]; then
         success "Base de datos existente eliminada"
     else
-        error "Error al eliminar la base de datos existente"
+        echo "$DROP_OUTPUT"
+        error "Error al eliminar la base de datos existente. Verifica que el usuario tenga permisos DROP DATABASE."
     fi
 fi
 
 # Crear base de datos
 echo "Creando base de datos '$DB_NAME'..."
-mysql -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" -e "CREATE DATABASE $DB_NAME CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" 2>/dev/null
+CREATE_OUTPUT=$(mysql -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" -e "CREATE DATABASE $DB_NAME CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" 2>&1)
 if [ $? -eq 0 ]; then
     success "Base de datos creada"
 else
-    error "Error al crear la base de datos"
+    echo "$CREATE_OUTPUT"
+    error "Error al crear la base de datos. Verifica que el usuario tenga permisos CREATE DATABASE."
 fi
 
 # Importar schema
 echo "Importando estructura de la base de datos..."
-mysql -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" "$DB_NAME" < schema.sql
+IMPORT_OUTPUT=$(mysql -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" "$DB_NAME" < schema.sql 2>&1)
 if [ $? -eq 0 ]; then
     success "Schema importado correctamente"
 else
-    error "Error al importar el schema"
+    echo "$IMPORT_OUTPUT"
+    error "Error al importar el schema. Revisa los errores de SQL arriba."
 fi
 
 # Preguntar si quiere importar datos de ejemplo
