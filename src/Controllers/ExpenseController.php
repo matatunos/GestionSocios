@@ -76,18 +76,36 @@ class ExpenseController {
         }
         
         if ($expenseModel->create()) {
+            $lastId = $this->db->lastInsertId();
+            
             // Auditoría de alta de gasto
             require_once __DIR__ . '/../Models/AuditLog.php';
             $audit = new AuditLog($this->db);
-            $lastId = $this->db->lastInsertId();
             $audit->create($_SESSION['user_id'], 'create', 'expense', $lastId, 'Alta de gasto por el usuario ' . ($_SESSION['username'] ?? ''));
+            
+            // Crear asiento contable automático
+            require_once __DIR__ . '/../Helpers/AccountingHelper.php';
+            $accountingCreated = AccountingHelper::createEntryFromExpense(
+                $this->db,
+                $lastId,
+                $expenseModel->amount,
+                $expenseModel->description,
+                $expenseModel->expense_date,
+                $expenseModel->payment_method,
+                $expenseModel->category_id
+            );
+            
+            if (!$accountingCreated) {
+                error_log("No se pudo crear el asiento contable para el gasto #$lastId");
+            }
+            
             // Notificación ntfy y Telegram
             require_once __DIR__ . '/../Notifications/NotificationManager.php';
             $notifier = new NotificationManager();
             $msg = 'Nuevo gasto registrado: ' . $expenseModel->description . ' (' . number_format($expenseModel->amount, 2) . ' €)';
             $notifier->sendNtfy($msg, 'Nuevo Gasto');
             $notifier->sendTelegram($msg);
-            $_SESSION['success'] = 'Gasto registrado correctamente';
+            $_SESSION['success'] = 'Gasto registrado correctamente' . ($accountingCreated ? ' y contabilizado' : '');
         } else {
             $_SESSION['error'] = 'Error al registrar el gasto';
         }

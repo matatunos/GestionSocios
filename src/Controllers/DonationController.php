@@ -45,11 +45,32 @@ class DonationController {
             $this->donation->type = $_POST['type'];
             $this->donation->year = $_POST['year'];
             if ($this->donation->create()) {
+                $lastId = $this->db->lastInsertId();
+                
                 // Auditoría de alta de donación
                 require_once __DIR__ . '/../Models/AuditLog.php';
                 $audit = new AuditLog($this->db);
-                $lastId = $this->db->lastInsertId();
                 $audit->create($_SESSION['user_id'], 'create', 'donation', $lastId, 'Alta de donación por el usuario ' . ($_SESSION['username'] ?? ''));
+                
+                // Crear asiento contable automático
+                require_once __DIR__ . '/../Helpers/AccountingHelper.php';
+                $donationType = $_POST['type'] ?? 'monetary';
+                $description = "Donación " . $donationType . " (" . $_POST['year'] . ")";
+                $donationDate = date('Y-m-d'); // Usar fecha actual o del POST si existe
+                
+                $accountingCreated = AccountingHelper::createEntryFromDonation(
+                    $this->db,
+                    $lastId,
+                    $_POST['amount'],
+                    $description,
+                    $donationDate,
+                    'transfer'
+                );
+                
+                if (!$accountingCreated) {
+                    error_log("No se pudo crear el asiento contable para la donación #$lastId");
+                }
+                
                 header('Location: index.php?page=donations&msg=created');
                 exit;
             } else {

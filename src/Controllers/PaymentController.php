@@ -79,6 +79,8 @@ class PaymentController {
                 $this->payment->event_id = !empty($_POST['event_id']) ? $_POST['event_id'] : null;
 
                 if ($this->payment->create()) {
+                    $lastId = $this->db->lastInsertId();
+                    
                     // Audit log registro alta pago
                     require_once __DIR__ . '/../Models/AuditLog.php';
                     $auditLog = new AuditLog($this->db);
@@ -89,7 +91,23 @@ class PaymentController {
                         'payment_type' => $payment_type,
                         'payment_date' => $payment_date
                     ]);
-                    $auditLog->create($userId, 'create', 'payment', null, $details);
+                    $auditLog->create($userId, 'create', 'payment', $lastId, $details);
+
+                    // Crear asiento contable automático
+                    require_once __DIR__ . '/../Helpers/AccountingHelper.php';
+                    $accountingCreated = AccountingHelper::createEntryFromPayment(
+                        $this->db,
+                        $lastId,
+                        $_POST['amount'],
+                        $_POST['concept'],
+                        $payment_date,
+                        'transfer', // Por defecto, podría obtenerse del formulario
+                        $payment_type
+                    );
+                    
+                    if (!$accountingCreated) {
+                        error_log("No se pudo crear el asiento contable para el pago #$lastId");
+                    }
 
                     header('Location: index.php?page=payments&success=created');
                     exit;
