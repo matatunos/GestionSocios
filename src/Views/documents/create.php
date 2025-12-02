@@ -16,9 +16,8 @@
 
     <form method="POST" action="index.php?page=documents&action=store" enctype="multipart/form-data">
                 <div class="form-group mb-3">
-                    <label for="category_id" class="form-label">Categoría</label>
-                    <select name="category_id" id="category_id" class="form-control">
-                        <option value="">Sin categoría</option>
+                    <label for="category_ids" class="form-label">Categorías</label>
+                    <select name="category_ids[]" id="category_ids" class="form-control" multiple>
                         <?php if (isset($categories) && is_array($categories)): ?>
                             <?php foreach ($categories as $cat): ?>
                                 <option value="<?php echo $cat['id']; ?>" style="color:<?php echo htmlspecialchars($cat['color']); ?>;">
@@ -27,7 +26,7 @@
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </select>
-                    <small class="text-muted">Puedes añadir nuevas categorías desde la gestión de categorías.</small>
+                    <small class="text-muted">Puedes seleccionar varias categorías usando Ctrl o Shift.</small>
                 </div>
         
         <div class="form-group mb-3">
@@ -107,3 +106,16 @@ document.getElementById('file').addEventListener('change', function(e) {
 $content = ob_get_clean();
 require_once __DIR__ . '/../layout.php';
 ?>
+<style>
+select[multiple] {
+    padding: 0.5rem;
+}
+select[multiple] option {
+    padding: 0.5rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 0.25rem;
+}
+select[multiple] option:hover {
+    background: var(--primary-100);
+}
+</style>

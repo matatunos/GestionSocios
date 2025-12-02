@@ -27,8 +27,8 @@ class Document {
      */
     public function create() {
         $query = "INSERT INTO " . $this->table . " 
-                  (title, description, file_name, file_path, file_size, file_type, uploaded_by, is_public, category_id) 
-                  VALUES (:title, :description, :file_name, :file_path, :file_size, :file_type, :uploaded_by, :is_public, :category_id)";
+                  (title, description, file_name, file_path, file_size, file_type, uploaded_by, is_public) 
+                  VALUES (:title, :description, :file_name, :file_path, :file_size, :file_type, :uploaded_by, :is_public)";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':title', $this->title);
         $stmt->bindParam(':description', $this->description);
@@ -39,9 +39,12 @@ class Document {
         $stmt->bindParam(':uploaded_by', $this->uploaded_by, PDO::PARAM_INT);
         $is_public = $this->is_public ?? true;
         $stmt->bindParam(':is_public', $is_public, PDO::PARAM_BOOL);
-        $stmt->bindParam(':category_id', $this->category_id, PDO::PARAM_INT);
         if ($stmt->execute()) {
             $this->id = $this->conn->lastInsertId();
+            // Guardar categorías si existen
+            if (isset($this->category_ids) && is_array($this->category_ids)) {
+                $this->setCategories($this->id, $this->category_ids);
+            }
             return true;
         }
         return false;
@@ -160,15 +163,17 @@ class Document {
                       description = :description,
                       is_public = :is_public
                   WHERE id = :id";
-        
         $stmt = $this->conn->prepare($query);
-        
         $stmt->bindParam(':id', $this->id, PDO::PARAM_INT);
         $stmt->bindParam(':title', $this->title);
         $stmt->bindParam(':description', $this->description);
         $stmt->bindParam(':is_public', $this->is_public, PDO::PARAM_BOOL);
-        
-        return $stmt->execute();
+        $result = $stmt->execute();
+        // Actualizar categorías si existen
+        if (isset($this->category_ids) && is_array($this->category_ids)) {
+            $this->setCategories($this->id, $this->category_ids);
+        }
+        return $result;
     }
     
     /**
@@ -263,5 +268,44 @@ class Document {
         $stmt->bindParam(':member_id', $member_id, PDO::PARAM_INT);
         
         return $stmt->execute();
+    }
+
+    /**
+     * Obtener categorías asociadas a un documento
+     */
+    public function getCategories($document_id) {
+        $query = "SELECT dc.* FROM document_category_rel dcr JOIN document_categories dc ON dcr.category_id = dc.id WHERE dcr.document_id = :document_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':document_id', $document_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Asignar categorías a un documento (sobrescribe las existentes)
+     */
+    public function setCategories($document_id, $category_ids) {
+        $del = $this->conn->prepare("DELETE FROM document_category_rel WHERE document_id = :document_id");
+        $del->bindParam(':document_id', $document_id, PDO::PARAM_INT);
+        $del->execute();
+        if (is_array($category_ids)) {
+            foreach ($category_ids as $cat_id) {
+                $ins = $this->conn->prepare("INSERT INTO document_category_rel (document_id, category_id) VALUES (:document_id, :category_id)");
+                $ins->bindParam(':document_id', $document_id, PDO::PARAM_INT);
+                $ins->bindParam(':category_id', $cat_id, PDO::PARAM_INT);
+                $ins->execute();
+            }
+        }
+    }
+
+    /**
+     * Obtener IDs de categorías asociadas a un documento
+     */
+    public function getCategoryIds($document_id) {
+        $query = "SELECT category_id FROM document_category_rel WHERE document_id = :document_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':document_id', $document_id, PDO::PARAM_INT);
+        $stmt->execute();
+        return array_column($stmt->fetchAll(PDO::FETCH_ASSOC), 'category_id');
     }
 }
