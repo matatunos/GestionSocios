@@ -5,6 +5,11 @@ require_once __DIR__ . '/../Models/AccountingEntry.php';
 require_once __DIR__ . '/../Models/AccountingPeriod.php';
 
 class AccountingController {
+        // Default entry point for the module
+        public function index() {
+            // Redirect to dashboard or load a default view
+            $this->dashboard();
+        }
     private $db;
     
     public function __construct() {
