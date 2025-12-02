@@ -31,6 +31,17 @@ Sistema web integral para la gestión completa de asociaciones y entidades sin �
 - Reportes financieros exportables
 - Control de morosos y pagos vencidos
 
+### 🧮 Contabilidad Avanzada
+- **Plan de Cuentas** personalizable (activos, pasivos, patrimonio, ingresos, gastos)
+- **Contabilidad por Partida Doble** con validación automática
+- **Libro Diario** con asientos contables (borradores y contabilizados)
+- **Libro Mayor** por cuenta con saldos acumulados
+- **Balance de Sumas y Saldos** con verificación automática
+- **Períodos Contables** para organización por ejercicio fiscal
+- Asientos manuales y automáticos desde otros módulos
+- Códigos de cuenta compatibles con Plan General Contable español
+- Reportes contables exportables
+
 ### 🎁 Gestión de Donantes
 - Registro de empresas y particulares donantes
 - **Galería de imágenes** con historial y comparación
@@ -360,6 +371,55 @@ sudo chmod -R 775 /var/www/GestionSocios/src/Config
 3. Subir facturas asociadas
 4. Dashboard con estado de facturas y pagos
 
+## 🧮 Contabilidad Avanzada
+
+### Configuración Inicial
+1. Las tablas contables se crean automáticamente con el schema
+2. Se incluye un plan de cuentas básico según PGC español
+3. Se crea automáticamente un período contable para el año actual
+
+### Gestionar Plan de Cuentas
+1. Menú → "Contabilidad" → "Plan de Cuentas"
+2. Ver todas las cuentas existentes
+3. Crear nuevas cuentas especificando:
+   - Código (ej: 570, 700)
+   - Nombre descriptivo
+   - Tipo: Activo, Pasivo, Patrimonio, Ingresos, Gastos
+   - Tipo de saldo: Deudor o Acreedor
+   - Cuenta padre (opcional, para subcuentas)
+   - Nivel jerárquico
+4. Editar o desactivar cuentas existentes
+
+### Crear Asientos Contables
+1. Menú → "Contabilidad" → "Libro Diario" → "Nuevo Asiento"
+2. Completar información:
+   - Fecha del asiento
+   - Período contable
+   - Descripción general
+   - Referencia (opcional)
+3. Añadir líneas del asiento:
+   - Seleccionar cuenta contable
+   - Descripción de la línea
+   - Importe en Debe o Haber
+   - Añadir todas las líneas necesarias
+4. El sistema valida que Debe = Haber
+5. Guardar como borrador
+6. Contabilizar cuando esté revisado
+
+### Consultar Libro Mayor
+1. Menú → "Contabilidad" → "Libro Mayor"
+2. Seleccionar cuenta a consultar
+3. Definir rango de fechas
+4. Ver todos los movimientos de la cuenta con saldo acumulado
+
+### Balance de Sumas y Saldos
+1. Menú → "Contabilidad" → "Balance de Sumas"
+2. Definir período a consultar
+3. Ver resumen de todas las cuentas con:
+   - Total Debe y Haber
+   - Saldos deudores y acreedores
+   - Verificación automática de cuadre
+
 ## 📊 Analíticas y Reportes
 
 ### Dashboard Principal
@@ -492,6 +552,16 @@ Este proyecto está bajo licencia MIT. Ver archivo `LICENSE` para más detalles.
 
 ## 🎯 Roadmap
 
+### Funcionalidades Implementadas Recientemente
+- [x] **Módulo de contabilidad avanzada**
+  - Plan de cuentas (Chart of Accounts)
+  - Contabilidad por partida doble
+  - Libro Diario (Journal Entries)
+  - Libro Mayor (General Ledger)
+  - Balance de Sumas y Saldos (Trial Balance)
+  - Períodos contables
+  - Gestión de asientos contables (borradores y contabilizados)
+
 ### Próximas Funcionalidades
 - [ ] API REST para integración con otras aplicaciones
 - [ ] App móvil nativa (Android/iOS)
@@ -500,4 +570,3 @@ Este proyecto está bajo licencia MIT. Ver archivo `LICENSE` para más detalles.
 - [ ] Firma digital de documentos
 - [ ] Integración con redes sociales
 - [ ] Sistema de newsletters
-- [ ] Módulo de contabilidad avanzada
