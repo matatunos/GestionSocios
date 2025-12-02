@@ -42,7 +42,13 @@ require_once __DIR__ . '/../../layout.php';
         <div class="report-header">
             <h2>Balance de Sumas y Saldos</h2>
             <p>
-                Período: <?php echo date('d/m/Y', strtotime($startDate)); ?> - <?php echo date('d/m/Y', strtotime($endDate)); ?>
+                Período: 
+                <?php 
+                $startDateTime = DateTime::createFromFormat('Y-m-d', $startDate);
+                $endDateTime = DateTime::createFromFormat('Y-m-d', $endDate);
+                echo ($startDateTime ? $startDateTime->format('d/m/Y') : 'Fecha inválida') . ' - ' . 
+                     ($endDateTime ? $endDateTime->format('d/m/Y') : 'Fecha inválida');
+                ?>
             </p>
         </div>
 

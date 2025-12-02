@@ -89,7 +89,8 @@ require_once __DIR__ . '/../../layout.php';
 
 <script>
 let lineCounter = 0;
-const accounts = <?php echo json_encode($accounts); ?>;
+const accounts = <?php echo json_encode($accounts, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+const BALANCE_TOLERANCE = 0.01;
 
 function addLine() {
     lineCounter++;
@@ -98,13 +99,19 @@ function addLine() {
     lineDiv.className = 'entry-line';
     lineDiv.id = 'line-' + lineCounter;
     
+    const escapeHtml = (text) => {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    };
+    
     lineDiv.innerHTML = `
         <div class="line-grid">
             <div class="form-group">
                 <label>Cuenta</label>
                 <select name="account_id[]" class="form-control" required onchange="updateTotals()">
                     <option value="">Seleccione...</option>
-                    ${accounts.map(acc => `<option value="${acc.id}">${acc.code} - ${acc.name}</option>`).join('')}
+                    ${accounts.map(acc => `<option value="${escapeHtml(acc.id)}">${escapeHtml(acc.code)} - ${escapeHtml(acc.name)}</option>`).join('')}
                 </select>
             </div>
             <div class="form-group">
@@ -165,7 +172,7 @@ function updateTotals() {
     
     // Enable/disable submit button based on balance
     const submitBtn = document.getElementById('submitBtn');
-    if (difference < 0.01 && totalDebit > 0 && totalCredit > 0) {
+    if (difference < BALANCE_TOLERANCE && totalDebit > 0 && totalCredit > 0) {
         submitBtn.disabled = false;
         document.getElementById('difference').style.color = 'green';
     } else {

@@ -58,7 +58,13 @@ require_once __DIR__ . '/../../layout.php';
                     Libro Mayor - <?php echo htmlspecialchars($accountModel->code . ' - ' . $accountModel->name); ?>
                 </h2>
                 <p>
-                    Período: <?php echo date('d/m/Y', strtotime($startDate)); ?> - <?php echo date('d/m/Y', strtotime($endDate)); ?>
+                    Período: 
+                    <?php 
+                    $startDateTime = DateTime::createFromFormat('Y-m-d', $startDate);
+                    $endDateTime = DateTime::createFromFormat('Y-m-d', $endDate);
+                    echo ($startDateTime ? $startDateTime->format('d/m/Y') : 'Fecha inválida') . ' - ' . 
+                         ($endDateTime ? $endDateTime->format('d/m/Y') : 'Fecha inválida');
+                    ?>
                 </p>
             </div>
 

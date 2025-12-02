@@ -766,12 +766,15 @@ INSERT INTO accounting_accounts (code, name, account_type, balance_type, level, 
 ('678', 'Gastos Excepcionales', 'expense', 'debit', 0, 1);
 
 -- Insertar período contable por defecto para año actual
+-- Solo si existe al menos un usuario en el sistema
 INSERT INTO accounting_periods (name, start_date, end_date, fiscal_year, status, created_by) 
-VALUES (
+SELECT 
     CONCAT('Ejercicio ', YEAR(CURDATE())), 
     CONCAT(YEAR(CURDATE()), '-01-01'), 
     CONCAT(YEAR(CURDATE()), '-12-31'),
     YEAR(CURDATE()),
     'open',
-    1
-) ON DUPLICATE KEY UPDATE id=id;
+    MIN(id)
+FROM users
+WHERE EXISTS (SELECT 1 FROM users LIMIT 1)
+ON DUPLICATE KEY UPDATE id=id;
