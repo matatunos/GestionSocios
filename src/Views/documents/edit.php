@@ -66,3 +66,16 @@
 $content = ob_get_clean();
 require_once __DIR__ . '/../layout.php';
 ?>
+<style>
+select[multiple] {
+    padding: 0.5rem;
+}
+select[multiple] option {
+    padding: 0.5rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 0.25rem;
+}
+select[multiple] option:hover {
+    background: var(--primary-100);
+}
+</style>
