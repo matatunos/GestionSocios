@@ -156,27 +156,45 @@ if [ "$CREATE_USER" = "s" ] || [ "$CREATE_USER" = "S" ] || [ "$CREATE_USER" = ""
     read -p "Nombre del usuario de la aplicación [gestion_user]: " APP_USER
     APP_USER=${APP_USER:-gestion_user}
     
+    read -p "Host desde donde se conectará la aplicación (use '%' para cualquier host) [%]: " APP_HOST
+    APP_HOST=${APP_HOST:-%}
+    
     # Generar contraseña aleatoria
     APP_PASS=$(openssl rand -base64 16 2>/dev/null || cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
     
-    echo "Creando usuario '$APP_USER'..."
-    mysql -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" -e "CREATE USER IF NOT EXISTS '$APP_USER'@'localhost' IDENTIFIED BY '$APP_PASS';" 2>/dev/null
-    mysql -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" -e "GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$APP_USER'@'localhost';" 2>/dev/null
-    mysql -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" -e "FLUSH PRIVILEGES;" 2>/dev/null
+    echo "Creando usuario '$APP_USER'@'$APP_HOST'..."
     
-    if [ $? -eq 0 ]; then
-        success "Usuario de aplicación creado"
-        echo "  Usuario: $APP_USER"
-        echo "  Contraseña: $APP_PASS"
-        echo "  ⚠️  GUARDA ESTA CONTRASEÑA EN UN LUGAR SEGURO"
-        
-        # Usar las credenciales del nuevo usuario para el config
-        FINAL_USER="$APP_USER"
-        FINAL_PASS="$APP_PASS"
-    else
+    # Eliminar usuario si existe
+    mysql -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" -e "DROP USER IF EXISTS '$APP_USER'@'$APP_HOST';" 2>&1
+    
+    # Crear usuario
+    CREATE_USER_OUTPUT=$(mysql -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" -e "CREATE USER '$APP_USER'@'$APP_HOST' IDENTIFIED BY '$APP_PASS';" 2>&1)
+    if [ $? -ne 0 ]; then
+        echo "$CREATE_USER_OUTPUT"
         warning "Error al crear usuario, usando credenciales proporcionadas"
         FINAL_USER="$DB_USER"
         FINAL_PASS="$DB_PASS"
+    else
+        # Dar permisos
+        GRANT_OUTPUT=$(mysql -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" -e "GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$APP_USER'@'$APP_HOST';" 2>&1)
+        if [ $? -ne 0 ]; then
+            echo "$GRANT_OUTPUT"
+            warning "Error al asignar permisos, usando credenciales proporcionadas"
+            FINAL_USER="$DB_USER"
+            FINAL_PASS="$DB_PASS"
+        else
+            mysql -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" -e "FLUSH PRIVILEGES;" 2>&1
+            
+            success "Usuario de aplicación creado"
+            echo "  Usuario: $APP_USER"
+            echo "  Host permitido: $APP_HOST"
+            echo "  Contraseña: $APP_PASS"
+            echo "  ⚠️  GUARDA ESTA CONTRASEÑA EN UN LUGAR SEGURO"
+            
+            # Usar las credenciales del nuevo usuario para el config
+            FINAL_USER="$APP_USER"
+            FINAL_PASS="$APP_PASS"
+        fi
     fi
 else
     FINAL_USER="$DB_USER"
