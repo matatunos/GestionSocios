@@ -160,17 +160,22 @@ else
     FINAL_PASS="$DB_PASS"
 fi
 
+# Generar JWT Secret aleatorio
+JWT_SECRET=$(openssl rand -base64 32 2>/dev/null || cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+
 # Crear config.php
 cat > "$CONFIG_FILE" << EOF
 <?php
 // Configuración de la base de datos
-// Generado automáticamente por install.sh
+// Generado automáticamente por install.sh el $(date '+%Y-%m-%d %H:%M:%S')
 
 define('DB_HOST', '$DB_HOST');
 define('DB_NAME', '$DB_NAME');
 define('DB_USER', '$FINAL_USER');
 define('DB_PASS', '$FINAL_PASS');
-?>
+
+// JWT Secret Key (generado automáticamente)
+define('JWT_SECRET', '$JWT_SECRET');
 EOF
 
 if [ $? -eq 0 ]; then
