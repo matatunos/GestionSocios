@@ -502,4 +502,131 @@ class AccountingController {
         header('Location: index.php?page=accounting&action=periods');
         exit;
     }
+    
+    // ========== FINANCIAL STATEMENTS ==========
+    
+    // Balance Sheet (Balance de Situación)
+    public function balanceSheet() {
+        $periodId = $_GET['period_id'] ?? '';
+        $endDate = $_GET['end_date'] ?? date('Y-12-31');
+        
+        // Get periods for filter
+        $periodModel = new AccountingPeriod($this->db);
+        $periods = $periodModel->readAll([]);
+        
+        // If period selected, use its end date
+        if (!empty($periodId)) {
+            $periodModel->readOne($periodId);
+            $endDate = $periodModel->end_date;
+        }
+        
+        // Get balances by account type
+        $query = "SELECT 
+                      a.id,
+                      a.code,
+                      a.name,
+                      a.account_type,
+                      a.balance_type,
+                      a.level,
+                      COALESCE(SUM(el.debit), 0) as total_debit,
+                      COALESCE(SUM(el.credit), 0) as total_credit
+                  FROM accounting_accounts a
+                  LEFT JOIN accounting_entry_lines el ON a.id = el.account_id
+                  LEFT JOIN accounting_entries e ON el.entry_id = e.id
+                  WHERE a.is_active = 1
+                    AND (e.status = 'posted' OR e.status IS NULL)
+                    AND (e.entry_date <= :end_date OR e.entry_date IS NULL)
+                  GROUP BY a.id, a.code, a.name, a.account_type, a.balance_type, a.level
+                  ORDER BY a.code ASC";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':end_date', $endDate);
+        $stmt->execute();
+        $allAccounts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Calculate net balance for each account
+        foreach ($allAccounts as &$account) {
+            if ($account['balance_type'] === 'debit') {
+                $account['balance'] = $account['total_debit'] - $account['total_credit'];
+            } else {
+                $account['balance'] = $account['total_credit'] - $account['total_debit'];
+            }
+        }
+        
+        // Separate by type
+        $assets = array_filter($allAccounts, fn($a) => $a['account_type'] === 'asset' && $a['balance'] != 0);
+        $liabilities = array_filter($allAccounts, fn($a) => $a['account_type'] === 'liability' && $a['balance'] != 0);
+        $equity = array_filter($allAccounts, fn($a) => $a['account_type'] === 'equity' && $a['balance'] != 0);
+        
+        // Calculate totals
+        $totalAssets = array_sum(array_column($assets, 'balance'));
+        $totalLiabilities = array_sum(array_column($liabilities, 'balance'));
+        $totalEquity = array_sum(array_column($equity, 'balance'));
+        
+        require_once __DIR__ . '/../Views/accounting/reports/balance_sheet.php';
+    }
+    
+    // Income Statement (Cuenta de Resultados / Pérdidas y Ganancias)
+    public function incomeStatement() {
+        $periodId = $_GET['period_id'] ?? '';
+        $startDate = $_GET['start_date'] ?? date('Y-01-01');
+        $endDate = $_GET['end_date'] ?? date('Y-12-31');
+        
+        // Get periods for filter
+        $periodModel = new AccountingPeriod($this->db);
+        $periods = $periodModel->readAll([]);
+        
+        // If period selected, use its dates
+        if (!empty($periodId)) {
+            $periodModel->readOne($periodId);
+            $startDate = $periodModel->start_date;
+            $endDate = $periodModel->end_date;
+        }
+        
+        // Get income and expense accounts with activity
+        $query = "SELECT 
+                      a.id,
+                      a.code,
+                      a.name,
+                      a.account_type,
+                      a.balance_type,
+                      a.level,
+                      COALESCE(SUM(el.debit), 0) as total_debit,
+                      COALESCE(SUM(el.credit), 0) as total_credit
+                  FROM accounting_accounts a
+                  LEFT JOIN accounting_entry_lines el ON a.id = el.account_id
+                  LEFT JOIN accounting_entries e ON el.entry_id = e.id
+                  WHERE a.is_active = 1
+                    AND a.account_type IN ('income', 'expense')
+                    AND (e.status = 'posted' OR e.status IS NULL)
+                    AND (e.entry_date BETWEEN :start_date AND :end_date OR e.entry_date IS NULL)
+                  GROUP BY a.id, a.code, a.name, a.account_type, a.balance_type, a.level
+                  ORDER BY a.code ASC";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':start_date', $startDate);
+        $stmt->bindParam(':end_date', $endDate);
+        $stmt->execute();
+        $allAccounts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Calculate net balance for each account
+        foreach ($allAccounts as &$account) {
+            if ($account['balance_type'] === 'debit') {
+                $account['balance'] = $account['total_debit'] - $account['total_credit'];
+            } else {
+                $account['balance'] = $account['total_credit'] - $account['total_debit'];
+            }
+        }
+        
+        // Separate income and expenses
+        $incomeAccounts = array_filter($allAccounts, fn($a) => $a['account_type'] === 'income' && $a['balance'] != 0);
+        $expenseAccounts = array_filter($allAccounts, fn($a) => $a['account_type'] === 'expense' && $a['balance'] != 0);
+        
+        // Calculate totals
+        $totalIncome = array_sum(array_column($incomeAccounts, 'balance'));
+        $totalExpenses = array_sum(array_column($expenseAccounts, 'balance'));
+        $netProfit = $totalIncome - $totalExpenses;
+        
+        require_once __DIR__ . '/../Views/accounting/reports/income_statement.php';
+    }
 }

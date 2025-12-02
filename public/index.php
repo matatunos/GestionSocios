@@ -442,6 +442,8 @@ switch ($page) {
         else if ($action === 'editPeriod') $controller->editPeriod();
         else if ($action === 'updatePeriod') $controller->updatePeriod();
         else if ($action === 'closePeriod') $controller->closePeriod();
+        else if ($action === 'balanceSheet') $controller->balanceSheet();
+        else if ($action === 'incomeStatement') $controller->incomeStatement();
         else $controller->dashboard();
         break;
     case 'budget':
