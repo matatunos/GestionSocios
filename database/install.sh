@@ -82,8 +82,8 @@ fi
 success "Conexión a MySQL exitosa"
 
 # Verificar si la base de datos existe y advertir antes de dropear
-DB_EXISTS=$(mysql -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" -e "SHOW DATABASES LIKE '$DB_NAME';" 2>/dev/null | grep -c "$DB_NAME")
-if [ "$DB_EXISTS" -eq 1 ]; then
+DB_EXISTS=$(mysql -h"$DB_HOST" -u"$DB_USER" -p"$DB_PASS" -e "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '$DB_NAME';" 2>/dev/null | grep -w "$DB_NAME")
+if [ -n "$DB_EXISTS" ]; then
     echo ""
     warning "La base de datos '$DB_NAME' ya existe y será ELIMINADA con todos sus datos."
     read -p "¿Deseas continuar y ELIMINAR la base de datos existente? (S/n): " DROP_CONFIRM
