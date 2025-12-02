@@ -233,6 +233,12 @@ if (isset($_SESSION['user_id'])) {
                         <ul class="nav-submenu">
                             <li>
                                 <a href="index.php?page=dashboard" class="nav-link <?php echo ($page === 'dashboard') ? 'active' : ''; ?>">
+                    <li>
+                        <a href="index.php?page=accounting" class="nav-link <?php echo ($page === 'accounting') ? 'active' : ''; ?>">
+                            <i class="fas fa-calculator"></i>
+                            <span>Contabilidad</span>
+                        </a>
+                    </li>
                                     <i class="fas fa-chart-pie"></i>
                                     <span>General</span>
                                 </a>
