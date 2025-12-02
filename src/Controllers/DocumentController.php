@@ -133,7 +133,7 @@ class DocumentController {
         $this->documentModel->file_type = $file['type'];
         $this->documentModel->uploaded_by = $_SESSION['user_id'];
         $this->documentModel->is_public = $is_public;
-            $this->documentModel->category_id = $category_id;
+        $this->documentModel->category_ids = isset($_POST['category_ids']) ? array_map('intval', $_POST['category_ids']) : [];
         
         if ($this->documentModel->create()) {
             // Auditoría de alta de documento
@@ -214,32 +214,29 @@ class DocumentController {
      */
     public function edit() {
         $id = $_GET['id'] ?? null;
-        
         if (!$id) {
             $_SESSION['error'] = 'ID de documento no proporcionado';
             header('Location: index.php?page=documents');
             exit;
         }
-        
         $document = $this->documentModel->readOne($id);
-        
         if (!$document) {
             $_SESSION['error'] = 'Documento no encontrado';
             header('Location: index.php?page=documents');
             exit;
         }
-        
         // Solo el creador o admin puede editar
         if ($document['uploaded_by'] != $_SESSION['user_id'] && !Auth::hasPermission('documents_edit')) {
             $_SESSION['error'] = 'No tienes permisos para editar este documento';
             header('Location: index.php?page=documents');
             exit;
         }
-        
         // Obtener lista de socios
         $memberModel = new Member($this->db);
         $members = $memberModel->readActive();
-        
+        // Obtener categorías de documentos
+        $categoryModel = new DocumentCategory($this->db);
+        $categories = $categoryModel->readAll();
         require_once __DIR__ . '/../Views/documents/edit.php';
     }
     
@@ -272,6 +269,7 @@ class DocumentController {
         $this->documentModel->title = $_POST['title'] ?? $document['title'];
         $this->documentModel->description = $_POST['description'] ?? $document['description'];
         $this->documentModel->is_public = isset($_POST['is_public']) ? 1 : 0;
+        $this->documentModel->category_ids = isset($_POST['category_ids']) ? array_map('intval', $_POST['category_ids']) : [];
         
         if ($this->documentModel->update()) {
             // Auditoría de modificación de documento
