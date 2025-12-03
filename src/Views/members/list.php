@@ -223,16 +223,19 @@ try {
                                     </div>
                                 </div>
                                 
-                                <?php if (empty($row['has_paid_current_year'])): ?>
-                                <?php
+                                <?php if (empty($row['has_paid_current_year'])): 
                                 // Obtener la cuota correcta para este socio según su categoría
                                 $memberFeeAmount = $feeAmount; // Default
                                 if (!empty($row['category_id'])) {
-                                    $feeStmt = $GLOBALS['db']->prepare("SELECT amount FROM category_fee_history WHERE category_id = ? AND year = ?");
-                                    $feeStmt->execute([$row['category_id'], $currentYear]);
-                                    $categoryFee = $feeStmt->fetch(PDO::FETCH_ASSOC);
-                                    if ($categoryFee) {
-                                        $memberFeeAmount = $categoryFee['amount'];
+                                    try {
+                                        $categoryFeeStmt = $GLOBALS['db']->prepare("SELECT amount FROM category_fee_history WHERE category_id = ? AND year = ?");
+                                        $categoryFeeStmt->execute([$row['category_id'], $currentYear]);
+                                        $categoryFee = $categoryFeeStmt->fetch(PDO::FETCH_ASSOC);
+                                        if ($categoryFee) {
+                                            $memberFeeAmount = $categoryFee['amount'];
+                                        }
+                                    } catch (Exception $e) {
+                                        // Si falla, usar cuota por defecto
                                     }
                                 }
                                 ?>
