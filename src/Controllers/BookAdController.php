@@ -277,6 +277,23 @@ class BookAdController {
                 $this->bookAd->year,
                 $adId
             ]);
+            
+            // Crear asiento contable si está pagado
+            if ($this->bookAd->status === 'paid' && $paymentDate) {
+                require_once __DIR__ . '/../Helpers/AccountingHelper.php';
+                $accountingCreated = AccountingHelper::createEntryFromBookAd(
+                    $this->db,
+                    $adId,
+                    $this->bookAd->amount,
+                    'Anuncio Libro Fiestas ' . $this->bookAd->year . ' - ' . $donorModel->name,
+                    $paymentDate,
+                    'transfer' // Por defecto transferencia
+                );
+                
+                if (!$accountingCreated) {
+                    error_log("No se pudo crear el asiento contable para el anuncio #$adId");
+                }
+            }
         }
     }
 

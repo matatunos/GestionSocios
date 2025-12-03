@@ -277,7 +277,25 @@ class SupplierController {
                     }
 
                     if ($this->invoice->create()) {
+                        $invoiceId = $this->db->lastInsertId();
                         $_SESSION['success'] = "Factura subida correctamente.";
+                        
+                        // Crear asiento contable automático
+                        require_once __DIR__ . '/../Helpers/AccountingHelper.php';
+                        $paymentDate = ($this->invoice->status === 'paid') ? date('Y-m-d') : null;
+                        $accountingCreated = AccountingHelper::createEntryFromSupplierInvoice(
+                            $this->db,
+                            $invoiceId,
+                            $this->invoice->amount,
+                            'Factura ' . $invoiceNumber . ' - Proveedor',
+                            $this->invoice->invoice_date,
+                            $paymentDate,
+                            'transfer'
+                        );
+                        
+                        if (!$accountingCreated) {
+                            error_log("No se pudo crear el asiento contable para la factura #$invoiceId");
+                        }
                     } else {
                         // If DB insert fails, maybe delete the file?
                         unlink($targetPath);

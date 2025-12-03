@@ -235,6 +235,158 @@ class AccountingHelper {
     }
     
     /**
+     * Crea un asiento contable automático desde un anuncio del libro de fiestas
+     * 
+     * @param PDO $db Conexión a la base de datos
+     * @param int $bookAdId ID del anuncio
+     * @param float $amount Monto del anuncio
+     * @param string $description Descripción
+     * @param string $date Fecha del pago
+     * @param string $paymentMethod Método de pago
+     * @return bool True si se creó correctamente
+     */
+    public static function createEntryFromBookAd($db, $bookAdId, $amount, $description, $date, $paymentMethod = 'transfer') {
+        try {
+            $period = AccountingPeriod::getOpenPeriodForDate($db, $date);
+            if (!$period) {
+                error_log("No hay periodo contable abierto para la fecha: $date");
+                return false;
+            }
+            
+            // Cuenta de ingreso: 705 - Prestaciones de servicios (publicidad en libro)
+            $incomeAccountCode = '705';
+            $treasuryAccountCode = self::getTreasuryAccountByPaymentMethod($paymentMethod);
+            
+            $incomeAccount = self::getAccountByCode($db, $incomeAccountCode);
+            $treasuryAccount = self::getAccountByCode($db, $treasuryAccountCode);
+            
+            if (!$incomeAccount || !$treasuryAccount) {
+                error_log("No se encontraron las cuentas contables necesarias");
+                return false;
+            }
+            
+            $entry = new AccountingEntry($db);
+            $entry->entry_date = $date;
+            $entry->period_id = $period['id'];
+            $entry->description = "Ingreso Libro Fiestas: " . $description;
+            $entry->reference = "BOOK-" . $bookAdId;
+            $entry->entry_type = 'automatic';
+            $entry->source_type = 'book_ad';
+            $entry->source_id = $bookAdId;
+            $entry->status = 'posted';
+            $entry->created_by = $_SESSION['user_id'] ?? 1;
+            $entry->posted_by = $_SESSION['user_id'] ?? 1;
+            $entry->posted_at = date('Y-m-d H:i:s');
+            
+            $lines = [
+                [
+                    'account_id' => $treasuryAccount['id'],
+                    'description' => $description,
+                    'debit' => $amount,
+                    'credit' => 0,
+                    'line_order' => 1
+                ],
+                [
+                    'account_id' => $incomeAccount['id'],
+                    'description' => $description,
+                    'debit' => 0,
+                    'credit' => $amount,
+                    'line_order' => 2
+                ]
+            ];
+            
+            return $entry->create($lines);
+            
+        } catch (Exception $e) {
+            error_log("Error al crear asiento desde anuncio libro: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Crea un asiento contable automático desde una factura de proveedor
+     * 
+     * @param PDO $db Conexión a la base de datos
+     * @param int $invoiceId ID de la factura
+     * @param float $amount Monto de la factura
+     * @param string $description Descripción
+     * @param string $invoiceDate Fecha de la factura
+     * @param string $paymentDate Fecha del pago (null si pendiente)
+     * @param string $paymentMethod Método de pago
+     * @return bool True si se creó correctamente
+     */
+    public static function createEntryFromSupplierInvoice($db, $invoiceId, $amount, $description, $invoiceDate, $paymentDate = null, $paymentMethod = 'transfer') {
+        try {
+            // Si hay fecha de pago, usar esa; si no, usar fecha de factura
+            $entryDate = $paymentDate ?? $invoiceDate;
+            
+            $period = AccountingPeriod::getOpenPeriodForDate($db, $entryDate);
+            if (!$period) {
+                error_log("No hay periodo contable abierto para la fecha: $entryDate");
+                return false;
+            }
+            
+            // Cuenta de gasto: 629 - Otros servicios (por defecto)
+            // Podría mejorarse con categorización de proveedores
+            $expenseAccountCode = '629';
+            
+            if ($paymentDate) {
+                // Si está pagado, registrar contra tesorería
+                $treasuryAccountCode = self::getTreasuryAccountByPaymentMethod($paymentMethod);
+                $creditAccount = self::getAccountByCode($db, $treasuryAccountCode);
+                $reference = "SUP-INV-" . $invoiceId;
+            } else {
+                // Si está pendiente, registrar como deuda con proveedor
+                $creditAccount = self::getAccountByCode($db, '400'); // Proveedores
+                $reference = "SUP-PEND-" . $invoiceId;
+            }
+            
+            $expenseAccount = self::getAccountByCode($db, $expenseAccountCode);
+            
+            if (!$expenseAccount || !$creditAccount) {
+                error_log("No se encontraron las cuentas contables necesarias");
+                return false;
+            }
+            
+            $entry = new AccountingEntry($db);
+            $entry->entry_date = $entryDate;
+            $entry->period_id = $period['id'];
+            $entry->description = "Factura Proveedor: " . $description;
+            $entry->reference = $reference;
+            $entry->entry_type = 'automatic';
+            $entry->source_type = 'supplier_invoice';
+            $entry->source_id = $invoiceId;
+            $entry->status = 'posted';
+            $entry->created_by = $_SESSION['user_id'] ?? 1;
+            $entry->posted_by = $_SESSION['user_id'] ?? 1;
+            $entry->posted_at = date('Y-m-d H:i:s');
+            
+            $lines = [
+                [
+                    'account_id' => $expenseAccount['id'],
+                    'description' => $description,
+                    'debit' => $amount,
+                    'credit' => 0,
+                    'line_order' => 1
+                ],
+                [
+                    'account_id' => $creditAccount['id'],
+                    'description' => $description,
+                    'debit' => 0,
+                    'credit' => $amount,
+                    'line_order' => 2
+                ]
+            ];
+            
+            return $entry->create($lines);
+            
+        } catch (Exception $e) {
+            error_log("Error al crear asiento desde factura proveedor: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
      * Obtiene el código de cuenta de tesorería según el método de pago
      */
     private static function getTreasuryAccountByPaymentMethod($paymentMethod) {
