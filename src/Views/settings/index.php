@@ -56,19 +56,31 @@
 }
 
 .tabs-nav {
+    background: var(--bg-card);
+    border-bottom: 3px solid var(--border-light);
+}
+
+.tabs-nav-primary {
     display: flex;
     justify-content: center;
-    gap: 1rem;
-    border-bottom: 3px solid var(--border-light);
-    padding-bottom: 0;
-    background: var(--bg-card);
+    gap: 0.5rem;
+    padding: 1rem 1rem 0.5rem 1rem;
+    border-bottom: 2px solid var(--border-light);
+}
+
+.tabs-nav-secondary {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem 0 1rem;
+    flex-wrap: wrap;
 }
 
 .tab-btn {
     background: none;
     border: none;
-    padding: 1.25rem 2rem;
-    font-size: 1.125rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.95rem;
     font-weight: 500;
     color: var(--text-muted);
     cursor: pointer;
@@ -76,6 +88,18 @@
     transition: all 0.3s ease;
     border-bottom: 4px solid transparent;
     margin-bottom: -3px;
+    border-radius: 8px 8px 0 0;
+    white-space: nowrap;
+}
+
+.tab-btn.primary {
+    font-size: 1rem;
+    padding: 0.875rem 1.75rem;
+}
+
+.tab-btn.secondary {
+    font-size: 0.875rem;
+    padding: 0.625rem 1.25rem;
 }
 
 .tab-btn:hover {
@@ -87,11 +111,12 @@
     color: var(--primary-600);
     font-weight: 700;
     border-bottom-color: var(--primary-600);
+    background: var(--primary-50);
 }
 
 .tab-btn i {
-    margin-right: 0.75rem;
-    font-size: 1.25rem;
+    margin-right: 0.5rem;
+    font-size: 1rem;
 }
 
 .tab-content-wrapper {
@@ -119,13 +144,17 @@
         grid-template-columns: 1fr;
     }
     
-    .tabs-nav {
+    .tabs-nav-primary,
+    .tabs-nav-secondary {
         overflow-x: auto;
+        justify-content: flex-start;
+        padding: 0.75rem 1rem;
     }
     
     .tab-btn {
         flex: 0 0 auto;
-        white-space: nowrap;
+        font-size: 0.85rem !important;
+        padding: 0.625rem 1rem !important;
     }
 }
     .category-card {
@@ -292,13 +321,37 @@
     </div>
     <div class="tabs-container">
         <div class="tabs-nav">
-            <button class="tab-btn" onclick="switchTab('organization')" id="tab-organization"><i class="fas fa-building"></i> Organización</button>
-            <button class="tab-btn" onclick="switchTab('members')" id="tab-members"><i class="fas fa-users"></i> Socios</button>
-            <button class="tab-btn" onclick="switchTab('ad_prices')" id="tab-ad_prices"><i class="fas fa-tags"></i> Precios Anuncios</button>
-            <button class="tab-btn" onclick="switchTab('database')" id="tab-database"><i class="fas fa-database"></i> Base de Datos</button>
-            <button class="tab-btn" onclick="switchTab('admin_users')" id="tab-admin_users"><i class="fas fa-user-shield"></i> Administración de Usuarios</button>
-            <button class="tab-btn" onclick="switchTab('notifications')" id="tab-notifications"><i class="fas fa-bell"></i> Notificaciones</button>
-            <button class="tab-btn" onclick="switchTab('password-policy')" id="tab-password-policy"><i class="fas fa-shield-alt"></i> Política de Contraseñas</button>
+            <!-- Nivel 1: Categorías principales -->
+            <div class="tabs-nav-primary">
+                <button class="tab-btn primary" onclick="switchTab('organization')" id="tab-organization">
+                    <i class="fas fa-building"></i> Organización
+                </button>
+                <button class="tab-btn primary" onclick="switchTab('members')" id="tab-members">
+                    <i class="fas fa-users"></i> Socios
+                </button>
+                <button class="tab-btn primary" onclick="switchTab('database')" id="tab-database">
+                    <i class="fas fa-database"></i> Base de Datos
+                </button>
+                <button class="tab-btn primary" onclick="switchTab('admin_users')" id="tab-admin_users">
+                    <i class="fas fa-user-shield"></i> Usuarios Admin
+                </button>
+            </div>
+            
+            <!-- Nivel 2: Configuraciones específicas -->
+            <div class="tabs-nav-secondary">
+                <button class="tab-btn secondary" onclick="switchTab('ad_prices')" id="tab-ad_prices">
+                    <i class="fas fa-tags"></i> Precios Anuncios
+                </button>
+                <button class="tab-btn secondary" onclick="switchTab('notifications')" id="tab-notifications">
+                    <i class="fas fa-bell"></i> Notificaciones
+                </button>
+                <button class="tab-btn secondary" onclick="switchTab('social_media')" id="tab-social_media">
+                    <i class="fab fa-share-alt"></i> Redes Sociales
+                </button>
+                <button class="tab-btn secondary" onclick="switchTab('password-policy')" id="tab-password-policy">
+                    <i class="fas fa-shield-alt"></i> Contraseñas
+                </button>
+            </div>
         </div>
         <!-- Organization Tab -->
         <div id="organization" class="tab-content active-tab">
@@ -771,6 +824,198 @@
         <!-- Notifications Tab -->
         <div id="notifications" class="tab-content">
             <?php require __DIR__ . '/notifications.php'; ?>
+        </div>
+        
+        <!-- Social Media Tab -->
+        <div id="social_media" class="tab-content">
+            <div class="settings-section-header">
+                <div>
+                    <h2 class="section-title"><i class="fab fa-share-alt"></i> Configuración de Redes Sociales</h2>
+                    <p class="text-muted">Configura las opciones para compartir contenido en redes sociales.</p>
+                </div>
+            </div>
+
+            <?php if (isset($_SESSION['social_media_success'])): ?>
+                <div class="alert alert-success"><i class="fas fa-check-circle"></i> <?= $_SESSION['social_media_success']; unset($_SESSION['social_media_success']); ?></div>
+            <?php endif; ?>
+            <?php if (isset($_SESSION['social_media_error'])): ?>
+                <div class="alert alert-danger"><i class="fas fa-exclamation-circle"></i> <?= $_SESSION['social_media_error']; unset($_SESSION['social_media_error']); ?></div>
+            <?php endif; ?>
+
+            <form action="index.php?page=settings&action=updateSocialMedia" method="POST">
+                <?php require_once __DIR__ . '/../../Helpers/CsrfHelper.php'; echo CsrfHelper::getTokenField(); ?>
+                
+                <div class="settings-grid-layout">
+                    
+                    <!-- Facebook -->
+                    <div class="settings-card">
+                        <div class="card-header">
+                            <div class="header-icon bg-primary-light text-primary">
+                                <i class="fab fa-facebook-f"></i>
+                            </div>
+                            <div class="header-text">
+                                <h3>Facebook</h3>
+                                <p>Compartir eventos y anuncios en Facebook</p>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group mb-4">
+                                <label class="checkbox-label" style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <input type="checkbox" name="facebook_enabled" value="1" 
+                                        <?= ($orgSettings->get('facebook_enabled') == '1') ? 'checked' : '' ?>
+                                        style="width: 1.25rem; height: 1.25rem;">
+                                    <span style="font-weight: 600;">Habilitar compartir en Facebook</span>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="facebook_app_id">Facebook App ID (opcional)</label>
+                                <input type="text" name="facebook_app_id" id="facebook_app_id" class="form-control" 
+                                    value="<?= htmlspecialchars($orgSettings->get('facebook_app_id') ?? '') ?>" 
+                                    placeholder="123456789012345">
+                                <small class="text-muted">Obtén tu App ID en <a href="https://developers.facebook.com/apps/" target="_blank">developers.facebook.com</a></small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Twitter/X -->
+                    <div class="settings-card">
+                        <div class="card-header">
+                            <div class="header-icon bg-info-light text-info">
+                                <i class="fab fa-twitter"></i>
+                            </div>
+                            <div class="header-text">
+                                <h3>Twitter / X</h3>
+                                <p>Compartir publicaciones en Twitter</p>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group mb-4">
+                                <label class="checkbox-label" style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <input type="checkbox" name="twitter_enabled" value="1" 
+                                        <?= ($orgSettings->get('twitter_enabled') == '1') ? 'checked' : '' ?>
+                                        style="width: 1.25rem; height: 1.25rem;">
+                                    <span style="font-weight: 600;">Habilitar compartir en Twitter/X</span>
+                                </label>
+                            </div>
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i> No se requiere configuración adicional para compartir en Twitter.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LinkedIn -->
+                    <div class="settings-card">
+                        <div class="card-header">
+                            <div class="header-icon" style="background: #0077b5; color: white;">
+                                <i class="fab fa-linkedin-in"></i>
+                            </div>
+                            <div class="header-text">
+                                <h3>LinkedIn</h3>
+                                <p>Compartir contenido profesional</p>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group mb-4">
+                                <label class="checkbox-label" style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <input type="checkbox" name="linkedin_enabled" value="1" 
+                                        <?= ($orgSettings->get('linkedin_enabled') == '1') ? 'checked' : '' ?>
+                                        style="width: 1.25rem; height: 1.25rem;">
+                                    <span style="font-weight: 600;">Habilitar compartir en LinkedIn</span>
+                                </label>
+                            </div>
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i> No se requiere configuración adicional para compartir en LinkedIn.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Instagram -->
+                    <div class="settings-card">
+                        <div class="card-header">
+                            <div class="header-icon" style="background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color: white;">
+                                <i class="fab fa-instagram"></i>
+                            </div>
+                            <div class="header-text">
+                                <h3>Instagram</h3>
+                                <p>Recordatorio para compartir manualmente</p>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group mb-4">
+                                <label class="checkbox-label" style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <input type="checkbox" name="instagram_enabled" value="1" 
+                                        <?= ($orgSettings->get('instagram_enabled') == '1') ? 'checked' : '' ?>
+                                        style="width: 1.25rem; height: 1.25rem;">
+                                    <span style="font-weight: 600;">Mostrar opción de Instagram</span>
+                                </label>
+                            </div>
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle"></i> Instagram no permite compartir desde web. Los usuarios verán un recordatorio para compartir desde la app móvil.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- WhatsApp & Telegram -->
+                    <div class="settings-card">
+                        <div class="card-header">
+                            <div class="header-icon bg-success-light text-success">
+                                <i class="fab fa-whatsapp"></i>
+                            </div>
+                            <div class="header-text">
+                                <h3>Mensajería</h3>
+                                <p>WhatsApp y Telegram (siempre activos)</p>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle"></i> WhatsApp y Telegram están siempre disponibles para compartir sin necesidad de configuración.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- General Settings -->
+                    <div class="settings-card" style="grid-column: 1 / -1;">
+                        <div class="card-header">
+                            <div class="header-icon bg-secondary-light text-secondary">
+                                <i class="fas fa-cog"></i>
+                            </div>
+                            <div class="header-text">
+                                <h3>Configuración General</h3>
+                                <p>Valores predeterminados para compartir</p>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label class="form-label" for="share_site_name">Nombre del Sitio</label>
+                                <input type="text" name="share_site_name" id="share_site_name" class="form-control" 
+                                    value="<?= htmlspecialchars($orgSettings->get('share_site_name') ?? '') ?>" 
+                                    placeholder="Nombre de tu asociación">
+                                <small class="text-muted">Aparecerá en las previsualizaciones al compartir</small>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="share_description">Descripción por Defecto</label>
+                                <textarea name="share_description" id="share_description" class="form-control" rows="3" 
+                                    placeholder="Descripción breve de tu asociación"><?= htmlspecialchars($orgSettings->get('share_description') ?? '') ?></textarea>
+                                <small class="text-muted">Se usará cuando no se especifique una descripción</small>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="share_default_image">URL de Imagen por Defecto</label>
+                                <input type="url" name="share_default_image" id="share_default_image" class="form-control" 
+                                    value="<?= htmlspecialchars($orgSettings->get('share_default_image') ?? '') ?>" 
+                                    placeholder="https://tudominio.com/imagen.jpg">
+                                <small class="text-muted">Imagen que aparecerá en las previsualizaciones (recomendado: 1200x630 px)</small>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="form-actions" style="margin-top: 2rem; text-align: center;">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-save"></i> Guardar Configuración de Redes Sociales
+                    </button>
+                </div>
+            </form>
         </div>
         
         <div id="password-policy" class="tab-content">
