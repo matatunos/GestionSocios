@@ -224,9 +224,21 @@ try {
                                 </div>
                                 
                                 <?php if (empty($row['has_paid_current_year'])): ?>
+                                <?php
+                                // Obtener la cuota correcta para este socio según su categoría
+                                $memberFeeAmount = $feeAmount; // Default
+                                if (!empty($row['category_id'])) {
+                                    $feeStmt = $GLOBALS['db']->prepare("SELECT amount FROM category_fee_history WHERE category_id = ? AND year = ?");
+                                    $feeStmt->execute([$row['category_id'], $currentYear]);
+                                    $categoryFee = $feeStmt->fetch(PDO::FETCH_ASSOC);
+                                    if ($categoryFee) {
+                                        $memberFeeAmount = $categoryFee['amount'];
+                                    }
+                                }
+                                ?>
                                 <a href="index.php?page=members&action=markPaid&id=<?php echo $row['id']; ?>"
                                    class="btn btn-sm btn-primary"
-                                   onclick="return confirm('¿Marcar la cuota de <?php echo $currentYear; ?> como pagada para este socio?\nImporte: <?php echo number_format($feeAmount, 2); ?> €\nConcepto: <?php echo $feeConcept; ?>');">
+                                   onclick="return confirm('¿Marcar la cuota de <?php echo $currentYear; ?> como pagada para este socio?\nImporte: <?php echo number_format($memberFeeAmount, 2); ?> €\nConcepto: <?php echo $feeConcept; ?>');">
                                     <i class="fas fa-check"></i> Marcar como Pagado
                                 </a>
                                 <?php else: ?>
