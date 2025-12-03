@@ -594,66 +594,68 @@ INSERT INTO document_categories (name, description, color) VALUES
 ON DUPLICATE KEY UPDATE id=id;
 
 -- ============================================
--- Advanced Accounting Module Migration
+-- Advanced Accounting Module
 -- ============================================
--- This migration adds advanced accounting features including:
--- - Chart of accounts
--- - Double-entry bookkeeping (journal entries)
--- - Accounting periods
--- - Budget management
+-- Módulo de contabilidad avanzada con:
+-- - Plan de cuentas contable (Chart of Accounts)
+-- - Asientos contables con partida doble (Journal Entries)
+-- - Períodos contables (Accounting Periods)
+-- - Gestión de presupuestos (Budget Management)
 -- ============================================
 
 -- Tabla de períodos contables
 CREATE TABLE IF NOT EXISTS accounting_periods (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    start_date DATE NOT NULL,
-    end_date DATE NOT NULL,
-    fiscal_year INT NOT NULL,
-    status ENUM('open', 'closed', 'locked') DEFAULT 'open',
-    created_by INT NOT NULL,
+    name VARCHAR(100) NOT NULL COMMENT 'Nombre del período (ej: Ejercicio 2025)',
+    start_date DATE NOT NULL COMMENT 'Fecha de inicio del período',
+    end_date DATE NOT NULL COMMENT 'Fecha de fin del período',
+    fiscal_year INT NOT NULL COMMENT 'Año fiscal',
+    status ENUM('open', 'closed', 'locked') DEFAULT 'open' COMMENT 'Estado del período',
+    created_by INT NOT NULL COMMENT 'Usuario que creó el período',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE,
     INDEX idx_fiscal_year (fiscal_year),
     INDEX idx_status (status)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+COMMENT='Períodos contables para organización por ejercicio fiscal';
 
--- Tabla de plan de cuentas (Chart of Accounts)
+-- Tabla de plan de cuentas contable (Chart of Accounts)
 CREATE TABLE IF NOT EXISTS accounting_accounts (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    code VARCHAR(20) NOT NULL UNIQUE,
-    name VARCHAR(200) NOT NULL,
-    description TEXT,
-    account_type ENUM('asset', 'liability', 'equity', 'income', 'expense') NOT NULL,
-    parent_id INT DEFAULT NULL,
-    level INT DEFAULT 0,
-    balance_type ENUM('debit', 'credit') NOT NULL,
-    is_active BOOLEAN DEFAULT 1,
-    is_system BOOLEAN DEFAULT 0,
+    code VARCHAR(20) NOT NULL UNIQUE COMMENT 'Código de cuenta (ej: 570, 700)',
+    name VARCHAR(200) NOT NULL COMMENT 'Nombre de la cuenta',
+    description TEXT COMMENT 'Descripción detallada',
+    account_type ENUM('asset', 'liability', 'equity', 'income', 'expense') NOT NULL COMMENT 'Tipo de cuenta',
+    parent_id INT DEFAULT NULL COMMENT 'Cuenta padre para jerarquía',
+    level INT DEFAULT 0 COMMENT 'Nivel jerárquico (0-5)',
+    balance_type ENUM('debit', 'credit') NOT NULL COMMENT 'Tipo de saldo natural',
+    is_active BOOLEAN DEFAULT 1 COMMENT 'Si la cuenta está activa',
+    is_system BOOLEAN DEFAULT 0 COMMENT 'Si es cuenta del sistema (no editable)',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (parent_id) REFERENCES accounting_accounts(id) ON DELETE SET NULL,
     INDEX idx_code (code),
     INDEX idx_type (account_type),
     INDEX idx_parent (parent_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+COMMENT='Plan de cuentas contable con estructura jerárquica';
 
--- Tabla de asientos contables (Journal Entries)
+-- Tabla de cabecera de asientos contables (Journal Entries)
 CREATE TABLE IF NOT EXISTS accounting_entries (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    entry_number VARCHAR(50) NOT NULL,
-    entry_date DATE NOT NULL,
-    period_id INT NOT NULL,
-    description TEXT NOT NULL,
-    reference VARCHAR(100),
-    entry_type ENUM('manual', 'automatic') DEFAULT 'manual',
-    source_type ENUM('expense', 'payment', 'donation', 'manual') DEFAULT 'manual',
-    source_id INT DEFAULT NULL,
-    status ENUM('draft', 'posted', 'cancelled') DEFAULT 'draft',
-    created_by INT NOT NULL,
-    posted_by INT DEFAULT NULL,
-    posted_at DATETIME DEFAULT NULL,
+    entry_number VARCHAR(50) NOT NULL COMMENT 'Número único del asiento (ej: AS-2025-000001)',
+    entry_date DATE NOT NULL COMMENT 'Fecha del asiento',
+    period_id INT NOT NULL COMMENT 'Período contable al que pertenece',
+    description TEXT NOT NULL COMMENT 'Descripción del asiento',
+    reference VARCHAR(100) COMMENT 'Referencia externa (número de factura, etc)',
+    entry_type ENUM('manual', 'automatic') DEFAULT 'manual' COMMENT 'Tipo de asiento',
+    source_type ENUM('expense', 'payment', 'donation', 'manual') DEFAULT 'manual' COMMENT 'Origen del asiento',
+    source_id INT DEFAULT NULL COMMENT 'ID del registro origen',
+    status ENUM('draft', 'posted', 'cancelled') DEFAULT 'draft' COMMENT 'Estado del asiento',
+    created_by INT NOT NULL COMMENT 'Usuario que creó el asiento',
+    posted_by INT DEFAULT NULL COMMENT 'Usuario que contabilizó el asiento',
+    posted_at DATETIME DEFAULT NULL COMMENT 'Fecha de contabilización',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (period_id) REFERENCES accounting_periods(id) ON DELETE CASCADE,
@@ -664,36 +666,38 @@ CREATE TABLE IF NOT EXISTS accounting_entries (
     INDEX idx_period (period_id),
     INDEX idx_status (status),
     INDEX idx_source (source_type, source_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+COMMENT='Cabecera de asientos contables (libro diario)';
 
--- Tabla de líneas de asiento (Entry Lines - double entry)
+-- Tabla de líneas de asiento contable (Partida Doble)
 CREATE TABLE IF NOT EXISTS accounting_entry_lines (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    entry_id INT NOT NULL,
-    account_id INT NOT NULL,
-    description TEXT,
-    debit DECIMAL(10,2) DEFAULT 0.00,
-    credit DECIMAL(10,2) DEFAULT 0.00,
-    line_order INT DEFAULT 0,
+    entry_id INT NOT NULL COMMENT 'Asiento al que pertenece',
+    account_id INT NOT NULL COMMENT 'Cuenta contable',
+    description TEXT COMMENT 'Descripción de la línea',
+    debit DECIMAL(10,2) DEFAULT 0.00 COMMENT 'Importe en el Debe',
+    credit DECIMAL(10,2) DEFAULT 0.00 COMMENT 'Importe en el Haber',
+    line_order INT DEFAULT 0 COMMENT 'Orden de la línea en el asiento',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (entry_id) REFERENCES accounting_entries(id) ON DELETE CASCADE,
     FOREIGN KEY (account_id) REFERENCES accounting_accounts(id) ON DELETE CASCADE,
     INDEX idx_entry (entry_id),
     INDEX idx_account (account_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+COMMENT='Líneas de asientos contables (partida doble: Debe = Haber)';
 
 -- Tabla de presupuestos
 CREATE TABLE IF NOT EXISTS budgets (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(200) NOT NULL,
-    description TEXT,
-    fiscal_year INT NOT NULL,
-    account_id INT NOT NULL,
-    amount DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-    period_type ENUM('yearly', 'monthly', 'quarterly') DEFAULT 'yearly',
-    period_number INT DEFAULT NULL,
-    status ENUM('draft', 'approved', 'active', 'closed') DEFAULT 'draft',
-    created_by INT NOT NULL,
+    name VARCHAR(200) NOT NULL COMMENT 'Nombre del presupuesto',
+    description TEXT COMMENT 'Descripción detallada',
+    fiscal_year INT NOT NULL COMMENT 'Año fiscal',
+    account_id INT NOT NULL COMMENT 'Cuenta contable asociada',
+    amount DECIMAL(10,2) NOT NULL DEFAULT 0.00 COMMENT 'Importe presupuestado',
+    period_type ENUM('yearly', 'monthly', 'quarterly') DEFAULT 'yearly' COMMENT 'Tipo de período',
+    period_number INT DEFAULT NULL COMMENT 'Número de período (mes o trimestre)',
+    status ENUM('draft', 'approved', 'active', 'closed') DEFAULT 'draft' COMMENT 'Estado del presupuesto',
+    created_by INT NOT NULL COMMENT 'Usuario que creó el presupuesto',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (account_id) REFERENCES accounting_accounts(id) ON DELETE CASCADE,
@@ -701,13 +705,16 @@ CREATE TABLE IF NOT EXISTS budgets (
     INDEX idx_fiscal_year (fiscal_year),
     INDEX idx_account (account_id),
     INDEX idx_status (status)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+COMMENT='Presupuestos asociados a cuentas contables';
 
--- Insertar plan de cuentas básico (Spanish Chart of Accounts - PGC simplified)
-INSERT INTO accounting_accounts (code, name, account_type, balance_type, level, is_system) VALUES
--- ACTIVO (Assets)
+-- Insertar plan de cuentas básico según PGC español
+INSERT IGNORE INTO accounting_accounts (code, name, account_type, balance_type, level, is_system) VALUES
+-- PATRIMONIO (Equity)
 ('100', 'Capital Social', 'equity', 'credit', 0, 1),
 ('129', 'Resultados del Ejercicio', 'equity', 'credit', 0, 1),
+
+-- ACTIVO (Assets)
 ('430', 'Clientes', 'asset', 'debit', 0, 1),
 ('440', 'Deudores', 'asset', 'debit', 0, 1),
 ('470', 'Hacienda Pública, Deudora', 'asset', 'debit', 0, 1),
@@ -744,8 +751,7 @@ INSERT INTO accounting_accounts (code, name, account_type, balance_type, level, 
 ('678', 'Gastos Excepcionales', 'expense', 'debit', 0, 1);
 
 -- Insertar período contable por defecto para año actual
--- Solo si existe al menos un usuario en el sistema
-INSERT INTO accounting_periods (name, start_date, end_date, fiscal_year, status, created_by) 
+INSERT IGNORE INTO accounting_periods (name, start_date, end_date, fiscal_year, status, created_by) 
 SELECT 
     CONCAT('Ejercicio ', YEAR(CURDATE())), 
     CONCAT(YEAR(CURDATE()), '-01-01'), 
@@ -754,5 +760,18 @@ SELECT
     'open',
     MIN(id)
 FROM users
-WHERE EXISTS (SELECT 1 FROM users LIMIT 1)
-ON DUPLICATE KEY UPDATE id=id;
+WHERE EXISTS (SELECT 1 FROM users LIMIT 1);
+
+-- ============================================
+-- Social Media Sharing Integration
+-- ============================================
+INSERT INTO organization_settings (category, setting_key, setting_value, setting_type, description) VALUES
+('social_media', 'facebook_enabled', '0', 'boolean', 'Habilitar compartir en Facebook'),
+('social_media', 'facebook_app_id', '', 'text', 'Facebook App ID para compartir contenido'),
+('social_media', 'twitter_enabled', '0', 'boolean', 'Habilitar compartir en Twitter/X'),
+('social_media', 'linkedin_enabled', '0', 'boolean', 'Habilitar compartir en LinkedIn'),
+('social_media', 'instagram_enabled', '0', 'boolean', 'Habilitar compartir en Instagram'),
+('social_media', 'share_default_image', '', 'text', 'URL de imagen por defecto para compartir'),
+('social_media', 'share_site_name', '', 'text', 'Nombre del sitio para metadatos Open Graph'),
+('social_media', 'share_description', '', 'text', 'Descripción por defecto para compartir')
+ON DUPLICATE KEY UPDATE setting_key=setting_key;
