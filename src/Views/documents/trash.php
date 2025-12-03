@@ -1,26 +1,22 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Papelera - Documentos</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
-    <?php require_once __DIR__ . '/../partials/nav.php'; ?>
-    
-    <div class="container">
-        <div class="page-header">
-            <h1><i class="fas fa-trash"></i> Papelera de Documentos</h1>
-            <div class="header-actions">
-                <a href="index.php?page=documents" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Volver a Documentos
-                </a>
-            </div>
-        </div>
+<?php 
+require_once __DIR__ . '/../../Helpers/FileTypeHelper.php';
+require_once __DIR__ . '/../../Helpers/FileUploadHelper.php';
+ob_start(); 
+?>
 
-        <?php if (isset($_SESSION['error'])): ?>
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="fas fa-trash"></i> Papelera de Documentos</h1>
+        <p class="page-subtitle">Documentos eliminados que pueden ser restaurados</p>
+    </div>
+    <div class="page-actions">
+        <a href="index.php?page=documents" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Volver a Documentos
+        </a>
+    </div>
+</div>
+
+<?php if (isset($_SESSION['error'])): ?>
             <div class="alert alert-danger">
                 <?php echo htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?>
             </div>
@@ -32,13 +28,13 @@
             </div>
         <?php endif; ?>
 
-        <?php if (empty($documents)): ?>
-            <div class="empty-state">
-                <i class="fas fa-trash fa-4x"></i>
-                <h3>No hay documentos en la papelera</h3>
-                <p>Los documentos eliminados aparecerán aquí</p>
-            </div>
-        <?php else: ?>
+<?php if (empty($documents)): ?>
+    <div class="empty-state">
+        <i class="fas fa-trash fa-4x"></i>
+        <h3>No hay documentos en la papelera</h3>
+        <p>Los documentos eliminados aparecerán aquí</p>
+    </div>
+<?php else: ?>
             <div class="table-responsive">
                 <table class="table">
                     <thead>
@@ -56,10 +52,7 @@
                         <?php foreach ($documents as $doc): ?>
                             <tr>
                                 <td class="text-center">
-                                    <?php
-                                    require_once __DIR__ . '/../../../Helpers/FileTypeHelper.php';
-                                    echo FileTypeHelper::renderIcon($doc['file_extension'] ?? pathinfo($doc['file_name'], PATHINFO_EXTENSION));
-                                    ?>
+                                    <?php echo FileTypeHelper::renderIcon($doc['file_extension'] ?? pathinfo($doc['file_name'], PATHINFO_EXTENSION)); ?>
                                 </td>
                                 <td>
                                     <strong><?php echo htmlspecialchars($doc['title']); ?></strong>
@@ -69,12 +62,17 @@
                                 </td>
                                 <td><?php echo htmlspecialchars($doc['file_name']); ?></td>
                                 <td>
-                                    <?php
-                                    require_once __DIR__ . '/../../../Helpers/FileUploadHelper.php';
-                                    echo FileUploadHelper::formatBytes($doc['file_size']);
+                                    <?php echo FileUploadHelper::formatBytes($doc['file_size']); ?>
+                                </td>
+                                <td>
+                                    <?php 
+                                    if (isset($doc['deleted_by_first_name'])) {
+                                        echo htmlspecialchars($doc['deleted_by_first_name'] . ' ' . $doc['deleted_by_last_name']);
+                                    } else {
+                                        echo 'Desconocido';
+                                    }
                                     ?>
                                 </td>
-                                <td><?php echo htmlspecialchars($doc['deleted_by_username'] ?? 'Desconocido'); ?></td>
                                 <td>
                                     <?php 
                                     $date = new DateTime($doc['deleted_at']);
@@ -104,23 +102,25 @@
                     </tbody>
                 </table>
             </div>
-        <?php endif; ?>
-    </div>
+<?php endif; ?>
 
-    <style>
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #999;
-        }
-        .empty-state i {
-            color: #ddd;
-            margin-bottom: 20px;
-        }
-        .btn-group {
-            display: flex;
-            gap: 5px;
-        }
-    </style>
-</body>
-</html>
+<style>
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #999;
+    }
+    .empty-state i {
+        color: #ddd;
+        margin-bottom: 20px;
+    }
+    .btn-group {
+        display: flex;
+        gap: 5px;
+    }
+</style>
+
+<?php
+$content = ob_get_clean();
+require_once __DIR__ . '/../layout.php';
+?>

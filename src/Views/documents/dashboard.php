@@ -1,4 +1,7 @@
-<?php ob_start(); ?>
+<?php 
+require_once __DIR__ . '/../../Helpers/DocumentViewHelper.php';
+ob_start(); 
+?>
 
 <div class="page-header">
     <div>
@@ -45,7 +48,7 @@
             </div>
             <div class="stat-label">Almacenamiento</div>
             <div class="stat-trend">
-                <i class="fas fa-database"></i> <?php echo number_format($stats['total_size'] / $stats['total_documents']); ?> bytes/doc
+                <i class="fas fa-database"></i> <?php echo $stats['total_documents'] > 0 ? number_format($stats['total_size'] / $stats['total_documents']) : 0; ?> bytes/doc
             </div>
         </div>
     </div>
@@ -139,19 +142,19 @@
             <div class="activity-timeline">
                 <?php foreach ($recentActivity as $activity): ?>
                     <div class="activity-item">
-                        <div class="activity-icon <?php echo $this->getActivityIconClass($activity['action']); ?>">
-                            <i class="fas <?php echo $this->getActivityIcon($activity['action']); ?>"></i>
+                        <div class="activity-icon <?php echo DocumentViewHelper::getActivityIconClass($activity['action']); ?>">
+                            <i class="fas <?php echo DocumentViewHelper::getActivityIcon($activity['action']); ?>"></i>
                         </div>
                         <div class="activity-content">
                             <div class="activity-text">
                                 <strong><?php echo htmlspecialchars($activity['first_name'] . ' ' . $activity['last_name']); ?></strong>
-                                <?php echo $this->getActivityText($activity['action']); ?>
+                                <?php echo DocumentViewHelper::getActivityText($activity['action']); ?>
                                 <a href="index.php?page=documents&action=preview&id=<?php echo $activity['document_id']; ?>">
                                     <?php echo htmlspecialchars($activity['document_title'] ?? $activity['file_name'] ?? 'documento'); ?>
                                 </a>
                             </div>
                             <div class="activity-time">
-                                <?php echo $this->timeAgo($activity['created_at']); ?>
+                                <?php echo DocumentViewHelper::timeAgo($activity['created_at']); ?>
                             </div>
                         </div>
                     </div>
@@ -177,7 +180,7 @@
                         </div>
                         <div class="category-bar">
                             <div class="category-progress" 
-                                 style="width: <?php echo ($cat['count'] / $stats['total_documents'] * 100); ?>%; background: <?php echo htmlspecialchars($cat['color']); ?>;"></div>
+                                 style="width: <?php echo $stats['total_documents'] > 0 ? ($cat['count'] / $stats['total_documents'] * 100) : 0; ?>%; background: <?php echo htmlspecialchars($cat['color']); ?>;"></div>
                         </div>
                     </div>
                 <?php endif; ?>
@@ -280,7 +283,7 @@
                             </div>
                             <div class="list-meta">
                                 <span><i class="fas fa-user"></i> <?php echo htmlspecialchars($doc['first_name'] . ' ' . $doc['last_name']); ?></span>
-                                <span><i class="fas fa-clock"></i> <?php echo $this->timeAgo($doc['created_at']); ?></span>
+                                <span><i class="fas fa-clock"></i> <?php echo DocumentViewHelper::timeAgo($doc['created_at']); ?></span>
                             </div>
                         </div>
                     </div>

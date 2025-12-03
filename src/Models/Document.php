@@ -425,10 +425,11 @@ class Document {
     public function getTrash($user_id = null) {
         $query = "SELECT d.*, 
                          m.first_name, m.last_name,
-                         u.username as deleted_by_username
+                         m2.first_name as deleted_by_first_name,
+                         m2.last_name as deleted_by_last_name
                   FROM " . $this->table . " d
                   JOIN members m ON d.uploaded_by = m.id
-                  LEFT JOIN users u ON d.deleted_by = u.id
+                  LEFT JOIN members m2 ON d.deleted_by = m2.id
                   WHERE d.deleted_at IS NOT NULL";
         
         if ($user_id) {

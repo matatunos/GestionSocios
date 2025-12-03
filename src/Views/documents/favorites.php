@@ -1,26 +1,22 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Favoritos - Documentos</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
-    <?php require_once __DIR__ . '/../partials/nav.php'; ?>
-    
-    <div class="container">
-        <div class="page-header">
-            <h1><i class="fas fa-star"></i> Documentos Favoritos</h1>
-            <div class="header-actions">
-                <a href="index.php?page=documents" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Volver a Documentos
-                </a>
-            </div>
-        </div>
+<?php 
+require_once __DIR__ . '/../../Helpers/FileTypeHelper.php';
+require_once __DIR__ . '/../../Helpers/FileUploadHelper.php';
+ob_start(); 
+?>
 
-        <?php if (empty($documents)): ?>
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="fas fa-star"></i> Documentos Favoritos</h1>
+        <p class="page-subtitle">Acceso rápido a tus documentos marcados como favoritos</p>
+    </div>
+    <div class="page-actions">
+        <a href="index.php?page=documents" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Volver a Documentos
+        </a>
+    </div>
+</div>
+
+<?php if (empty($documents)): ?>
             <div class="empty-state">
                 <i class="fas fa-star fa-4x"></i>
                 <h3>No tienes documentos favoritos</h3>
@@ -45,10 +41,7 @@
                         <?php foreach ($documents as $doc): ?>
                             <tr>
                                 <td class="text-center">
-                                    <?php
-                                    require_once __DIR__ . '/../../../Helpers/FileTypeHelper.php';
-                                    echo FileTypeHelper::renderIcon($doc['file_extension'] ?? pathinfo($doc['file_name'], PATHINFO_EXTENSION));
-                                    ?>
+                                    <?php echo FileTypeHelper::renderIcon($doc['file_extension'] ?? pathinfo($doc['file_name'], PATHINFO_EXTENSION)); ?>
                                 </td>
                                 <td>
                                     <strong><?php echo htmlspecialchars($doc['title']); ?></strong>
@@ -58,10 +51,7 @@
                                 </td>
                                 <td><?php echo htmlspecialchars($doc['file_name']); ?></td>
                                 <td>
-                                    <?php
-                                    require_once __DIR__ . '/../../../Helpers/FileUploadHelper.php';
-                                    echo FileUploadHelper::formatBytes($doc['file_size']);
-                                    ?>
+                                    <?php echo FileUploadHelper::formatBytes($doc['file_size']); ?>
                                 </td>
                                 <td><?php echo htmlspecialchars($doc['first_name'] . ' ' . $doc['last_name']); ?></td>
                                 <td>
@@ -94,10 +84,9 @@
                     </tbody>
                 </table>
             </div>
-        <?php endif; ?>
-    </div>
+<?php endif; ?>
 
-    <style>
+<style>
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -146,5 +135,8 @@
             });
         });
     </script>
-</body>
-</html>
+
+<?php
+$content = ob_get_clean();
+require_once __DIR__ . '/../layout.php';
+?>
