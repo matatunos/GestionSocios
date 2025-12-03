@@ -141,17 +141,32 @@
                         <th class="text-right"><?php echo number_format($totalDebtorBalance, 2); ?> €</th>
                         <th class="text-right"><?php echo number_format($totalCreditorBalance, 2); ?> €</th>
                     </tr>
-                    <tr>
-                        <th colspan="3" class="text-right">VERIFICACIÓN:</th>
-                        <th colspan="2" class="text-center <?php echo abs($totalDebit - $totalCredit) < 0.01 ? 'text-success' : 'text-danger'; ?>">
-                            <?php echo abs($totalDebit - $totalCredit) < 0.01 ? '✓ Cuadrado' : '✗ Descuadrado'; ?>
-                        </th>
-                        <th colspan="2" class="text-center <?php echo abs($totalDebtorBalance - $totalCreditorBalance) < 0.01 ? 'text-success' : 'text-danger'; ?>">
-                            <?php echo abs($totalDebtorBalance - $totalCreditorBalance) < 0.01 ? '✓ Cuadrado' : '✗ Descuadrado'; ?>
-                        </th>
-                    </tr>
                 </tfoot>
             </table>
+        </div>
+
+        <!-- Verification Summary -->
+        <div class="verification-summary">
+            <div class="verification-item">
+                <div class="verification-label">Verificación de Sumas:</div>
+                <div class="verification-value <?php echo abs($totalDebit - $totalCredit) < 0.01 ? 'status-success' : 'status-error'; ?>">
+                    <?php if (abs($totalDebit - $totalCredit) < 0.01): ?>
+                        <i class="fas fa-check-circle"></i> Cuadrado
+                    <?php else: ?>
+                        <i class="fas fa-exclamation-circle"></i> Descuadrado (Diferencia: <?php echo number_format(abs($totalDebit - $totalCredit), 2); ?> €)
+                    <?php endif; ?>
+                </div>
+            </div>
+            <div class="verification-item">
+                <div class="verification-label">Verificación de Saldos:</div>
+                <div class="verification-value <?php echo abs($totalDebtorBalance - $totalCreditorBalance) < 0.01 ? 'status-success' : 'status-error'; ?>">
+                    <?php if (abs($totalDebtorBalance - $totalCreditorBalance) < 0.01): ?>
+                        <i class="fas fa-check-circle"></i> Cuadrado
+                    <?php else: ?>
+                        <i class="fas fa-exclamation-circle"></i> Descuadrado (Diferencia: <?php echo number_format(abs($totalDebtorBalance - $totalCreditorBalance), 2); ?> €)
+                    <?php endif; ?>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -296,31 +311,55 @@
     color: #374151;
 }
 
-/* Status Badges - Minimalistas */
-.text-success {
-    color: #059669 !important;
-    font-weight: 600;
-    background: #ecfdf5;
-    padding: 0.375rem 0.75rem;
-    border-radius: 4px;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    font-size: 0.875rem;
-    border: 1px solid #a7f3d0;
+/* Verification Summary */
+.verification-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    padding: 1.5rem 2rem 2rem;
+    background: #fafbfc;
+    border-top: 1px solid #e5e7eb;
 }
 
-.text-danger {
-    color: #dc2626 !important;
-    font-weight: 600;
-    background: #fef2f2;
-    padding: 0.375rem 0.75rem;
-    border-radius: 4px;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
+.verification-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.verification-label {
     font-size: 0.875rem;
-    border: 1px solid #fecaca;
+    font-weight: 500;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.verification-value {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    border: 2px solid;
+}
+
+.verification-value i {
+    font-size: 1.125rem;
+}
+
+.status-success {
+    color: #059669;
+    background: #ecfdf5;
+    border-color: #a7f3d0;
+}
+
+.status-error {
+    color: #dc2626;
+    background: #fef2f2;
+    border-color: #fecaca;
 }
 
 /* Responsive Design */
