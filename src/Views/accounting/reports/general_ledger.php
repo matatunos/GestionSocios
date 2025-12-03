@@ -128,35 +128,139 @@
 </div>
 
 <style>
+/* Report Card Container */
 .report-card {
     background: white;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
     margin-top: 2rem;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
 }
 
 .report-header {
     padding: 2rem;
-    border-bottom: 1px solid var(--border-color);
+    background: white;
+    border-bottom: 2px solid #f3f4f6;
 }
 
 .report-header h2 {
     margin: 0 0 0.5rem 0;
     font-size: 1.5rem;
     font-weight: 600;
+    color: #111827;
 }
 
 .report-header p {
     margin: 0;
-    color: var(--text-secondary);
+    color: #6b7280;
+    font-size: 0.95rem;
 }
 
+/* Table Styling */
+.table-responsive {
+    padding: 0;
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.data-table thead {
+    background: #fafafa;
+}
+
+.data-table thead th {
+    padding: 0.875rem 1rem;
+    font-weight: 600;
+    color: #374151;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid #e5e7eb;
+    background: #f9fafb;
+}
+
+.data-table tbody td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f3f4f6;
+    color: #374151;
+}
+
+.data-table tbody tr {
+    transition: background-color 0.15s ease;
+}
+
+.data-table tbody tr:hover {
+    background-color: #fafbfc;
+}
+
+/* Number Formatting */
+.text-right {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-family: ui-monospace, 'SF Mono', 'Roboto Mono', monospace;
+    font-weight: 400;
+}
+
+/* Footer Totals */
+.data-table tfoot {
+    background: #f9fafb;
+    border-top: 2px solid #e5e7eb;
+}
+
+.data-table tfoot th {
+    color: #111827;
+    padding: 0.875rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* Balance Colors */
 .text-success {
-    color: #10b981;
+    color: #059669;
+    font-weight: 500;
 }
 
 .text-danger {
-    color: #ef4444;
+    color: #dc2626;
+    font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .report-header {
+        padding: 1.5rem 1rem;
+    }
+    
+    .report-header h2 {
+        font-size: 1.25rem;
+    }
+    
+    .data-table {
+        font-size: 0.85rem;
+    }
+    
+    .data-table thead th,
+    .data-table tbody td,
+    .data-table tfoot th {
+        padding: 0.625rem 0.5rem;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .report-card {
+        box-shadow: none;
+        border: 1px solid #e5e7eb;
+    }
+    
+    .data-table tbody tr:hover {
+        background-color: transparent !important;
+    }
 }
 </style>
 
