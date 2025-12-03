@@ -366,34 +366,40 @@ class MemberController {
         $currentYear = date('Y');
         
         // Obtener la categoría del socio
-        $memberStmt = $this->db->prepare("SELECT category_id FROM members WHERE id = ?");
+        $memberStmt = $this->db->prepare("SELECT category_id, first_name, last_name FROM members WHERE id = ?");
         $memberStmt->execute([$id]);
         $member = $memberStmt->fetch(PDO::FETCH_ASSOC);
         
+        if (!$member) {
+            $_SESSION['error'] = "Socio no encontrado.";
+            header('Location: index.php?page=members');
+            exit;
+        }
+        
         // Obtener la cuota correcta según la categoría del socio
-        $paymentAmount = 0;
-        if ($member && !empty($member['category_id'])) {
+        $paymentAmount = null;
+        if (!empty($member['category_id'])) {
             // Intentar obtener cuota específica de la categoría
             $categoryFeeStmt = $this->db->prepare("SELECT amount FROM category_fee_history WHERE category_id = ? AND year = ?");
             $categoryFeeStmt->execute([$member['category_id'], $currentYear]);
             $categoryFee = $categoryFeeStmt->fetch(PDO::FETCH_ASSOC);
-            if ($categoryFee) {
-                $paymentAmount = $categoryFee['amount'];
+            if ($categoryFee && isset($categoryFee['amount'])) {
+                $paymentAmount = floatval($categoryFee['amount']);
             }
         }
         
         // Si no hay cuota de categoría, usar cuota por defecto
-        if ($paymentAmount == 0) {
+        if ($paymentAmount === null || $paymentAmount <= 0) {
             $feeStmt = $this->db->prepare("SELECT amount FROM annual_fees WHERE year = ?");
             $feeStmt->execute([$currentYear]);
             $fee = $feeStmt->fetch(PDO::FETCH_ASSOC);
-            if ($fee) {
-                $paymentAmount = $fee['amount'];
+            if ($fee && isset($fee['amount'])) {
+                $paymentAmount = floatval($fee['amount']);
             }
         }
         
-        if ($paymentAmount == 0) {
-            $_SESSION['error'] = "No hay cuota definida para el año $currentYear. Por favor, define la cuota en Configuración > Socios.";
+        if (!$paymentAmount || $paymentAmount <= 0) {
+            $_SESSION['error'] = "No hay cuota definida para el año $currentYear. Por favor, define la cuota en Configuración > Cuotas Anuales.";
             
             // Preserve current filters
             $redirectParams = [];
