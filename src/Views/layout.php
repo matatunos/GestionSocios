@@ -205,12 +205,6 @@ if (isset($_SESSION['user_id'])) {
                         </a>
                     </li>
                     <li>
-                        <a href="index.php?page=expenses" class="nav-link <?php echo ($page === 'expenses') ? 'active' : ''; ?>">
-                            <i class="fas fa-file-invoice-dollar"></i>
-                            <span>Gastos</span>
-                        </a>
-                    </li>
-                    <li>
                         <a href="index.php?page=map" class="nav-link <?php echo ($page === 'map') ? 'active' : ''; ?>">
                             <i class="fas fa-map-marked-alt"></i>
                             <span>Mapa</span>
@@ -400,13 +394,6 @@ if (isset($_SESSION['user_id'])) {
                         <a href="index.php?page=suppliers" class="nav-link <?php echo ($page === 'suppliers') ? 'active' : ''; ?>">
                             <i class="fas fa-truck"></i>
                             <span>Proveedores</span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="index.php?page=expenses" class="nav-link <?php echo ($page === 'expenses') ? 'active' : ''; ?>">
-                            <i class="fas fa-file-invoice-dollar"></i>
-                            <span>Gastos</span>
                         </a>
                     </li>
 
