@@ -974,6 +974,43 @@ if (isset($_SESSION['user_id'])) {
             if (mobileOverlay) {
                 mobileOverlay.addEventListener('click', toggleMenu);
             }
+
+            // Handle submenu toggle
+            const navGroups = document.querySelectorAll('.nav-group > .nav-link');
+            
+            // Mark active submenu parent as open on page load
+            const activeSublink = document.querySelector('.nav-submenu .nav-link.active');
+            if (activeSublink) {
+                const parentGroup = activeSublink.closest('.nav-group');
+                if (parentGroup) {
+                    parentGroup.classList.add('open');
+                }
+            }
+            
+            navGroups.forEach(function(navLink) {
+                navLink.addEventListener('click', function(e) {
+                    // Only prevent default if it's a # link (submenu toggle)
+                    if (this.getAttribute('href') === '#') {
+                        e.preventDefault();
+                        const parentLi = this.parentElement;
+                        const wasOpen = parentLi.classList.contains('open');
+                        
+                        // Close all other submenus
+                        document.querySelectorAll('.nav-group').forEach(function(group) {
+                            if (group !== parentLi) {
+                                group.classList.remove('open');
+                            }
+                        });
+                        
+                        // Toggle current submenu
+                        if (wasOpen) {
+                            parentLi.classList.remove('open');
+                        } else {
+                            parentLi.classList.add('open');
+                        }
+                    }
+                });
+            });
         });
     </script>
 </body>
