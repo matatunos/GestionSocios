@@ -1006,6 +1006,66 @@ CREATE TABLE IF NOT EXISTS issued_invoice_lines (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================================
+-- VERIFACTU - Sistema Antifraude AEAT (Obligatorio 2025)
+-- ============================================================================
+-- Tabla para almacenar las firmas digitales y huellas de Verifactu
+CREATE TABLE IF NOT EXISTS verifactu_signatures (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    
+    -- Relación con factura
+    invoice_id INT NOT NULL,
+    
+    -- Datos de la cadena de bloques
+    hash VARCHAR(64) NOT NULL COMMENT 'Hash SHA-256 de esta factura',
+    previous_hash VARCHAR(64) DEFAULT NULL COMMENT 'Hash de la factura anterior (cadena)',
+    signature TEXT NOT NULL COMMENT 'Firma electrónica completa',
+    
+    -- Código QR para verificación
+    qr_code TEXT COMMENT 'Código QR en base64 con URL de verificación AEAT',
+    qr_url VARCHAR(500) COMMENT 'URL de verificación en sede electrónica AEAT',
+    
+    -- Datos para envío a AEAT
+    csv VARCHAR(100) COMMENT 'Código Seguro de Verificación',
+    registration_number VARCHAR(100) COMMENT 'Número de registro en sistema Verifactu',
+    sent_to_aeat BOOLEAN DEFAULT FALSE,
+    sent_at DATETIME NULL,
+    aeat_response TEXT COMMENT 'Respuesta del SII/Verifactu',
+    aeat_status ENUM('pending', 'accepted', 'rejected', 'error') DEFAULT 'pending',
+    
+    -- Metadatos de la firma
+    signature_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    signature_algorithm VARCHAR(50) DEFAULT 'SHA256-RSA',
+    certificate_id VARCHAR(100) COMMENT 'ID del certificado digital usado',
+    
+    -- Control de versiones (por si cambia normativa)
+    verifactu_version VARCHAR(10) DEFAULT '1.0',
+    
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (invoice_id) REFERENCES issued_invoices(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_invoice (invoice_id),
+    INDEX idx_hash (hash),
+    INDEX idx_sent (sent_to_aeat, sent_at),
+    INDEX idx_status (aeat_status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Configuración de Verifactu en settings
+INSERT INTO organization_settings (category, setting_key, setting_value, setting_type, description) VALUES
+('verifactu', 'enabled', '0', 'boolean', 'Activar sistema Verifactu'),
+('verifactu', 'nif_emisor', '', 'text', 'NIF del emisor registrado en AEAT'),
+('verifactu', 'certificate_path', '', 'text', 'Ruta al certificado digital'),
+('verifactu', 'certificate_password', '', 'password', 'Contraseña del certificado (encriptada)'),
+('verifactu', 'environment', 'test', 'select', 'Entorno: test o production'),
+('verifactu', 'sistema_id', '', 'text', 'ID del sistema informático registrado'),
+('verifactu', 'version', '1.0', 'text', 'Versión del sistema Verifactu'),
+('verifactu', 'auto_send', '0', 'boolean', 'Enviar automáticamente al emitir factura'),
+('verifactu', 'qr_enabled', '1', 'boolean', 'Incluir código QR en facturas'),
+('verifactu', 'test_url', 'https://prewww1.aeat.es/wlpl/TIKE-CONT/ValidarQR', 'text', 'URL de verificación (pruebas)'),
+('verifactu', 'production_url', 'https://www.agenciatributaria.gob.es/wlpl/TIKE-CONT/ValidarQR', 'text', 'URL de verificación (producción)')
+ON DUPLICATE KEY UPDATE setting_key=setting_key;
+
+-- ============================================================================
 -- Social Media Sharing Integration
 -- ============================================================================
 INSERT INTO organization_settings (category, setting_key, setting_value, setting_type, description) VALUES

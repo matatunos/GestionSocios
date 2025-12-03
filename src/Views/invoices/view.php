@@ -9,6 +9,16 @@ $statusColors = [
     'cancelled' => ['bg' => '#fee2e2', 'text' => '#991b1b', 'label' => 'Cancelada']
 ];
 $status = $statusColors[$this->invoice->status] ?? ['bg' => '#f3f4f6', 'text' => '#374151', 'label' => $this->invoice->status];
+
+// Obtener firma Verifactu si existe
+$verifactu = null;
+if (in_array($this->invoice->status, ['issued', 'paid'])) {
+    require_once __DIR__ . '/../../Models/VerifactuSignature.php';
+    $verifactuModel = new VerifactuSignature($this->db ?? (new Database())->getConnection());
+    if ($verifactuModel->getByInvoiceId($this->invoice->id)) {
+        $verifactu = $verifactuModel;
+    }
+}
 ?>
 
 <style>
@@ -496,6 +506,53 @@ $status = $statusColors[$this->invoice->status] ?? ['bg' => '#f3f4f6', 'text' =>
                 <a href="index.php?page=accounting-entries&action=view&id=<?= $this->invoice->accounting_entry_id ?>">
                     Ver asiento #<?= $this->invoice->accounting_entry_id ?>
                 </a>
+            </div>
+        <?php endif; ?>
+        
+        <!-- Información Verifactu -->
+        <?php if ($verifactu): ?>
+            <div style="background: #f0fdf4; border: 1px solid #86efac; padding: 1rem; border-radius: 6px; margin-top: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <div style="flex: 1;">
+                        <h4 style="font-size: 0.875rem; font-weight: 600; color: #065f46; margin: 0 0 0.5rem 0;">
+                            🔒 Verifactu - Factura Verificada AEAT
+                        </h4>
+                        <div style="font-size: 0.8125rem; color: #047857;">
+                            <p style="margin: 0.25rem 0;">
+                                <strong>CSV:</strong> <code style="background: white; padding: 0.125rem 0.375rem; border-radius: 3px;"><?= htmlspecialchars($verifactu->csv) ?></code>
+                            </p>
+                            <p style="margin: 0.25rem 0;">
+                                <strong>Hash:</strong> <code style="background: white; padding: 0.125rem 0.375rem; border-radius: 3px; font-size: 0.75rem;"><?= substr($verifactu->hash, 0, 32) ?>...</code>
+                            </p>
+                            <?php if ($verifactu->sent_to_aeat): ?>
+                                <p style="margin: 0.25rem 0;">
+                                    <strong>Estado AEAT:</strong>
+                                    <span style="display: inline-block; padding: 0.125rem 0.5rem; background: <?= $verifactu->aeat_status === 'accepted' ? '#d1fae5' : '#fef3c7' ?>; border-radius: 9999px; font-size: 0.75rem; font-weight: 500;">
+                                        <?= strtoupper($verifactu->aeat_status) ?>
+                                    </span>
+                                </p>
+                                <p style="margin: 0.25rem 0; font-size: 0.75rem; color: #065f46;">
+                                    Enviado: <?= date('d/m/Y H:i', strtotime($verifactu->sent_at)) ?>
+                                </p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <?php if ($verifactu->qr_url): ?>
+                        <div style="margin-left: 1rem; text-align: center;">
+                            <div style="background: white; padding: 0.5rem; border-radius: 4px; border: 1px solid #86efac;">
+                                <!-- Aquí iría el QR real generado con una librería -->
+                                <div style="width: 100px; height: 100px; background: #f9fafb; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: #6b7280;">
+                                    QR Code
+                                </div>
+                            </div>
+                            <a href="<?= htmlspecialchars($verifactu->qr_url) ?>" 
+                               target="_blank" 
+                               style="font-size: 0.75rem; color: #047857; text-decoration: none; display: block; margin-top: 0.25rem;">
+                                Verificar en AEAT
+                            </a>
+                        </div>
+                    <?php endif; ?>
+                </div>
             </div>
         <?php endif; ?>
         

@@ -206,6 +206,9 @@ class InvoiceController {
             // Crear asiento contable
             $accountingCreated = $this->createAccountingEntry();
             
+            // Generar firma Verifactu (si está habilitado)
+            $verifactuCreated = $this->createVerifactuSignature();
+            
             // Auditoría
             require_once __DIR__ . '/../Models/AuditLog.php';
             $audit = new AuditLog($this->db);
@@ -215,6 +218,9 @@ class InvoiceController {
             $message = 'Factura emitida correctamente';
             if ($accountingCreated) {
                 $message .= ' y registrada en contabilidad';
+            }
+            if ($verifactuCreated) {
+                $message .= '. Firma Verifactu generada';
             }
             
             $_SESSION['success'] = $message;
@@ -437,6 +443,71 @@ class InvoiceController {
             
         } catch (Exception $e) {
             error_log("Error creando asiento contable para factura: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Crear firma Verifactu para la factura
+     */
+    private function createVerifactuSignature() {
+        try {
+            // Verificar si Verifactu está habilitado
+            $query = "SELECT setting_value FROM organization_settings 
+                      WHERE category = 'verifactu' AND setting_key = 'enabled'";
+            $stmt = $this->db->prepare($query);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$result || $result['setting_value'] !== '1') {
+                return false; // Verifactu no está habilitado
+            }
+            
+            // Obtener NIF emisor
+            $query = "SELECT setting_value FROM organization_settings 
+                      WHERE category = 'verifactu' AND setting_key = 'nif_emisor'";
+            $stmt = $this->db->prepare($query);
+            $stmt->execute();
+            $nif_result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $nif_emisor = $nif_result['setting_value'] ?? '';
+            
+            if (empty($nif_emisor)) {
+                error_log("Verifactu habilitado pero NIF emisor no configurado");
+                return false;
+            }
+            
+            // Preparar datos de la factura para el hash
+            $invoice_data = [
+                'nif_emisor' => $nif_emisor,
+                'full_number' => $this->invoice->full_number,
+                'issue_date' => $this->invoice->issue_date,
+                'total' => $this->invoice->total,
+                'customer_tax_id' => $this->invoice->customer_tax_id ?? ''
+            ];
+            
+            // Crear instancia de Verifactu y generar firma
+            require_once __DIR__ . '/../Models/VerifactuSignature.php';
+            $verifactu = new VerifactuSignature($this->db);
+            
+            if ($verifactu->generateSignature($this->invoice->id, $invoice_data)) {
+                // Si auto_send está habilitado, enviar a AEAT
+                $query = "SELECT setting_value FROM organization_settings 
+                          WHERE category = 'verifactu' AND setting_key = 'auto_send'";
+                $stmt = $this->db->prepare($query);
+                $stmt->execute();
+                $auto_send_result = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                if ($auto_send_result && $auto_send_result['setting_value'] === '1') {
+                    $verifactu->sendToAEAT();
+                }
+                
+                return true;
+            }
+            
+            return false;
+            
+        } catch (Exception $e) {
+            error_log("Error creando firma Verifactu: " . $e->getMessage());
             return false;
         }
     }
