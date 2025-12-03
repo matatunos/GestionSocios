@@ -514,6 +514,43 @@ switch ($page) {
         else if ($action === 'pdf') $controller->generatePDF();
         else $controller->index();
         break;
+    case 'grants':
+        require_once __DIR__ . '/../src/Controllers/GrantController.php';
+        $controller = new GrantController($db);
+        if ($action === 'scrape') $controller->scrapeGrants();
+        else if ($action === 'view') $controller->view();
+        else if ($action === 'track') $controller->track();
+        else if ($action === 'updateStatus') $controller->updateStatus();
+        else if ($action === 'delete') $controller->delete();
+        else if ($action === 'dashboard') $controller->dashboard();
+        else if ($action === 'calendar') $controller->calendar();
+        else $controller->index();
+        break;
+    case 'bank':
+        require_once __DIR__ . '/../src/Controllers/BankController.php';
+        $controller = new BankController($db);
+        if ($action === 'accounts') $controller->accounts();
+        else if ($action === 'createAccount') $controller->createAccount();
+        else if ($action === 'storeAccount') $controller->storeAccount();
+        else if ($action === 'editAccount') $controller->editAccount();
+        else if ($action === 'updateAccount') $controller->updateAccount();
+        else if ($action === 'viewAccount') $controller->viewAccount();
+        else if ($action === 'transactions') $controller->transactions();
+        else if ($action === 'createTransaction') $controller->createTransaction();
+        else if ($action === 'storeTransaction') $controller->storeTransaction();
+        else if ($action === 'viewTransaction') $controller->viewTransaction();
+        else if ($action === 'import') $controller->import();
+        else if ($action === 'processImport') $controller->processImport();
+        else if ($action === 'reconciliation') $controller->reconciliation();
+        else if ($action === 'startReconciliation') $controller->startReconciliation();
+        else if ($action === 'processReconciliation') $controller->processReconciliation();
+        else $controller->dashboard();
+        break;
+    case 'financial':
+        require_once __DIR__ . '/../src/Controllers/FinancialDashboardController.php';
+        $controller = new FinancialDashboardController($db);
+        $controller->index();
+        break;
     default:
         echo "404 Not Found";
         break;

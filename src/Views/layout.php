@@ -217,6 +217,24 @@ if (isset($_SESSION['user_id'])) {
                         </a>
                     </li>
                     <li>
+                        <a href="index.php?page=financial" class="nav-link <?php echo ($page === 'financial') ? 'active' : ''; ?>">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Dashboard Financiero</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.php?page=bank" class="nav-link <?php echo ($page === 'bank') ? 'active' : ''; ?>">
+                            <i class="fas fa-university"></i>
+                            <span>Gestión Bancaria</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.php?page=grants" class="nav-link <?php echo ($page === 'grants') ? 'active' : ''; ?>">
+                            <i class="fas fa-hand-holding-usd"></i>
+                            <span>Subvenciones</span>
+                        </a>
+                    </li>
+                    <li>
                         <a href="index.php?page=map" class="nav-link <?php echo ($page === 'map') ? 'active' : ''; ?>">
                             <i class="fas fa-map-marked-alt"></i>
                             <span>Mapa</span>
@@ -439,6 +457,90 @@ if (isset($_SESSION['user_id'])) {
                                 <a href="index.php?page=accounting&action=trialBalance" class="nav-link <?php echo ($page === 'accounting' && $action === 'trialBalance') ? 'active' : ''; ?>">
                                     <i class="fas fa-balance-scale"></i>
                                     <span>Balance de Sumas</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Menú Financiero Consolidado -->
+                    <li>
+                        <a href="index.php?page=financial" class="nav-link <?php echo ($page === 'financial') ? 'active' : ''; ?>">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Dashboard Financiero</span>
+                        </a>
+                    </li>
+
+                    <!-- Menú de Gestión Bancaria -->
+                    <li class="nav-group">
+                        <a href="#" class="nav-link <?php echo ($page === 'bank') ? 'active' : ''; ?>">
+                            <i class="fas fa-university"></i>
+                            <span>Gestión Bancaria</span>
+                            <i class="fas fa-chevron-down" style="margin-left:auto;font-size:0.8em;"></i>
+                        </a>
+                        <ul class="nav-submenu">
+                            <li>
+                                <a href="index.php?page=bank" class="nav-link <?php echo ($page === 'bank' && (!isset($action) || $action === 'dashboard')) ? 'active' : ''; ?>">
+                                    <i class="fas fa-chart-pie"></i>
+                                    <span>Panel Bancario</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="index.php?page=bank&action=accounts" class="nav-link <?php echo ($page === 'bank' && $action === 'accounts') ? 'active' : ''; ?>">
+                                    <i class="fas fa-piggy-bank"></i>
+                                    <span>Cuentas Bancarias</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="index.php?page=bank&action=transactions" class="nav-link <?php echo ($page === 'bank' && $action === 'transactions') ? 'active' : ''; ?>">
+                                    <i class="fas fa-exchange-alt"></i>
+                                    <span>Movimientos</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="index.php?page=bank&action=import" class="nav-link <?php echo ($page === 'bank' && $action === 'import') ? 'active' : ''; ?>">
+                                    <i class="fas fa-file-csv"></i>
+                                    <span>Importar CSV</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="index.php?page=bank&action=reconciliation" class="nav-link <?php echo ($page === 'bank' && $action === 'reconciliation') ? 'active' : ''; ?>">
+                                    <i class="fas fa-check-double"></i>
+                                    <span>Conciliación</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Menú de Subvenciones -->
+                    <li class="nav-group">
+                        <a href="#" class="nav-link <?php echo ($page === 'grants') ? 'active' : ''; ?>">
+                            <i class="fas fa-hand-holding-usd"></i>
+                            <span>Subvenciones</span>
+                            <i class="fas fa-chevron-down" style="margin-left:auto;font-size:0.8em;"></i>
+                        </a>
+                        <ul class="nav-submenu">
+                            <li>
+                                <a href="index.php?page=grants" class="nav-link <?php echo ($page === 'grants' && (!isset($action) || $action === 'index')) ? 'active' : ''; ?>">
+                                    <i class="fas fa-list"></i>
+                                    <span>Listado</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="index.php?page=grants&action=dashboard" class="nav-link <?php echo ($page === 'grants' && $action === 'dashboard') ? 'active' : ''; ?>">
+                                    <i class="fas fa-chart-bar"></i>
+                                    <span>Dashboard</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="index.php?page=grants&action=calendar" class="nav-link <?php echo ($page === 'grants' && $action === 'calendar') ? 'active' : ''; ?>">
+                                    <i class="fas fa-calendar-check"></i>
+                                    <span>Calendario</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="index.php?page=grants&action=scrape" class="nav-link <?php echo ($page === 'grants' && $action === 'scrape') ? 'active' : ''; ?>">
+                                    <i class="fas fa-sync"></i>
+                                    <span>Actualizar BDNS</span>
                                 </a>
                             </li>
                         </ul>
