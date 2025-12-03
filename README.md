@@ -568,5 +568,5 @@ Este proyecto está bajo licencia MIT. Ver archivo `LICENSE` para más detalles.
 - [ ] Sistema de reservas online
 - [ ] Pasarela de pago integrada
 - [ ] Firma digital de documentos
-- [ ] Integración con redes sociales
+- [x] **Integración con redes sociales** (compartir anuncios en Facebook, Twitter, LinkedIn, WhatsApp, Telegram)
 - [ ] Sistema de newsletters
