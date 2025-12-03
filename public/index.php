@@ -324,6 +324,14 @@ switch ($page) {
         else if ($action === 'update') $controller->update();
         else if ($action === 'delete') $controller->delete();
         else if ($action === 'download') $controller->download();
+        else if ($action === 'trash') $controller->trash();
+        else if ($action === 'restore') $controller->restore();
+        else if ($action === 'permanent_delete') $controller->permanentDelete();
+        else if ($action === 'versions') $controller->versions();
+        else if ($action === 'upload_version') $controller->uploadVersion();
+        else if ($action === 'favorite') $controller->toggleFavorite();
+        else if ($action === 'favorites') $controller->favorites();
+        else if ($action === 'preview') $controller->preview();
         else $controller->index();
         break;
     case 'ad_prices':

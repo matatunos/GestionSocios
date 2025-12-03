@@ -2,7 +2,10 @@
 
 require_once __DIR__ . '/../Models/Document.php';
 require_once __DIR__ . '/../Models/Member.php';
-    require_once __DIR__ . '/../Models/DocumentCategory.php';
+require_once __DIR__ . '/../Models/DocumentCategory.php';
+require_once __DIR__ . '/../Helpers/FileUploadHelper.php';
+require_once __DIR__ . '/../Helpers/FileTypeHelper.php';
+require_once __DIR__ . '/../Helpers/CsrfHelper.php';
 
 class DocumentController {
     private $db;
@@ -66,16 +69,24 @@ class DocumentController {
             return;
         }
         
+        // Validar CSRF token
+        if (!CsrfHelper::validateRequest()) {
+            $_SESSION['error'] = 'Token de seguridad inválido. Por favor, inténtalo de nuevo.';
+            header('Location: index.php?page=documents&action=create');
+            exit;
+        }
+        
         if (!Auth::hasPermission('documents_create')) {
             $_SESSION['error'] = 'No tienes permisos para subir documentos';
             header('Location: index.php?page=documents');
             exit;
         }
         
-        $title = $_POST['title'] ?? '';
-        $description = $_POST['description'] ?? '';
+        $title = trim($_POST['title'] ?? '');
+        $description = trim($_POST['description'] ?? '');
         $is_public = isset($_POST['is_public']) ? 1 : 0;
-            $category_id = isset($_POST['category_id']) ? (int)$_POST['category_id'] : null;
+        $folder_id = isset($_POST['folder_id']) && !empty($_POST['folder_id']) ? (int)$_POST['folder_id'] : null;
+        $status = $_POST['status'] ?? 'published';
         
         if (empty($title)) {
             $_SESSION['error'] = 'El título es obligatorio';
@@ -83,77 +94,115 @@ class DocumentController {
             exit;
         }
         
-        // Manejar subida de archivo
-        if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
+        // Validar archivo con FileUploadHelper
+        if (!isset($_FILES['file'])) {
             $_SESSION['error'] = 'Debes seleccionar un archivo';
             header('Location: index.php?page=documents&action=create');
             exit;
         }
         
-        $file = $_FILES['file'];
+        $validation = FileUploadHelper::validateUpload($_FILES['file']);
+        
+        if (!$validation['valid']) {
+            $_SESSION['error'] = $validation['error'];
+            header('Location: index.php?page=documents&action=create');
+            exit;
+        }
+        
+        $fileData = $validation['data'];
         $uploadDir = __DIR__ . '/../../public/uploads/documents/';
         
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0777, true);
-        }
+        // Generar nombre seguro y único
+        $safeName = FileUploadHelper::generateSafeFileName($fileData['original_name']);
+        $targetPath = $uploadDir . $safeName;
         
-        // Validar tipo de archivo (permitir solo ciertos tipos)
-        $allowed_types = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'jpg', 'jpeg', 'png', 'zip', 'rar'];
-        $file_extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-        
-        if (!in_array($file_extension, $allowed_types)) {
-            $_SESSION['error'] = 'Tipo de archivo no permitido. Permitidos: ' . implode(', ', $allowed_types);
+        // Mover archivo
+        if (!FileUploadHelper::moveUploadedFile($fileData['tmp_name'], $targetPath)) {
+            $_SESSION['error'] = 'Error al subir el archivo al servidor';
             header('Location: index.php?page=documents&action=create');
             exit;
         }
         
-        // Validar tamaño (máximo 10MB)
-        if ($file['size'] > 10 * 1024 * 1024) {
-            $_SESSION['error'] = 'El archivo no puede superar los 10MB';
-            header('Location: index.php?page=documents&action=create');
-            exit;
+        // Extraer texto de PDFs para búsqueda (opcional)
+        $extractedText = '';
+        if ($fileData['extension'] === 'pdf') {
+            $extractedText = FileUploadHelper::extractTextFromPdf($targetPath);
         }
         
-        // Generar nombre único
-        $fileName = uniqid() . '_' . basename($file['name']);
-        $targetPath = $uploadDir . $fileName;
-        
-        if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
-            $_SESSION['error'] = 'Error al subir el archivo';
-            header('Location: index.php?page=documents&action=create');
-            exit;
+        // Generar thumbnail para imágenes
+        if (FileTypeHelper::isImage($fileData['extension'])) {
+            $thumbnailDir = $uploadDir . 'thumbnails/';
+            if (!is_dir($thumbnailDir)) {
+                mkdir($thumbnailDir, 0775, true);
+            }
+            $thumbnailPath = $thumbnailDir . 'thumb_' . $safeName;
+            FileUploadHelper::generateThumbnail($targetPath, $thumbnailPath);
         }
         
         // Guardar en base de datos
         $this->documentModel->title = $title;
         $this->documentModel->description = $description;
-        $this->documentModel->file_name = basename($file['name']);
-        $this->documentModel->file_path = 'uploads/documents/' . $fileName;
-        $this->documentModel->file_size = $file['size'];
-        $this->documentModel->file_type = $file['type'];
+        $this->documentModel->file_name = $fileData['original_name'];
+        $this->documentModel->file_path = 'uploads/documents/' . $safeName;
+        $this->documentModel->file_size = $fileData['size'];
+        $this->documentModel->file_type = $fileData['mime_type'];
+        $this->documentModel->file_extension = $fileData['extension'];
+        $this->documentModel->mime_type_verified = $fileData['mime_type'];
         $this->documentModel->uploaded_by = $_SESSION['user_id'];
         $this->documentModel->is_public = $is_public;
-        $this->documentModel->category_ids = isset($_POST['category_ids']) ? array_map('intval', $_POST['category_ids']) : [];
+        $this->documentModel->folder_id = $folder_id;
+        $this->documentModel->status = $status;
+        $this->documentModel->extracted_text = $extractedText;
+        $this->documentModel->version = 1;
+        $this->documentModel->is_latest_version = 1;
+        
+        // Categorías (soporte múltiple)
+        $category_ids = isset($_POST['category_ids']) ? array_map('intval', $_POST['category_ids']) : [];
+        
+        // Tags
+        $tag_ids = isset($_POST['tag_ids']) ? array_map('intval', $_POST['tag_ids']) : [];
         
         if ($this->documentModel->create()) {
+            $documentId = $this->db->lastInsertId();
+            
+            // Asignar categorías
+            if (!empty($category_ids)) {
+                $this->documentModel->setCategories($documentId, $category_ids);
+            }
+            
+            // Asignar tags (nuevo)
+            if (!empty($tag_ids)) {
+                $this->documentModel->setTags($documentId, $tag_ids);
+            }
+            
             // Auditoría de alta de documento
             require_once __DIR__ . '/../Models/AuditLog.php';
             $audit = new AuditLog($this->db);
-            $lastId = $this->db->lastInsertId();
-            $audit->create($_SESSION['user_id'], 'create', 'document', $lastId, 'Alta de documento por el usuario ' . ($_SESSION['username'] ?? ''));
+            $audit->create($_SESSION['user_id'], 'create', 'document', $documentId, 'Alta de documento: ' . $title);
+            
+            // Registrar actividad detallada
+            $this->logActivity($documentId, 'upload', [
+                'file_name' => $fileData['original_name'],
+                'file_size' => $fileData['size'],
+                'mime_type' => $fileData['mime_type']
+            ]);
+            
             // Si es privado, otorgar permisos a usuarios seleccionados
             if (!$is_public && isset($_POST['permitted_members'])) {
                 $permitted_members = $_POST['permitted_members'];
                 foreach ($permitted_members as $member_id) {
                     $this->documentModel->grantPermission(
-                        $this->documentModel->id,
+                        $documentId,
                         $member_id,
                         $_SESSION['user_id']
                     );
                 }
             }
+            
             $_SESSION['success'] = 'Documento subido correctamente';
         } else {
+            // Si falla DB, eliminar archivo
+            FileUploadHelper::deleteFile($targetPath);
             $_SESSION['error'] = 'Error al guardar el documento en la base de datos';
         }
         
@@ -322,5 +371,256 @@ class DocumentController {
         
         header('Location: index.php?page=documents');
         exit;
+    }
+    
+    /**
+     * Registrar actividad en documento
+     */
+    private function logActivity($document_id, $action, $user_id = null, $details = null) {
+        $user_id = $user_id ?? $_SESSION['user_id'];
+        
+        $query = "INSERT INTO document_activity_log 
+                  (document_id, user_id, action, ip_address, details) 
+                  VALUES (:doc_id, :user_id, :action, :ip, :details)";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':doc_id', $document_id, PDO::PARAM_INT);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->bindParam(':action', $action);
+        $stmt->bindParam(':ip', $_SERVER['REMOTE_ADDR']);
+        $stmt->bindParam(':details', $details);
+        
+        return $stmt->execute();
+    }
+    
+    /**
+     * Vista de papelera de documentos
+     */
+    public function trash() {
+        $documents = $this->documentModel->getTrash($_SESSION['user_id']);
+        require_once __DIR__ . '/../Views/documents/trash.php';
+    }
+    
+    /**
+     * Restaurar documento de papelera
+     */
+    public function restore() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            return;
+        }
+        
+        $id = $_POST['id'] ?? null;
+        
+        if (!$id) {
+            $_SESSION['error'] = 'ID de documento no proporcionado';
+            header('Location: index.php?page=documents&action=trash');
+            exit;
+        }
+        
+        if ($this->documentModel->restore($id)) {
+            $this->logActivity($id, 'restored', $_SESSION['user_id'], 'Documento restaurado de papelera');
+            $_SESSION['success'] = 'Documento restaurado correctamente';
+        } else {
+            $_SESSION['error'] = 'Error al restaurar el documento';
+        }
+        
+        header('Location: index.php?page=documents&action=trash');
+        exit;
+    }
+    
+    /**
+     * Eliminar permanentemente un documento
+     */
+    public function permanentDelete() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            return;
+        }
+        
+        $id = $_POST['id'] ?? null;
+        
+        if (!$id) {
+            $_SESSION['error'] = 'ID de documento no proporcionado';
+            header('Location: index.php?page=documents&action=trash');
+            exit;
+        }
+        
+        if ($this->documentModel->permanentDelete($id)) {
+            $_SESSION['success'] = 'Documento eliminado permanentemente';
+        } else {
+            $_SESSION['error'] = 'Error al eliminar el documento';
+        }
+        
+        header('Location: index.php?page=documents&action=trash');
+        exit;
+    }
+    
+    /**
+     * Ver versiones de un documento
+     */
+    public function versions() {
+        $id = $_GET['id'] ?? null;
+        
+        if (!$id) {
+            $_SESSION['error'] = 'ID de documento no proporcionado';
+            header('Location: index.php?page=documents');
+            exit;
+        }
+        
+        $document = $this->documentModel->readOne($id);
+        
+        if (!$document) {
+            $_SESSION['error'] = 'Documento no encontrado';
+            header('Location: index.php?page=documents');
+            exit;
+        }
+        
+        $versions = $this->documentModel->getVersions($id);
+        
+        require_once __DIR__ . '/../Views/documents/versions.php';
+    }
+    
+    /**
+     * Subir nueva versión de documento
+     */
+    public function uploadVersion() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            return;
+        }
+        
+        // Validar CSRF
+        if (!CsrfHelper::validateRequest()) {
+            $_SESSION['error'] = 'Token CSRF inválido';
+            header('Location: index.php?page=documents');
+            exit;
+        }
+        
+        $parent_id = $_POST['document_id'] ?? null;
+        
+        if (!$parent_id || !isset($_FILES['file'])) {
+            $_SESSION['error'] = 'Datos incompletos';
+            header('Location: index.php?page=documents&action=versions&id=' . $parent_id);
+            exit;
+        }
+        
+        // Validar archivo
+        $validation = FileUploadHelper::validateUpload($_FILES['file']);
+        
+        if (!$validation['valid']) {
+            $_SESSION['error'] = $validation['error'];
+            header('Location: index.php?page=documents&action=versions&id=' . $parent_id);
+            exit;
+        }
+        
+        // Subir archivo
+        $upload_dir = __DIR__ . '/../../public/uploads/documents/';
+        $file_name = FileUploadHelper::generateSafeFileName($_FILES['file']['name']);
+        $file_path = $upload_dir . $file_name;
+        
+        if (!FileUploadHelper::moveUploadedFile($_FILES['file']['tmp_name'], $file_path)) {
+            $_SESSION['error'] = 'Error al subir el archivo';
+            header('Location: index.php?page=documents&action=versions&id=' . $parent_id);
+            exit;
+        }
+        
+        // Preparar datos para nueva versión
+        $file_data = [
+            'file_name' => $_FILES['file']['name'],
+            'file_path' => 'uploads/documents/' . $file_name,
+            'file_size' => $_FILES['file']['size'],
+            'file_type' => $_FILES['file']['type'],
+            'file_extension' => pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION),
+            'mime_type_verified' => FileUploadHelper::getMimeType($file_path),
+            'extracted_text' => null
+        ];
+        
+        // Extraer texto si es PDF
+        if (strtolower($file_data['file_extension']) === 'pdf') {
+            $file_data['extracted_text'] = FileUploadHelper::extractTextFromPdf($file_path);
+        }
+        
+        // Crear nueva versión
+        $new_version_id = $this->documentModel->createVersion($parent_id, $file_data);
+        
+        if ($new_version_id) {
+            $this->logActivity($new_version_id, 'version_created', $_SESSION['user_id'], 'Nueva versión del documento');
+            $_SESSION['success'] = 'Nueva versión creada correctamente';
+        } else {
+            FileUploadHelper::deleteFile($file_path);
+            $_SESSION['error'] = 'Error al crear nueva versión';
+        }
+        
+        header('Location: index.php?page=documents&action=versions&id=' . $parent_id);
+        exit;
+    }
+    
+    /**
+     * Toggle favorito
+     */
+    public function toggleFavorite() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            return;
+        }
+        
+        $id = $_POST['id'] ?? null;
+        
+        if (!$id) {
+            echo json_encode(['success' => false, 'error' => 'ID no proporcionado']);
+            exit;
+        }
+        
+        $result = $this->documentModel->toggleFavorite($id, $_SESSION['user_id']);
+        
+        if ($result) {
+            $this->logActivity($id, 'favorite_' . $result, $_SESSION['user_id']);
+            echo json_encode(['success' => true, 'action' => $result]);
+        } else {
+            echo json_encode(['success' => false, 'error' => 'Error al procesar solicitud']);
+        }
+        exit;
+    }
+    
+    /**
+     * Ver favoritos
+     */
+    public function favorites() {
+        $documents = $this->documentModel->getFavorites($_SESSION['user_id']);
+        require_once __DIR__ . '/../Views/documents/favorites.php';
+    }
+    
+    /**
+     * Vista previa de documento
+     */
+    public function preview() {
+        $id = $_GET['id'] ?? null;
+        
+        if (!$id) {
+            http_response_code(404);
+            echo 'Documento no encontrado';
+            exit;
+        }
+        
+        $document = $this->documentModel->readOne($id);
+        
+        if (!$document) {
+            http_response_code(404);
+            echo 'Documento no encontrado';
+            exit;
+        }
+        
+        // Verificar permisos
+        if (!$document['is_public'] && $document['uploaded_by'] != $_SESSION['user_id']) {
+            http_response_code(403);
+            echo 'No tienes permisos para ver este documento';
+            exit;
+        }
+        
+        // Registrar vista
+        $this->logActivity($id, 'previewed', $_SESSION['user_id']);
+        
+        require_once __DIR__ . '/../Views/documents/preview.php';
     }
 }
