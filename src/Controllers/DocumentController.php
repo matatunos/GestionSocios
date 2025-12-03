@@ -181,11 +181,11 @@ class DocumentController {
             $audit->create($_SESSION['user_id'], 'create', 'document', $documentId, 'Alta de documento: ' . $title);
             
             // Registrar actividad detallada
-            $this->logActivity($documentId, 'upload', [
+            $this->logActivity($documentId, 'uploaded', $_SESSION['user_id'], json_encode([
                 'file_name' => $fileData['original_name'],
                 'file_size' => $fileData['size'],
                 'mime_type' => $fileData['mime_type']
-            ]);
+            ]));
             
             // Si es privado, otorgar permisos a usuarios seleccionados
             if (!$is_public && isset($_POST['permitted_members'])) {
