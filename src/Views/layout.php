@@ -292,8 +292,9 @@ if (isset($_SESSION['user_id'])) {
             <?php else: ?>
                 <!-- Desktop Menu (Full) -->
                 <ul class="nav-menu">
+                    <!-- Menú Dashboard con Tesorería y Contabilidad -->
                     <li class="nav-group">
-                        <a href="#" class="nav-link <?php echo ($page === 'dashboard' || $page === 'treasury' || ($page === 'reports' && $action === 'dashboard_events')) ? 'active' : ''; ?>">
+                        <a href="#" class="nav-link <?php echo ($page === 'dashboard' || $page === 'treasury' || $page === 'accounting' || ($page === 'reports' && $action === 'dashboard_events')) ? 'active' : ''; ?>">
                             <i class="fas fa-home"></i>
                             <span>Dashboard</span>
                             <i class="fas fa-chevron-down" style="margin-left:auto;font-size:0.8em;"></i>
@@ -301,14 +302,8 @@ if (isset($_SESSION['user_id'])) {
                         <ul class="nav-submenu">
                             <li>
                                 <a href="index.php?page=dashboard" class="nav-link <?php echo ($page === 'dashboard') ? 'active' : ''; ?>">
-                    <li>
-                        <a href="index.php?page=accounting" class="nav-link <?php echo ($page === 'accounting') ? 'active' : ''; ?>">
-                            <i class="fas fa-calculator"></i>
-                            <span>Contabilidad</span>
-                        </a>
-                    </li>
                                     <i class="fas fa-chart-pie"></i>
-                                    <span>General</span>
+                                    <span>Panel de Control</span>
                                 </a>
                             </li>
                             <li>
@@ -317,39 +312,11 @@ if (isset($_SESSION['user_id'])) {
                                     <span>Tesorería</span>
                                 </a>
                             </li>
-                            <!-- Menú de Contabilidad (escritorio) -->
-                            <li class="nav-group">
-                                <a href="#" class="nav-link <?php echo ($page === 'accounting' || $page === 'budget') ? 'active' : ''; ?>">
+                            <li>
+                                <a href="index.php?page=accounting&action=dashboard" class="nav-link <?php echo ($page === 'accounting' && ($action === 'dashboard' || $action === 'index' || !$action)) ? 'active' : ''; ?>">
                                     <i class="fas fa-calculator"></i>
                                     <span>Contabilidad</span>
-                                    <i class="fas fa-chevron-down" style="margin-left:auto;font-size:0.8em;"></i>
                                 </a>
-                                <ul class="nav-submenu">
-                                    <li>
-                                        <a href="index.php?page=accounting&action=accounts" class="nav-link <?php echo ($page === 'accounting' && $action === 'accounts') ? 'active' : ''; ?>">
-                                            <i class="fas fa-list-ol"></i>
-                                            <span>Cuentas</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="index.php?page=accounting&action=entries" class="nav-link <?php echo ($page === 'accounting' && $action === 'entries') ? 'active' : ''; ?>">
-                                            <i class="fas fa-book"></i>
-                                            <span>Asientos</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="index.php?page=accounting&action=periods" class="nav-link <?php echo ($page === 'accounting' && $action === 'periods') ? 'active' : ''; ?>">
-                                            <i class="fas fa-calendar-alt"></i>
-                                            <span>Periodos</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="index.php?page=budget" class="nav-link <?php echo ($page === 'budget') ? 'active' : ''; ?>">
-                                            <i class="fas fa-wallet"></i>
-                                            <span>Presupuestos</span>
-                                        </a>
-                                    </li>
-                                </ul>
                             </li>
                             <li>
                                 <a href="index.php?page=reports&action=dashboard_events" class="nav-link <?php echo ($page === 'reports' && $action === 'dashboard_events') ? 'active' : ''; ?>">
@@ -443,17 +410,17 @@ if (isset($_SESSION['user_id'])) {
                         </a>
                     </li>
 
-                    <!-- Menú de Contabilidad -->
+                    <!-- Menú de Contabilidad (operaciones técnicas) -->
                     <li class="nav-group">
-                        <a href="index.php?page=accounting&action=dashboard" class="nav-link <?php echo ($page === 'accounting') ? 'active' : ''; ?>">
-                            <i class="fas fa-calculator"></i>
-                            <span>Contabilidad</span>
+                        <a href="#" class="nav-link <?php echo ($page === 'accounting' && $action !== 'dashboard' && $action !== 'index') ? 'active' : ''; ?>">
+                            <i class="fas fa-book"></i>
+                            <span>Libros Contables</span>
                             <i class="fas fa-chevron-down" style="margin-left:auto;font-size:0.8em;"></i>
                         </a>
                         <ul class="nav-submenu">
                             <li>
                                 <a href="index.php?page=accounting&action=accounts" class="nav-link <?php echo ($page === 'accounting' && $action === 'accounts') ? 'active' : ''; ?>">
-                                    <i class="fas fa-book"></i>
+                                    <i class="fas fa-list-ol"></i>
                                     <span>Plan de Cuentas</span>
                                 </a>
                             </li>
