@@ -486,6 +486,12 @@ if (isset($_SESSION['user_id'])) {
                                 </a>
                             </li>
                             <li>
+                                <a href="index.php?page=documents&action=public_links" class="nav-link <?php echo ($page === 'documents' && $action === 'public_links') ? 'active' : ''; ?>">
+                                    <i class="fas fa-share-alt"></i>
+                                    <span>Enlaces Públicos</span>
+                                </a>
+                            </li>
+                            <li>
                                 <a href="index.php?page=document_folders" class="nav-link <?php echo ($page === 'document_folders') ? 'active' : ''; ?>">
                                     <i class="fas fa-folder"></i>
                                     <span>Carpetas</span>

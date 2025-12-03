@@ -27,11 +27,25 @@ $lang = Lang::getInstance();
 $requestUri = $_SERVER['REQUEST_URI'];
 $basePath = str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']);
 
+$page = $_GET['page'] ?? 'dashboard';
+
+// Manejar acceso público a documentos (sin autenticación)
+if ($page === 'public_document') {
+    require_once __DIR__ . '/../src/Controllers/PublicDocumentController.php';
+    $controller = new PublicDocumentController();
+    $action = $_GET['action'] ?? 'view';
+    
+    if ($action === 'download') {
+        $controller->download();
+    } else {
+        $controller->view();
+    }
+    exit;
+}
+
 // Check if it's an API request
 if (strpos($requestUri, '/api/') === 0 || strpos($requestUri, $basePath . '/api/') === 0) {
     $page = 'api';
-} else {
-    $page = $_GET['page'] ?? 'dashboard';
 }
 
 // Check Installation & DB Connection
@@ -333,6 +347,10 @@ switch ($page) {
         else if ($action === 'favorites') $controller->favorites();
         else if ($action === 'preview') $controller->preview();
         else if ($action === 'dashboard') $controller->dashboard();
+        else if ($action === 'generate_public') $controller->generatePublic();
+        else if ($action === 'revoke_public') $controller->revokePublic();
+        else if ($action === 'public_links') $controller->publicLinks();
+        else if ($action === 'public_stats') $controller->publicStats();
         else $controller->index();
         break;
     case 'document_folders':

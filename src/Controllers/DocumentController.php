@@ -658,6 +658,9 @@ class DocumentController {
         // Tags más usados
         $topTags = $this->getTopTags(10);
         
+        // Documentos públicos activos
+        $publicDocuments = $this->documentModel->getPublicDocuments();
+        
         require_once __DIR__ . '/../Views/documents/dashboard.php';
     }
     
@@ -946,5 +949,114 @@ class DocumentController {
         }
         
         return date('d/m/Y', $timestamp);
+    }
+    
+    /**
+     * Generar enlace público para un documento
+     */
+    public function generatePublic() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            return;
+        }
+        
+        $id = $_POST['id'] ?? null;
+        $expires_days = $_POST['expires_days'] ?? null;
+        $download_limit = $_POST['download_limit'] ?? null;
+        
+        if (!$id) {
+            echo json_encode(['success' => false, 'error' => 'ID no proporcionado']);
+            exit;
+        }
+        
+        // Calcular fecha de expiración si se especificó
+        $expires_at = null;
+        if ($expires_days && is_numeric($expires_days)) {
+            $expires_at = date('Y-m-d H:i:s', strtotime("+{$expires_days} days"));
+        }
+        
+        // Convertir límite de descargas
+        $download_limit = ($download_limit && is_numeric($download_limit)) ? (int)$download_limit : null;
+        
+        $token = $this->documentModel->generatePublicLink($id, $_SESSION['user_id'], $expires_at, $download_limit);
+        
+        if ($token) {
+            $this->logActivity($id, 'public_link_created', $_SESSION['user_id'], json_encode([
+                'expires_at' => $expires_at,
+                'download_limit' => $download_limit
+            ]));
+            
+            // Generar URL pública
+            $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+            $host = $_SERVER['HTTP_HOST'];
+            $public_url = "{$protocol}://{$host}/public/index.php?page=public_document&token={$token}";
+            
+            echo json_encode([
+                'success' => true,
+                'token' => $token,
+                'url' => $public_url
+            ]);
+        } else {
+            echo json_encode(['success' => false, 'error' => 'Error al generar enlace']);
+        }
+        exit;
+    }
+    
+    /**
+     * Revocar enlace público
+     */
+    public function revokePublic() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            return;
+        }
+        
+        $id = $_POST['id'] ?? null;
+        
+        if (!$id) {
+            echo json_encode(['success' => false, 'error' => 'ID no proporcionado']);
+            exit;
+        }
+        
+        if ($this->documentModel->revokePublicLink($id, $_SESSION['user_id'])) {
+            $this->logActivity($id, 'public_link_revoked', $_SESSION['user_id']);
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false, 'error' => 'Error al revocar enlace']);
+        }
+        exit;
+    }
+    
+    /**
+     * Vista de gestión de enlaces públicos
+     */
+    public function publicLinks() {
+        $documents = $this->documentModel->getPublicDocuments();
+        require_once __DIR__ . '/../Views/documents/public_links.php';
+    }
+    
+    /**
+     * Estadísticas de un enlace público
+     */
+    public function publicStats() {
+        $id = $_GET['id'] ?? null;
+        
+        if (!$id) {
+            $_SESSION['error'] = 'ID de documento no proporcionado';
+            header('Location: index.php?page=documents&action=public_links');
+            exit;
+        }
+        
+        $document = $this->documentModel->readOne($id);
+        if (!$document) {
+            $_SESSION['error'] = 'Documento no encontrado';
+            header('Location: index.php?page=documents&action=public_links');
+            exit;
+        }
+        
+        $stats = $this->documentModel->getPublicLinkStats($id);
+        $accessLog = $this->documentModel->getPublicAccessLog($id, 100);
+        
+        require_once __DIR__ . '/../Views/documents/public_stats.php';
     }
 }

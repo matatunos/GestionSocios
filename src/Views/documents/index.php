@@ -217,6 +217,13 @@ $title = 'Gestión de Documentos';
                         <i class="far fa-star"></i>
                     </button>
                     
+                    <button type="button" class="btn btn-sm btn-success share-public-btn" 
+                            data-id="<?php echo $doc['id']; ?>" 
+                            data-title="<?php echo htmlspecialchars($doc['title']); ?>"
+                            title="Compartir públicamente">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
+                    
                     <a href="index.php?page=documents&action=versions&id=<?php echo $doc['id']; ?>" 
                        class="btn btn-sm btn-warning" title="Versiones">
                         <i class="fas fa-history"></i>
@@ -332,9 +339,239 @@ $title = 'Gestión de Documentos';
 .favorite-btn.favorited i {
     color: #fbbf24;
 }
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #64748b;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #1e293b;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #3b82f6;
+}
+
+.form-help {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin-top: 0.25rem;
+}
+
+.result-box {
+    background: #f1f5f9;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+.result-url {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.result-url input {
+    flex: 1;
+    font-family: monospace;
+    font-size: 0.875rem;
+}
 </style>
 
+<!-- Modal para generar enlace público -->
+<div id="sharePublicModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-share-alt"></i> Compartir Públicamente</h2>
+            <button class="modal-close" onclick="closeShareModal()">&times;</button>
+        </div>
+        
+        <form id="sharePublicForm">
+            <input type="hidden" id="share_doc_id" name="id">
+            
+            <div class="form-group">
+                <label>Documento:</label>
+                <div id="share_doc_title" style="font-weight:normal; color:#64748b;"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="expires_days">Expiración (días)</label>
+                <select class="form-control" id="expires_days" name="expires_days">
+                    <option value="">Sin expiración</option>
+                    <option value="1">1 día</option>
+                    <option value="7" selected>7 días</option>
+                    <option value="30">30 días</option>
+                    <option value="90">90 días</option>
+                </select>
+                <div class="form-help">Tiempo hasta que el enlace deje de funcionar</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="download_limit">Límite de descargas</label>
+                <input type="number" class="form-control" id="download_limit" name="download_limit" min="1" placeholder="Ilimitado">
+                <div class="form-help">Número máximo de descargas permitidas (dejar vacío para ilimitado)</div>
+            </div>
+            
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary" style="width:100%;">
+                    <i class="fas fa-link"></i> Generar Enlace Público
+                </button>
+            </div>
+            
+            <div id="shareResult" style="display:none;">
+                <div class="result-box">
+                    <strong><i class="fas fa-check-circle" style="color:#10b981;"></i> Enlace generado correctamente</strong>
+                    <div class="result-url">
+                        <input type="text" id="public_url" class="form-control" readonly>
+                        <button type="button" class="btn btn-secondary" onclick="copyPublicUrl()">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                    <div class="form-help" style="margin-top:0.5rem;">
+                        Comparte este enlace con las personas que necesiten acceder al documento
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script src="js/documents.js"></script>
+<script>
+// Abrir modal para compartir
+document.querySelectorAll('.share-public-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const docId = this.getAttribute('data-id');
+        const docTitle = this.getAttribute('data-title');
+        
+        document.getElementById('share_doc_id').value = docId;
+        document.getElementById('share_doc_title').textContent = docTitle;
+        document.getElementById('shareResult').style.display = 'none';
+        document.getElementById('sharePublicForm').reset();
+        document.getElementById('share_doc_id').value = docId; // Restaurar después del reset
+        document.getElementById('expires_days').value = '7'; // Valor por defecto
+        
+        document.getElementById('sharePublicModal').classList.add('show');
+    });
+});
+
+function closeShareModal() {
+    document.getElementById('sharePublicModal').classList.remove('show');
+}
+
+// Cerrar modal al hacer clic fuera
+document.getElementById('sharePublicModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeShareModal();
+    }
+});
+
+// Generar enlace público
+document.getElementById('sharePublicForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const submitBtn = this.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando...';
+    
+    try {
+        const response = await fetch('index.php?page=documents&action=generate_public', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            document.getElementById('public_url').value = data.url;
+            document.getElementById('shareResult').style.display = 'block';
+            submitBtn.innerHTML = '<i class="fas fa-check"></i> Enlace Generado';
+        } else {
+            alert('Error: ' + (data.error || 'Error desconocido'));
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-link"></i> Generar Enlace Público';
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al generar el enlace');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-link"></i> Generar Enlace Público';
+    }
+});
+
+function copyPublicUrl() {
+    const input = document.getElementById('public_url');
+    input.select();
+    document.execCommand('copy');
+    
+    const btn = event.target.closest('button');
+    const icon = btn.querySelector('i');
+    icon.className = 'fas fa-check';
+    setTimeout(() => {
+        icon.className = 'fas fa-copy';
+    }, 2000);
+}
+</script>
 
 <?php
 $content = ob_get_clean();

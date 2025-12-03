@@ -291,6 +291,56 @@ ob_start();
             </div>
         </div>
     </div>
+    
+    <!-- Enlaces Públicos Activos -->
+    <div class="dashboard-card">
+        <div class="card-header">
+            <h3><i class="fas fa-share-alt"></i> Enlaces Públicos Activos</h3>
+            <a href="index.php?page=documents&action=public_links" class="btn-header">Ver todos</a>
+        </div>
+        <div class="card-body">
+            <?php if (empty($publicDocuments)): ?>
+                <p class="text-muted text-center">No hay documentos compartidos públicamente</p>
+            <?php else: ?>
+                <div class="list-group">
+                    <?php 
+                    $displayCount = 0;
+                    foreach ($publicDocuments as $doc): 
+                        if ($displayCount >= 5) break;
+                        $displayCount++;
+                    ?>
+                        <div class="list-item">
+                            <div class="list-icon">
+                                <?php echo FileTypeHelper::renderIcon($doc['file_extension'] ?? pathinfo($doc['file_name'], PATHINFO_EXTENSION), 24); ?>
+                            </div>
+                            <div class="list-content">
+                                <div class="list-title">
+                                    <a href="index.php?page=documents&action=public_stats&id=<?php echo $doc['id']; ?>">
+                                        <?php echo htmlspecialchars($doc['title']); ?>
+                                    </a>
+                                    <?php if ($doc['status'] === 'expired'): ?>
+                                        <span class="badge bg-warning">Expirado</span>
+                                    <?php elseif ($doc['status'] === 'limit_reached'): ?>
+                                        <span class="badge bg-danger">Límite</span>
+                                    <?php else: ?>
+                                        <span class="badge bg-success">Activo</span>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="list-meta">
+                                    <span><i class="fas fa-download"></i> <?php echo htmlspecialchars($doc['download_stats']); ?></span>
+                                    <?php if ($doc['public_last_access']): ?>
+                                        <span><i class="fas fa-clock"></i> <?php echo DocumentViewHelper::timeAgo($doc['public_last_access']); ?></span>
+                                    <?php else: ?>
+                                        <span class="text-muted"><i class="fas fa-clock"></i> Sin accesos</span>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
 </div>
 
 <style>
@@ -369,6 +419,9 @@ ob_start();
     padding: 1.5rem;
     border-bottom: 1px solid #e2e8f0;
     background: #f8fafc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .dashboard-card .card-header h3 {
@@ -379,6 +432,20 @@ ob_start();
     display: flex;
     align-items: center;
     gap: 0.5rem;
+}
+
+.btn-header {
+    color: #3b82f6;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+
+.btn-header:hover {
+    background: #dbeafe;
 }
 
 .dashboard-card .card-body {

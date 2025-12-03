@@ -1,0 +1,21 @@
+User-agent: *
+# Permitir acceso general al sitio
+Allow: /
+
+# Bloquear indexación de enlaces públicos de documentos
+Disallow: /index.php?page=public_document
+Disallow: /*?page=public_document*
+Disallow: /*&token=*
+
+# Bloquear directorios sensibles
+Disallow: /src/
+Disallow: /database/
+Disallow: /vendor/
+Disallow: /uploads/
+
+# Bloquear archivos de configuración
+Disallow: /*.php$
+Allow: /index.php
+
+# Sitemap (si existe)
+Sitemap: https://tusitio.com/sitemap.xml

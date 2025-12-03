@@ -629,4 +629,121 @@ class Document {
         
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
+    /**
+     * Generar enlace público para un documento
+     */
+    public function generatePublicLink($document_id, $user_id, $expires_at = null, $download_limit = null) {
+        $query = "CALL generate_public_token(:doc_id, :user_id, :expires_at, :download_limit, @token)";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':doc_id', $document_id, PDO::PARAM_INT);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->bindParam(':expires_at', $expires_at);
+        $stmt->bindParam(':download_limit', $download_limit, PDO::PARAM_INT);
+        
+        if ($stmt->execute()) {
+            // Obtener el token generado
+            $result = $this->conn->query("SELECT @token as token")->fetch(PDO::FETCH_ASSOC);
+            return $result['token'];
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Obtener documento por token público
+     */
+    public function getByPublicToken($token) {
+        $query = "SELECT d.*, m.first_name, m.last_name,
+                         is_public_token_valid(:token) as is_valid
+                  FROM " . $this->table . " d
+                  JOIN members m ON d.uploaded_by = m.id
+                  WHERE d.public_token = :token";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':token', $token);
+        $stmt->execute();
+        
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    
+    /**
+     * Registrar acceso a enlace público
+     */
+    public function logPublicAccess($document_id, $token, $downloaded = false) {
+        $ip_address = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+        $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? null;
+        $referer = $_SERVER['HTTP_REFERER'] ?? null;
+        
+        $query = "CALL log_public_access(:doc_id, :token, :ip, :user_agent, :referer, :downloaded)";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':doc_id', $document_id, PDO::PARAM_INT);
+        $stmt->bindParam(':token', $token);
+        $stmt->bindParam(':ip', $ip_address);
+        $stmt->bindParam(':user_agent', $user_agent);
+        $stmt->bindParam(':referer', $referer);
+        $stmt->bindParam(':downloaded', $downloaded, PDO::PARAM_BOOL);
+        
+        return $stmt->execute();
+    }
+    
+    /**
+     * Revocar enlace público
+     */
+    public function revokePublicLink($document_id, $user_id) {
+        $query = "CALL revoke_public_token(:doc_id, :user_id)";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':doc_id', $document_id, PDO::PARAM_INT);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        
+        return $stmt->execute();
+    }
+    
+    /**
+     * Obtener todos los documentos públicos activos
+     */
+    public function getPublicDocuments() {
+        $query = "SELECT * FROM public_documents_active ORDER BY public_created_at DESC";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    /**
+     * Obtener estadísticas de un enlace público
+     */
+    public function getPublicLinkStats($document_id) {
+        $query = "SELECT 
+                    COUNT(*) as total_accesses,
+                    SUM(CASE WHEN downloaded = TRUE THEN 1 ELSE 0 END) as total_downloads,
+                    COUNT(DISTINCT ip_address) as unique_visitors,
+                    MIN(access_date) as first_access,
+                    MAX(access_date) as last_access
+                  FROM document_public_access_log
+                  WHERE document_id = :doc_id";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':doc_id', $document_id, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    
+    /**
+     * Obtener accesos recientes a un enlace público
+     */
+    public function getPublicAccessLog($document_id, $limit = 50) {
+        $query = "SELECT * FROM document_public_access_log
+                  WHERE document_id = :doc_id
+                  ORDER BY access_date DESC
+                  LIMIT :limit";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':doc_id', $document_id, PDO::PARAM_INT);
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
