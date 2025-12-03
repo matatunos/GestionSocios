@@ -17,8 +17,14 @@ $title = 'Gestión de Documentos';
                 <i class="fas fa-cloud-upload-alt"></i> Subir Documento
             </a>
         <?php endif; ?>
+        <a href="index.php?page=documents&action=favorites" class="btn btn-warning" style="margin-left:0.5em;">
+            <i class="fas fa-star"></i> Favoritos
+        </a>
+        <a href="index.php?page=documents&action=trash" class="btn btn-secondary" style="margin-left:0.5em;">
+            <i class="fas fa-trash"></i> Papelera
+        </a>
         <a href="index.php?page=document_categories" class="btn btn-secondary" style="margin-left:0.5em;">
-            <i class="fas fa-tags"></i> Categorías de Documentos
+            <i class="fas fa-tags"></i> Categorías
         </a>
     </div>
 </div>
@@ -195,20 +201,40 @@ $title = 'Gestión de Documentos';
                 </div>
                 
                 <div class="document-actions">
-                    <a href="index.php?page=documents&action=download&id=<?php echo $doc['id']; ?>" class="btn btn-sm btn-primary">
-                        <i class="fas fa-download"></i> Descargar
+                    <a href="index.php?page=documents&action=download&id=<?php echo $doc['id']; ?>" 
+                       class="btn btn-sm btn-primary" title="Descargar">
+                        <i class="fas fa-download"></i>
+                    </a>
+                    
+                    <a href="index.php?page=documents&action=preview&id=<?php echo $doc['id']; ?>" 
+                       class="btn btn-sm btn-secondary" target="_blank" title="Vista previa">
+                        <i class="fas fa-eye"></i>
+                    </a>
+                    
+                    <button type="button" class="btn btn-sm btn-info favorite-btn" 
+                            data-id="<?php echo $doc['id']; ?>" 
+                            title="Favorito">
+                        <i class="far fa-star"></i>
+                    </button>
+                    
+                    <a href="index.php?page=documents&action=versions&id=<?php echo $doc['id']; ?>" 
+                       class="btn btn-sm btn-warning" title="Versiones">
+                        <i class="fas fa-history"></i>
                     </a>
                     
                     <?php if ($doc['uploaded_by'] == $_SESSION['user_id'] || Auth::hasPermission('documents_edit')): ?>
-                        <a href="index.php?page=documents&action=edit&id=<?php echo $doc['id']; ?>" class="btn btn-sm btn-secondary">
-                            <i class="fas fa-edit"></i> Editar
+                        <a href="index.php?page=documents&action=edit&id=<?php echo $doc['id']; ?>" 
+                           class="btn btn-sm btn-secondary" title="Editar">
+                            <i class="fas fa-edit"></i>
                         </a>
                     <?php endif; ?>
                     
                     <?php if ($doc['uploaded_by'] == $_SESSION['user_id'] || Auth::hasPermission('documents_delete')): ?>
-                        <form method="POST" action="index.php?page=documents&action=delete" style="display: inline;" onsubmit="return confirm('¿Eliminar este documento permanentemente?');">
+                        <form method="POST" action="index.php?page=documents&action=delete" 
+                              style="display: inline;" class="delete-document"
+                              onsubmit="return confirm('¿Mover este documento a la papelera?');">
                             <input type="hidden" name="id" value="<?php echo $doc['id']; ?>">
-                            <button type="submit" class="btn btn-sm btn-danger">
+                            <button type="submit" class="btn btn-sm btn-danger" title="Eliminar">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </form>
@@ -302,7 +328,13 @@ $title = 'Gestión de Documentos';
         grid-template-columns: 1fr;
     }
 }
+
+.favorite-btn.favorited i {
+    color: #fbbf24;
+}
 </style>
+
+<script src="js/documents.js"></script>
 
 <?php
 $content = ob_get_clean();

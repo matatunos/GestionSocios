@@ -15,19 +15,49 @@
     <?php endif; ?>
 
     <form method="POST" action="index.php?page=documents&action=store" enctype="multipart/form-data">
-                <div class="form-group mb-3">
-                    <label for="category_ids" class="form-label">Categorías</label>
-                    <select name="category_ids[]" id="category_ids" class="form-control" multiple>
-                        <?php if (isset($categories) && is_array($categories)): ?>
-                            <?php foreach ($categories as $cat): ?>
-                                <option value="<?php echo $cat['id']; ?>" style="color:<?php echo htmlspecialchars($cat['color']); ?>;">
-                                    <?php echo htmlspecialchars($cat['name']); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </select>
-                    <small class="text-muted">Puedes seleccionar varias categorías usando Ctrl o Shift.</small>
-                </div>
+        <?php require_once __DIR__ . '/../../Helpers/CsrfHelper.php'; echo CsrfHelper::getTokenField(); ?>
+        
+        <div class="form-group mb-3">
+            <label for="category_ids" class="form-label">Categorías</label>
+            <select name="category_ids[]" id="category_ids" class="form-control" multiple>
+                <?php if (isset($categories) && is_array($categories)): ?>
+                    <?php foreach ($categories as $cat): ?>
+                        <option value="<?php echo $cat['id']; ?>" style="color:<?php echo htmlspecialchars($cat['color']); ?>;">
+                            <?php echo htmlspecialchars($cat['name']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </select>
+            <small class="text-muted">Puedes seleccionar varias categorías usando Ctrl o Shift.</small>
+        </div>
+        
+        <div class="form-group mb-3">
+            <label for="folder_id" class="form-label">Carpeta</label>
+            <select name="folder_id" id="folder_id" class="form-control">
+                <option value="">Raíz (sin carpeta)</option>
+                <?php
+                // Obtener carpetas si existen
+                require_once __DIR__ . '/../../Models/Document.php';
+                $docModel = new Document($GLOBALS['db'] ?? null);
+                $folders = $docModel->getFolders();
+                foreach ($folders as $folder):
+                ?>
+                    <option value="<?php echo $folder['id']; ?>">
+                        <?php echo str_repeat('&nbsp;&nbsp;', substr_count($folder['path'], '/') - 1); ?>
+                        <?php echo htmlspecialchars($folder['name']); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        
+        <div class="form-group mb-3">
+            <label for="status" class="form-label">Estado</label>
+            <select name="status" id="status" class="form-control">
+                <option value="published">Publicado</option>
+                <option value="draft">Borrador</option>
+                <option value="archived">Archivado</option>
+            </select>
+        </div>
         
         <div class="form-group mb-3">
             <label for="title" class="form-label">Título <span class="text-danger">*</span></label>

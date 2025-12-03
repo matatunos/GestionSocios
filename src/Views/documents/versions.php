@@ -112,7 +112,7 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <form method="POST" action="index.php?page=documents&action=upload_version" enctype="multipart/form-data">
-                    <?php require_once __DIR__ . '/../../../Helpers/CsrfHelper.php'; CsrfHelper::renderToken(); ?>
+                    <?php require_once __DIR__ . '/../../Helpers/CsrfHelper.php'; echo CsrfHelper::getTokenField(); ?>
                     <input type="hidden" name="document_id" value="<?php echo $document['id']; ?>">
                     
                     <div class="modal-body">
