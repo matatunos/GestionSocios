@@ -452,12 +452,6 @@ if (isset($_SESSION['user_id'])) {
                         </a>
                         <ul class="nav-submenu">
                             <li>
-                                <a href="index.php?page=accounting&action=dashboard" class="nav-link <?php echo ($page === 'accounting' && ($action === 'dashboard' || $action === 'index' || !$action)) ? 'active' : ''; ?>">
-                                    <i class="fas fa-home"></i>
-                                    <span>Dashboard</span>
-                                </a>
-                            </li>
-                            <li>
                                 <a href="index.php?page=accounting&action=accounts" class="nav-link <?php echo ($page === 'accounting' && $action === 'accounts') ? 'active' : ''; ?>">
                                     <i class="fas fa-book"></i>
                                     <span>Plan de Cuentas</span>
