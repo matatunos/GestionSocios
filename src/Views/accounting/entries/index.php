@@ -66,7 +66,7 @@
     </div>
 
     <!-- Entries Table -->
-    <div class="table-card">
+    <div class="entries-card">
         <div class="table-responsive">
             <table class="data-table">
                 <thead>
@@ -75,16 +75,19 @@
                         <th>Fecha</th>
                         <th>Descripción</th>
                         <th>Período</th>
-                        <th>Débito</th>
-                        <th>Crédito</th>
+                        <th class="text-right">Débito</th>
+                        <th class="text-right">Crédito</th>
                         <th>Estado</th>
-                        <th>Acciones</th>
+                        <th class="text-center">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (empty($entries)): ?>
                         <tr>
-                            <td colspan="8" class="text-center">No hay asientos registrados</td>
+                            <td colspan="8" class="text-center empty-state">
+                                <i class="fas fa-file-invoice"></i>
+                                <p>No hay asientos registrados</p>
+                            </td>
                         </tr>
                     <?php else: ?>
                         <?php foreach ($entries as $entry): ?>
@@ -105,7 +108,7 @@
                                     echo $statusLabels[$entry['status']] ?? $entry['status'];
                                     ?>
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     <div class="action-buttons">
                                         <a href="index.php?page=accounting&action=viewEntry&id=<?php echo $entry['id']; ?>" 
                                            class="btn btn-sm btn-info" title="Ver">
@@ -143,6 +146,191 @@
         <?php endif; ?>
     </div>
 </div>
+
+<style>
+/* Entries Card */
+.entries-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    margin-top: 2rem;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+}
+
+/* Table Styling */
+.table-responsive {
+    padding: 0;
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.data-table thead {
+    background: #f9fafb;
+}
+
+.data-table thead th {
+    padding: 0.875rem 1rem;
+    font-weight: 600;
+    color: #374151;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.data-table tbody td {
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid #f3f4f6;
+    color: #374151;
+}
+
+.data-table tbody tr {
+    transition: background-color 0.15s ease;
+}
+
+.data-table tbody tr:hover {
+    background-color: #fafbfc;
+}
+
+/* Empty State */
+.empty-state {
+    padding: 3rem 1rem !important;
+    color: #9ca3af;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.empty-state p {
+    margin: 0;
+    font-size: 1rem;
+}
+
+/* Number Formatting */
+.text-right {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-family: ui-monospace, 'SF Mono', 'Roboto Mono', monospace;
+    font-weight: 400;
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* Status Badges */
+.badge {
+    display: inline-block;
+    padding: 0.375rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    border: 1px solid;
+}
+
+.badge-warning {
+    color: #d97706;
+    background: #fef3c7;
+    border-color: #fde68a;
+}
+
+.badge-success {
+    color: #059669;
+    background: #ecfdf5;
+    border-color: #a7f3d0;
+}
+
+.badge-danger {
+    color: #dc2626;
+    background: #fef2f2;
+    border-color: #fecaca;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.btn-sm {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1.5rem;
+    border-top: 1px solid #f3f4f6;
+}
+
+.pagination a {
+    padding: 0.5rem 0.875rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    color: #374151;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.15s ease;
+}
+
+.pagination a:hover {
+    background: #f9fafb;
+    border-color: #d1d5db;
+}
+
+.pagination a.active {
+    background: #111827;
+    color: white;
+    border-color: #111827;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .data-table {
+        font-size: 0.85rem;
+    }
+    
+    .data-table thead th,
+    .data-table tbody td {
+        padding: 0.625rem 0.5rem;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .entries-card {
+        box-shadow: none;
+        border: 1px solid #e5e7eb;
+    }
+    
+    .data-table tbody tr:hover {
+        background-color: transparent !important;
+    }
+    
+    .action-buttons,
+    .pagination {
+        display: none;
+    }
+}
+</style>
 
 <?php
 $content = ob_get_clean();
