@@ -376,6 +376,9 @@ class MemberController {
             exit;
         }
         
+        // DEBUG: Log para ver qué categoría tiene el socio
+        error_log("DEBUG markPaid - Socio ID: $id, Categoría: " . ($member['category_id'] ?? 'NULL'));
+        
         // Obtener la cuota correcta según la categoría del socio
         $paymentAmount = null;
         if (!empty($member['category_id'])) {
@@ -383,8 +386,10 @@ class MemberController {
             $categoryFeeStmt = $this->db->prepare("SELECT amount FROM category_fee_history WHERE category_id = ? AND year = ?");
             $categoryFeeStmt->execute([$member['category_id'], $currentYear]);
             $categoryFee = $categoryFeeStmt->fetch(PDO::FETCH_ASSOC);
+            error_log("DEBUG markPaid - Consulta categoría: category_id={$member['category_id']}, year=$currentYear, resultado: " . json_encode($categoryFee));
             if ($categoryFee && isset($categoryFee['amount'])) {
                 $paymentAmount = floatval($categoryFee['amount']);
+                error_log("DEBUG markPaid - Cuota de categoría encontrada: $paymentAmount");
             }
         }
         
@@ -393,13 +398,17 @@ class MemberController {
             $feeStmt = $this->db->prepare("SELECT amount FROM annual_fees WHERE year = ?");
             $feeStmt->execute([$currentYear]);
             $fee = $feeStmt->fetch(PDO::FETCH_ASSOC);
+            error_log("DEBUG markPaid - Consulta annual_fees: year=$currentYear, resultado: " . json_encode($fee));
             if ($fee && isset($fee['amount'])) {
                 $paymentAmount = floatval($fee['amount']);
+                error_log("DEBUG markPaid - Cuota por defecto encontrada: $paymentAmount");
             }
         }
         
+        error_log("DEBUG markPaid - Cuota final: " . ($paymentAmount ?? 'NULL'));
+        
         if (!$paymentAmount || $paymentAmount <= 0) {
-            $_SESSION['error'] = "No hay cuota definida para el año $currentYear. Por favor, define la cuota en Configuración > Cuotas Anuales.";
+            $_SESSION['error'] = "No hay cuota definida para el año $currentYear. Por favor, define la cuota en Configuración > Categorías.";
             
             // Preserve current filters
             $redirectParams = [];
