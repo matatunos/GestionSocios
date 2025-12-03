@@ -401,5 +401,70 @@ class SettingsController {
         header('Location: index.php?page=settings&tab=password-policy');
         exit;
     }
+    
+    /**
+     * Update social media settings
+     */
+    public function updateSocialMedia() {
+        $this->checkAdmin();
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Validate CSRF token
+            require_once __DIR__ . '/../Helpers/CsrfHelper.php';
+            CsrfHelper::validateRequest();
+            
+            require_once __DIR__ . '/../Models/OrganizationSettings.php';
+            $settings = new OrganizationSettings($this->db);
+            
+            // Platform toggles
+            $facebookEnabled = isset($_POST['facebook_enabled']) ? '1' : '0';
+            $twitterEnabled = isset($_POST['twitter_enabled']) ? '1' : '0';
+            $linkedinEnabled = isset($_POST['linkedin_enabled']) ? '1' : '0';
+            $instagramEnabled = isset($_POST['instagram_enabled']) ? '1' : '0';
+            
+            // Platform credentials (optional)
+            $facebookAppId = $_POST['facebook_app_id'] ?? '';
+            
+            // General settings
+            $siteName = $_POST['share_site_name'] ?? '';
+            $description = $_POST['share_description'] ?? '';
+            $defaultImage = $_POST['share_default_image'] ?? '';
+            
+            // Update all settings
+            $updates = [
+                'facebook_enabled' => $facebookEnabled,
+                'facebook_app_id' => $facebookAppId,
+                'twitter_enabled' => $twitterEnabled,
+                'linkedin_enabled' => $linkedinEnabled,
+                'instagram_enabled' => $instagramEnabled,
+                'share_site_name' => $siteName,
+                'share_description' => $description,
+                'share_default_image' => $defaultImage
+            ];
+            
+            $success = true;
+            foreach ($updates as $key => $value) {
+                if (!$settings->set($key, $value)) {
+                    $success = false;
+                    break;
+                }
+            }
+            
+            if ($success) {
+                // Audit log
+                require_once __DIR__ . '/../Models/AuditLog.php';
+                $audit = new AuditLog($this->db);
+                $userId = $_SESSION['user_id'] ?? null;
+                $audit->create($userId, 'update', 'social_media_settings', null, 'Configuración de redes sociales actualizada');
+                
+                $_SESSION['social_media_success'] = 'Configuración de redes sociales guardada correctamente';
+            } else {
+                $_SESSION['social_media_error'] = 'Error al guardar la configuración';
+            }
+        }
+        
+        header('Location: index.php?page=settings&tab=social_media');
+        exit;
+    }
 }
 ?>

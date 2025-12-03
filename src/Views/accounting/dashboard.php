@@ -173,12 +173,12 @@
 .stat-value {
     font-size: 2rem;
     font-weight: 700;
-    color: #1f2937;
+    color: #111827;
     line-height: 1.2;
 }
 
 .stat-label {
-    color: #6b7280;
+    color: #374151;
     font-size: 0.875rem;
     margin-top: 0.25rem;
     font-weight: 500;

@@ -445,14 +445,14 @@ if (isset($_SESSION['user_id'])) {
 
                     <!-- Menú de Contabilidad -->
                     <li class="nav-group">
-                        <a href="#" class="nav-link <?php echo ($page === 'accounting') ? 'active' : ''; ?>">
+                        <a href="index.php?page=accounting&action=dashboard" class="nav-link <?php echo ($page === 'accounting') ? 'active' : ''; ?>">
                             <i class="fas fa-calculator"></i>
                             <span>Contabilidad</span>
                             <i class="fas fa-chevron-down" style="margin-left:auto;font-size:0.8em;"></i>
                         </a>
                         <ul class="nav-submenu">
                             <li>
-                                <a href="index.php?page=accounting&action=dashboard" class="nav-link <?php echo ($page === 'accounting' && $action === 'dashboard') ? 'active' : ''; ?>">
+                                <a href="index.php?page=accounting&action=dashboard" class="nav-link <?php echo ($page === 'accounting' && ($action === 'dashboard' || $action === 'index' || !$action)) ? 'active' : ''; ?>">
                                     <i class="fas fa-home"></i>
                                     <span>Dashboard</span>
                                 </a>
@@ -988,8 +988,35 @@ if (isset($_SESSION['user_id'])) {
             }
             
             navGroups.forEach(function(navLink) {
+                // Handle chevron click separately
+                const chevron = navLink.querySelector('.fa-chevron-down');
+                if (chevron) {
+                    chevron.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        const parentLi = navLink.parentElement;
+                        const wasOpen = parentLi.classList.contains('open');
+                        
+                        // Close all other submenus
+                        document.querySelectorAll('.nav-group').forEach(function(group) {
+                            if (group !== parentLi) {
+                                group.classList.remove('open');
+                            }
+                        });
+                        
+                        // Toggle current submenu
+                        if (wasOpen) {
+                            parentLi.classList.remove('open');
+                        } else {
+                            parentLi.classList.add('open');
+                        }
+                    });
+                }
+                
+                // If clicking the main link (not the chevron), allow navigation but also toggle if it's a hash
                 navLink.addEventListener('click', function(e) {
-                    // Only prevent default if it's a # link (submenu toggle)
+                    // If it's a # link and no chevron was clicked, toggle submenu
                     if (this.getAttribute('href') === '#') {
                         e.preventDefault();
                         const parentLi = this.parentElement;
@@ -1009,6 +1036,7 @@ if (isset($_SESSION['user_id'])) {
                             parentLi.classList.add('open');
                         }
                     }
+                    // If it has a real link, let it navigate (don't prevent default)
                 });
             });
         });

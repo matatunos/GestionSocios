@@ -31,6 +31,13 @@
     <?php endif; ?>
 </div>
 
+<!-- Compartir Evento -->
+<div class="card mb-4">
+    <h3 style="margin-bottom: 0.5rem;"><i class="fas fa-share-alt"></i> Compartir este Evento</h3>
+    <p class="text-muted" style="margin-bottom: 1rem;">Invita a más personas a participar</p>
+    <div id="event-share-buttons"></div>
+</div>
+
 <div class="card" style="padding: 0; overflow: hidden;">
     <table class="table">
         <thead>
@@ -103,6 +110,28 @@
         </tbody>
     </table>
 </div>
+
+<script src="js/social-share.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const shareUrl = window.location.origin + window.location.pathname + '?page=events&action=show&id=<?= $event->id ?>';
+    const eventTitle = '<?= addslashes($event->title ?? $event->name ?? 'Evento') ?>';
+    const eventDate = '<?= date('d/m/Y', strtotime($event->date)) ?>';
+    const shareText = eventTitle + ' - ' + eventDate;
+    
+    const share = new SocialMediaShare({
+        url: shareUrl,
+        title: shareText,
+        description: '<?= addslashes(substr($event->description ?? '', 0, 200)) ?>'
+    });
+    
+    share.initButtons('#event-share-buttons', {
+        platforms: ['facebook', 'twitter', 'whatsapp', 'telegram', 'copy'],
+        size: 'medium',
+        showLabels: true
+    });
+});
+</script>
 
 <?php 
 $content = ob_get_clean(); 

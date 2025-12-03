@@ -577,9 +577,9 @@ INSERT INTO settings (setting_key, setting_value)
 VALUES ('association_name', 'Mi Asociación') 
 ON DUPLICATE KEY UPDATE setting_key=setting_key;
 
--- Insertar usuario administrador por defecto (password: admin)
+-- Insertar usuario administrador por defecto (username: admin, password: admin123)
 INSERT INTO users (email, name, password, role, active, status) 
-VALUES ('admin@admin.com', 'Administrador', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', 1, 'active') 
+VALUES ('admin@admin.com', 'admin', '$2y$10$BXk2d.oBMUer9kKl/acSTO0LP93AstPq1cMfNuxTOOmcIXaOJlBnS', 'admin', 1, 'active') 
 ON DUPLICATE KEY UPDATE id=id;
 
 -- Insertar categorías de documentos por defecto

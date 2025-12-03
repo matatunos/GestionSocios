@@ -420,7 +420,13 @@ switch ($page) {
         else if ($action === 'changePassword') $controller->changePassword();
         else if ($action === 'save_notifications') $controller->save_notifications();
         else if ($action === 'downloadBackup') $controller->downloadBackup();
+        else if ($action === 'updateSocialMedia') $controller->updateSocialMedia();
+        else if ($action === 'updatePasswordPolicy') $controller->updatePasswordPolicy();
         else $controller->index();
+        break;
+    case 'social_media':
+        $controller = new SocialMediaController();
+        $controller->handleRequest();
         break;
     case 'accounting':
         $controller = new AccountingController();
