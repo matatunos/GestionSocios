@@ -28,8 +28,15 @@ class PaymentController {
     public function create() {
         $this->checkAdmin();
         
-        // Load Members
-        $stmt = $this->member->readAll();
+        // Load Members with their category fees
+        $query = "SELECT m.id, m.first_name, m.last_name, m.category_id, 
+                         COALESCE(mc.default_fee, 0) as category_fee
+                  FROM members m
+                  LEFT JOIN member_categories mc ON m.category_id = mc.id
+                  WHERE m.is_active = 1
+                  ORDER BY m.last_name, m.first_name";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
         $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         // Load Active Events
@@ -37,7 +44,7 @@ class PaymentController {
         $stmtEvents = $eventModel->readActive();
         $events = $stmtEvents->fetchAll(PDO::FETCH_ASSOC);
 
-        // Load Annual Fees for auto-fill
+        // Load Annual Fees for auto-fill (fallback)
         $feeModel = new Fee($this->db);
         $stmtFees = $feeModel->readAll();
         $fees = $stmtFees->fetchAll(PDO::FETCH_ASSOC);

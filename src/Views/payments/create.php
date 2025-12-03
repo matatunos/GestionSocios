@@ -15,8 +15,12 @@
 <?php endif; ?>
 
 <script>
-// Annual fees data for auto-fill
+// Annual fees data for auto-fill (fallback)
 const annualFees = <?php echo json_encode($fees ?? []); ?>;
+// Members with their category fees
+const membersFees = <?php echo json_encode(array_map(function($m) {
+    return ['id' => $m['id'], 'fee' => $m['category_fee']];
+}, $members)); ?>;
 </script>
 
 <div class="mb-4">
@@ -31,11 +35,14 @@ const annualFees = <?php echo json_encode($fees ?? []); ?>;
         <?php require_once __DIR__ . '/../../Helpers/CsrfHelper.php'; echo CsrfHelper::getTokenField(); ?>
         <div class="form-group">
             <label class="form-label">Socio</label>
-            <select name="member_id" class="form-control" required>
+            <select name="member_id" id="member_id" class="form-control" onchange="updateFeeAmount()" required>
                 <option value="">Seleccione un socio...</option>
                 <?php foreach ($members as $member): ?>
-                    <option value="<?php echo $member['id']; ?>">
+                    <option value="<?php echo $member['id']; ?>" data-fee="<?php echo $member['category_fee']; ?>">
                         <?php echo htmlspecialchars($member['first_name'] . ' ' . $member['last_name']); ?>
+                        <?php if ($member['category_fee'] > 0): ?>
+                            (<?php echo number_format($member['category_fee'], 2); ?>€)
+                        <?php endif; ?>
                     </option>
                 <?php endforeach; ?>
             </select>
@@ -134,22 +141,32 @@ function updateAmountFromEvent() {
 
 function updateFeeAmount() {
     const paymentType = document.getElementById('payment_type').value;
+    const memberSelect = document.getElementById('member_id');
     const paymentDateInput = document.querySelector('input[name="payment_date"]');
     const amountInput = document.getElementById('amount');
     const conceptInput = document.getElementById('concept');
     
-    if (paymentType === 'fee' && paymentDateInput.value) {
+    if (paymentType === 'fee' && memberSelect.value && paymentDateInput.value) {
         const year = new Date(paymentDateInput.value).getFullYear();
-        const fee = annualFees.find(f => f.year == year);
         
-        if (fee) {
-            amountInput.value = fee.amount;
+        // Try to get fee from selected member's category first
+        const selectedOption = memberSelect.options[memberSelect.selectedIndex];
+        const memberFee = parseFloat(selectedOption.dataset.fee || 0);
+        
+        if (memberFee > 0) {
+            amountInput.value = memberFee.toFixed(2);
             conceptInput.value = 'Cuota Anual ' + year;
         } else {
-            // No fee defined for this year
-            amountInput.value = '';
-            conceptInput.value = 'Cuota Anual ' + year;
-            // Could show a warning here if desired
+            // Fallback to annual fee table if member has no category fee
+            const fee = annualFees.find(f => f.year == year);
+            if (fee) {
+                amountInput.value = fee.amount;
+                conceptInput.value = 'Cuota Anual ' + year;
+            } else {
+                // No fee defined
+                amountInput.value = '';
+                conceptInput.value = 'Cuota Anual ' + year;
+            }
         }
     }
 }
