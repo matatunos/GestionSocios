@@ -1,6 +1,4 @@
-<?php
-require_once __DIR__ . '/../../layout.php';
-?>
+<?php ob_start(); ?>
 
 <div class="main-content">
     <div class="content-header">
@@ -156,3 +154,8 @@ require_once __DIR__ . '/../../layout.php';
     margin-right: 8px;
 }
 </style>
+
+<?php
+$content = ob_get_clean();
+require __DIR__ . '/../../layout.php';
+?>

@@ -1,6 +1,4 @@
-<?php
-require_once __DIR__ . '/../../layout.php';
-?>
+<?php ob_start(); ?>
 
 <div class="main-content">
     <div class="content-header">
@@ -178,3 +176,8 @@ document.addEventListener('DOMContentLoaded', function() {
     updatePeriodOptions();
 });
 </script>
+
+<?php
+$content = ob_get_clean();
+require __DIR__ . '/../../layout.php';
+?>
