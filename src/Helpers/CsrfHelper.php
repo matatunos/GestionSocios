@@ -50,15 +50,19 @@ class CsrfHelper {
     
     /**
      * Validate CSRF token from POST request
-     * Throws exception if invalid
-     * @throws Exception if token is invalid
+     * @param bool $regenerate Whether to regenerate token after validation (default: false)
+     * @return bool True if valid, false otherwise
      */
-    public static function validateRequest() {
+    public static function validateRequest($regenerate = false) {
         $token = $_POST['csrf_token'] ?? '';
+        $valid = self::validateToken($token);
         
-        if (!self::validateToken($token)) {
-            http_response_code(403);
-            die('CSRF token validation failed. Please refresh the page and try again.');
+        // Regenerar token después de uso exitoso para mayor seguridad
+        if ($valid && $regenerate) {
+            unset($_SESSION['csrf_token']);
+            self::generateToken();
         }
+        
+        return $valid;
     }
 }

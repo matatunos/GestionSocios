@@ -71,7 +71,8 @@ class DocumentController {
         
         // Validar CSRF token
         if (!CsrfHelper::validateRequest()) {
-            $_SESSION['error'] = 'Token de seguridad inválido. Por favor, inténtalo de nuevo.';
+            error_log("CSRF validation failed. Session token: " . ($_SESSION['csrf_token'] ?? 'not set') . ", Posted token: " . ($_POST['csrf_token'] ?? 'not posted'));
+            $_SESSION['error'] = 'Token de seguridad inválido. Por favor, recarga la página e inténtalo de nuevo.';
             header('Location: index.php?page=documents&action=create');
             exit;
         }

@@ -15,7 +15,14 @@
     <?php endif; ?>
 
     <form method="POST" action="index.php?page=documents&action=store" enctype="multipart/form-data">
-        <?php require_once __DIR__ . '/../../Helpers/CsrfHelper.php'; echo CsrfHelper::getTokenField(); ?>
+        <?php 
+        require_once __DIR__ . '/../../Helpers/CsrfHelper.php'; 
+        // Asegurar que hay sesión iniciada
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        echo CsrfHelper::getTokenField(); 
+        ?>
         
         <div class="form-group mb-3">
             <label for="category_ids" class="form-label">Categorías</label>
