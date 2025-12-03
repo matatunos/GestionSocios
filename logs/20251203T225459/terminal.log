@@ -1,0 +1,386 @@
+2025-12-03 23:14:49.585 [info] RunInTerminalTool: Command rewritten by Jan: Removed redundant cd command []
+2025-12-03 23:14:49.757 [info] RunInTerminalTool#CommandLineFileWriteAnalyzer: File writes detected [[]]
+2025-12-03 23:14:49.757 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: Parsed sub-commands via bash grammar [["git status"]]
+2025-12-03 23:14:49.759 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: All sub-commands auto-approved [null]
+2025-12-03 23:14:49.762 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git status' is approved by allow list rule: git status [null]
+2025-12-03 23:14:49.766 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command line 'git status' has no matching auto approve entries [null]
+2025-12-03 23:14:50.011 [info] ToolTerminalCreator#createTerminal: Waiting 4999ms for shell integration []
+2025-12-03 23:14:50.024 [info] ToolTerminalCreator#_waitForShellIntegration: Rich SI available eventually []
+2025-12-03 23:14:50.025 [info] ToolTerminalCreator#_waitForShellIntegration: Promise complete, disposing store []
+2025-12-03 23:14:50.026 [info] ToolTerminalCreator#createTerminal: Waiting up to 2s for PromptInputModel state to change []
+2025-12-03 23:14:55.060 [info] RunInTerminalTool: Command rewritten by Jan: Removed redundant cd command []
+2025-12-03 23:14:55.085 [info] RunInTerminalTool#CommandLineFileWriteAnalyzer: File writes detected [[]]
+2025-12-03 23:14:55.087 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: Parsed sub-commands via bash grammar [["git add database/schema.sql database/migrations/ src/Models/Supplier*.php src/Controllers/SupplierController.php SUPPLIER_MODULE.md"]]
+2025-12-03 23:14:55.088 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: All sub-commands NOT auto-approved [null]
+2025-12-03 23:14:55.088 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: Command line NOT auto-approved [null]
+2025-12-03 23:14:55.088 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git add database/schema.sql database/migrations/ src/Models/Supplier*.php src/Controllers/SupplierController.php SUPPLIER_MODULE.md' has no matching auto approve entries [null]
+2025-12-03 23:14:55.089 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command line 'git add database/schema.sql database/migrations/ src/Models/Supplier*.php src/Controllers/SupplierController.php SUPPLIER_MODULE.md' has no matching auto approve entries [null]
+2025-12-03 23:15:14.113 [info] RunInTerminalTool#CommandLineFileWriteAnalyzer: File writes detected [[]]
+2025-12-03 23:15:14.113 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: Parsed sub-commands via bash grammar [["cd /root/Documentos/github/GestionSocios","git commit -m \"feat: Profesionalización completa del módulo de proveedores\n\n- Añadidos campos profesionales a tabla suppliers (tipo, categoría, estado, datos bancarios, rating)\n- Creadas tablas supplier_contacts para múltiples contactos\n- Creadas tablas supplier_documents con gestión de caducidad\n- Creadas tablas supplier_orders y supplier_order_lines para órdenes de compra\n- Mejorada tabla supplier_invoices con desglose de impuestos y fechas de vencimiento\n- Actualizados modelos PHP con todos los nuevos campos\n- Integración completa con sistema contable\n- Integración preparada con gestor documental\n- Script de migración automático con backup\n- Documentación técnica completa en SUPPLIER_MODULE.md\n- Gestión de alertas de vencimiento de facturas y documentos\""]]
+2025-12-03 23:15:14.113 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: All sub-commands NOT auto-approved [null]
+2025-12-03 23:15:14.114 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: Command line NOT auto-approved [null]
+2025-12-03 23:15:14.114 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'cd /root/Documentos/github/GestionSocios' is approved by allow list rule: cd [null]
+2025-12-03 23:15:14.114 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git commit -m "feat: Profesionalización completa del módulo de proveedores
+
+- Añadidos campos profesionales a tabla suppliers (tipo, categoría, estado, datos bancarios, rating)
+- Creadas tablas supplier_contacts para múltiples contactos
+- Creadas tablas supplier_documents con gestión de caducidad
+- Creadas tablas supplier_orders y supplier_order_lines para órdenes de compra
+- Mejorada tabla supplier_invoices con desglose de impuestos y fechas de vencimiento
+- Actualizados modelos PHP con todos los nuevos campos
+- Integración completa con sistema contable
+- Integración preparada con gestor documental
+- Script de migración automático con backup
+- Documentación técnica completa en SUPPLIER_MODULE.md
+- Gestión de alertas de vencimiento de facturas y documentos"' has no matching auto approve entries [null]
+2025-12-03 23:15:14.114 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command line 'cd /root/Documentos/github/GestionSocios && git commit -m "feat: Profesionalización completa del módulo de proveedores
+
+- Añadidos campos profesionales a tabla suppliers (tipo, categoría, estado, datos bancarios, rating)
+- Creadas tablas supplier_contacts para múltiples contactos
+- Creadas tablas supplier_documents con gestión de caducidad
+- Creadas tablas supplier_orders y supplier_order_lines para órdenes de compra
+- Mejorada tabla supplier_invoices con desglose de impuestos y fechas de vencimiento
+- Actualizados modelos PHP con todos los nuevos campos
+- Integración completa con sistema contable
+- Integración preparada con gestor documental
+- Script de migración automático con backup
+- Documentación técnica completa en SUPPLIER_MODULE.md
+- Gestión de alertas de vencimiento de facturas y documentos"' has no matching auto approve entries [null]
+2025-12-03 23:15:25.153 [info] RunInTerminalTool: Command rewritten by Jan: Removed redundant cd command []
+2025-12-03 23:15:25.168 [info] RunInTerminalTool#CommandLineFileWriteAnalyzer: File writes detected [[]]
+2025-12-03 23:15:25.168 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: Parsed sub-commands via bash grammar [["git push origin devel"]]
+2025-12-03 23:15:25.170 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: All sub-commands NOT auto-approved [null]
+2025-12-03 23:15:25.170 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: Command line NOT auto-approved [null]
+2025-12-03 23:15:25.170 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git push origin devel' has no matching auto approve entries [null]
+2025-12-03 23:15:25.170 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command line 'git push origin devel' has no matching auto approve entries [null]
+2025-12-03 23:20:31.315 [info] RunInTerminalTool#CommandLineFileWriteAnalyzer: File writes detected [[]]
+2025-12-03 23:20:31.329 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: Parsed sub-commands via bash grammar [["cd /root/Documentos/github/GestionSocios","git add src/Views/members/list.php","git commit -m \"fix: Calcular cuota correcta por categoría en botón marcar como pagado\n\n- Ahora obtiene la cuota específica de category_fee_history según la categoría del socio\n- Soluciona el problema de mostrar 0 euros en el mensaje de confirmación\n- Usa cuota por defecto si el socio no tiene categoría asignada\""]]
+2025-12-03 23:20:31.330 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: All sub-commands NOT auto-approved [null]
+2025-12-03 23:20:31.330 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: Command line NOT auto-approved [null]
+2025-12-03 23:20:31.330 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'cd /root/Documentos/github/GestionSocios' is approved by allow list rule: cd [null]
+2025-12-03 23:20:31.331 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git add src/Views/members/list.php' is approved by allow list rule: git add [null]
+2025-12-03 23:20:31.331 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git commit -m "fix: Calcular cuota correcta por categoría en botón marcar como pagado
+
+- Ahora obtiene la cuota específica de category_fee_history según la categoría del socio
+- Soluciona el problema de mostrar 0 euros en el mensaje de confirmación
+- Usa cuota por defecto si el socio no tiene categoría asignada"' has no matching auto approve entries [null]
+2025-12-03 23:20:31.331 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command line 'cd /root/Documentos/github/GestionSocios && git add src/Views/members/list.php && git commit -m "fix: Calcular cuota correcta por categoría en botón marcar como pagado
+
+- Ahora obtiene la cuota específica de category_fee_history según la categoría del socio
+- Soluciona el problema de mostrar 0 euros en el mensaje de confirmación
+- Usa cuota por defecto si el socio no tiene categoría asignada"' has no matching auto approve entries [null]
+2025-12-03 23:20:45.178 [info] RunInTerminalTool#CommandLineFileWriteAnalyzer: File writes detected [[]]
+2025-12-03 23:20:45.179 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: Parsed sub-commands via bash grammar [["git push origin devel"]]
+2025-12-03 23:20:45.181 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: All sub-commands auto-approved [null]
+2025-12-03 23:20:45.181 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git push origin devel' is approved by allow list rule: git push [null]
+2025-12-03 23:20:45.181 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command line 'git push origin devel' has no matching auto approve entries [null]
+2025-12-03 23:21:51.242 [info] RunInTerminalTool#CommandLineFileWriteAnalyzer: File writes detected [[]]
+2025-12-03 23:21:51.242 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: Parsed sub-commands via bash grammar [["php -l /root/Documentos/github/GestionSocios/src/Views/members/list.php"]]
+2025-12-03 23:21:51.242 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: All sub-commands NOT auto-approved [null]
+2025-12-03 23:21:51.242 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: Command line NOT auto-approved [null]
+2025-12-03 23:21:51.242 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'php -l /root/Documentos/github/GestionSocios/src/Views/members/list.php' has no matching auto approve entries [null]
+2025-12-03 23:21:51.243 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command line 'php -l /root/Documentos/github/GestionSocios/src/Views/members/list.php' has no matching auto approve entries [null]
+2025-12-03 23:22:43.707 [info] RunInTerminalTool#CommandLineFileWriteAnalyzer: File writes detected [[]]
+2025-12-03 23:22:43.707 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: Parsed sub-commands via bash grammar [["cd /root/Documentos/github/GestionSocios","git add src/Views/members/list.php","git commit -m \"fix: Corregir conflicto de variables y manejo de errores en cálculo de cuotas\n\n- Renombrar variable a categoryFeeStmt para evitar conflicto\n- Añadir try-catch para prevenir errores que rompan la página\n- Combinar bloques PHP para mejor rendimiento\"","git push origin devel"]]
+2025-12-03 23:22:43.707 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: All sub-commands NOT auto-approved [null]
+2025-12-03 23:22:43.707 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: Command line NOT auto-approved [null]
+2025-12-03 23:22:43.707 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'cd /root/Documentos/github/GestionSocios' is approved by allow list rule: cd [null]
+2025-12-03 23:22:43.707 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git add src/Views/members/list.php' is approved by allow list rule: git add [null]
+2025-12-03 23:22:43.709 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git commit -m "fix: Corregir conflicto de variables y manejo de errores en cálculo de cuotas
+
+- Renombrar variable a categoryFeeStmt para evitar conflicto
+- Añadir try-catch para prevenir errores que rompan la página
+- Combinar bloques PHP para mejor rendimiento"' has no matching auto approve entries [null]
+2025-12-03 23:22:43.710 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git push origin devel' is approved by allow list rule: git push [null]
+2025-12-03 23:22:43.710 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command line 'cd /root/Documentos/github/GestionSocios && git add src/Views/members/list.php && git commit -m "fix: Corregir conflicto de variables y manejo de errores en cálculo de cuotas
+
+- Renombrar variable a categoryFeeStmt para evitar conflicto
+- Añadir try-catch para prevenir errores que rompan la página
+- Combinar bloques PHP para mejor rendimiento" && git push origin devel' has no matching auto approve entries [null]
+2025-12-03 23:24:06.514 [info] RunInTerminalTool#CommandLineFileWriteAnalyzer: File writes detected [[]]
+2025-12-03 23:24:06.515 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: Parsed sub-commands via bash grammar [["cd /root/Documentos/github/GestionSocios","git add src/Controllers/MemberController.php","git commit -m \"fix: Usar cuota correcta por categoría en MemberController::markPaid\n\n- Obtener categoría del socio antes de buscar la cuota\n- Priorizar cuota de category_fee_history según categoría del socio\n- Usar cuota por defecto de annual_fees si no hay cuota de categoría\n- Evita crear pagos con importe 0 euros\"","git push origin devel"]]
+2025-12-03 23:24:06.516 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: All sub-commands auto-approved [null]
+2025-12-03 23:24:06.517 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'cd /root/Documentos/github/GestionSocios' is approved by allow list rule: cd [null]
+2025-12-03 23:24:06.517 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git add src/Controllers/MemberController.php' is approved by allow list rule: git add [null]
+2025-12-03 23:24:06.517 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git commit -m "fix: Usar cuota correcta por categoría en MemberController::markPaid
+
+- Obtener categoría del socio antes de buscar la cuota
+- Priorizar cuota de category_fee_history según categoría del socio
+- Usar cuota por defecto de annual_fees si no hay cuota de categoría
+- Evita crear pagos con importe 0 euros"' is approved by allow list rule: git commit [null]
+2025-12-03 23:24:06.518 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git push origin devel' is approved by allow list rule: git push [null]
+2025-12-03 23:24:06.518 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command line 'cd /root/Documentos/github/GestionSocios && git add src/Controllers/MemberController.php && git commit -m "fix: Usar cuota correcta por categoría en MemberController::markPaid
+
+- Obtener categoría del socio antes de buscar la cuota
+- Priorizar cuota de category_fee_history según categoría del socio
+- Usar cuota por defecto de annual_fees si no hay cuota de categoría
+- Evita crear pagos con importe 0 euros" && git push origin devel' has no matching auto approve entries [null]
+2025-12-03 23:25:40.904 [info] RunInTerminalTool#CommandLineFileWriteAnalyzer: File writes detected [[]]
+2025-12-03 23:25:40.905 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: Parsed sub-commands via bash grammar [["cd /root/Documentos/github/GestionSocios","git add src/Controllers/MemberController.php","git commit -m \"fix: Mejorar validación y conversión de cuotas en markPaid\n\n- Usar validación estricta con === null y <= 0\n- Convertir explícitamente a float con floatval()\n- Verificar que el socio existe antes de procesar\n- Validar que el campo amount existe en los resultados\n- Mejorar mensajes de error\"","git push origin devel"]]
+2025-12-03 23:25:40.906 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: All sub-commands auto-approved [null]
+2025-12-03 23:25:40.907 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'cd /root/Documentos/github/GestionSocios' is approved by allow list rule: cd [null]
+2025-12-03 23:25:40.907 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git add src/Controllers/MemberController.php' is approved by allow list rule: git add [null]
+2025-12-03 23:25:40.907 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git commit -m "fix: Mejorar validación y conversión de cuotas en markPaid
+
+- Usar validación estricta con === null y <= 0
+- Convertir explícitamente a float con floatval()
+- Verificar que el socio existe antes de procesar
+- Validar que el campo amount existe en los resultados
+- Mejorar mensajes de error"' is approved by allow list rule: git commit [null]
+2025-12-03 23:25:40.907 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git push origin devel' is approved by allow list rule: git push [null]
+2025-12-03 23:25:40.907 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command line 'cd /root/Documentos/github/GestionSocios && git add src/Controllers/MemberController.php && git commit -m "fix: Mejorar validación y conversión de cuotas en markPaid
+
+- Usar validación estricta con === null y <= 0
+- Convertir explícitamente a float con floatval()
+- Verificar que el socio existe antes de procesar
+- Validar que el campo amount existe en los resultados
+- Mejorar mensajes de error" && git push origin devel' has no matching auto approve entries [null]
+2025-12-03 23:28:18.240 [info] RunInTerminalTool: Command rewritten by Jan: Removed redundant cd command []
+2025-12-03 23:28:18.257 [info] RunInTerminalTool#CommandLineFileWriteAnalyzer: File writes detected [[]]
+2025-12-03 23:28:18.260 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: Parsed sub-commands via bash grammar [["git add src/Controllers/MemberController.php","git commit -m \"debug: Añadir logs para diagnosticar problema de cuota 0 euros\"","git push origin devel"]]
+2025-12-03 23:28:18.260 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: All sub-commands auto-approved [null]
+2025-12-03 23:28:18.260 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git add src/Controllers/MemberController.php' is approved by allow list rule: git add [null]
+2025-12-03 23:28:18.260 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git commit -m "debug: Añadir logs para diagnosticar problema de cuota 0 euros"' is approved by allow list rule: git commit [null]
+2025-12-03 23:28:18.260 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git push origin devel' is approved by allow list rule: git push [null]
+2025-12-03 23:28:18.261 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command line 'git add src/Controllers/MemberController.php && git commit -m "debug: Añadir logs para diagnosticar problema de cuota 0 euros" && git push origin devel' has no matching auto approve entries [null]
+2025-12-03 23:30:00.904 [info] RunInTerminalTool#CommandLineFileWriteAnalyzer: File writes detected [[]]
+2025-12-03 23:30:00.904 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: Parsed sub-commands via bash grammar [["cd /root/Documentos/github/GestionSocios","git add src/Controllers/MemberController.php src/Views/members/list.php","git commit -m \"fix: Corregir nombre de columna de amount a fee_amount en category_fee_history\n\n- La columna correcta es fee_amount, no amount\n- Corregido en MemberController::markPaid()\n- Corregido en members/list.php para el mensaje de confirmación\n- Ahora las cuotas por categoría funcionarán correctamente\"","git push origin devel"]]
+2025-12-03 23:30:00.904 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: All sub-commands auto-approved [null]
+2025-12-03 23:30:00.905 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'cd /root/Documentos/github/GestionSocios' is approved by allow list rule: cd [null]
+2025-12-03 23:30:00.905 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git add src/Controllers/MemberController.php src/Views/members/list.php' is approved by allow list rule: git add [null]
+2025-12-03 23:30:00.905 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git commit -m "fix: Corregir nombre de columna de amount a fee_amount en category_fee_history
+
+- La columna correcta es fee_amount, no amount
+- Corregido en MemberController::markPaid()
+- Corregido en members/list.php para el mensaje de confirmación
+- Ahora las cuotas por categoría funcionarán correctamente"' is approved by allow list rule: git commit [null]
+2025-12-03 23:30:00.905 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git push origin devel' is approved by allow list rule: git push [null]
+2025-12-03 23:30:00.905 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command line 'cd /root/Documentos/github/GestionSocios && git add src/Controllers/MemberController.php src/Views/members/list.php && git commit -m "fix: Corregir nombre de columna de amount a fee_amount en category_fee_history
+
+- La columna correcta es fee_amount, no amount
+- Corregido en MemberController::markPaid()
+- Corregido en members/list.php para el mensaje de confirmación
+- Ahora las cuotas por categoría funcionarán correctamente" && git push origin devel' has no matching auto approve entries [null]
+2025-12-03 23:34:26.417 [info] RunInTerminalTool#CommandLineFileWriteAnalyzer: File writes detected [[]]
+2025-12-03 23:34:26.418 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: Parsed sub-commands via bash grammar [["cd /root/Documentos/github/GestionSocios","git add src/Views/members/create.php src/Views/settings/index.php","git commit -m \"feat: Añadir selector de categoría en creación de socio y gestión de cuota por defecto\n\n- Agregar selector de categoría en formulario de creación de socios\n- Añadir sección de Cuota Anual por Defecto en Configuración\n- Interfaz para definir cuota para socios sin categoría\n- Mostrar advertencia si no hay cuota definida para el año actual\n- Permite crear/actualizar cuota por defecto desde la interfaz\"","git push origin devel"]]
+2025-12-03 23:34:26.418 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: All sub-commands auto-approved [null]
+2025-12-03 23:34:26.419 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'cd /root/Documentos/github/GestionSocios' is approved by allow list rule: cd [null]
+2025-12-03 23:34:26.419 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git add src/Views/members/create.php src/Views/settings/index.php' is approved by allow list rule: git add [null]
+2025-12-03 23:34:26.419 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git commit -m "feat: Añadir selector de categoría en creación de socio y gestión de cuota por defecto
+
+- Agregar selector de categoría en formulario de creación de socios
+- Añadir sección de Cuota Anual por Defecto en Configuración
+- Interfaz para definir cuota para socios sin categoría
+- Mostrar advertencia si no hay cuota definida para el año actual
+- Permite crear/actualizar cuota por defecto desde la interfaz"' is approved by allow list rule: git commit [null]
+2025-12-03 23:34:26.419 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git push origin devel' is approved by allow list rule: git push [null]
+2025-12-03 23:34:26.420 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command line 'cd /root/Documentos/github/GestionSocios && git add src/Views/members/create.php src/Views/settings/index.php && git commit -m "feat: Añadir selector de categoría en creación de socio y gestión de cuota por defecto
+
+- Agregar selector de categoría en formulario de creación de socios
+- Añadir sección de Cuota Anual por Defecto en Configuración
+- Interfaz para definir cuota para socios sin categoría
+- Mostrar advertencia si no hay cuota definida para el año actual
+- Permite crear/actualizar cuota por defecto desde la interfaz" && git push origin devel' has no matching auto approve entries [null]
+2025-12-03 23:36:02.935 [info] RunInTerminalTool: Command rewritten by Jan: Removed redundant cd command []
+2025-12-03 23:36:02.949 [info] RunInTerminalTool#CommandLineFileWriteAnalyzer: File writes detected [[]]
+2025-12-03 23:36:02.949 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: Parsed sub-commands via bash grammar [["git push origin devel"]]
+2025-12-03 23:36:02.950 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: All sub-commands auto-approved [null]
+2025-12-03 23:36:02.951 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git push origin devel' is approved by allow list rule: git push [null]
+2025-12-03 23:36:02.951 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command line 'git push origin devel' has no matching auto approve entries [null]
+2025-12-03 23:41:11.455 [info] RunInTerminalTool: Command rewritten by Jan: Removed redundant cd command []
+2025-12-03 23:41:11.470 [info] RunInTerminalTool#CommandLineFileWriteAnalyzer: File writes detected [[]]
+2025-12-03 23:41:11.471 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: Parsed sub-commands via bash grammar [["git add src/Views/accounting/reports/trial_balance.php"]]
+2025-12-03 23:41:11.472 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: All sub-commands auto-approved [null]
+2025-12-03 23:41:11.472 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git add src/Views/accounting/reports/trial_balance.php' is approved by allow list rule: git add [null]
+2025-12-03 23:41:11.472 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command line 'git add src/Views/accounting/reports/trial_balance.php' has no matching auto approve entries [null]
+2025-12-03 23:41:18.195 [info] RunInTerminalTool#CommandLineFileWriteAnalyzer: File writes detected [[]]
+2025-12-03 23:41:18.195 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: Parsed sub-commands via bash grammar [["cd /root/Documentos/github/GestionSocios","git commit -m \"Mejora del estilo del Balance de Sumas y Saldos\n\n- Agregado diseño visual profesional con gradientes\n- Mejorada legibilidad con mejor jerarquía tipográfica\n- Añadidos colores distintivos para secciones y totales\n- Implementado diseño responsivo para móviles\n- Mejorado formato de números con fuentes monoespaciadas\n- Agregados efectos hover y sombras para mejor UX\n- Añadidos estilos de impresión optimizados\n- Headers de grupo con gradientes azules distintivos\n- Badges de verificación (cuadrado/descuadrado) más visibles\""]]
+2025-12-03 23:41:18.196 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: All sub-commands auto-approved [null]
+2025-12-03 23:41:18.196 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'cd /root/Documentos/github/GestionSocios' is approved by allow list rule: cd [null]
+2025-12-03 23:41:18.196 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git commit -m "Mejora del estilo del Balance de Sumas y Saldos
+
+- Agregado diseño visual profesional con gradientes
+- Mejorada legibilidad con mejor jerarquía tipográfica
+- Añadidos colores distintivos para secciones y totales
+- Implementado diseño responsivo para móviles
+- Mejorado formato de números con fuentes monoespaciadas
+- Agregados efectos hover y sombras para mejor UX
+- Añadidos estilos de impresión optimizados
+- Headers de grupo con gradientes azules distintivos
+- Badges de verificación (cuadrado/descuadrado) más visibles"' is approved by allow list rule: git commit [null]
+2025-12-03 23:41:18.196 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command line 'cd /root/Documentos/github/GestionSocios && git commit -m "Mejora del estilo del Balance de Sumas y Saldos
+
+- Agregado diseño visual profesional con gradientes
+- Mejorada legibilidad con mejor jerarquía tipográfica
+- Añadidos colores distintivos para secciones y totales
+- Implementado diseño responsivo para móviles
+- Mejorado formato de números con fuentes monoespaciadas
+- Agregados efectos hover y sombras para mejor UX
+- Añadidos estilos de impresión optimizados
+- Headers de grupo con gradientes azules distintivos
+- Badges de verificación (cuadrado/descuadrado) más visibles"' has no matching auto approve entries [null]
+2025-12-03 23:41:22.489 [info] RunInTerminalTool: Command rewritten by Jan: Removed redundant cd command []
+2025-12-03 23:41:22.550 [info] RunInTerminalTool#CommandLineFileWriteAnalyzer: File writes detected [[]]
+2025-12-03 23:41:22.550 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: Parsed sub-commands via bash grammar [["git push origin devel"]]
+2025-12-03 23:41:22.550 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: All sub-commands auto-approved [null]
+2025-12-03 23:41:22.550 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git push origin devel' is approved by allow list rule: git push [null]
+2025-12-03 23:41:22.550 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command line 'git push origin devel' has no matching auto approve entries [null]
+2025-12-03 23:43:31.151 [info] RunInTerminalTool#CommandLineFileWriteAnalyzer: File writes detected [[]]
+2025-12-03 23:43:31.151 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: Parsed sub-commands via bash grammar [["cd /root/Documentos/github/GestionSocios","git add src/Views/accounting/reports/trial_balance.php","git commit -m \"Rediseño minimalista del Balance de Sumas y Saldos\n\n- Eliminados gradientes y colores excesivos\n- Diseño limpio y profesional con paleta de grises\n- Mejor legibilidad con espaciado optimizado\n- Headers de grupo sutiles con bordes en lugar de fondos cargados\n- Badges de estado más discretos\n- Tipografía moderna con fuentes del sistema\n- Sombras suaves y bordes delicados\n- Enfoque en contenido sobre decoración\""]]
+2025-12-03 23:43:31.153 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: All sub-commands auto-approved [null]
+2025-12-03 23:43:31.153 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'cd /root/Documentos/github/GestionSocios' is approved by allow list rule: cd [null]
+2025-12-03 23:43:31.153 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git add src/Views/accounting/reports/trial_balance.php' is approved by allow list rule: git add [null]
+2025-12-03 23:43:31.153 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git commit -m "Rediseño minimalista del Balance de Sumas y Saldos
+
+- Eliminados gradientes y colores excesivos
+- Diseño limpio y profesional con paleta de grises
+- Mejor legibilidad con espaciado optimizado
+- Headers de grupo sutiles con bordes en lugar de fondos cargados
+- Badges de estado más discretos
+- Tipografía moderna con fuentes del sistema
+- Sombras suaves y bordes delicados
+- Enfoque en contenido sobre decoración"' is approved by allow list rule: git commit [null]
+2025-12-03 23:43:31.153 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command line 'cd /root/Documentos/github/GestionSocios && git add src/Views/accounting/reports/trial_balance.php && git commit -m "Rediseño minimalista del Balance de Sumas y Saldos
+
+- Eliminados gradientes y colores excesivos
+- Diseño limpio y profesional con paleta de grises
+- Mejor legibilidad con espaciado optimizado
+- Headers de grupo sutiles con bordes en lugar de fondos cargados
+- Badges de estado más discretos
+- Tipografía moderna con fuentes del sistema
+- Sombras suaves y bordes delicados
+- Enfoque en contenido sobre decoración"' has no matching auto approve entries [null]
+2025-12-03 23:43:35.418 [info] RunInTerminalTool: Command rewritten by Jan: Removed redundant cd command []
+2025-12-03 23:43:35.432 [info] RunInTerminalTool#CommandLineFileWriteAnalyzer: File writes detected [[]]
+2025-12-03 23:43:35.432 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: Parsed sub-commands via bash grammar [["git push origin devel"]]
+2025-12-03 23:43:35.432 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: All sub-commands auto-approved [null]
+2025-12-03 23:43:35.432 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git push origin devel' is approved by allow list rule: git push [null]
+2025-12-03 23:43:35.432 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command line 'git push origin devel' has no matching auto approve entries [null]
+2025-12-03 23:45:12.469 [info] RunInTerminalTool#CommandLineFileWriteAnalyzer: File writes detected [[]]
+2025-12-03 23:45:12.471 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: Parsed sub-commands via bash grammar [["cd /root/Documentos/github/GestionSocios","git add src/Views/accounting/reports/trial_balance.php","git commit -m \"Mejora de la sección de verificación del balance\n\n- Movida verificación fuera del footer de la tabla\n- Creada sección de resumen de verificación separada\n- Diseño más limpio con cards individuales\n- Añadidos iconos para mejor identificación visual\n- Muestra diferencia cuando está descuadrado\n- Mejor organización y legibilidad\"","git push origin devel"]]
+2025-12-03 23:45:12.471 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: All sub-commands auto-approved [null]
+2025-12-03 23:45:12.471 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'cd /root/Documentos/github/GestionSocios' is approved by allow list rule: cd [null]
+2025-12-03 23:45:12.471 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git add src/Views/accounting/reports/trial_balance.php' is approved by allow list rule: git add [null]
+2025-12-03 23:45:12.471 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git commit -m "Mejora de la sección de verificación del balance
+
+- Movida verificación fuera del footer de la tabla
+- Creada sección de resumen de verificación separada
+- Diseño más limpio con cards individuales
+- Añadidos iconos para mejor identificación visual
+- Muestra diferencia cuando está descuadrado
+- Mejor organización y legibilidad"' is approved by allow list rule: git commit [null]
+2025-12-03 23:45:12.471 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git push origin devel' is approved by allow list rule: git push [null]
+2025-12-03 23:45:12.472 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command line 'cd /root/Documentos/github/GestionSocios && git add src/Views/accounting/reports/trial_balance.php && git commit -m "Mejora de la sección de verificación del balance
+
+- Movida verificación fuera del footer de la tabla
+- Creada sección de resumen de verificación separada
+- Diseño más limpio con cards individuales
+- Añadidos iconos para mejor identificación visual
+- Muestra diferencia cuando está descuadrado
+- Mejor organización y legibilidad" && git push origin devel' has no matching auto approve entries [null]
+2025-12-03 23:47:11.254 [info] RunInTerminalTool#CommandLineFileWriteAnalyzer: File writes detected [[]]
+2025-12-03 23:47:11.255 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: Parsed sub-commands via bash grammar [["cd /root/Documentos/github/GestionSocios","git add src/Views/accounting/reports/general_ledger.php","git commit -m \"Rediseño minimalista del Libro Mayor\n\n- Aplicado mismo diseño limpio del Balance de Sumas y Saldos\n- Paleta de grises suave y profesional\n- Mejor legibilidad con espaciado optimizado\n- Tipografía moderna con fuentes del sistema\n- Sombras sutiles y bordes delicados\n- Diseño responsivo para móviles\n- Estilos de impresión optimizados\"","git push origin devel"]]
+2025-12-03 23:47:11.257 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: All sub-commands auto-approved [null]
+2025-12-03 23:47:11.258 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'cd /root/Documentos/github/GestionSocios' is approved by allow list rule: cd [null]
+2025-12-03 23:47:11.258 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git add src/Views/accounting/reports/general_ledger.php' is approved by allow list rule: git add [null]
+2025-12-03 23:47:11.258 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git commit -m "Rediseño minimalista del Libro Mayor
+
+- Aplicado mismo diseño limpio del Balance de Sumas y Saldos
+- Paleta de grises suave y profesional
+- Mejor legibilidad con espaciado optimizado
+- Tipografía moderna con fuentes del sistema
+- Sombras sutiles y bordes delicados
+- Diseño responsivo para móviles
+- Estilos de impresión optimizados"' is approved by allow list rule: git commit [null]
+2025-12-03 23:47:11.258 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git push origin devel' is approved by allow list rule: git push [null]
+2025-12-03 23:47:11.259 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command line 'cd /root/Documentos/github/GestionSocios && git add src/Views/accounting/reports/general_ledger.php && git commit -m "Rediseño minimalista del Libro Mayor
+
+- Aplicado mismo diseño limpio del Balance de Sumas y Saldos
+- Paleta de grises suave y profesional
+- Mejor legibilidad con espaciado optimizado
+- Tipografía moderna con fuentes del sistema
+- Sombras sutiles y bordes delicados
+- Diseño responsivo para móviles
+- Estilos de impresión optimizados" && git push origin devel' has no matching auto approve entries [null]
+2025-12-03 23:48:54.834 [info] RunInTerminalTool#CommandLineFileWriteAnalyzer: File writes detected [[]]
+2025-12-03 23:48:54.834 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: Parsed sub-commands via bash grammar [["cd /root/Documentos/github/GestionSocios","git add src/Views/accounting/entries/index.php","git commit -m \"Rediseño minimalista del Libro Diario\n\n- Aplicado diseño limpio y profesional consistente\n- Paleta de grises suave con mejor legibilidad\n- Badges de estado más sutiles y elegantes\n- Mejorado empty state con iconos\n- Paginación con mejor diseño\n- Tipografía moderna con fuentes monoespaciadas para números\n- Botones de acción centralizados\n- Diseño responsivo optimizado\n- Estilos de impresión sin elementos de navegación\"","git push origin devel"]]
+2025-12-03 23:48:54.834 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: All sub-commands auto-approved [null]
+2025-12-03 23:48:54.834 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'cd /root/Documentos/github/GestionSocios' is approved by allow list rule: cd [null]
+2025-12-03 23:48:54.834 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git add src/Views/accounting/entries/index.php' is approved by allow list rule: git add [null]
+2025-12-03 23:48:54.834 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git commit -m "Rediseño minimalista del Libro Diario
+
+- Aplicado diseño limpio y profesional consistente
+- Paleta de grises suave con mejor legibilidad
+- Badges de estado más sutiles y elegantes
+- Mejorado empty state con iconos
+- Paginación con mejor diseño
+- Tipografía moderna con fuentes monoespaciadas para números
+- Botones de acción centralizados
+- Diseño responsivo optimizado
+- Estilos de impresión sin elementos de navegación"' is approved by allow list rule: git commit [null]
+2025-12-03 23:48:54.834 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git push origin devel' is approved by allow list rule: git push [null]
+2025-12-03 23:48:54.834 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command line 'cd /root/Documentos/github/GestionSocios && git add src/Views/accounting/entries/index.php && git commit -m "Rediseño minimalista del Libro Diario
+
+- Aplicado diseño limpio y profesional consistente
+- Paleta de grises suave con mejor legibilidad
+- Badges de estado más sutiles y elegantes
+- Mejorado empty state con iconos
+- Paginación con mejor diseño
+- Tipografía moderna con fuentes monoespaciadas para números
+- Botones de acción centralizados
+- Diseño responsivo optimizado
+- Estilos de impresión sin elementos de navegación" && git push origin devel' has no matching auto approve entries [null]
+2025-12-03 23:50:01.145 [info] RunInTerminalTool#CommandLineFileWriteAnalyzer: File writes detected [[]]
+2025-12-03 23:50:01.146 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: Parsed sub-commands via bash grammar [["cd /root/Documentos/github/GestionSocios","git add src/Views/accounting/entries/view.php","git commit -m \"Rediseño minimalista de la vista de asiento contable\n\n- Diseño limpio y profesional con mejor jerarquía visual\n- Header destacado con número de asiento y estado\n- Sección de descripción separada y clara\n- Tabla de movimientos con códigos de cuenta destacados\n- Colores diferenciados para débito (rojo) y crédito (verde)\n- Footer con información de creación\n- Referencia destacada con badge amarillo cuando existe\n- Tipografía moderna con fuentes monoespaciadas para importes\n- Diseño responsivo optimizado\n- Estilos de impresión limpios\"","git push origin devel"]]
+2025-12-03 23:50:01.146 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: All sub-commands auto-approved [null]
+2025-12-03 23:50:01.146 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'cd /root/Documentos/github/GestionSocios' is approved by allow list rule: cd [null]
+2025-12-03 23:50:01.146 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git add src/Views/accounting/entries/view.php' is approved by allow list rule: git add [null]
+2025-12-03 23:50:01.146 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git commit -m "Rediseño minimalista de la vista de asiento contable
+
+- Diseño limpio y profesional con mejor jerarquía visual
+- Header destacado con número de asiento y estado
+- Sección de descripción separada y clara
+- Tabla de movimientos con códigos de cuenta destacados
+- Colores diferenciados para débito (rojo) y crédito (verde)
+- Footer con información de creación
+- Referencia destacada con badge amarillo cuando existe
+- Tipografía moderna con fuentes monoespaciadas para importes
+- Diseño responsivo optimizado
+- Estilos de impresión limpios"' is approved by allow list rule: git commit [null]
+2025-12-03 23:50:01.146 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git push origin devel' is approved by allow list rule: git push [null]
+2025-12-03 23:50:01.146 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command line 'cd /root/Documentos/github/GestionSocios && git add src/Views/accounting/entries/view.php && git commit -m "Rediseño minimalista de la vista de asiento contable
+
+- Diseño limpio y profesional con mejor jerarquía visual
+- Header destacado con número de asiento y estado
+- Sección de descripción separada y clara
+- Tabla de movimientos con códigos de cuenta destacados
+- Colores diferenciados para débito (rojo) y crédito (verde)
+- Footer con información de creación
+- Referencia destacada con badge amarillo cuando existe
+- Tipografía moderna con fuentes monoespaciadas para importes
+- Diseño responsivo optimizado
+- Estilos de impresión limpios" && git push origin devel' has no matching auto approve entries [null]
+2025-12-03 23:52:01.720 [info] RunInTerminalTool#CommandLineFileWriteAnalyzer: File writes detected [[]]
+2025-12-03 23:52:01.720 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: Parsed sub-commands via bash grammar [["cd /root/Documentos/github/GestionSocios","git add -A","git commit -m \"Mejora de trazabilidad en asientos contables\n\n- Agregado número de socio e identificación en descripciones\n- Cuotas: 'Cuota Anual 2025 - Socio #123: Juan Pérez'\n- Eventos: 'Evento: Cena Anual - Socio #123: Juan Pérez'\n- Donaciones: 'Donación monetary (2025) - Empresa XYZ'\n- Mejor cumplimiento de principios contables\n- Facilita auditorías y trazabilidad de movimientos\n- Información clara en libro diario y mayor\"","git push origin devel"]]
+2025-12-03 23:52:01.720 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: All sub-commands auto-approved [null]
+2025-12-03 23:52:01.720 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'cd /root/Documentos/github/GestionSocios' is approved by allow list rule: cd [null]
+2025-12-03 23:52:01.720 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git add -A' is approved by allow list rule: git add [null]
+2025-12-03 23:52:01.720 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git commit -m "Mejora de trazabilidad en asientos contables
+
+- Agregado número de socio e identificación en descripciones
+- Cuotas: 'Cuota Anual 2025 - Socio #123: Juan Pérez'
+- Eventos: 'Evento: Cena Anual - Socio #123: Juan Pérez'
+- Donaciones: 'Donación monetary (2025) - Empresa XYZ'
+- Mejor cumplimiento de principios contables
+- Facilita auditorías y trazabilidad de movimientos
+- Información clara en libro diario y mayor"' is approved by allow list rule: git commit [null]
+2025-12-03 23:52:01.720 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command 'git push origin devel' is approved by allow list rule: git push [null]
+2025-12-03 23:52:01.720 [info] RunInTerminalTool#CommandLineAutoApproveAnalyzer: - Command line 'cd /root/Documentos/github/GestionSocios && git add -A && git commit -m "Mejora de trazabilidad en asientos contables
+
+- Agregado número de socio e identificación en descripciones
+- Cuotas: 'Cuota Anual 2025 - Socio #123: Juan Pérez'
+- Eventos: 'Evento: Cena Anual - Socio #123: Juan Pérez'
+- Donaciones: 'Donación monetary (2025) - Empresa XYZ'
+- Mejor cumplimiento de principios contables
+- Facilita auditorías y trazabilidad de movimientos
+- Información clara en libro diario y mayor" && git push origin devel' has no matching auto approve entries [null]

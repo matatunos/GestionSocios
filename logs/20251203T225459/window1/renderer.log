@@ -1,0 +1,65 @@
+2025-12-03 22:55:03.003 [info] Started local extension host with pid 97723.
+2025-12-03 22:55:07.569 [error] [Extension Host] (node:97723) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `exe --trace-deprecation ...` to show where the warning was created)
+2025-12-03 22:55:07.585 [error] [Extension Host] (node:97723) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2025-12-03 22:55:08.213 [info] MCP Registry configured: https://api.mcp.github.com
+2025-12-03 22:55:08.794 [info] Settings Sync: Account status changed from uninitialized to unavailable
+2025-12-03 22:55:08.819 [info] Auto updating outdated extensions. github.copilot-chat
+2025-12-03 22:55:10.950 [error] chatParticipant must be declared in package.json: claude-code
+2025-12-03 22:55:13.792 [info] [perf] Render performance baseline is 120ms
+2025-12-03 22:55:56.762 [error] [Extension Host] RangeError: Maximum call stack size exceeded
+	at TK._getUntrackedChangePatch (/root/.vscode/extensions/github.copilot-chat-0.33.3/dist/extension.js:5719:3315)
+	at async TK.getChangeDiffs (/root/.vscode/extensions/github.copilot-chat-0.33.3/dist/extension.js:5719:2784)
+	at async jue.invoke (/root/.vscode/extensions/github.copilot-chat-0.33.3/dist/extension.js:5005:3077)
+	at async tQ.$invokeTool (file:///usr/share/code/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:192:3195) Failed to generate patch file for untracked file: file:///root/Documentos/github/GestionSocios/User/workspaceStorage/91570e3aac97b09b000b86470d1f8e4a/chatSessions/f0f33394-42f5-4d59-9b31-2ae2f9b8ccd1.json
+2025-12-03 22:55:57.247 [error] [12d] potential listener LEAK detected, having 175 listeners already. MOST frequent listener (1):: Error
+    at pFi.create (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:27:12071)
+    at f9e.u [as onDidChangeReadonly] (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:29:1377)
+    at kye.wb (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:9406)
+    at new kye (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:9274)
+    at ETt.o (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1399:1716)
+    at ETt.createInstance (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1399:1213)
+    at axt.W (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:3833:6473)
+    at axt.resolve (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:3833:6173)
+    at kYe.r (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:21429)
+    at kYe.f (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:21043)
+2025-12-03 22:55:57.276 [error] [12c] potential listener LEAK detected, having 175 listeners already. MOST frequent listener (1):: Error
+    at pFi.create (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:27:12071)
+    at f9e.u [as onDidChangeFilesAssociation] (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:29:1377)
+    at kye.wb (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:9347)
+    at new kye (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:9274)
+    at ETt.o (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1399:1716)
+    at ETt.createInstance (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1399:1213)
+    at axt.W (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:3833:6473)
+    at axt.resolve (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:3833:6173)
+    at kYe.r (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:21429)
+    at kYe.f (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:21043)
+2025-12-03 22:55:57.405 [error] [12d] potential listener LEAK detected, having 261 listeners already. MOST frequent listener (89):: Error
+    at pFi.create (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:27:12071)
+    at f9e.u [as onDidChangeReadonly] (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:29:1377)
+    at kye.wb (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:9406)
+    at new kye (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:9274)
+    at ETt.o (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1399:1716)
+    at ETt.createInstance (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1399:1213)
+    at axt.W (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:3833:6473)
+    at axt.resolve (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:3833:6173)
+    at kYe.r (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:21429)
+    at kYe.f (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:21043)
+2025-12-03 22:55:57.407 [error] [12c] potential listener LEAK detected, having 261 listeners already. MOST frequent listener (89):: Error
+    at pFi.create (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:27:12071)
+    at f9e.u [as onDidChangeFilesAssociation] (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:29:1377)
+    at kye.wb (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:9347)
+    at new kye (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:9274)
+    at ETt.o (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1399:1716)
+    at ETt.createInstance (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1399:1213)
+    at axt.W (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:3833:6473)
+    at axt.resolve (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:3833:6173)
+    at kYe.r (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:21429)
+    at kYe.f (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:21043)
+2025-12-03 23:14:25.353 [error] [LanguageModelToolsService#invokeTool] Error from tool copilot_getChangedFiles with parameters {"repositoryPath":"/root/Documentos/github/GestionSocios"}:
+Canceled: Canceled: Canceled
+	at tQ.$invokeTool (file:///usr/share/code/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:192:3257)
+2025-12-03 23:40:41.217 [error] [Extension Host] Failed to fetch remote embeddings cache from https://embeddings.vscode-cdn.net/text-3-small/v1.106/tools/latest.txt
+2025-12-03 23:40:41.223 [error] [Extension Host] Response status: 404, status text: 
+2025-12-03 23:40:41.399 [error] [Extension Host] Failed to fetch remote embeddings cache from https://embeddings.vscode-cdn.net/text-3-small/v1.106/tools/core.json
+2025-12-03 23:40:41.400 [error] [Extension Host] Response status: 404, status text: 

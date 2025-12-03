@@ -1,0 +1,7 @@
+{
+    "github.copilot.nextEditSuggestions.enabled": true,
+    "workbench.startupEditor": "none",
+    "chat.tools.terminal.autoApprove": {
+        "git add": true
+    }
+}
