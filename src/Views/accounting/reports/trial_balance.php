@@ -160,31 +160,30 @@
 /* Report Card Container */
 .report-card {
     background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
     margin-top: 2rem;
     overflow: hidden;
+    border: 1px solid #e5e7eb;
 }
 
 .report-header {
-    padding: 2rem 2rem 1.5rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-bottom: none;
+    padding: 2rem;
+    background: white;
+    border-bottom: 2px solid #f3f4f6;
 }
 
 .report-header h2 {
     margin: 0 0 0.5rem 0;
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: white;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #111827;
 }
 
 .report-header p {
     margin: 0;
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 1rem;
-    font-weight: 500;
+    color: #6b7280;
+    font-size: 0.95rem;
 }
 
 /* Table Styling */
@@ -196,137 +195,132 @@
 .data-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
 }
 
 .data-table thead {
-    background: #f8f9fa;
+    background: #fafafa;
     position: sticky;
     top: 0;
     z-index: 10;
 }
 
 .data-table thead th {
-    padding: 1rem;
+    padding: 0.875rem 1rem;
     font-weight: 600;
     color: #374151;
     text-transform: uppercase;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     letter-spacing: 0.05em;
-    border-bottom: 2px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
 }
 
 .data-table thead tr:first-child th {
-    background: #1f2937;
-    color: white;
-    border-bottom: 1px solid #374151;
+    background: #f9fafb;
+    color: #111827;
+    border-bottom: 1px solid #d1d5db;
+    padding-bottom: 0.5rem;
 }
 
 .data-table thead tr:last-child th {
-    background: #374151;
-    color: white;
+    background: #f3f4f6;
+    color: #374151;
+    padding-top: 0.5rem;
 }
 
 .data-table tbody td {
-    padding: 0.875rem 1rem;
-    border-bottom: 1px solid #e5e7eb;
-    color: #1f2937;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f3f4f6;
+    color: #374151;
 }
 
 .data-table tbody tr {
-    transition: background-color 0.2s ease;
+    transition: background-color 0.15s ease;
 }
 
 .data-table tbody tr:hover:not(.group-header) {
-    background-color: #f9fafb;
-}
-
-.data-table tbody tr:nth-child(even):not(.group-header) {
     background-color: #fafbfc;
 }
 
-/* Group Headers */
+/* Group Headers - Diseño minimalista */
 .group-header td {
-    background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%) !important;
-    color: white !important;
-    font-weight: 700;
-    padding: 1rem 1rem !important;
-    font-size: 1rem;
-    letter-spacing: 0.05em;
+    background: #f9fafb !important;
+    color: #111827 !important;
+    font-weight: 600;
+    padding: 0.875rem 1rem !important;
+    font-size: 0.85rem;
+    letter-spacing: 0.025em;
     text-transform: uppercase;
-    border-bottom: 2px solid #1e40af !important;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Account Type Colors */
-.data-table tbody tr:not(.group-header):hover {
-    box-shadow: inset 4px 0 0 #3b82f6;
+    border-top: 2px solid #e5e7eb !important;
+    border-bottom: 1px solid #d1d5db !important;
 }
 
 /* Number Formatting */
 .text-right {
     text-align: right;
     font-variant-numeric: tabular-nums;
-    font-family: 'Courier New', monospace;
-    font-weight: 500;
+    font-family: ui-monospace, 'SF Mono', 'Roboto Mono', monospace;
+    font-weight: 400;
 }
 
 .text-center {
     text-align: center;
 }
 
-/* Footer Totals */
+/* Footer Totals - Más limpio */
 .data-table tfoot {
-    background: #f8f9fa;
-    border-top: 3px solid #3b82f6;
+    background: white;
+    border-top: 2px solid #e5e7eb;
 }
 
 .data-table tfoot tr:first-child {
-    background: linear-gradient(90deg, #1f2937 0%, #374151 100%);
+    background: #f9fafb;
 }
 
 .data-table tfoot tr:first-child th {
-    color: white;
-    padding: 1rem;
-    font-size: 1rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
+    color: #111827;
+    padding: 0.875rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
 }
 
 .data-table tfoot tr:last-child {
-    background: #e5e7eb;
+    background: white;
+    border-top: 1px solid #e5e7eb;
 }
 
 .data-table tfoot tr:last-child th {
-    padding: 1.25rem 1rem;
-    font-size: 1rem;
-    font-weight: 700;
-    color: #1f2937;
+    padding: 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #374151;
 }
 
-/* Status Badges */
+/* Status Badges - Minimalistas */
 .text-success {
     color: #059669 !important;
-    font-weight: 700;
-    background: #d1fae5;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
+    font-weight: 600;
+    background: #ecfdf5;
+    padding: 0.375rem 0.75rem;
+    border-radius: 4px;
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 1rem;
+    gap: 0.375rem;
+    font-size: 0.875rem;
+    border: 1px solid #a7f3d0;
 }
 
 .text-danger {
     color: #dc2626 !important;
-    font-weight: 700;
-    background: #fee2e2;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
+    font-weight: 600;
+    background: #fef2f2;
+    padding: 0.375rem 0.75rem;
+    border-radius: 4px;
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    font-size: 1rem;
+    gap: 0.375rem;
+    font-size: 0.875rem;
+    border: 1px solid #fecaca;
 }
 
 /* Responsive Design */
@@ -346,11 +340,11 @@
     .data-table thead th,
     .data-table tbody td,
     .data-table tfoot th {
-        padding: 0.75rem 0.5rem;
+        padding: 0.625rem 0.5rem;
     }
     
     .group-header td {
-        font-size: 0.9rem;
+        font-size: 0.8rem;
     }
 }
 
@@ -366,7 +360,7 @@
     }
     
     .group-header td {
-        background: #3b82f6 !important;
+        background: #f9fafb !important;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
