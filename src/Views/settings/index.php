@@ -690,6 +690,21 @@
         </div>
         <!-- Member Fees Tab -->
         <div id="members" class="tab-content">
+                
+                <!-- Success/Warning Messages for Payment Generation -->
+                <?php if (isset($_GET['success']) && $_GET['success'] === 'generated'): ?>
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i>
+                        <strong>Pagos generados:</strong> Se crearon <?php echo intval($_GET['count'] ?? 0); ?> pagos pendientes para el año <?php echo htmlspecialchars($_GET['year'] ?? ''); ?>.
+                        <?php if (isset($_GET['skipped']) && intval($_GET['skipped']) > 0): ?>
+                            <br><strong>Nota:</strong> Se omitieron <?php echo intval($_GET['skipped']); ?> socios sin cuota definida<?php 
+                                if (isset($_GET['categories'])) {
+                                    echo ' (categorías: ' . htmlspecialchars($_GET['categories']) . ')';
+                                }
+                            ?>.
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
 
                 <!-- Generate Payments Widget -->
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
@@ -699,9 +714,9 @@
                 <div class="card" style="margin-bottom: 2rem;">
                     <h3 class="text-md font-semibold mb-4">Generar Pagos Pendientes</h3>
                     <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
-                        Esta acción creará pagos pendientes para todos los socios activos según la cuota predeterminada de su categoría.
+                        Esta acción creará pagos pendientes para todos los socios activos usando las <strong>cuotas por categoría definidas para el año seleccionado</strong>. Si una categoría no tiene cuota definida para ese año, se usará la cuota predeterminada.
                     </p>
-                    <form action="index.php?page=fees&action=generate" method="GET" onsubmit="return confirm('¿Generar pagos pendientes para todos los socios activos del año seleccionado? Se usará la cuota predeterminada de cada categoría.');">
+                    <form action="index.php?page=fees&action=generate" method="GET" onsubmit="return confirm('¿Generar pagos pendientes para todos los socios activos del año seleccionado? Se usarán las cuotas específicas de cada categoría para ese año.');">
                         <input type="hidden" name="page" value="fees">
                         <input type="hidden" name="action" value="generate">
                         <div class="form-group" style="max-width: 300px;">
@@ -712,6 +727,62 @@
                             <i class="fas fa-file-invoice-dollar"></i> Generar Pagos
                         </button>
                     </form>
+                </div>
+
+                <!-- Default Annual Fee Section -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2 class="section-title" style="margin: 0;">Cuota Anual por Defecto</h2>
+                </div>
+                
+                <div class="card" style="margin-bottom: 2rem;">
+                    <h3 class="text-md font-semibold mb-4">Cuota para Socios sin Categoría</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+                        Esta cuota se aplicará a los socios que <strong>no tengan una categoría asignada</strong> o cuya categoría no tenga cuota definida para el año.
+                    </p>
+                    
+                    <?php
+                    // Get current year default fee
+                    $currentYearFee = null;
+                    $currentYear = date('Y');
+                    try {
+                        $feeStmt = $GLOBALS['db']->prepare("SELECT amount FROM annual_fees WHERE year = ?");
+                        $feeStmt->execute([$currentYear]);
+                        $currentYearFee = $feeStmt->fetch(PDO::FETCH_ASSOC);
+                    } catch (Exception $e) {}
+                    ?>
+                    
+                    <form action="index.php?page=fees&action=store" method="POST">
+                        <?php require_once __DIR__ . '/../../Helpers/CsrfHelper.php'; echo CsrfHelper::getTokenField(); ?>
+                        <div style="display: grid; grid-template-columns: 150px 200px auto; gap: 1rem; align-items: end;">
+                            <div class="form-group" style="margin: 0;">
+                                <label class="form-label">Año</label>
+                                <input type="number" name="year" class="form-control" value="<?php echo $currentYear; ?>" required min="2000" max="2100">
+                            </div>
+                            <div class="form-group" style="margin: 0;">
+                                <label class="form-label">Importe (€)</label>
+                                <input type="number" name="amount" class="form-control" step="0.01" min="0" 
+                                       value="<?php echo $currentYearFee ? htmlspecialchars($currentYearFee['amount']) : ''; ?>" 
+                                       placeholder="Ej: 25.00" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> <?php echo $currentYearFee ? 'Actualizar' : 'Guardar'; ?> Cuota
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <?php if ($currentYearFee): ?>
+                        <div style="margin-top: 1rem; padding: 1rem; background: var(--success-50); border: 1px solid var(--success-200); border-radius: 0.5rem;">
+                            <i class="fas fa-check-circle" style="color: var(--success-600);"></i>
+                            <strong>Cuota actual para <?php echo $currentYear; ?>:</strong> 
+                            <?php echo number_format($currentYearFee['amount'], 2); ?> €
+                        </div>
+                    <?php else: ?>
+                        <div style="margin-top: 1rem; padding: 1rem; background: var(--warning-50); border: 1px solid var(--warning-200); border-radius: 0.5rem;">
+                            <i class="fas fa-exclamation-triangle" style="color: var(--warning-600);"></i>
+                            <strong>No hay cuota definida para <?php echo $currentYear; ?>.</strong>
+                            Los socios sin categoría no podrán ser cobrados hasta que definas una cuota.
+                        </div>
+                    <?php endif; ?>
                 </div>
 
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
@@ -772,8 +843,23 @@
                                     <div class="stat-label">Socios asignados</div>
                                 </div>
                                 <div class="stat-item">
-                                    <div class="stat-value" style="color: var(--text-muted);"><?php echo $category['display_order']; ?></div>
-                                    <div class="stat-label">Orden de visualización</div>
+                                    <?php
+                                    // Check if category has fee for current year
+                                    require_once __DIR__ . '/../../Models/CategoryFeeHistory.php';
+                                    $feeHistory = new CategoryFeeHistory($GLOBALS['db'] ?? $this->db ?? null);
+                                    $currentYearFee = null;
+                                    if ($feeHistory && isset($category['id'])) {
+                                        $currentYearFee = $feeHistory->readByCategoryAndYear($category['id'], date('Y'));
+                                    }
+                                    ?>
+                                    <div class="stat-value" style="color: <?php echo $currentYearFee ? 'var(--success-600)' : 'var(--text-muted)'; ?>">
+                                        <?php if ($currentYearFee): ?>
+                                            <i class="fas fa-check-circle"></i> <?php echo number_format($currentYearFee, 2); ?> €
+                                        <?php else: ?>
+                                            <i class="fas fa-minus-circle"></i> No definida
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="stat-label">Cuota año <?php echo date('Y'); ?></div>
                                 </div>
                             </div>
                         </div>

@@ -38,7 +38,20 @@
                 <input type="text" name="phone" class="form-control">
             </div>
             <div class="form-group" style="margin-bottom: 0;">
-                <!-- Spacer -->
+                <label class="form-label">Categoría</label>
+                <select name="category_id" class="form-control">
+                    <option value="">Sin categoría</option>
+                    <?php 
+                    if (isset($categories) && is_array($categories)):
+                        foreach ($categories as $cat): ?>
+                        <option value="<?php echo $cat['id']; ?>">
+                            <?php echo htmlspecialchars($cat['name']); ?>
+                        </option>
+                    <?php 
+                        endforeach;
+                    endif;
+                    ?>
+                </select>
             </div>
         </div>
 
