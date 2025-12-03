@@ -319,6 +319,12 @@ if (isset($_SESSION['user_id'])) {
                                 </a>
                             </li>
                             <li>
+                                <a href="index.php?page=documents&action=dashboard" class="nav-link <?php echo ($page === 'documents' && $action === 'dashboard') ? 'active' : ''; ?>">
+                                    <i class="fas fa-folder-open"></i>
+                                    <span>Documentos</span>
+                                </a>
+                            </li>
+                            <li>
                                 <a href="index.php?page=suppliers&action=dashboard" class="nav-link <?php echo ($page === 'suppliers' && ($action === 'dashboard')) ? 'active' : ''; ?>">
                                     <i class="fas fa-truck"></i>
                                     <span>Dashboard Proveedores</span>
@@ -454,11 +460,56 @@ if (isset($_SESSION['user_id'])) {
                         </a>
                     </li>
 
-                    <li>
-                        <a href="index.php?page=documents" class="nav-link <?php echo ($page === 'documents') ? 'active' : ''; ?>">
+                    <li class="nav-group">
+                        <a href="#" class="nav-link <?php echo ($page === 'documents' || $page === 'document_folders' || $page === 'document_tags' || $page === 'document_categories') ? 'active' : ''; ?>">
                             <i class="fas fa-folder-open"></i>
                             <span>Documentos</span>
+                            <i class="fas fa-chevron-down" style="margin-left:auto;font-size:0.8em;"></i>
                         </a>
+                        <ul class="nav-submenu">
+                            <li>
+                                <a href="index.php?page=documents" class="nav-link <?php echo ($page === 'documents' && !isset($_GET['action'])) ? 'active' : ''; ?>">
+                                    <i class="fas fa-file-alt"></i>
+                                    <span>Todos los Documentos</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="index.php?page=documents&action=favorites" class="nav-link <?php echo ($page === 'documents' && $action === 'favorites') ? 'active' : ''; ?>">
+                                    <i class="fas fa-star"></i>
+                                    <span>Favoritos</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="index.php?page=documents&action=trash" class="nav-link <?php echo ($page === 'documents' && $action === 'trash') ? 'active' : ''; ?>">
+                                    <i class="fas fa-trash"></i>
+                                    <span>Papelera</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="index.php?page=documents&action=public_links" class="nav-link <?php echo ($page === 'documents' && $action === 'public_links') ? 'active' : ''; ?>">
+                                    <i class="fas fa-share-alt"></i>
+                                    <span>Enlaces Públicos</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="index.php?page=document_folders" class="nav-link <?php echo ($page === 'document_folders') ? 'active' : ''; ?>">
+                                    <i class="fas fa-folder"></i>
+                                    <span>Carpetas</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="index.php?page=document_tags" class="nav-link <?php echo ($page === 'document_tags') ? 'active' : ''; ?>">
+                                    <i class="fas fa-hashtag"></i>
+                                    <span>Tags</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="index.php?page=document_categories" class="nav-link <?php echo ($page === 'document_categories') ? 'active' : ''; ?>">
+                                    <i class="fas fa-tags"></i>
+                                    <span>Categorías</span>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                         <li>
                             <a href="index.php?page=calendar" class="nav-link <?php echo ($page === 'calendar') ? 'active' : ''; ?>">

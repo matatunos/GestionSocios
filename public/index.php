@@ -27,11 +27,25 @@ $lang = Lang::getInstance();
 $requestUri = $_SERVER['REQUEST_URI'];
 $basePath = str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']);
 
+$page = $_GET['page'] ?? 'dashboard';
+
+// Manejar acceso público a documentos (sin autenticación)
+if ($page === 'public_document') {
+    require_once __DIR__ . '/../src/Controllers/PublicDocumentController.php';
+    $controller = new PublicDocumentController();
+    $action = $_GET['action'] ?? 'view';
+    
+    if ($action === 'download') {
+        $controller->download();
+    } else {
+        $controller->view();
+    }
+    exit;
+}
+
 // Check if it's an API request
 if (strpos($requestUri, '/api/') === 0 || strpos($requestUri, $basePath . '/api/') === 0) {
     $page = 'api';
-} else {
-    $page = $_GET['page'] ?? 'dashboard';
 }
 
 // Check Installation & DB Connection
@@ -320,10 +334,45 @@ switch ($page) {
         $controller = new DocumentController($db);
         if ($action === 'create') $controller->create();
         else if ($action === 'store') $controller->store();
+        else if ($action === 'bulk_upload') $controller->bulkUpload();
+        else if ($action === 'bulk_store') $controller->bulkStore();
         else if ($action === 'edit') $controller->edit();
         else if ($action === 'update') $controller->update();
         else if ($action === 'delete') $controller->delete();
         else if ($action === 'download') $controller->download();
+        else if ($action === 'trash') $controller->trash();
+        else if ($action === 'restore') $controller->restore();
+        else if ($action === 'permanent_delete') $controller->permanentDelete();
+        else if ($action === 'versions') $controller->versions();
+        else if ($action === 'upload_version') $controller->uploadVersion();
+        else if ($action === 'favorite') $controller->toggleFavorite();
+        else if ($action === 'favorites') $controller->favorites();
+        else if ($action === 'preview') $controller->preview();
+        else if ($action === 'dashboard') $controller->dashboard();
+        else if ($action === 'generate_public') $controller->generatePublic();
+        else if ($action === 'revoke_public') $controller->revokePublic();
+        else if ($action === 'public_links') $controller->publicLinks();
+        else if ($action === 'public_stats') $controller->publicStats();
+        else $controller->index();
+        break;
+    case 'document_folders':
+        require_once __DIR__ . '/../src/Controllers/DocumentFolderController.php';
+        $controller = new DocumentFolderController($db);
+        if ($action === 'create') $controller->create();
+        else if ($action === 'store') $controller->store();
+        else if ($action === 'edit') $controller->edit();
+        else if ($action === 'update') $controller->update();
+        else if ($action === 'delete') $controller->delete();
+        else $controller->index();
+        break;
+    case 'document_tags':
+        require_once __DIR__ . '/../src/Controllers/DocumentTagController.php';
+        $controller = new DocumentTagController($db);
+        if ($action === 'create') $controller->create();
+        else if ($action === 'store') $controller->store();
+        else if ($action === 'edit') $controller->edit();
+        else if ($action === 'update') $controller->update();
+        else if ($action === 'delete') $controller->delete();
         else $controller->index();
         break;
     case 'ad_prices':

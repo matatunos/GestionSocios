@@ -594,68 +594,66 @@ INSERT INTO document_categories (name, description, color) VALUES
 ON DUPLICATE KEY UPDATE id=id;
 
 -- ============================================
--- Advanced Accounting Module
+-- Advanced Accounting Module Migration
 -- ============================================
--- Módulo de contabilidad avanzada con:
--- - Plan de cuentas contable (Chart of Accounts)
--- - Asientos contables con partida doble (Journal Entries)
--- - Períodos contables (Accounting Periods)
--- - Gestión de presupuestos (Budget Management)
+-- This migration adds advanced accounting features including:
+-- - Chart of accounts
+-- - Double-entry bookkeeping (journal entries)
+-- - Accounting periods
+-- - Budget management
 -- ============================================
 
 -- Tabla de períodos contables
 CREATE TABLE IF NOT EXISTS accounting_periods (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL COMMENT 'Nombre del período (ej: Ejercicio 2025)',
-    start_date DATE NOT NULL COMMENT 'Fecha de inicio del período',
-    end_date DATE NOT NULL COMMENT 'Fecha de fin del período',
-    fiscal_year INT NOT NULL COMMENT 'Año fiscal',
-    status ENUM('open', 'closed', 'locked') DEFAULT 'open' COMMENT 'Estado del período',
-    created_by INT NOT NULL COMMENT 'Usuario que creó el período',
+    name VARCHAR(100) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    fiscal_year INT NOT NULL,
+    status ENUM('open', 'closed', 'locked') DEFAULT 'open',
+    created_by INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE,
     INDEX idx_fiscal_year (fiscal_year),
     INDEX idx_status (status)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-COMMENT='Períodos contables para organización por ejercicio fiscal';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabla de plan de cuentas contable (Chart of Accounts)
+-- Tabla de plan de cuentas (Chart of Accounts)
 CREATE TABLE IF NOT EXISTS accounting_accounts (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    code VARCHAR(20) NOT NULL UNIQUE COMMENT 'Código de cuenta (ej: 570, 700)',
-    name VARCHAR(200) NOT NULL COMMENT 'Nombre de la cuenta',
-    description TEXT COMMENT 'Descripción detallada',
-    account_type ENUM('asset', 'liability', 'equity', 'income', 'expense') NOT NULL COMMENT 'Tipo de cuenta',
-    parent_id INT DEFAULT NULL COMMENT 'Cuenta padre para jerarquía',
-    level INT DEFAULT 0 COMMENT 'Nivel jerárquico (0-5)',
-    balance_type ENUM('debit', 'credit') NOT NULL COMMENT 'Tipo de saldo natural',
-    is_active BOOLEAN DEFAULT 1 COMMENT 'Si la cuenta está activa',
-    is_system BOOLEAN DEFAULT 0 COMMENT 'Si es cuenta del sistema (no editable)',
+    code VARCHAR(20) NOT NULL UNIQUE,
+    name VARCHAR(200) NOT NULL,
+    description TEXT,
+    account_type ENUM('asset', 'liability', 'equity', 'income', 'expense') NOT NULL,
+    parent_id INT DEFAULT NULL,
+    level INT DEFAULT 0,
+    balance_type ENUM('debit', 'credit') NOT NULL,
+    is_active BOOLEAN DEFAULT 1,
+    is_system BOOLEAN DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (parent_id) REFERENCES accounting_accounts(id) ON DELETE SET NULL,
     INDEX idx_code (code),
     INDEX idx_type (account_type),
     INDEX idx_parent (parent_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-COMMENT='Plan de cuentas contable con estructura jerárquica';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabla de cabecera de asientos contables (Journal Entries)
+-- Tabla de asientos contables (Journal Entries)
 CREATE TABLE IF NOT EXISTS accounting_entries (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    entry_number VARCHAR(50) NOT NULL COMMENT 'Número único del asiento (ej: AS-2025-000001)',
-    entry_date DATE NOT NULL COMMENT 'Fecha del asiento',
-    period_id INT NOT NULL COMMENT 'Período contable al que pertenece',
-    description TEXT NOT NULL COMMENT 'Descripción del asiento',
-    reference VARCHAR(100) COMMENT 'Referencia externa (número de factura, etc)',
-    entry_type ENUM('manual', 'automatic') DEFAULT 'manual' COMMENT 'Tipo de asiento',
-    source_type ENUM('expense', 'payment', 'donation', 'manual') DEFAULT 'manual' COMMENT 'Origen del asiento',
-    source_id INT DEFAULT NULL COMMENT 'ID del registro origen',
-    status ENUM('draft', 'posted', 'cancelled') DEFAULT 'draft' COMMENT 'Estado del asiento',
-    created_by INT NOT NULL COMMENT 'Usuario que creó el asiento',
-    posted_by INT DEFAULT NULL COMMENT 'Usuario que contabilizó el asiento',
-    posted_at DATETIME DEFAULT NULL COMMENT 'Fecha de contabilización',
+    entry_number VARCHAR(50) NOT NULL,
+    entry_date DATE NOT NULL,
+    period_id INT NOT NULL,
+    description TEXT NOT NULL,
+    reference VARCHAR(100),
+    entry_type ENUM('manual', 'automatic') DEFAULT 'manual',
+    source_type ENUM('expense', 'payment', 'donation', 'manual') DEFAULT 'manual',
+    source_id INT DEFAULT NULL,
+    status ENUM('draft', 'posted', 'cancelled') DEFAULT 'draft',
+    created_by INT NOT NULL,
+    posted_by INT DEFAULT NULL,
+    posted_at DATETIME DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (period_id) REFERENCES accounting_periods(id) ON DELETE CASCADE,
@@ -666,38 +664,36 @@ CREATE TABLE IF NOT EXISTS accounting_entries (
     INDEX idx_period (period_id),
     INDEX idx_status (status),
     INDEX idx_source (source_type, source_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-COMMENT='Cabecera de asientos contables (libro diario)';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabla de líneas de asiento contable (Partida Doble)
+-- Tabla de líneas de asiento (Entry Lines - double entry)
 CREATE TABLE IF NOT EXISTS accounting_entry_lines (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    entry_id INT NOT NULL COMMENT 'Asiento al que pertenece',
-    account_id INT NOT NULL COMMENT 'Cuenta contable',
-    description TEXT COMMENT 'Descripción de la línea',
-    debit DECIMAL(10,2) DEFAULT 0.00 COMMENT 'Importe en el Debe',
-    credit DECIMAL(10,2) DEFAULT 0.00 COMMENT 'Importe en el Haber',
-    line_order INT DEFAULT 0 COMMENT 'Orden de la línea en el asiento',
+    entry_id INT NOT NULL,
+    account_id INT NOT NULL,
+    description TEXT,
+    debit DECIMAL(10,2) DEFAULT 0.00,
+    credit DECIMAL(10,2) DEFAULT 0.00,
+    line_order INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (entry_id) REFERENCES accounting_entries(id) ON DELETE CASCADE,
     FOREIGN KEY (account_id) REFERENCES accounting_accounts(id) ON DELETE CASCADE,
     INDEX idx_entry (entry_id),
     INDEX idx_account (account_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-COMMENT='Líneas de asientos contables (partida doble: Debe = Haber)';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabla de presupuestos
 CREATE TABLE IF NOT EXISTS budgets (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(200) NOT NULL COMMENT 'Nombre del presupuesto',
-    description TEXT COMMENT 'Descripción detallada',
-    fiscal_year INT NOT NULL COMMENT 'Año fiscal',
-    account_id INT NOT NULL COMMENT 'Cuenta contable asociada',
-    amount DECIMAL(10,2) NOT NULL DEFAULT 0.00 COMMENT 'Importe presupuestado',
-    period_type ENUM('yearly', 'monthly', 'quarterly') DEFAULT 'yearly' COMMENT 'Tipo de período',
-    period_number INT DEFAULT NULL COMMENT 'Número de período (mes o trimestre)',
-    status ENUM('draft', 'approved', 'active', 'closed') DEFAULT 'draft' COMMENT 'Estado del presupuesto',
-    created_by INT NOT NULL COMMENT 'Usuario que creó el presupuesto',
+    name VARCHAR(200) NOT NULL,
+    description TEXT,
+    fiscal_year INT NOT NULL,
+    account_id INT NOT NULL,
+    amount DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    period_type ENUM('yearly', 'monthly', 'quarterly') DEFAULT 'yearly',
+    period_number INT DEFAULT NULL,
+    status ENUM('draft', 'approved', 'active', 'closed') DEFAULT 'draft',
+    created_by INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (account_id) REFERENCES accounting_accounts(id) ON DELETE CASCADE,
@@ -705,16 +701,13 @@ CREATE TABLE IF NOT EXISTS budgets (
     INDEX idx_fiscal_year (fiscal_year),
     INDEX idx_account (account_id),
     INDEX idx_status (status)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-COMMENT='Presupuestos asociados a cuentas contables';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Insertar plan de cuentas básico según PGC español
-INSERT IGNORE INTO accounting_accounts (code, name, account_type, balance_type, level, is_system) VALUES
--- PATRIMONIO (Equity)
+-- Insertar plan de cuentas básico (Spanish Chart of Accounts - PGC simplified)
+INSERT INTO accounting_accounts (code, name, account_type, balance_type, level, is_system) VALUES
+-- ACTIVO (Assets)
 ('100', 'Capital Social', 'equity', 'credit', 0, 1),
 ('129', 'Resultados del Ejercicio', 'equity', 'credit', 0, 1),
-
--- ACTIVO (Assets)
 ('430', 'Clientes', 'asset', 'debit', 0, 1),
 ('440', 'Deudores', 'asset', 'debit', 0, 1),
 ('470', 'Hacienda Pública, Deudora', 'asset', 'debit', 0, 1),
@@ -751,6 +744,7 @@ INSERT IGNORE INTO accounting_accounts (code, name, account_type, balance_type, 
 ('678', 'Gastos Excepcionales', 'expense', 'debit', 0, 1);
 
 -- Insertar período contable por defecto para año actual
+-- Solo si existe al menos un usuario en el sistema
 INSERT IGNORE INTO accounting_periods (name, start_date, end_date, fiscal_year, status, created_by) 
 SELECT 
     CONCAT('Ejercicio ', YEAR(CURDATE())), 
@@ -762,9 +756,9 @@ SELECT
 FROM users
 WHERE EXISTS (SELECT 1 FROM users LIMIT 1);
 
--- ============================================
+-- ============================================================================
 -- Social Media Sharing Integration
--- ============================================
+-- ============================================================================
 INSERT INTO organization_settings (category, setting_key, setting_value, setting_type, description) VALUES
 ('social_media', 'facebook_enabled', '0', 'boolean', 'Habilitar compartir en Facebook'),
 ('social_media', 'facebook_app_id', '', 'text', 'Facebook App ID para compartir contenido'),
@@ -775,3 +769,480 @@ INSERT INTO organization_settings (category, setting_key, setting_value, setting
 ('social_media', 'share_site_name', '', 'text', 'Nombre del sitio para metadatos Open Graph'),
 ('social_media', 'share_description', '', 'text', 'Descripción por defecto para compartir')
 ON DUPLICATE KEY UPDATE setting_key=setting_key;
+
+-- ============================================================================
+-- MÓDULO DE DOCUMENTOS MEJORADO
+-- ============================================================================
+-- Mejoras: Versionado, Carpetas, Tags, Metadatos, Comentarios,
+--          Soft Delete, Compartir por enlace y Auditoría completa
+-- ============================================================================
+
+-- Modificaciones a la tabla documents existente
+ALTER TABLE `documents`
+ADD COLUMN IF NOT EXISTS `version` INT DEFAULT 1 AFTER `downloads`,
+ADD COLUMN IF NOT EXISTS `parent_document_id` INT DEFAULT NULL AFTER `version`,
+ADD COLUMN IF NOT EXISTS `is_latest_version` BOOLEAN DEFAULT TRUE AFTER `parent_document_id`,
+ADD COLUMN IF NOT EXISTS `deleted_at` DATETIME NULL AFTER `updated_at`,
+ADD COLUMN IF NOT EXISTS `deleted_by` INT NULL AFTER `deleted_at`,
+ADD COLUMN IF NOT EXISTS `folder_id` INT DEFAULT NULL AFTER `category_id`,
+ADD COLUMN IF NOT EXISTS `file_extension` VARCHAR(10) AFTER `file_type`,
+ADD COLUMN IF NOT EXISTS `mime_type_verified` VARCHAR(100) AFTER `file_extension`,
+ADD COLUMN IF NOT EXISTS `public_token` VARCHAR(64) UNIQUE DEFAULT NULL AFTER `is_public`,
+ADD COLUMN IF NOT EXISTS `token_expires_at` DATETIME NULL AFTER `public_token`,
+ADD COLUMN IF NOT EXISTS `public_download_limit` INT NULL COMMENT 'Límite de descargas públicas (NULL = ilimitado)' AFTER `token_expires_at`,
+ADD COLUMN IF NOT EXISTS `public_downloads` INT DEFAULT 0 COMMENT 'Contador de descargas públicas' AFTER `public_download_limit`,
+ADD COLUMN IF NOT EXISTS `public_enabled` BOOLEAN DEFAULT FALSE COMMENT 'Si el enlace público está activo' AFTER `public_downloads`,
+ADD COLUMN IF NOT EXISTS `public_created_at` DATETIME NULL COMMENT 'Fecha de creación del enlace público' AFTER `public_enabled`,
+ADD COLUMN IF NOT EXISTS `public_created_by` INT NULL COMMENT 'Usuario que creó el enlace público' AFTER `public_created_at`,
+ADD COLUMN IF NOT EXISTS `public_last_access` DATETIME NULL COMMENT 'Última vez que se accedió al enlace' AFTER `public_created_by`,
+ADD COLUMN IF NOT EXISTS `status` ENUM('draft', 'published', 'archived') DEFAULT 'published' AFTER `is_public`,
+ADD COLUMN IF NOT EXISTS `extracted_text` LONGTEXT AFTER `description`;
+
+-- Agregar índices para optimizar consultas
+SET @exist := (SELECT COUNT(*) FROM information_schema.statistics WHERE table_schema = DATABASE() AND table_name = 'documents' AND index_name = 'idx_folder');
+SET @sqlstmt := IF(@exist = 0, 'ALTER TABLE documents ADD INDEX idx_folder (folder_id)', 'SELECT "Index already exists"');
+PREPARE stmt FROM @sqlstmt; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @exist := (SELECT COUNT(*) FROM information_schema.statistics WHERE table_schema = DATABASE() AND table_name = 'documents' AND index_name = 'idx_parent');
+SET @sqlstmt := IF(@exist = 0, 'ALTER TABLE documents ADD INDEX idx_parent (parent_document_id)', 'SELECT "Index already exists"');
+PREPARE stmt FROM @sqlstmt; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @exist := (SELECT COUNT(*) FROM information_schema.statistics WHERE table_schema = DATABASE() AND table_name = 'documents' AND index_name = 'idx_deleted');
+SET @sqlstmt := IF(@exist = 0, 'ALTER TABLE documents ADD INDEX idx_deleted (deleted_at)', 'SELECT "Index already exists"');
+PREPARE stmt FROM @sqlstmt; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @exist := (SELECT COUNT(*) FROM information_schema.statistics WHERE table_schema = DATABASE() AND table_name = 'documents' AND index_name = 'idx_status');
+SET @sqlstmt := IF(@exist = 0, 'ALTER TABLE documents ADD INDEX idx_status (status)', 'SELECT "Index already exists"');
+PREPARE stmt FROM @sqlstmt; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @exist := (SELECT COUNT(*) FROM information_schema.statistics WHERE table_schema = DATABASE() AND table_name = 'documents' AND index_name = 'idx_version');
+SET @sqlstmt := IF(@exist = 0, 'ALTER TABLE documents ADD INDEX idx_version (version, is_latest_version)', 'SELECT "Index already exists"');
+PREPARE stmt FROM @sqlstmt; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @exist := (SELECT COUNT(*) FROM information_schema.statistics WHERE table_schema = DATABASE() AND table_name = 'documents' AND index_name = 'idx_public_token');
+SET @sqlstmt := IF(@exist = 0, 'ALTER TABLE documents ADD INDEX idx_public_token (public_token)', 'SELECT "Index already exists"');
+PREPARE stmt FROM @sqlstmt; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @exist := (SELECT COUNT(*) FROM information_schema.statistics WHERE table_schema = DATABASE() AND table_name = 'documents' AND index_name = 'idx_public_enabled');
+SET @sqlstmt := IF(@exist = 0, 'ALTER TABLE documents ADD INDEX idx_public_enabled (public_enabled)', 'SELECT "Index already exists"');
+PREPARE stmt FROM @sqlstmt; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @exist := (SELECT COUNT(*) FROM information_schema.statistics WHERE table_schema = DATABASE() AND table_name = 'documents' AND index_name = 'idx_token_expires');
+SET @sqlstmt := IF(@exist = 0, 'ALTER TABLE documents ADD INDEX idx_token_expires (token_expires_at)', 'SELECT "Index already exists"');
+PREPARE stmt FROM @sqlstmt; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+-- Tabla de historial de versiones
+CREATE TABLE IF NOT EXISTS `document_versions` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `document_id` INT NOT NULL COMMENT 'ID del documento padre',
+    `version_number` INT NOT NULL COMMENT 'Número de versión',
+    `file_name` VARCHAR(255) NOT NULL COMMENT 'Nombre original del archivo',
+    `file_path` VARCHAR(500) NOT NULL COMMENT 'Ruta del archivo en servidor',
+    `file_size` INT NOT NULL COMMENT 'Tamaño en bytes',
+    `file_type` VARCHAR(100) NOT NULL COMMENT 'MIME type',
+    `uploaded_by` INT NOT NULL COMMENT 'Usuario que subió esta versión',
+    `change_notes` TEXT COMMENT 'Notas sobre los cambios en esta versión',
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`document_id`) REFERENCES `documents`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`uploaded_by`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+    INDEX `idx_document_version` (`document_id`, `version_number`),
+    INDEX `idx_created` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Historial de versiones de documentos';
+
+-- Tabla de carpetas jerárquicas
+CREATE TABLE IF NOT EXISTS `document_folders` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `name` VARCHAR(100) NOT NULL COMMENT 'Nombre de la carpeta',
+    `description` TEXT COMMENT 'Descripción de la carpeta',
+    `parent_id` INT DEFAULT NULL COMMENT 'ID de la carpeta padre (NULL = raíz)',
+    `path` VARCHAR(500) COMMENT 'Ruta completa ej: /Estatutos/2024',
+    `level` INT DEFAULT 0 COMMENT 'Nivel de profundidad (0 = raíz)',
+    `color` VARCHAR(20) DEFAULT '#6366f1' COMMENT 'Color para UI',
+    `icon` VARCHAR(50) DEFAULT 'fa-folder' COMMENT 'Icono FontAwesome',
+    `created_by` INT NOT NULL COMMENT 'Usuario que creó la carpeta',
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (`parent_id`) REFERENCES `document_folders`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`created_by`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+    INDEX `idx_parent` (`parent_id`),
+    INDEX `idx_path` (`path`),
+    INDEX `idx_level` (`level`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Carpetas para organizar documentos';
+
+-- Tabla de etiquetas libres
+CREATE TABLE IF NOT EXISTS `document_tags` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `name` VARCHAR(50) NOT NULL UNIQUE COMMENT 'Nombre de la etiqueta',
+    `slug` VARCHAR(50) NOT NULL UNIQUE COMMENT 'Slug para URLs',
+    `color` VARCHAR(20) DEFAULT '#6366f1' COMMENT 'Color hex para UI',
+    `description` TEXT COMMENT 'Descripción de la etiqueta',
+    `usage_count` INT DEFAULT 0 COMMENT 'Contador de uso',
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX `idx_slug` (`slug`),
+    INDEX `idx_usage` (`usage_count`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Etiquetas para clasificar documentos';
+
+-- Tabla relacional muchos a muchos: documentos ↔ tags
+CREATE TABLE IF NOT EXISTS `document_tag_rel` (
+    `document_id` INT NOT NULL,
+    `tag_id` INT NOT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`document_id`, `tag_id`),
+    FOREIGN KEY (`document_id`) REFERENCES `documents`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`tag_id`) REFERENCES `document_tags`(`id`) ON DELETE CASCADE,
+    INDEX `idx_tag` (`tag_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Relación documentos-etiquetas';
+
+-- Tabla de campos personalizados
+CREATE TABLE IF NOT EXISTS `document_metadata` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `document_id` INT NOT NULL COMMENT 'ID del documento',
+    `meta_key` VARCHAR(100) NOT NULL COMMENT 'Clave del metadato (ej: autor, expediente)',
+    `meta_value` TEXT COMMENT 'Valor del metadato',
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (`document_id`) REFERENCES `documents`(`id`) ON DELETE CASCADE,
+    INDEX `idx_document_key` (`document_id`, `meta_key`),
+    INDEX `idx_meta_key` (`meta_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Metadatos personalizados de documentos';
+
+-- Tabla de comentarios en documentos
+CREATE TABLE IF NOT EXISTS `document_comments` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `document_id` INT NOT NULL COMMENT 'ID del documento comentado',
+    `user_id` INT NOT NULL COMMENT 'Usuario que comentó',
+    `comment` TEXT NOT NULL COMMENT 'Texto del comentario',
+    `parent_comment_id` INT DEFAULT NULL COMMENT 'ID del comentario padre (para respuestas)',
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (`document_id`) REFERENCES `documents`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`parent_comment_id`) REFERENCES `document_comments`(`id`) ON DELETE CASCADE,
+    INDEX `idx_document` (`document_id`),
+    INDEX `idx_user` (`user_id`),
+    INDEX `idx_parent` (`parent_comment_id`),
+    INDEX `idx_created` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Comentarios en documentos';
+
+-- Tabla de compartir por enlace público
+CREATE TABLE IF NOT EXISTS `document_shares` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `document_id` INT NOT NULL COMMENT 'ID del documento compartido',
+    `token` VARCHAR(64) UNIQUE NOT NULL COMMENT 'Token único para acceso',
+    `password_hash` VARCHAR(255) DEFAULT NULL COMMENT 'Hash de contraseña opcional',
+    `expires_at` DATETIME DEFAULT NULL COMMENT 'Fecha de expiración del enlace',
+    `max_downloads` INT DEFAULT NULL COMMENT 'Máximo de descargas permitidas',
+    `download_count` INT DEFAULT 0 COMMENT 'Contador de descargas realizadas',
+    `is_active` BOOLEAN DEFAULT TRUE COMMENT 'Si el enlace está activo',
+    `created_by` INT NOT NULL COMMENT 'Usuario que compartió',
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `last_accessed_at` DATETIME NULL COMMENT 'Última vez que se accedió',
+    FOREIGN KEY (`document_id`) REFERENCES `documents`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`created_by`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+    INDEX `idx_token` (`token`),
+    INDEX `idx_expires` (`expires_at`),
+    INDEX `idx_active` (`is_active`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Enlaces públicos para compartir documentos';
+
+-- Tabla de log de actividad detallado
+CREATE TABLE IF NOT EXISTS `document_activity_log` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `document_id` INT NOT NULL COMMENT 'ID del documento',
+    `user_id` INT DEFAULT NULL COMMENT 'Usuario que realizó la acción',
+    `action` ENUM('view','download','edit','delete','restore','share','comment','upload_version','uploaded','created','updated','moved','copied','favorited','unfavorited','previewed','public_link_created','public_link_revoked','trashed') NOT NULL COMMENT 'Tipo de acción',
+    `ip_address` VARCHAR(45) DEFAULT NULL COMMENT 'IP del usuario',
+    `user_agent` TEXT DEFAULT NULL COMMENT 'User agent del navegador',
+    `details` TEXT COMMENT 'Detalles adicionales en JSON',
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`document_id`) REFERENCES `documents`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE SET NULL,
+    INDEX `idx_document` (`document_id`),
+    INDEX `idx_user` (`user_id`),
+    INDEX `idx_action` (`action`),
+    INDEX `idx_created` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Log detallado de actividad en documentos';
+
+-- Tabla de documentos favoritos por usuario
+CREATE TABLE IF NOT EXISTS `document_favorites` (
+    `user_id` INT NOT NULL COMMENT 'Usuario',
+    `document_id` INT NOT NULL COMMENT 'Documento marcado como favorito',
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`user_id`, `document_id`),
+    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`document_id`) REFERENCES `documents`(`id`) ON DELETE CASCADE,
+    INDEX `idx_document` (`document_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Documentos favoritos de usuarios';
+
+-- Tabla de log de accesos públicos
+CREATE TABLE IF NOT EXISTS `document_public_access_log` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `document_id` INT NOT NULL,
+    `access_token` VARCHAR(64) NOT NULL,
+    `ip_address` VARCHAR(45) NOT NULL,
+    `user_agent` TEXT NULL,
+    `referer` VARCHAR(255) NULL,
+    `downloaded` BOOLEAN DEFAULT FALSE,
+    `access_date` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    INDEX `idx_document_id` (`document_id`),
+    INDEX `idx_access_token` (`access_token`),
+    INDEX `idx_access_date` (`access_date`),
+    FOREIGN KEY (`document_id`) REFERENCES `documents`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Insertar carpetas por defecto
+INSERT IGNORE INTO `document_folders` (`name`, `description`, `parent_id`, `path`, `level`, `color`, `icon`, `created_by`) VALUES
+('Estatutos', 'Estatutos y normativas de la asociación', NULL, '/Estatutos', 0, '#6366f1', 'fa-balance-scale', 1),
+('Actas', 'Actas de reuniones y asambleas', NULL, '/Actas', 0, '#10b981', 'fa-file-signature', 1),
+('Informes', 'Informes y reportes', NULL, '/Informes', 0, '#f59e0b', 'fa-chart-line', 1),
+('Convocatorias', 'Convocatorias de eventos y reuniones', NULL, '/Convocatorias', 0, '#ef4444', 'fa-bell', 1),
+('Certificados', 'Certificados emitidos', NULL, '/Certificados', 0, '#3b82f6', 'fa-certificate', 1),
+('Contratos', 'Contratos y acuerdos', NULL, '/Contratos', 0, '#8b5cf6', 'fa-file-contract', 1),
+('Facturas', 'Facturas y documentos fiscales', NULL, '/Facturas', 0, '#ec4899', 'fa-file-invoice', 1),
+('General', 'Documentos generales', NULL, '/General', 0, '#94a3b8', 'fa-folder', 1);
+
+-- Insertar tags por defecto
+INSERT IGNORE INTO `document_tags` (`name`, `slug`, `color`, `description`) VALUES
+('Urgente', 'urgente', '#ef4444', 'Documentos que requieren atención inmediata'),
+('Importante', 'importante', '#f59e0b', 'Documentos de alta prioridad'),
+('Revisión', 'revision', '#3b82f6', 'Documentos pendientes de revisión'),
+('Aprobado', 'aprobado', '#10b981', 'Documentos aprobados'),
+('Borrador', 'borrador', '#6b7280', 'Documentos en borrador'),
+('Confidencial', 'confidencial', '#7c3aed', 'Documentos confidenciales'),
+('Público', 'publico', '#06b6d4', 'Documentos de acceso público'),
+('Archivo', 'archivo', '#64748b', 'Documentos archivados');
+
+-- ============================================================================
+-- VISTAS, TRIGGERS Y PROCEDIMIENTOS ALMACENADOS
+-- ============================================================================
+
+-- Vista de documentos activos (no eliminados)
+CREATE OR REPLACE VIEW `v_documents_active` AS
+SELECT 
+    d.*,
+    u.name as uploaded_by_name,
+    u.email as uploaded_by_email,
+    f.name as folder_name,
+    f.path as folder_path,
+    GROUP_CONCAT(DISTINCT dc.name SEPARATOR ', ') as category_names,
+    GROUP_CONCAT(DISTINCT dt.name SEPARATOR ', ') as tag_names,
+    COUNT(DISTINCT comm.id) as comment_count,
+    COUNT(DISTINCT dv.id) as version_count
+FROM documents d
+LEFT JOIN users u ON d.uploaded_by = u.id
+LEFT JOIN document_folders f ON d.folder_id = f.id
+LEFT JOIN document_category_rel dcr ON d.id = dcr.document_id
+LEFT JOIN document_categories dc ON dcr.category_id = dc.id
+LEFT JOIN document_tag_rel dtr ON d.id = dtr.document_id
+LEFT JOIN document_tags dt ON dtr.tag_id = dt.id
+LEFT JOIN document_comments comm ON d.id = comm.document_id
+LEFT JOIN document_versions dv ON d.id = dv.document_id
+WHERE d.deleted_at IS NULL
+GROUP BY d.id;
+
+-- Vista de documentos más descargados
+CREATE OR REPLACE VIEW `v_documents_most_downloaded` AS
+SELECT 
+    d.id,
+    d.title,
+    d.downloads,
+    d.file_name,
+    d.created_at,
+    u.name as uploaded_by,
+    GROUP_CONCAT(DISTINCT dc.name SEPARATOR ', ') as categories
+FROM documents d
+LEFT JOIN users u ON d.uploaded_by = u.id
+LEFT JOIN document_category_rel dcr ON d.id = dcr.document_id
+LEFT JOIN document_categories dc ON dcr.category_id = dc.id
+WHERE d.deleted_at IS NULL
+GROUP BY d.id
+ORDER BY d.downloads DESC
+LIMIT 20;
+
+-- Vista de actividad reciente
+CREATE OR REPLACE VIEW `v_document_recent_activity` AS
+SELECT 
+    dal.id,
+    dal.document_id,
+    d.title as document_title,
+    dal.user_id,
+    u.name as username,
+    dal.action,
+    dal.created_at,
+    dal.details
+FROM document_activity_log dal
+LEFT JOIN documents d ON dal.document_id = d.id
+LEFT JOIN users u ON dal.user_id = u.id
+ORDER BY dal.created_at DESC
+LIMIT 100;
+
+-- Vista de documentos públicos activos
+CREATE OR REPLACE VIEW `v_public_documents_active` AS
+SELECT 
+    d.id,
+    d.title,
+    d.file_name,
+    d.file_size,
+    d.public_token,
+    d.token_expires_at,
+    d.public_download_limit,
+    d.public_downloads,
+    d.public_created_at,
+    d.public_last_access,
+    u.name as created_by_name,
+    CASE 
+        WHEN d.public_download_limit IS NOT NULL AND d.public_downloads >= d.public_download_limit THEN 'limit_reached'
+        WHEN d.token_expires_at IS NOT NULL AND d.token_expires_at < NOW() THEN 'expired'
+        ELSE 'active'
+    END as status,
+    CASE 
+        WHEN d.public_download_limit IS NOT NULL 
+        THEN CONCAT(d.public_downloads, '/', d.public_download_limit)
+        ELSE CONCAT(d.public_downloads, '/∞')
+    END as download_stats
+FROM documents d
+LEFT JOIN users u ON d.public_created_by = u.id
+WHERE d.public_enabled = TRUE
+    AND d.deleted_at IS NULL;
+
+-- Triggers para mantener contadores actualizados
+DELIMITER //
+
+DROP TRIGGER IF EXISTS `after_document_tag_insert`//
+CREATE TRIGGER `after_document_tag_insert` AFTER INSERT ON `document_tag_rel`
+FOR EACH ROW
+BEGIN
+    UPDATE document_tags SET usage_count = usage_count + 1 WHERE id = NEW.tag_id;
+END//
+
+DROP TRIGGER IF EXISTS `after_document_tag_delete`//
+CREATE TRIGGER `after_document_tag_delete` AFTER DELETE ON `document_tag_rel`
+FOR EACH ROW
+BEGIN
+    UPDATE document_tags SET usage_count = usage_count - 1 WHERE id = OLD.tag_id;
+END//
+
+-- Procedimiento para limpiar enlaces compartidos expirados
+DROP PROCEDURE IF EXISTS `sp_cleanup_expired_shares`//
+CREATE PROCEDURE `sp_cleanup_expired_shares`()
+BEGIN
+    UPDATE document_shares 
+    SET is_active = FALSE 
+    WHERE expires_at IS NOT NULL 
+    AND expires_at < NOW() 
+    AND is_active = TRUE;
+    
+    -- También desactivar los tokens públicos expirados
+    UPDATE documents 
+    SET public_enabled = FALSE
+    WHERE public_enabled = TRUE
+        AND token_expires_at IS NOT NULL
+        AND token_expires_at < NOW();
+    
+    SELECT ROW_COUNT() as cleaned_shares;
+END//
+
+-- Procedimiento para mover documento a papelera
+DROP PROCEDURE IF EXISTS `sp_trash_document`//
+CREATE PROCEDURE `sp_trash_document`(IN doc_id INT, IN user_id INT)
+BEGIN
+    UPDATE documents 
+    SET deleted_at = NOW(), deleted_by = user_id 
+    WHERE id = doc_id AND deleted_at IS NULL;
+    
+    INSERT INTO document_activity_log (document_id, user_id, action, details)
+    VALUES (doc_id, user_id, 'trashed', 'Documento movido a papelera');
+    
+    SELECT ROW_COUNT() > 0 as success;
+END//
+
+-- Procedimiento para restaurar documento de papelera
+DROP PROCEDURE IF EXISTS `sp_restore_document`//
+CREATE PROCEDURE `sp_restore_document`(IN doc_id INT, IN user_id INT)
+BEGIN
+    UPDATE documents 
+    SET deleted_at = NULL, deleted_by = NULL 
+    WHERE id = doc_id AND deleted_at IS NOT NULL;
+    
+    INSERT INTO document_activity_log (document_id, user_id, action, details)
+    VALUES (doc_id, user_id, 'restore', 'Documento restaurado de papelera');
+    
+    SELECT ROW_COUNT() > 0 as success;
+END//
+
+-- Procedimiento para generar token público
+DROP PROCEDURE IF EXISTS `sp_generate_public_token`//
+CREATE PROCEDURE `sp_generate_public_token`(
+    IN p_document_id INT,
+    IN p_user_id INT,
+    IN p_expires_at DATETIME,
+    IN p_download_limit INT,
+    OUT p_token VARCHAR(64)
+)
+BEGIN
+    DECLARE v_token VARCHAR(64);
+    DECLARE v_exists INT;
+    
+    -- Generar token único
+    REPEAT
+        SET v_token = SHA2(CONCAT(p_document_id, NOW(), RAND(), UUID()), 256);
+        SELECT COUNT(*) INTO v_exists FROM documents WHERE public_token = v_token;
+    UNTIL v_exists = 0 END REPEAT;
+    
+    -- Actualizar documento con el token
+    UPDATE documents 
+    SET public_token = v_token,
+        token_expires_at = p_expires_at,
+        public_download_limit = p_download_limit,
+        public_downloads = 0,
+        public_enabled = TRUE,
+        public_created_at = NOW(),
+        public_created_by = p_user_id,
+        public_last_access = NULL
+    WHERE id = p_document_id;
+    
+    INSERT INTO document_activity_log (document_id, action, user_id, details)
+    VALUES (p_document_id, 'public_link_created', p_user_id, 
+            JSON_OBJECT('expires_at', p_expires_at, 'download_limit', p_download_limit));
+    
+    SET p_token = v_token;
+END//
+
+-- Procedimiento para revocar enlace público
+DROP PROCEDURE IF EXISTS `sp_revoke_public_token`//
+CREATE PROCEDURE `sp_revoke_public_token`(
+    IN p_document_id INT,
+    IN p_user_id INT
+)
+BEGIN
+    UPDATE documents 
+    SET public_enabled = FALSE
+    WHERE id = p_document_id;
+    
+    INSERT INTO document_activity_log (document_id, action, user_id, details)
+    VALUES (p_document_id, 'public_link_revoked', p_user_id, NULL);
+END//
+
+-- Función para verificar si un token público es válido
+DROP FUNCTION IF EXISTS `fn_is_public_token_valid`//
+CREATE FUNCTION `fn_is_public_token_valid`(
+    p_token VARCHAR(64)
+) RETURNS BOOLEAN
+DETERMINISTIC
+READS SQL DATA
+BEGIN
+    DECLARE v_valid BOOLEAN DEFAULT FALSE;
+    
+    SELECT 
+        (public_enabled = TRUE
+        AND deleted_at IS NULL
+        AND (token_expires_at IS NULL OR token_expires_at > NOW())
+        AND (public_download_limit IS NULL OR public_downloads < public_download_limit))
+    INTO v_valid
+    FROM documents
+    WHERE public_token = p_token;
+    
+    RETURN COALESCE(v_valid, FALSE);
+END//
+
+DELIMITER ;
