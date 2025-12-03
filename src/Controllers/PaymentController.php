@@ -28,16 +28,27 @@ class PaymentController {
     public function create() {
         $this->checkAdmin();
         
-        // Load Members with their category fees
-        $query = "SELECT m.id, m.first_name, m.last_name, m.category_id, 
-                         COALESCE(mc.default_fee, 0) as category_fee
+        // Load Members with their category info
+        $query = "SELECT m.id, m.first_name, m.last_name, m.category_id
                   FROM members m
-                  LEFT JOIN member_categories mc ON m.category_id = mc.id
                   WHERE m.is_active = 1
                   ORDER BY m.last_name, m.first_name";
         $stmt = $this->db->prepare($query);
         $stmt->execute();
         $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Load category fees by year (for current and previous years)
+        $currentYear = date('Y');
+        $queryFees = "SELECT cfh.category_id, cfh.year, cfh.fee_amount,
+                             mc.name as category_name
+                      FROM category_fee_history cfh
+                      INNER JOIN member_categories mc ON cfh.category_id = mc.id
+                      WHERE cfh.year >= :year_start
+                      ORDER BY cfh.category_id, cfh.year DESC";
+        $stmtFees = $this->db->prepare($queryFees);
+        $stmtFees->bindValue(':year_start', $currentYear - 2, PDO::PARAM_INT);
+        $stmtFees->execute();
+        $categoryFees = $stmtFees->fetchAll(PDO::FETCH_ASSOC);
         
         // Load Active Events
         $eventModel = new Event($this->db);

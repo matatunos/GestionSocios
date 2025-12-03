@@ -17,10 +17,19 @@
 <script>
 // Annual fees data for auto-fill (fallback)
 const annualFees = <?php echo json_encode($fees ?? []); ?>;
-// Members with their category fees
-const membersFees = <?php echo json_encode(array_map(function($m) {
-    return ['id' => $m['id'], 'fee' => $m['category_fee']];
-}, $members)); ?>;
+// Members data
+const membersData = <?php echo json_encode($members); ?>;
+// Category fees by year
+const categoryFeesByYear = <?php 
+    $feesByYear = [];
+    foreach ($categoryFees ?? [] as $fee) {
+        if (!isset($feesByYear[$fee['category_id']])) {
+            $feesByYear[$fee['category_id']] = [];
+        }
+        $feesByYear[$fee['category_id']][$fee['year']] = $fee['fee_amount'];
+    }
+    echo json_encode($feesByYear);
+?>;
 </script>
 
 <div class="mb-4">
@@ -38,11 +47,8 @@ const membersFees = <?php echo json_encode(array_map(function($m) {
             <select name="member_id" id="member_id" class="form-control" onchange="updateFeeAmount()" required>
                 <option value="">Seleccione un socio...</option>
                 <?php foreach ($members as $member): ?>
-                    <option value="<?php echo $member['id']; ?>" data-fee="<?php echo $member['category_fee']; ?>">
+                    <option value="<?php echo $member['id']; ?>" data-category-id="<?php echo $member['category_id']; ?>">
                         <?php echo htmlspecialchars($member['first_name'] . ' ' . $member['last_name']); ?>
-                        <?php if ($member['category_fee'] > 0): ?>
-                            (<?php echo number_format($member['category_fee'], 2); ?>€)
-                        <?php endif; ?>
                     </option>
                 <?php endforeach; ?>
             </select>
@@ -149,23 +155,26 @@ function updateFeeAmount() {
     if (paymentType === 'fee' && memberSelect.value && paymentDateInput.value) {
         const year = new Date(paymentDateInput.value).getFullYear();
         
-        // Try to get fee from selected member's category first
+        // Get the category of the selected member
         const selectedOption = memberSelect.options[memberSelect.selectedIndex];
-        const memberFee = parseFloat(selectedOption.dataset.fee || 0);
+        const categoryId = selectedOption.dataset.categoryId;
         
-        if (memberFee > 0) {
-            amountInput.value = memberFee.toFixed(2);
+        // Try to get fee from category_fee_history for this year
+        if (categoryId && categoryFeesByYear[categoryId] && categoryFeesByYear[categoryId][year]) {
+            const categoryFee = categoryFeesByYear[categoryId][year];
+            amountInput.value = parseFloat(categoryFee).toFixed(2);
             conceptInput.value = 'Cuota Anual ' + year;
         } else {
-            // Fallback to annual fee table if member has no category fee
+            // Fallback to annual fee table if no category fee for this year
             const fee = annualFees.find(f => f.year == year);
             if (fee) {
                 amountInput.value = fee.amount;
                 conceptInput.value = 'Cuota Anual ' + year;
             } else {
-                // No fee defined
+                // No fee defined for this year
                 amountInput.value = '';
                 conceptInput.value = 'Cuota Anual ' + year;
+                console.warn('No fee defined for category ' + categoryId + ' in year ' + year);
             }
         }
     }
