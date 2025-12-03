@@ -114,7 +114,7 @@ if (isset($_SESSION['user_id'])) {
                 <ul class="nav-menu">
                                                             <!-- Menú de Contabilidad -->
                                                             <li class="nav-group">
-                                                                <a href="#" class="nav-link <?php echo ($page === 'accounting' || $page === 'budget') ? 'active' : ''; ?>">
+                                                                <a href="#" class="nav-link <?php echo ($page === 'accounting' || $page === 'budget' || $page === 'invoices') ? 'active' : ''; ?>">
                                                                     <i class="fas fa-calculator"></i>
                                                                     <span>Contabilidad</span>
                                                                     <i class="fas fa-chevron-down" style="margin-left:auto;font-size:0.8em;"></i>
@@ -144,11 +144,17 @@ if (isset($_SESSION['user_id'])) {
                                                                             <span>Presupuestos</span>
                                                                         </a>
                                                                     </li>
+                                                                    <li>
+                                                                        <a href="index.php?page=invoices" class="nav-link <?php echo ($page === 'invoices') ? 'active' : ''; ?>">
+                                                                            <i class="fas fa-file-invoice"></i>
+                                                                            <span>Facturas</span>
+                                                                        </a>
+                                                                    </li>
                                                                 </ul>
                                                             </li>
                                         <!-- Menú de Contabilidad -->
                                         <li class="nav-group">
-                                            <a href="#" class="nav-link <?php echo ($page === 'accounting' || $page === 'budget') ? 'active' : ''; ?>">
+                                            <a href="#" class="nav-link <?php echo ($page === 'accounting' || $page === 'budget' || $page === 'invoices') ? 'active' : ''; ?>">
                                                 <i class="fas fa-calculator"></i>
                                                 <span>Contabilidad</span>
                                                 <i class="fas fa-chevron-down" style="margin-left:auto;font-size:0.8em;"></i>
@@ -176,6 +182,12 @@ if (isset($_SESSION['user_id'])) {
                                                     <a href="index.php?page=budget" class="nav-link <?php echo ($page === 'budget') ? 'active' : ''; ?>">
                                                         <i class="fas fa-wallet"></i>
                                                         <span>Presupuestos</span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="index.php?page=invoices" class="nav-link <?php echo ($page === 'invoices') ? 'active' : ''; ?>">
+                                                        <i class="fas fa-file-invoice"></i>
+                                                        <span>Facturas</span>
                                                     </a>
                                                 </li>
                                             </ul>

@@ -502,6 +502,18 @@ switch ($page) {
         else if ($action === 'report') $controller->report();
         else $controller->index();
         break;
+    case 'invoices':
+        require_once __DIR__ . '/../src/Controllers/InvoiceController.php';
+        $controller = new InvoiceController($db);
+        if ($action === 'create') $controller->create();
+        else if ($action === 'store') $controller->store();
+        else if ($action === 'view') $controller->view();
+        else if ($action === 'issue') $controller->issue();
+        else if ($action === 'mark-paid') $controller->markPaid();
+        else if ($action === 'cancel') $controller->cancel();
+        else if ($action === 'pdf') $controller->generatePDF();
+        else $controller->index();
+        break;
     default:
         echo "404 Not Found";
         break;
