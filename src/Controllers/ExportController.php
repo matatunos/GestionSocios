@@ -2,7 +2,6 @@
 
 require_once __DIR__ . '/../Models/Member.php';
 require_once __DIR__ . '/../Models/Donation.php';
-require_once __DIR__ . '/../Models/Expense.php';
 require_once __DIR__ . '/../Models/Event.php';
 require_once __DIR__ . '/../Models/Payment.php';
 
@@ -197,56 +196,7 @@ class ExportController {
         exit;
     }
     
-    /**
-     * Exportar gastos a Excel (CSV)
-     */
-    public function exportExpensesExcel() {
-        $expenseModel = new Expense($this->db);
-        
-        $query = "SELECT e.*, c.name as category_name, c.color as category_color
-                  FROM expenses e
-                  LEFT JOIN expense_categories c ON e.category_id = c.id
-                  ORDER BY e.expense_date DESC";
-        
-        $stmt = $this->db->prepare($query);
-        $stmt->execute();
-        $expenses = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename="gastos_' . date('Y-m-d') . '.csv"');
-        
-        $output = fopen('php://output', 'w');
-        fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
-        
-        fputcsv($output, [
-            'ID',
-            'Fecha',
-            'Descripción',
-            'Categoría',
-            'Importe',
-            'Método de Pago',
-            'Proveedor',
-            'Número Factura',
-            'Estado'
-        ], ';');
-        
-        foreach ($expenses as $expense) {
-            fputcsv($output, [
-                $expense['id'],
-                date('d/m/Y', strtotime($expense['date'])),
-                $expense['description'],
-                $expense['category_name'] ?? 'Sin categoría',
-                number_format($expense['amount'], 2, ',', '.') . ' €',
-                $expense['payment_method'],
-                $expense['vendor'] ?? '',
-                $expense['invoice_number'] ?? '',
-                $expense['status']
-            ], ';');
-        }
-        
-        fclose($output);
-        exit;
-    }
+
     
     /**
      * Exportar eventos a Excel (CSV)

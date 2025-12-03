@@ -324,12 +324,6 @@ if (isset($_SESSION['user_id'])) {
                                     <span>Proveedores</span>
                                 </a>
                             </li>
-                            <li>
-                                <a href="index.php?page=expenses" class="nav-link <?php echo ($page === 'expenses') ? 'active' : ''; ?>">
-                                    <i class="fas fa-file-invoice-dollar"></i>
-                                    <span>Gastos</span>
-                                </a>
-                            </li>
                         </ul>
                     </li>
                     <!-- Menú de Socios -->

@@ -176,16 +176,6 @@ switch ($page) {
         else if ($action === 'dashboard') $controller->dashboard();
         else $controller->index();
         break;
-    case 'expenses':
-        require_once __DIR__ . '/../src/Controllers/ExpenseController.php';
-        $controller = new ExpenseController();
-        if ($action === 'create') $controller->create();
-        else if ($action === 'store') $controller->store();
-        else if ($action === 'edit') $controller->edit($_GET['id']);
-        else if ($action === 'update') $controller->update($_GET['id']);
-        else if ($action === 'delete') $controller->delete($_GET['id']);
-        else $controller->index();
-        break;
     case 'book':
         if ($action === 'dashboard') {
             require_once __DIR__ . '/../src/Controllers/BookDashboardController.php';
@@ -322,7 +312,6 @@ switch ($page) {
         if ($action === 'members_excel') $controller->exportMembersExcel();
         else if ($action === 'members_pdf') $controller->exportMembersPDF();
         else if ($action === 'donations_excel') $controller->exportDonationsExcel();
-        else if ($action === 'expenses_excel') $controller->exportExpensesExcel();
         else if ($action === 'events_excel') $controller->exportEventsExcel();
         else if ($action === 'payments_excel') $controller->exportPaymentsExcel();
         else header('Location: index.php?page=dashboard');
