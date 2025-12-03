@@ -13,12 +13,222 @@
 require_once __DIR__ . '/../Models/Grant.php';
 require_once __DIR__ . '/../Models/GrantApplication.php';
 require_once __DIR__ . '/../Models/AuditLog.php';
+require_once __DIR__ . '/../Helpers/GrantScraperHelper.php';
 
 class GrantController {
     private $db;
 
     public function __construct($db) {
         $this->db = $db;
+    }
+    
+    /**
+     * Gestión de búsquedas automáticas
+     */
+    public function searches() {
+        $action = $_GET['action'] ?? 'list';
+        
+        switch ($action) {
+            case 'list':
+                $this->listSearches();
+                break;
+            case 'create':
+                $this->createSearch();
+                break;
+            case 'edit':
+                $this->editSearch();
+                break;
+            case 'run':
+                $this->runSearch();
+                break;
+            case 'delete':
+                $this->deleteSearch();
+                break;
+            case 'toggle':
+                $this->toggleSearch();
+                break;
+            default:
+                $this->listSearches();
+        }
+    }
+    
+    /**
+     * Listar búsquedas programadas
+     */
+    private function listSearches() {
+        $query = "SELECT * FROM grant_searches ORDER BY created_at DESC";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        $searches = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        require_once __DIR__ . '/../Views/grants/searches/index.php';
+    }
+    
+    /**
+     * Crear nueva búsqueda programada
+     */
+    private function createSearch() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Procesar formulario
+            $data = [
+                'search_name' => $_POST['search_name'],
+                'keywords' => $_POST['keywords'],
+                'grant_type' => $_POST['grant_type'],
+                'province' => $_POST['province'] ?? null,
+                'municipality' => $_POST['municipality'] ?? null,
+                'min_amount' => !empty($_POST['min_amount']) ? (float)$_POST['min_amount'] : null,
+                'category' => $_POST['category'] ?? null,
+                'frequency' => $_POST['frequency'],
+                'active' => isset($_POST['active']) ? 1 : 0,
+                'notify_users' => !empty($_POST['notify_users']) ? json_encode($_POST['notify_users']) : null,
+                'created_by' => $_SESSION['user_id'] ?? 1
+            ];
+            
+            $query = "INSERT INTO grant_searches 
+                      (search_name, keywords, grant_type, province, municipality, min_amount, 
+                       category, frequency, active, notify_users, created_by, created_at)
+                      VALUES 
+                      (:search_name, :keywords, :grant_type, :province, :municipality, :min_amount,
+                       :category, :frequency, :active, :notify_users, :created_by, NOW())";
+            
+            $stmt = $this->db->prepare($query);
+            
+            if ($stmt->execute($data)) {
+                $_SESSION['message'] = "Búsqueda programada creada exitosamente";
+                header('Location: index.php?page=grants&subpage=searches');
+                exit;
+            } else {
+                $error = "Error al crear la búsqueda programada";
+            }
+        }
+        
+        require_once __DIR__ . '/../Views/grants/searches/create.php';
+    }
+    
+    /**
+     * Ejecutar búsqueda manualmente
+     */
+    private function runSearch() {
+        $searchId = $_GET['id'] ?? null;
+        
+        if (!$searchId) {
+            $_SESSION['error'] = "ID de búsqueda no especificado";
+            header('Location: index.php?page=grants&subpage=searches');
+            exit;
+        }
+        
+        // Obtener configuración de búsqueda
+        $query = "SELECT * FROM grant_searches WHERE id = :id";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([':id' => $searchId]);
+        $search = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if (!$search) {
+            $_SESSION['error'] = "Búsqueda no encontrada";
+            header('Location: index.php?page=grants&subpage=searches');
+            exit;
+        }
+        
+        try {
+            // Ejecutar scraping
+            $scraper = new GrantScraperHelper($this->db);
+            
+            $filters = [
+                'keywords' => $search['keywords'],
+                'grant_type' => $search['grant_type'],
+                'province' => $search['province'],
+                'municipality' => $search['municipality'],
+                'min_amount' => $search['min_amount'],
+                'category' => $search['category']
+            ];
+            
+            $results = $scraper->searchAll($search['keywords'], $filters);
+            
+            // Actualizar última ejecución
+            $updateQuery = "UPDATE grant_searches 
+                            SET last_run = NOW(), 
+                                last_results = :results 
+                            WHERE id = :id";
+            $updateStmt = $this->db->prepare($updateQuery);
+            $updateStmt->execute([
+                ':results' => $results['total_new'],
+                ':id' => $searchId
+            ]);
+            
+            $_SESSION['message'] = "Búsqueda ejecutada: {$results['total_found']} encontradas, {$results['total_new']} nuevas insertadas";
+            
+            // Auditar
+            AuditLog::create($this->db, [
+                'entity_type' => 'grant_search',
+                'entity_id' => $searchId,
+                'action' => 'run',
+                'user_id' => $_SESSION['user_id'] ?? 1,
+                'details' => json_encode($results)
+            ]);
+            
+        } catch (Exception $e) {
+            $_SESSION['error'] = "Error al ejecutar búsqueda: " . $e->getMessage();
+        }
+        
+        header('Location: index.php?page=grants&subpage=searches');
+        exit;
+    }
+    
+    /**
+     * Activar/Desactivar búsqueda
+     */
+    private function toggleSearch() {
+        $searchId = $_GET['id'] ?? null;
+        
+        if (!$searchId) {
+            $_SESSION['error'] = "ID de búsqueda no especificado";
+            header('Location: index.php?page=grants&subpage=searches');
+            exit;
+        }
+        
+        $query = "UPDATE grant_searches SET active = NOT active WHERE id = :id";
+        $stmt = $this->db->prepare($query);
+        
+        if ($stmt->execute([':id' => $searchId])) {
+            $_SESSION['message'] = "Estado de búsqueda actualizado";
+        } else {
+            $_SESSION['error'] = "Error al actualizar estado";
+        }
+        
+        header('Location: index.php?page=grants&subpage=searches');
+        exit;
+    }
+    
+    /**
+     * Eliminar búsqueda
+     */
+    private function deleteSearch() {
+        $searchId = $_GET['id'] ?? null;
+        
+        if (!$searchId) {
+            $_SESSION['error'] = "ID de búsqueda no especificado";
+            header('Location: index.php?page=grants&subpage=searches');
+            exit;
+        }
+        
+        $query = "DELETE FROM grant_searches WHERE id = :id";
+        $stmt = $this->db->prepare($query);
+        
+        if ($stmt->execute([':id' => $searchId])) {
+            $_SESSION['message'] = "Búsqueda eliminada exitosamente";
+            
+            AuditLog::create($this->db, [
+                'entity_type' => 'grant_search',
+                'entity_id' => $searchId,
+                'action' => 'delete',
+                'user_id' => $_SESSION['user_id'] ?? 1
+            ]);
+        } else {
+            $_SESSION['error'] = "Error al eliminar búsqueda";
+        }
+        
+        header('Location: index.php?page=grants&subpage=searches');
+        exit;
     }
 
     /**
