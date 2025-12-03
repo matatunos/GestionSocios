@@ -1,8 +1,8 @@
 <?php
 
 require_once __DIR__ . '/../Models/Payment.php';
-require_once __DIR__ . '/../Models/Expense.php';
 require_once __DIR__ . '/../Models/Member.php';
+require_once __DIR__ . '/../Models/AccountingEntry.php';
 
 class TreasuryController {
     private $db;
@@ -49,10 +49,14 @@ class TreasuryController {
         $stmt->execute();
         $stats['year_income'] = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
         
-        // Total expenses for the year
-        $query = "SELECT COALESCE(SUM(amount), 0) as total 
-                  FROM expenses 
-                  WHERE YEAR(expense_date) = :year";
+        // Total expenses for the year (from accounting - expense accounts 6xx)
+        $query = "SELECT COALESCE(SUM(ael.debit), 0) as total 
+                  FROM accounting_entry_lines ael
+                  INNER JOIN accounting_entries ae ON ael.entry_id = ae.id
+                  INNER JOIN accounting_accounts aa ON ael.account_id = aa.id
+                  WHERE YEAR(ae.entry_date) = :year 
+                  AND aa.code LIKE '6%'
+                  AND ae.status = 'posted'";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':year', $year);
         $stmt->execute();
@@ -71,10 +75,14 @@ class TreasuryController {
         $stmt->execute();
         $stats['month_income'] = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
         
-        // Expenses for current month
-        $query = "SELECT COALESCE(SUM(amount), 0) as total 
-                  FROM expenses 
-                  WHERE YEAR(expense_date) = :year AND MONTH(expense_date) = :month";
+        // Expenses for current month (from accounting)
+        $query = "SELECT COALESCE(SUM(ael.debit), 0) as total 
+                  FROM accounting_entry_lines ael
+                  INNER JOIN accounting_entries ae ON ael.entry_id = ae.id
+                  INNER JOIN accounting_accounts aa ON ael.account_id = aa.id
+                  WHERE YEAR(ae.entry_date) = :year AND MONTH(ae.entry_date) = :month
+                  AND aa.code LIKE '6%'
+                  AND ae.status = 'posted'";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':year', $year);
         $stmt->bindParam(':month', $month);
@@ -177,11 +185,15 @@ class TreasuryController {
             $evolution[$row['month']]['income'] = $row['total'];
         }
         
-        // Get expenses by month
-        $query = "SELECT MONTH(expense_date) as month, SUM(amount) as total
-                  FROM expenses
-                  WHERE YEAR(expense_date) = :year
-                  GROUP BY MONTH(expense_date)";
+        // Get expenses by month (from accounting)
+        $query = "SELECT MONTH(ae.entry_date) as month, SUM(ael.debit) as total
+                  FROM accounting_entry_lines ael
+                  INNER JOIN accounting_entries ae ON ael.entry_id = ae.id
+                  INNER JOIN accounting_accounts aa ON ael.account_id = aa.id
+                  WHERE YEAR(ae.entry_date) = :year
+                  AND aa.code LIKE '6%'
+                  AND ae.status = 'posted'
+                  GROUP BY MONTH(ae.entry_date)";
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':year', $year);
         $stmt->execute();
@@ -224,10 +236,18 @@ class TreasuryController {
     }
     
     private function getRecentExpenses($limit) {
-        $query = "SELECT e.*, ec.name as category_name
-                  FROM expenses e
-                  LEFT JOIN expense_categories ec ON e.category_id = ec.id
-                  ORDER BY e.expense_date DESC
+        // Get recent expenses from accounting entries (expense accounts 6xx)
+        $query = "SELECT ae.id, ae.entry_date as expense_date, ae.description,
+                         SUM(ael.debit) as amount, ae.reference,
+                         aa.name as category_name
+                  FROM accounting_entries ae
+                  INNER JOIN accounting_entry_lines ael ON ae.id = ael.entry_id
+                  INNER JOIN accounting_accounts aa ON ael.account_id = aa.id
+                  WHERE aa.code LIKE '6%'
+                  AND ae.status = 'posted'
+                  AND ael.debit > 0
+                  GROUP BY ae.id, ae.entry_date, ae.description, ae.reference, aa.name
+                  ORDER BY ae.entry_date DESC
                   LIMIT :limit";
         $stmt = $this->db->prepare($query);
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
