@@ -1555,3 +1555,250 @@ BEGIN
 END//
 
 DELIMITER ;
+
+-- ============================================================================
+-- MÓDULO DE GESTIÓN DE SUBVENCIONES
+-- ============================================================================
+-- Gestión completa de subvenciones: búsqueda, solicitud, seguimiento, justificación
+-- ============================================================================
+
+-- Tabla principal de subvenciones
+CREATE TABLE IF NOT EXISTS grants (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    
+    -- Información básica
+    title VARCHAR(500) NOT NULL,
+    description TEXT,
+    organization VARCHAR(300) NOT NULL COMMENT 'Organismo convocante',
+    
+    -- Tipo y ámbito
+    grant_type ENUM('estatal', 'autonomica', 'provincial', 'local', 'europea', 'privada') NOT NULL,
+    scope VARCHAR(200) COMMENT 'Ámbito geográfico específico',
+    category VARCHAR(100) COMMENT 'Categoría: cultura, deporte, social, etc.',
+    
+    -- Importes
+    min_amount DECIMAL(12,2) COMMENT 'Importe mínimo',
+    max_amount DECIMAL(12,2) COMMENT 'Importe máximo',
+    total_budget DECIMAL(15,2) COMMENT 'Presupuesto total de la convocatoria',
+    
+    -- Plazos
+    announcement_date DATE COMMENT 'Fecha de publicación',
+    open_date DATE COMMENT 'Fecha de apertura de solicitudes',
+    deadline DATE NOT NULL COMMENT 'Fecha límite de solicitud',
+    resolution_date DATE COMMENT 'Fecha prevista de resolución',
+    
+    -- URLs y referencias
+    url VARCHAR(500) COMMENT 'URL de la convocatoria',
+    official_document VARCHAR(500) COMMENT 'URL del documento oficial (BOE, DOGC, etc.)',
+    reference_code VARCHAR(100) COMMENT 'Código de referencia oficial',
+    
+    -- Requisitos
+    requirements TEXT COMMENT 'Requisitos principales',
+    eligibility TEXT COMMENT 'Criterios de elegibilidad',
+    excluded_activities TEXT COMMENT 'Actividades excluidas',
+    
+    -- Documentación requerida
+    required_documents TEXT COMMENT 'Lista de documentos necesarios',
+    
+    -- Estado de la convocatoria
+    status ENUM('prospecto', 'abierta', 'cerrada', 'resuelta', 'archivada') DEFAULT 'prospecto',
+    
+    -- Nuestro estado interno
+    our_status ENUM('identificada', 'en_revision', 'solicitada', 'concedida', 'denegada', 'descartada') DEFAULT 'identificada',
+    
+    -- Metadatos de búsqueda automática
+    auto_discovered BOOLEAN DEFAULT FALSE COMMENT 'Encontrada automáticamente',
+    search_keywords TEXT COMMENT 'Keywords usadas para encontrarla',
+    relevance_score INT DEFAULT 0 COMMENT 'Puntuación de relevancia (0-100)',
+    
+    -- Localización para búsqueda personalizada
+    province VARCHAR(100),
+    municipality VARCHAR(100),
+    
+    -- Alertas
+    alert_sent BOOLEAN DEFAULT FALSE,
+    alert_days_before INT DEFAULT 7 COMMENT 'Días de antelación para alertas',
+    
+    -- Auditoría
+    created_by INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_deadline (deadline),
+    INDEX idx_type (grant_type),
+    INDEX idx_status (status, our_status),
+    INDEX idx_location (province, municipality),
+    INDEX idx_auto_discovered (auto_discovered, relevance_score),
+    FULLTEXT idx_search (title, description, organization)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de solicitudes de subvenciones
+CREATE TABLE IF NOT EXISTS grant_applications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    
+    grant_id INT NOT NULL,
+    
+    -- Datos de la solicitud
+    application_number VARCHAR(100) COMMENT 'Número de registro de solicitud',
+    application_date DATE NOT NULL,
+    requested_amount DECIMAL(12,2) NOT NULL,
+    
+    -- Estado de la solicitud
+    status ENUM('borrador', 'presentada', 'subsanacion', 'en_evaluacion', 'concedida', 'denegada', 'desistida') DEFAULT 'borrador',
+    
+    -- Resolución
+    resolution_date DATE,
+    granted_amount DECIMAL(12,2) COMMENT 'Importe concedido',
+    resolution_text TEXT COMMENT 'Texto de la resolución',
+    
+    -- Justificación
+    justification_deadline DATE COMMENT 'Plazo de justificación',
+    justification_status ENUM('pendiente', 'en_curso', 'presentada', 'aceptada', 'rechazada', 'subsanacion') DEFAULT 'pendiente',
+    justification_date DATE,
+    
+    -- Pagos
+    payment_type ENUM('anticipo', 'unico', 'fraccionado') DEFAULT 'unico',
+    advance_payment DECIMAL(12,2) DEFAULT 0 COMMENT 'Anticipo recibido',
+    final_payment DECIMAL(12,2) DEFAULT 0 COMMENT 'Pago final',
+    
+    -- Documentos adjuntos
+    documents_folder VARCHAR(255) COMMENT 'Carpeta en sistema de documentos',
+    
+    -- Notas internas
+    notes TEXT,
+    internal_notes TEXT COMMENT 'Notas privadas del equipo',
+    
+    -- Responsable
+    responsible_user_id INT COMMENT 'Usuario responsable del seguimiento',
+    
+    -- Auditoría
+    created_by INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (grant_id) REFERENCES grants(id) ON DELETE CASCADE,
+    FOREIGN KEY (responsible_user_id) REFERENCES users(id) ON DELETE SET NULL,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_status (status),
+    INDEX idx_justification (justification_status, justification_deadline),
+    INDEX idx_grant (grant_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de documentos requeridos y estado
+CREATE TABLE IF NOT EXISTS grant_documents (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    
+    application_id INT NOT NULL,
+    
+    -- Documento
+    document_name VARCHAR(300) NOT NULL,
+    document_type ENUM('solicitud', 'estatutos', 'memoria', 'presupuesto', 'certificados', 'justificacion', 'otro') NOT NULL,
+    required BOOLEAN DEFAULT TRUE,
+    
+    -- Estado
+    status ENUM('pendiente', 'en_preparacion', 'completado', 'validado') DEFAULT 'pendiente',
+    
+    -- Archivo asociado
+    document_id INT COMMENT 'ID en tabla documents',
+    file_path VARCHAR(500),
+    
+    -- Fechas
+    due_date DATE,
+    uploaded_at DATETIME,
+    
+    -- Notas
+    notes TEXT,
+    
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (application_id) REFERENCES grant_applications(id) ON DELETE CASCADE,
+    FOREIGN KEY (document_id) REFERENCES documents(id) ON DELETE SET NULL,
+    INDEX idx_application (application_id),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de hitos y seguimiento
+CREATE TABLE IF NOT EXISTS grant_milestones (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    
+    application_id INT NOT NULL,
+    
+    -- Hito
+    milestone_type ENUM('solicitud', 'subsanacion', 'evaluacion', 'resolucion', 'pago', 'justificacion', 'otro') NOT NULL,
+    title VARCHAR(300) NOT NULL,
+    description TEXT,
+    
+    -- Fechas
+    due_date DATE,
+    completed_at DATETIME,
+    
+    -- Estado
+    status ENUM('pendiente', 'en_curso', 'completado', 'vencido') DEFAULT 'pendiente',
+    
+    -- Alertas
+    alert_enabled BOOLEAN DEFAULT TRUE,
+    alert_days_before INT DEFAULT 7,
+    alert_sent BOOLEAN DEFAULT FALSE,
+    
+    -- Responsable
+    responsible_user_id INT,
+    
+    -- Notas
+    notes TEXT,
+    
+    created_by INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (application_id) REFERENCES grant_applications(id) ON DELETE CASCADE,
+    FOREIGN KEY (responsible_user_id) REFERENCES users(id) ON DELETE SET NULL,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_application (application_id),
+    INDEX idx_status (status, due_date),
+    INDEX idx_alerts (alert_enabled, alert_sent, due_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de búsquedas automáticas
+CREATE TABLE IF NOT EXISTS grant_searches (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    
+    -- Parámetros de búsqueda
+    search_name VARCHAR(200) NOT NULL,
+    keywords TEXT NOT NULL,
+    grant_type VARCHAR(50),
+    province VARCHAR(100),
+    municipality VARCHAR(100),
+    min_amount DECIMAL(12,2),
+    category VARCHAR(100),
+    
+    -- Configuración
+    active BOOLEAN DEFAULT TRUE,
+    frequency ENUM('daily', 'weekly', 'monthly') DEFAULT 'weekly',
+    
+    -- Última ejecución
+    last_run DATETIME,
+    last_results INT DEFAULT 0,
+    
+    -- Notificaciones
+    notify_users TEXT COMMENT 'IDs de usuarios a notificar (JSON)',
+    
+    created_by INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_active (active, last_run)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Configuración de localización para búsquedas
+INSERT INTO organization_settings (category, setting_key, setting_value, setting_type, description) VALUES
+('location', 'province', '', 'text', 'Provincia de la organización'),
+('location', 'municipality', '', 'text', 'Municipio de la organización'),
+('location', 'autonomous_community', '', 'text', 'Comunidad Autónoma'),
+('grants', 'search_enabled', '1', 'boolean', 'Habilitar búsqueda automática de subvenciones'),
+('grants', 'alert_days_before', '7', 'number', 'Días de antelación para alertas de vencimiento'),
+('grants', 'auto_notify', '1', 'boolean', 'Notificar automáticamente nuevas subvenciones'),
+('grants', 'min_relevance_score', '50', 'number', 'Puntuación mínima de relevancia para mostrar (0-100)')
+ON DUPLICATE KEY UPDATE setting_key=setting_key;
