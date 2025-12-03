@@ -34,6 +34,12 @@ class DocumentController {
                 $documents = $this->documentModel->read($member_id, $category_id);
             }
         
+        // DEBUG: Log para verificar documentos
+        error_log("DocumentController::index() - member_id: $member_id, documents count: " . count($documents));
+        if (count($documents) > 0) {
+            error_log("First document: " . json_encode($documents[0]));
+        }
+        
         // Obtener estadísticas
         $stats = $this->documentModel->getStats();
         
@@ -56,6 +62,11 @@ class DocumentController {
             // Obtener categorías de documentos
             $categoryModel = new DocumentCategory($this->db);
             $categories = $categoryModel->readAll();
+            
+            // Obtener tags disponibles
+            $stmt = $this->db->prepare("SELECT * FROM document_tags ORDER BY name ASC");
+            $stmt->execute();
+            $tags = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         require_once __DIR__ . '/../Views/documents/create.php';
     }
@@ -287,6 +298,19 @@ class DocumentController {
         // Obtener categorías de documentos
         $categoryModel = new DocumentCategory($this->db);
         $categories = $categoryModel->readAll();
+        
+        // Obtener tags disponibles
+        $stmt = $this->db->prepare("SELECT * FROM document_tags ORDER BY name ASC");
+        $stmt->execute();
+        $tags = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Obtener tags actuales del documento
+        $stmt = $this->db->prepare("SELECT tag_id FROM document_tag_rel WHERE document_id = ?");
+        $stmt->execute([$id]);
+        $currentTags = array_map('intval', $stmt->fetchAll(PDO::FETCH_COLUMN));
+        
+        error_log("DocumentController::edit() - Document ID: $id, Current tags: " . json_encode($currentTags));
+        
         require_once __DIR__ . '/../Views/documents/edit.php';
     }
     
@@ -297,6 +321,14 @@ class DocumentController {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             http_response_code(405);
             return;
+        }
+        
+        // Validar CSRF token
+        if (!CsrfHelper::validateRequest()) {
+            error_log("CSRF validation failed on update. Session token: " . ($_SESSION['csrf_token'] ?? 'not set') . ", Posted token: " . ($_POST['csrf_token'] ?? 'not posted'));
+            $_SESSION['error'] = 'Token de seguridad inválido. Por favor, recarga la página e inténtalo de nuevo.';
+            header('Location: index.php?page=documents');
+            exit;
         }
         
         $id = $_POST['id'] ?? null;
@@ -322,6 +354,12 @@ class DocumentController {
         $this->documentModel->category_ids = isset($_POST['category_ids']) ? array_map('intval', $_POST['category_ids']) : [];
         
         if ($this->documentModel->update()) {
+            // Actualizar tags
+            $tag_ids = isset($_POST['tag_ids']) ? array_map('intval', $_POST['tag_ids']) : [];
+            error_log("DocumentController::update() - Document ID: $id, Tag IDs received: " . json_encode($tag_ids));
+            error_log("DocumentController::update() - POST data: " . json_encode($_POST));
+            $this->documentModel->setTags($id, $tag_ids);
+            
             // Auditoría de modificación de documento
             require_once __DIR__ . '/../Models/AuditLog.php';
             $audit = new AuditLog($this->db);
@@ -638,8 +676,13 @@ class DocumentController {
         // Documentos recientes
         $recentDocuments = $this->getRecentDocuments(10);
         
-        // Actividad reciente (usando sistema de auditoría)
-        $recentActivity = $this->getRecentActivity(20);
+        // Actividad reciente (usando sistema de auditoría) con paginación
+        $activityPage = isset($_GET['activity_page']) ? (int)$_GET['activity_page'] : 1;
+        $activityPerPage = 20;
+        $activityResult = $this->getRecentActivity($activityPerPage, $activityPage);
+        $recentActivity = $activityResult['data'];
+        $activityTotalPages = $activityResult['total_pages'];
+        $activityCurrentPage = $activityPage;
         
         // Estadísticas por tipo de archivo
         $fileTypeStats = $this->getFileTypeStats();
@@ -676,7 +719,9 @@ class DocumentController {
                     AVG(downloads) as avg_downloads,
                     COUNT(DISTINCT uploaded_by) as total_contributors,
                     COUNT(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) THEN 1 END) as new_this_week,
-                    COUNT(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as new_this_month
+                    COUNT(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as new_this_month,
+                    COUNT(CASE WHEN public_enabled = TRUE AND public_token IS NOT NULL THEN 1 END) as public_links_active,
+                    SUM(public_downloads) as total_public_downloads
                   FROM documents 
                   WHERE deleted_at IS NULL";
         
@@ -727,20 +772,77 @@ class DocumentController {
     /**
      * Obtener actividad reciente del sistema de auditoría
      */
-    private function getRecentActivity($limit = 20) {
-        $query = "SELECT dal.*, d.title as document_title, d.file_name,
-                         m.first_name, m.last_name
-                  FROM document_activity_log dal
-                  LEFT JOIN documents d ON dal.document_id = d.id
-                  LEFT JOIN members m ON dal.user_id = m.id
-                  ORDER BY dal.created_at DESC
-                  LIMIT :limit";
+    private function getRecentActivity($limit = 20, $page = 1) {
+        // Calcular offset
+        $offset = ($page - 1) * $limit;
+        
+        // Obtener total de registros para paginación
+        $countQuery = "SELECT COUNT(*) as total
+                       FROM (
+                           SELECT dal.id, dal.created_at
+                           FROM document_activity_log dal
+                           LEFT JOIN documents d ON dal.document_id = d.id
+                           LEFT JOIN members m ON dal.user_id = m.id
+                           UNION ALL
+                           SELECT CONCAT('public_', dpal.id) as id, dpal.access_date as created_at
+                           FROM document_public_access_log dpal
+                           WHERE dpal.downloaded = TRUE
+                       ) combined";
+        
+        $countStmt = $this->db->query($countQuery);
+        $totalRecords = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
+        $totalPages = ceil($totalRecords / $limit);
+        
+        // Consulta principal con UNION para incluir descargas públicas
+        $query = "SELECT * FROM (
+                      SELECT 
+                          dal.id,
+                          dal.document_id,
+                          dal.action,
+                          dal.user_id,
+                          dal.created_at,
+                          d.title as document_title,
+                          d.file_name,
+                          m.first_name,
+                          m.last_name,
+                          dal.ip_address,
+                          'internal' as source
+                      FROM document_activity_log dal
+                      LEFT JOIN documents d ON dal.document_id = d.id
+                      LEFT JOIN members m ON dal.user_id = m.id
+                      
+                      UNION ALL
+                      
+                      SELECT 
+                          CONCAT('public_', dpal.id) as id,
+                          dpal.document_id,
+                          'public_download' as action,
+                          NULL as user_id,
+                          dpal.access_date as created_at,
+                          d.title as document_title,
+                          d.file_name,
+                          NULL as first_name,
+                          NULL as last_name,
+                          dpal.ip_address,
+                          'public' as source
+                      FROM document_public_access_log dpal
+                      LEFT JOIN documents d ON dpal.document_id = d.id
+                      WHERE dpal.downloaded = TRUE
+                  ) combined
+                  ORDER BY created_at DESC
+                  LIMIT :limit OFFSET :offset";
         
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
         
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return [
+            'data' => $stmt->fetchAll(PDO::FETCH_ASSOC),
+            'total_pages' => $totalPages,
+            'current_page' => $page,
+            'total_records' => $totalRecords
+        ];
     }
     
     /**
@@ -964,10 +1066,30 @@ class DocumentController {
         $id = $_POST['id'] ?? null;
         $expires_days = $_POST['expires_days'] ?? null;
         $download_limit = $_POST['download_limit'] ?? null;
+        $regenerate = $_POST['regenerate'] ?? false;
         
         if (!$id) {
             echo json_encode(['success' => false, 'error' => 'ID no proporcionado']);
             exit;
+        }
+        
+        // Verificar si ya existe un enlace público activo
+        if (!$regenerate) {
+            $existing = $this->documentModel->readOne($id);
+            if ($existing && $existing['public_enabled'] && $existing['public_token']) {
+                // Generar URL del enlace existente
+                $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+                $host = $_SERVER['HTTP_HOST'];
+                $public_url = "{$protocol}://{$host}/public/index.php?page=public_document&token={$existing['public_token']}";
+                
+                echo json_encode([
+                    'success' => false,
+                    'already_exists' => true,
+                    'existing_url' => $public_url,
+                    'message' => 'Ya existe un enlace público activo para este documento.'
+                ]);
+                exit;
+            }
         }
         
         // Calcular fecha de expiración si se especificó
@@ -1059,5 +1181,191 @@ class DocumentController {
         $accessLog = $this->documentModel->getPublicAccessLog($id, 100);
         
         require_once __DIR__ . '/../Views/documents/public_stats.php';
+    }
+    
+    /**
+     * Vista de subida masiva
+     */
+    public function bulkUpload() {
+        if (!Auth::hasPermission('documents_create')) {
+            $_SESSION['error'] = 'No tienes permisos para subir documentos';
+            header('Location: index.php?page=documents');
+            exit;
+        }
+        
+        // Obtener categorías y tags
+        $categoryModel = new DocumentCategory($this->db);
+        $categories = $categoryModel->readAll();
+        
+        $stmt = $this->db->prepare("SELECT * FROM document_tags ORDER BY name ASC");
+        $stmt->execute();
+        $tags = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        require_once __DIR__ . '/../Views/documents/bulk_upload.php';
+    }
+    
+    /**
+     * Procesar subida masiva
+     */
+    public function bulkStore() {
+        header('Content-Type: application/json');
+        
+        if (!Auth::hasPermission('documents_create')) {
+            echo json_encode(['success' => false, 'error' => 'No tienes permisos']);
+            exit;
+        }
+        
+        if (!CsrfHelper::validateRequest()) {
+            echo json_encode(['success' => false, 'error' => 'Token de seguridad inválido']);
+            exit;
+        }
+        
+        if (!isset($_FILES['files']) || empty($_FILES['files']['name'][0])) {
+            echo json_encode(['success' => false, 'error' => 'No se recibieron archivos']);
+            exit;
+        }
+        
+        // Metadatos comunes
+        $categoryIds = isset($_POST['category_ids']) ? array_map('intval', $_POST['category_ids']) : [];
+        $tagIds = isset($_POST['tag_ids']) ? array_map('intval', $_POST['tag_ids']) : [];
+        $folderId = !empty($_POST['folder_id']) ? (int)$_POST['folder_id'] : null;
+        $status = $_POST['status'] ?? 'published';
+        $isPublic = isset($_POST['is_public']) ? 1 : 0;
+        
+        $results = [];
+        $uploadDir = __DIR__ . '/../../public/uploads/documents/';
+        
+        // Asegurar que el directorio existe
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0775, true);
+        }
+        
+        // Procesar cada archivo
+        $fileCount = count($_FILES['files']['name']);
+        
+        for ($i = 0; $i < $fileCount; $i++) {
+            $result = [
+                'filename' => $_FILES['files']['name'][$i],
+                'success' => false,
+                'message' => ''
+            ];
+            
+            try {
+                // Validar el archivo
+                if ($_FILES['files']['error'][$i] !== UPLOAD_ERR_OK) {
+                    throw new Exception('Error en la subida del archivo');
+                }
+                
+                $fileData = [
+                    'name' => $_FILES['files']['name'][$i],
+                    'type' => $_FILES['files']['type'][$i],
+                    'tmp_name' => $_FILES['files']['tmp_name'][$i],
+                    'size' => $_FILES['files']['size'][$i]
+                ];
+                
+                // Validar tamaño
+                $maxSize = 10 * 1024 * 1024; // 10MB
+                if ($fileData['size'] > $maxSize) {
+                    throw new Exception('El archivo excede el tamaño máximo de 10MB');
+                }
+                
+                // Validar extensión
+                $extension = strtolower(pathinfo($fileData['name'], PATHINFO_EXTENSION));
+                $allowedExtensions = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'jpg', 'jpeg', 'png', 'gif', 'zip', 'rar', '7z'];
+                if (!in_array($extension, $allowedExtensions)) {
+                    throw new Exception('Tipo de archivo no permitido');
+                }
+                
+                // Preparar datos del archivo
+                $originalName = $fileData['name'];
+                $extension = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+                $safeName = uniqid() . '_' . bin2hex(random_bytes(8)) . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', $originalName);
+                $targetPath = $uploadDir . $safeName;
+                
+                // Mover archivo
+                if (!FileUploadHelper::moveUploadedFile($fileData['tmp_name'], $targetPath)) {
+                    throw new Exception('Error al mover el archivo al servidor');
+                }
+                
+                // Extraer texto de PDFs
+                $extractedText = '';
+                if ($extension === 'pdf') {
+                    $extractedText = FileUploadHelper::extractTextFromPdf($targetPath);
+                }
+                
+                // Generar thumbnail para imágenes
+                if (FileTypeHelper::isImage($extension)) {
+                    $thumbnailDir = $uploadDir . 'thumbnails/';
+                    if (!is_dir($thumbnailDir)) {
+                        mkdir($thumbnailDir, 0775, true);
+                    }
+                    $thumbnailPath = $thumbnailDir . 'thumb_' . $safeName;
+                    FileUploadHelper::generateThumbnail($targetPath, $thumbnailPath);
+                }
+                
+                // Usar el nombre del archivo como título (sin extensión)
+                $title = pathinfo($originalName, PATHINFO_FILENAME);
+                
+                // Guardar en base de datos
+                $this->documentModel->title = $title;
+                $this->documentModel->description = '';
+                $this->documentModel->file_name = $originalName;
+                $this->documentModel->file_path = 'uploads/documents/' . $safeName;
+                $this->documentModel->file_size = $fileData['size'];
+                $this->documentModel->file_type = $fileData['type'];
+                $this->documentModel->file_extension = $extension;
+                $this->documentModel->mime_type_verified = FileUploadHelper::getMimeType($targetPath);
+                $this->documentModel->uploaded_by = $_SESSION['user_id'];
+                $this->documentModel->is_public = $isPublic;
+                $this->documentModel->status = $status;
+                $this->documentModel->folder_id = $folderId;
+                $this->documentModel->extracted_text = $extractedText;
+                
+                if ($this->documentModel->create()) {
+                    $documentId = $this->db->lastInsertId();
+                    
+                    // Asignar categorías
+                    if (!empty($categoryIds)) {
+                        $this->documentModel->setCategories($documentId, $categoryIds);
+                    }
+                    
+                    // Asignar tags
+                    if (!empty($tagIds)) {
+                        $this->documentModel->setTags($documentId, $tagIds);
+                    }
+                    
+                    // Log de auditoría
+                    $this->logActivity($documentId, 'uploaded', $_SESSION['user_id'], json_encode([
+                        'filename' => $originalName,
+                        'size' => $fileData['size'],
+                        'type' => $extension
+                    ]));
+                    
+                    $result['success'] = true;
+                    $result['message'] = 'Subido correctamente';
+                    $result['document_id'] = $documentId;
+                } else {
+                    // Si falla la BD, eliminar el archivo
+                    if (file_exists($targetPath)) {
+                        unlink($targetPath);
+                    }
+                    throw new Exception('Error al guardar en la base de datos');
+                }
+                
+            } catch (Exception $e) {
+                $result['message'] = $e->getMessage();
+            }
+            
+            $results[] = $result;
+        }
+        
+        echo json_encode([
+            'success' => true,
+            'results' => $results,
+            'total' => $fileCount,
+            'successful' => count(array_filter($results, fn($r) => $r['success'])),
+            'failed' => count(array_filter($results, fn($r) => !$r['success']))
+        ]);
+        exit;
     }
 }

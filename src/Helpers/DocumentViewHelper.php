@@ -12,6 +12,7 @@ class DocumentViewHelper {
         $classes = [
             'uploaded' => 'uploaded',
             'downloaded' => 'downloaded',
+            'public_download' => 'public-download',
             'deleted' => 'deleted',
             'edited' => 'edited',
             'updated' => 'edited',
@@ -29,6 +30,7 @@ class DocumentViewHelper {
         $icons = [
             'uploaded' => 'fa-upload',
             'downloaded' => 'fa-download',
+            'public_download' => 'fa-globe',
             'deleted' => 'fa-trash',
             'edited' => 'fa-edit',
             'updated' => 'fa-edit',
@@ -48,6 +50,7 @@ class DocumentViewHelper {
         $texts = [
             'uploaded' => 'subió',
             'downloaded' => 'descargó',
+            'public_download' => 'descargó públicamente',
             'deleted' => 'eliminó',
             'edited' => 'editó',
             'updated' => 'actualizó',

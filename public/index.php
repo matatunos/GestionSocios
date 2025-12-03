@@ -334,6 +334,8 @@ switch ($page) {
         $controller = new DocumentController($db);
         if ($action === 'create') $controller->create();
         else if ($action === 'store') $controller->store();
+        else if ($action === 'bulk_upload') $controller->bulkUpload();
+        else if ($action === 'bulk_store') $controller->bulkStore();
         else if ($action === 'edit') $controller->edit();
         else if ($action === 'update') $controller->update();
         else if ($action === 'delete') $controller->delete();

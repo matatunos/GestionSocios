@@ -93,18 +93,37 @@
         
         <div class="preview-content">
             <?php
-            require_once __DIR__ . '/../../../Helpers/FileTypeHelper.php';
             $extension = $document['file_extension'] ?? pathinfo($document['file_name'], PATHINFO_EXTENSION);
             $extension = strtolower($extension);
+            $mime_type = $document['mime_type_verified'] ?? $document['file_type'];
             
-            // Verificar si se puede previsualizar
-            if (FileTypeHelper::canPreview($extension)):
-                $previewType = FileTypeHelper::getPreviewType($extension);
-                
+            // Determinar tipo de previsualización
+            $canPreview = false;
+            $previewType = 'none';
+            
+            // PDFs
+            if ($extension === 'pdf' || $mime_type === 'application/pdf') {
+                $canPreview = true;
+                $previewType = 'pdf';
+            }
+            // Imágenes
+            elseif (in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp']) || 
+                    strpos($mime_type, 'image/') === 0) {
+                $canPreview = true;
+                $previewType = 'image';
+            }
+            // Texto
+            elseif (in_array($extension, ['txt', 'md', 'csv', 'log', 'json', 'xml', 'html', 'css', 'js', 'php', 'sql']) ||
+                    strpos($mime_type, 'text/') === 0) {
+                $canPreview = true;
+                $previewType = 'text';
+            }
+            
+            if ($canPreview):
                 if ($previewType === 'pdf'):
-                    // Vista previa de PDF
+                    // Vista previa de PDF con iframe
                     ?>
-                    <iframe src="<?php echo htmlspecialchars($document['file_path']); ?>#toolbar=1"></iframe>
+                    <iframe src="<?php echo htmlspecialchars($document['file_path']); ?>#view=FitH&toolbar=1&navpanes=0"></iframe>
                     <?php
                 elseif ($previewType === 'image'):
                     // Vista previa de imagen
@@ -134,9 +153,34 @@
                 endif;
             else:
                 // No se puede previsualizar
+                $icon = 'fa-file';
+                $color = '#94a3b8';
+                
+                // Iconos según extensión
+                $iconMap = [
+                    'doc' => ['fa-file-word', '#2b579a'],
+                    'docx' => ['fa-file-word', '#2b579a'],
+                    'xls' => ['fa-file-excel', '#217346'],
+                    'xlsx' => ['fa-file-excel', '#217346'],
+                    'ppt' => ['fa-file-powerpoint', '#d24726'],
+                    'pptx' => ['fa-file-powerpoint', '#d24726'],
+                    'zip' => ['fa-file-zipper', '#f59e0b'],
+                    'rar' => ['fa-file-zipper', '#f59e0b'],
+                    '7z' => ['fa-file-zipper', '#f59e0b'],
+                    'mp3' => ['fa-file-audio', '#8b5cf6'],
+                    'wav' => ['fa-file-audio', '#8b5cf6'],
+                    'mp4' => ['fa-file-video', '#ec4899'],
+                    'avi' => ['fa-file-video', '#ec4899'],
+                    'mov' => ['fa-file-video', '#ec4899']
+                ];
+                
+                if (isset($iconMap[$extension])) {
+                    $icon = $iconMap[$extension][0];
+                    $color = $iconMap[$extension][1];
+                }
                 ?>
                 <div class="no-preview">
-                    <?php echo FileTypeHelper::renderIcon($extension, 64); ?>
+                    <i class="fas <?php echo $icon; ?>" style="color: <?php echo $color; ?>;"></i>
                     <h3>Vista previa no disponible</h3>
                     <p>Este tipo de archivo (<?php echo strtoupper($extension); ?>) no admite vista previa</p>
                     <p>Descarga el archivo para abrirlo con la aplicación adecuada</p>

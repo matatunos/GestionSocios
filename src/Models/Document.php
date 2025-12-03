@@ -111,7 +111,7 @@ class Document {
                              ELSE FALSE
                          END as can_access
                   FROM " . $this->table . " d
-                  JOIN members m ON d.uploaded_by = m.id
+                  LEFT JOIN members m ON d.uploaded_by = m.id
                   LEFT JOIN document_categories dc ON d.category_id = dc.id
                   WHERE d.deleted_at IS NULL";
         if (func_num_args() > 1 && func_get_arg(1)) {
@@ -136,6 +136,19 @@ class Document {
             });
         }
         
+        // Añadir tags a cada documento
+        foreach ($documents as &$doc) {
+            $tagStmt = $this->conn->prepare("
+                SELECT dt.id, dt.name, dt.color, dt.description 
+                FROM document_tag_rel dtr 
+                JOIN document_tags dt ON dtr.tag_id = dt.id 
+                WHERE dtr.document_id = ?
+                ORDER BY dt.name
+            ");
+            $tagStmt->execute([$doc['id']]);
+            $doc['tags'] = $tagStmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+        
         return $documents;
     }
     
@@ -146,7 +159,7 @@ class Document {
         $query = "SELECT d.*, 
                          m.first_name, m.last_name
                   FROM " . $this->table . " d
-                  JOIN members m ON d.uploaded_by = m.id
+                  LEFT JOIN members m ON d.uploaded_by = m.id
                   WHERE d.id = :id AND d.deleted_at IS NULL
                   LIMIT 1";
         
@@ -252,7 +265,7 @@ class Document {
         $query = "SELECT d.*, 
                          m.first_name, m.last_name
                   FROM " . $this->table . " d
-                  JOIN members m ON d.uploaded_by = m.id
+                  LEFT JOIN members m ON d.uploaded_by = m.id
                   WHERE d.deleted_at IS NULL 
                   AND (d.title LIKE :keyword 
                        OR d.description LIKE :keyword 
@@ -428,7 +441,7 @@ class Document {
                          m2.first_name as deleted_by_first_name,
                          m2.last_name as deleted_by_last_name
                   FROM " . $this->table . " d
-                  JOIN members m ON d.uploaded_by = m.id
+                  LEFT JOIN members m ON d.uploaded_by = m.id
                   LEFT JOIN members m2 ON d.deleted_by = m2.id
                   WHERE d.deleted_at IS NOT NULL";
         
@@ -532,7 +545,7 @@ class Document {
         
         $query = "SELECT d.*, m.first_name, m.last_name 
                   FROM " . $this->table . " d
-                  JOIN members m ON d.uploaded_by = m.id
+                  LEFT JOIN members m ON d.uploaded_by = m.id
                   WHERE (d.id = :parent_id OR d.parent_document_id = :parent_id)
                   ORDER BY d.version DESC";
         
@@ -619,7 +632,7 @@ class Document {
         $query = "SELECT d.*, m.first_name, m.last_name 
                   FROM document_favorites df
                   JOIN " . $this->table . " d ON df.document_id = d.id
-                  JOIN members m ON d.uploaded_by = m.id
+                  LEFT JOIN members m ON d.uploaded_by = m.id
                   WHERE df.user_id = :user_id AND d.deleted_at IS NULL
                   ORDER BY df.created_at DESC";
         
@@ -657,7 +670,7 @@ class Document {
         $query = "SELECT d.*, m.first_name, m.last_name,
                          is_public_token_valid(:token) as is_valid
                   FROM " . $this->table . " d
-                  JOIN members m ON d.uploaded_by = m.id
+                  LEFT JOIN members m ON d.uploaded_by = m.id
                   WHERE d.public_token = :token";
         
         $stmt = $this->conn->prepare($query);

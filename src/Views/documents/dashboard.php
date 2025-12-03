@@ -78,6 +78,19 @@ ob_start();
             </div>
         </div>
     </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+            <i class="fas fa-globe"></i>
+        </div>
+        <div class="stat-content">
+            <div class="stat-value"><?php echo number_format($stats['public_links_active']); ?></div>
+            <div class="stat-label">Enlaces Públicos</div>
+            <div class="stat-trend">
+                <i class="fas fa-download"></i> <?php echo number_format($stats['total_public_downloads']); ?> descargas
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="dashboard-grid">
@@ -147,11 +160,21 @@ ob_start();
                         </div>
                         <div class="activity-content">
                             <div class="activity-text">
-                                <strong><?php echo htmlspecialchars($activity['first_name'] . ' ' . $activity['last_name']); ?></strong>
-                                <?php echo DocumentViewHelper::getActivityText($activity['action']); ?>
+                                <?php if ($activity['source'] === 'public'): ?>
+                                    <strong>Usuario anónimo (<?php echo htmlspecialchars(substr($activity['ip_address'], 0, 15)); ?>)</strong>
+                                    <?php echo DocumentViewHelper::getActivityText($activity['action']); ?>
+                                <?php else: ?>
+                                    <strong><?php echo htmlspecialchars($activity['first_name'] . ' ' . $activity['last_name']); ?></strong>
+                                    <?php echo DocumentViewHelper::getActivityText($activity['action']); ?>
+                                <?php endif; ?>
                                 <a href="index.php?page=documents&action=preview&id=<?php echo $activity['document_id']; ?>">
                                     <?php echo htmlspecialchars($activity['document_title'] ?? $activity['file_name'] ?? 'documento'); ?>
                                 </a>
+                                <?php if ($activity['source'] === 'public'): ?>
+                                    <span class="badge badge-success" style="margin-left: 0.5rem;">
+                                        <i class="fas fa-globe"></i> Público
+                                    </span>
+                                <?php endif; ?>
                             </div>
                             <div class="activity-time">
                                 <?php echo DocumentViewHelper::timeAgo($activity['created_at']); ?>
@@ -160,6 +183,31 @@ ob_start();
                     </div>
                 <?php endforeach; ?>
             </div>
+            
+            <!-- Paginación -->
+            <?php if ($activityTotalPages > 1): ?>
+                <div class="pagination-container" style="margin-top: 1.5rem; text-align: center;">
+                    <div class="pagination">
+                        <?php if ($activityCurrentPage > 1): ?>
+                            <a href="?page=documents&action=dashboard&activity_page=<?php echo $activityCurrentPage - 1; ?>" 
+                               class="pagination-btn">
+                                <i class="fas fa-chevron-left"></i> Anterior
+                            </a>
+                        <?php endif; ?>
+                        
+                        <span class="pagination-info">
+                            Página <?php echo $activityCurrentPage; ?> de <?php echo $activityTotalPages; ?>
+                        </span>
+                        
+                        <?php if ($activityCurrentPage < $activityTotalPages): ?>
+                            <a href="?page=documents&action=dashboard&activity_page=<?php echo $activityCurrentPage + 1; ?>" 
+                               class="pagination-btn">
+                                Siguiente <i class="fas fa-chevron-right"></i>
+                            </a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
     
@@ -523,6 +571,7 @@ ob_start();
 
 .activity-icon.uploaded { background: #10b981; }
 .activity-icon.downloaded { background: #3b82f6; }
+.activity-icon.public-download { background: #14b8a6; }
 .activity-icon.deleted { background: #ef4444; }
 .activity-icon.edited { background: #f59e0b; }
 .activity-icon.previewed { background: #8b5cf6; }
@@ -658,6 +707,60 @@ ob_start();
     .stats-grid {
         grid-template-columns: 1fr;
     }
+}
+
+/* Paginación */
+.pagination-container {
+    padding: 1rem 0;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.pagination-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #3b82f6;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.pagination-btn:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+}
+
+.pagination-info {
+    padding: 0.5rem 1rem;
+    background: #f1f5f9;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #475569;
+}
+
+[data-theme="dark"] .pagination-info {
+    background: #334155;
+    color: #cbd5e1;
+}
+
+[data-theme="dark"] .pagination-btn {
+    background: #1e40af;
+}
+
+[data-theme="dark"] .pagination-btn:hover {
+    background: #1e3a8a;
 }
 </style>
 

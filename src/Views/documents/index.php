@@ -12,9 +12,17 @@ $title = 'Gestión de Documentos';
         <p class="page-subtitle">Biblioteca de documentos compartidos</p>
     </div>
     <div class="page-actions">
+        <div class="btn-group" style="margin-right: 10px;">
+            <button type="button" class="btn btn-secondary" id="viewGridBtn" onclick="setView('grid')" title="Vista en cuadrícula">
+                <i class="fas fa-th"></i>
+            </button>
+            <button type="button" class="btn btn-secondary" id="viewListBtn" onclick="setView('list')" title="Vista en lista">
+                <i class="fas fa-list"></i>
+            </button>
+        </div>
         <?php if (Auth::hasPermission('documents_create')): ?>
             <a href="index.php?page=documents&action=create" class="btn btn-primary">
-                <i class="fas fa-cloud-upload-alt"></i> Subir Documento
+                <i class="fas fa-cloud-upload-alt"></i> Subir Documento(s)
             </a>
         <?php endif; ?>
         <a href="index.php?page=documents&action=favorites" class="btn btn-warning" style="margin-left:0.5em;">
@@ -121,7 +129,7 @@ $title = 'Gestión de Documentos';
 </div>
 
 <!-- Lista de documentos -->
-<div class="documents-grid">
+<div class="documents-grid" id="documentsGrid">
     <?php if (empty($documents)): ?>
         <div class="card">
             <div class="empty-state">
@@ -184,10 +192,23 @@ $title = 'Gestión de Documentos';
                             <i class="fas fa-calendar"></i>
                             <?php echo date('d/m/Y', strtotime($doc['created_at'])); ?>
                         </span>
-                        <span class="document-meta-item">
+                        <span class="document-meta-item" title="Descargas totales">
                             <i class="fas fa-download"></i>
                             <?php echo $doc['downloads']; ?>
                         </span>
+                        <?php if ($doc['public_enabled'] && $doc['public_token']): ?>
+                        <span class="document-meta-item" title="Descargas públicas" style="color: #10b981;">
+                            <i class="fas fa-globe"></i>
+                            <?php 
+                                echo $doc['public_downloads'];
+                                if ($doc['public_download_limit'] !== null) {
+                                    echo '/' . $doc['public_download_limit'];
+                                } else {
+                                    echo '/∞';
+                                }
+                            ?>
+                        </span>
+                        <?php endif; ?>
                         <span class="document-meta-item">
                             <i class="fas fa-hdd"></i>
                             <?php echo number_format($doc['file_size'] / 1024, 1); ?> KB
@@ -195,6 +216,29 @@ $title = 'Gestión de Documentos';
                         <?php if (!$doc['is_public']): ?>
                             <span class="badge badge-warning">
                                 <i class="fas fa-lock"></i> Privado
+                            </span>
+                        <?php endif; ?>
+                        <?php if ($doc['public_enabled'] && $doc['public_token']): ?>
+                            <span class="badge badge-success" title="Enlace público activo">
+                                <i class="fas fa-link"></i> Público
+                            </span>
+                        <?php endif; ?>
+                        <?php if (isset($doc['tags']) && !empty($doc['tags'])): ?>
+                            <span class="document-tags" style="display: inline-flex; gap: 4px; align-items: center; margin-left: 8px;">
+                                <?php foreach ($doc['tags'] as $tag): ?>
+                                    <span class="tag-dot" 
+                                          style="
+                                              display: inline-block;
+                                              width: 10px;
+                                              height: 10px;
+                                              border-radius: 50%;
+                                              background-color: <?php echo htmlspecialchars($tag['color']); ?>;
+                                              border: 2px solid <?php echo htmlspecialchars($tag['color']); ?>;
+                                              cursor: help;
+                                          "
+                                          title="<?php echo htmlspecialchars($tag['name']); ?>: <?php echo htmlspecialchars($tag['description'] ?? ''); ?>">
+                                    </span>
+                                <?php endforeach; ?>
                             </span>
                         <?php endif; ?>
                     </div>
@@ -217,9 +261,23 @@ $title = 'Gestión de Documentos';
                         <i class="far fa-star"></i>
                     </button>
                     
+                    <?php if ($doc['public_enabled'] && $doc['public_token']): ?>
+                    <button type="button" class="btn btn-sm btn-success copy-public-link-btn" 
+                            data-token="<?php echo $doc['public_token']; ?>" 
+                            title="Copiar enlace público">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-danger revoke-public-link-btn" 
+                            data-id="<?php echo $doc['id']; ?>" 
+                            title="Cancelar enlace público">
+                        <i class="fas fa-unlink"></i>
+                    </button>
+                    <?php endif; ?>
+                    
                     <button type="button" class="btn btn-sm btn-success share-public-btn" 
                             data-id="<?php echo $doc['id']; ?>" 
                             data-title="<?php echo htmlspecialchars($doc['title']); ?>"
+                            data-has-public="<?php echo ($doc['public_enabled'] && $doc['public_token']) ? '1' : '0'; ?>"
                             title="Compartir públicamente">
                         <i class="fas fa-share-alt"></i>
                     </button>
@@ -489,6 +547,11 @@ $title = 'Gestión de Documentos';
                     <div class="form-help" style="margin-top:0.5rem;">
                         Comparte este enlace con las personas que necesiten acceder al documento
                     </div>
+                    <div style="margin-top:1rem;">
+                        <button type="button" class="btn btn-success" onclick="closeShareModal()" style="width:100%;">
+                            <i class="fas fa-check"></i> Listo
+                        </button>
+                    </div>
                 </div>
             </div>
         </form>
@@ -497,25 +560,153 @@ $title = 'Gestión de Documentos';
 
 <script src="js/documents.js"></script>
 <script>
+// Copiar enlace público directamente
+document.querySelectorAll('.copy-public-link-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const token = this.getAttribute('data-token');
+        const protocol = window.location.protocol;
+        const host = window.location.host;
+        const publicUrl = `${protocol}//${host}/public/index.php?page=public_document&token=${token}`;
+        
+        // Copiar al portapapeles
+        navigator.clipboard.writeText(publicUrl).then(() => {
+            const icon = this.querySelector('i');
+            const originalClass = icon.className;
+            icon.className = 'fas fa-check';
+            this.style.backgroundColor = '#10b981';
+            
+            setTimeout(() => {
+                icon.className = originalClass;
+                this.style.backgroundColor = '';
+            }, 2000);
+        }).catch(err => {
+            console.error('Error al copiar:', err);
+            alert('No se pudo copiar el enlace');
+        });
+    });
+});
+
+// Revocar enlace público
+document.querySelectorAll('.revoke-public-link-btn').forEach(btn => {
+    btn.addEventListener('click', async function() {
+        if (!confirm('¿Estás seguro de que deseas cancelar el enlace público? El enlace actual dejará de funcionar.')) {
+            return;
+        }
+        
+        const docId = this.getAttribute('data-id');
+        const icon = this.querySelector('i');
+        const originalClass = icon.className;
+        
+        icon.className = 'fas fa-spinner fa-spin';
+        this.disabled = true;
+        
+        try {
+            const response = await fetch('index.php?page=documents&action=revoke_public', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `id=${docId}`
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Recargar la página para actualizar la vista
+                location.reload();
+            } else {
+                alert('Error: ' + (data.error || 'Error desconocido'));
+                icon.className = originalClass;
+                this.disabled = false;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al revocar el enlace');
+            icon.className = originalClass;
+            this.disabled = false;
+        }
+    });
+});
+
 // Abrir modal para compartir
 document.querySelectorAll('.share-public-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
+    btn.addEventListener('click', async function() {
         const docId = this.getAttribute('data-id');
         const docTitle = this.getAttribute('data-title');
+        const hasPublic = this.getAttribute('data-has-public') === '1';
         
         document.getElementById('share_doc_id').value = docId;
         document.getElementById('share_doc_title').textContent = docTitle;
-        document.getElementById('shareResult').style.display = 'none';
         document.getElementById('sharePublicForm').reset();
         document.getElementById('share_doc_id').value = docId; // Restaurar después del reset
         document.getElementById('expires_days').value = '7'; // Valor por defecto
+        
+        // Si ya tiene enlace público, obtenerlo y mostrarlo
+        const modalTitle = document.querySelector('#sharePublicModal .modal-header h2');
+        const submitBtn = document.querySelector('#sharePublicForm button[type="submit"]');
+        
+        if (hasPublic) {
+            // Intentar generar el enlace sin regenerate para obtener el existente
+            const formData = new FormData();
+            formData.append('id', docId);
+            
+            try {
+                const response = await fetch('index.php?page=documents&action=generate_public', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                
+                if (data.already_exists && data.existing_url) {
+                    // Mostrar el enlace existente
+                    document.getElementById('public_url').value = data.existing_url;
+                    document.getElementById('shareResult').style.display = 'block';
+                    if (modalTitle) {
+                        modalTitle.innerHTML = '<i class="fas fa-link"></i> Enlace Público Existente';
+                    }
+                    if (submitBtn) {
+                        submitBtn.innerHTML = '<i class="fas fa-redo"></i> Regenerar Enlace';
+                    }
+                } else {
+                    // No hay enlace o hubo error
+                    document.getElementById('shareResult').style.display = 'none';
+                    if (modalTitle) {
+                        modalTitle.innerHTML = '<i class="fas fa-link"></i> Generar Enlace Público';
+                    }
+                    if (submitBtn) {
+                        submitBtn.innerHTML = '<i class="fas fa-link"></i> Generar Enlace Público';
+                    }
+                }
+            } catch (error) {
+                console.error('Error al verificar enlace:', error);
+                document.getElementById('shareResult').style.display = 'none';
+            }
+        } else {
+            // No tiene enlace público
+            document.getElementById('shareResult').style.display = 'none';
+            if (modalTitle) {
+                modalTitle.innerHTML = '<i class="fas fa-link"></i> Generar Enlace Público';
+            }
+            if (submitBtn) {
+                submitBtn.innerHTML = '<i class="fas fa-link"></i> Generar Enlace Público';
+            }
+        }
         
         document.getElementById('sharePublicModal').classList.add('show');
     });
 });
 
 function closeShareModal() {
-    document.getElementById('sharePublicModal').classList.remove('show');
+    const modal = document.getElementById('sharePublicModal');
+    const submitBtn = document.querySelector('#sharePublicForm button[type="submit"]');
+    
+    // Si se generó o regeneró un enlace, recargar la página
+    if (submitBtn && (submitBtn.innerHTML.includes('Enlace Generado') || 
+                      submitBtn.innerHTML.includes('Enlace Regenerado'))) {
+        location.reload();
+    } else {
+        modal.classList.remove('show');
+    }
 }
 
 // Cerrar modal al hacer clic fuera
@@ -531,8 +722,15 @@ document.getElementById('sharePublicForm').addEventListener('submit', async func
     
     const formData = new FormData(this);
     const submitBtn = this.querySelector('button[type="submit"]');
+    const isRegenerating = submitBtn.innerHTML.includes('Regenerar');
+    
+    // Si el botón dice "Regenerar", forzar regeneración
+    if (isRegenerating) {
+        formData.append('regenerate', 'true');
+    }
+    
     submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando...';
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + (isRegenerating ? 'Regenerando...' : 'Generando...');
     
     try {
         const response = await fetch('index.php?page=documents&action=generate_public', {
@@ -545,7 +743,15 @@ document.getElementById('sharePublicForm').addEventListener('submit', async func
         if (data.success) {
             document.getElementById('public_url').value = data.url;
             document.getElementById('shareResult').style.display = 'block';
-            submitBtn.innerHTML = '<i class="fas fa-check"></i> Enlace Generado';
+            submitBtn.innerHTML = '<i class="fas fa-check"></i> ' + (isRegenerating ? 'Enlace Regenerado' : 'Enlace Generado');
+            submitBtn.disabled = false;
+        } else if (data.already_exists && !isRegenerating) {
+            // Ya existe un enlace público y no estábamos intentando regenerar
+            // Mostrar el enlace existente directamente sin preguntar
+            document.getElementById('public_url').value = data.existing_url;
+            document.getElementById('shareResult').style.display = 'block';
+            submitBtn.innerHTML = '<i class="fas fa-redo"></i> Regenerar Enlace';
+            submitBtn.disabled = false;
         } else {
             alert('Error: ' + (data.error || 'Error desconocido'));
             submitBtn.disabled = false;
@@ -571,7 +777,148 @@ function copyPublicUrl() {
         icon.className = 'fas fa-copy';
     }, 2000);
 }
+
+// Sistema de vistas (Grid/List)
+function setView(viewType) {
+    const grid = document.getElementById('documentsGrid');
+    const gridBtn = document.getElementById('viewGridBtn');
+    const listBtn = document.getElementById('viewListBtn');
+    
+    if (viewType === 'grid') {
+        grid.classList.remove('documents-list');
+        grid.classList.add('documents-grid');
+        gridBtn.classList.add('active');
+        listBtn.classList.remove('active');
+        localStorage.setItem('documentsView', 'grid');
+    } else {
+        grid.classList.remove('documents-grid');
+        grid.classList.add('documents-list');
+        listBtn.classList.add('active');
+        gridBtn.classList.remove('active');
+        localStorage.setItem('documentsView', 'list');
+    }
+}
+
+// Restaurar vista guardada
+document.addEventListener('DOMContentLoaded', function() {
+    const savedView = localStorage.getItem('documentsView') || 'grid';
+    setView(savedView);
+});
 </script>
+
+<style>
+/* Vista en lista */
+.documents-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.documents-list .document-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 15px 20px;
+    margin-bottom: 0;
+    border-radius: 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.documents-list .document-card:first-child {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.documents-list .document-card:last-child {
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-bottom: none;
+}
+
+.documents-list .document-icon {
+    width: 50px;
+    min-width: 50px;
+    height: 50px;
+    margin-right: 20px;
+}
+
+.documents-list .document-icon i {
+    font-size: 24px;
+}
+
+.documents-list .document-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.documents-list .document-title {
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.documents-list .document-description {
+    font-size: 13px;
+    max-height: none;
+    -webkit-line-clamp: 2;
+    margin-bottom: 10px;
+}
+
+.documents-list .document-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    font-size: 13px;
+}
+
+.documents-list .document-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    margin-left: 20px;
+}
+
+.btn-group {
+    display: inline-flex;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.btn-group .btn {
+    border-radius: 0;
+    border-right: 1px solid rgba(255,255,255,0.2);
+    margin: 0;
+}
+
+.btn-group .btn:last-child {
+    border-right: none;
+}
+
+.btn-group .btn.active {
+    background: var(--primary-600);
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .documents-list .document-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .documents-list .document-icon {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    
+    .documents-list .document-actions {
+        margin-left: 0;
+        margin-top: 15px;
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
+</style>
 
 <?php
 $content = ob_get_clean();

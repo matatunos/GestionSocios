@@ -47,6 +47,14 @@ PREPARE stmt FROM @sqlstmt;
 EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
 
+-- Agregar 'public_link_created' y 'public_link_revoked' al ENUM de acciones de document_activity_log
+ALTER TABLE document_activity_log 
+MODIFY COLUMN action ENUM(
+    'view','download','edit','delete','restore','share','comment','upload_version',
+    'uploaded','created','updated','moved','copied','favorited','unfavorited','previewed',
+    'public_link_created','public_link_revoked'
+) NOT NULL;
+
 -- Tabla de log de accesos públicos
 CREATE TABLE IF NOT EXISTS document_public_access_log (
     id INT AUTO_INCREMENT PRIMARY KEY,
