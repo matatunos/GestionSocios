@@ -334,6 +334,26 @@ switch ($page) {
         else if ($action === 'preview') $controller->preview();
         else $controller->index();
         break;
+    case 'document_folders':
+        require_once __DIR__ . '/../src/Controllers/DocumentFolderController.php';
+        $controller = new DocumentFolderController($db);
+        if ($action === 'create') $controller->create();
+        else if ($action === 'store') $controller->store();
+        else if ($action === 'edit') $controller->edit();
+        else if ($action === 'update') $controller->update();
+        else if ($action === 'delete') $controller->delete();
+        else $controller->index();
+        break;
+    case 'document_tags':
+        require_once __DIR__ . '/../src/Controllers/DocumentTagController.php';
+        $controller = new DocumentTagController($db);
+        if ($action === 'create') $controller->create();
+        else if ($action === 'store') $controller->store();
+        else if ($action === 'edit') $controller->edit();
+        else if ($action === 'update') $controller->update();
+        else if ($action === 'delete') $controller->delete();
+        else $controller->index();
+        break;
     case 'ad_prices':
         require_once __DIR__ . '/../src/Controllers/AdPriceController.php';
         $controller = new AdPriceController();
