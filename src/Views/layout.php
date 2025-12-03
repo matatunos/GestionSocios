@@ -319,6 +319,12 @@ if (isset($_SESSION['user_id'])) {
                                 </a>
                             </li>
                             <li>
+                                <a href="index.php?page=documents&action=dashboard" class="nav-link <?php echo ($page === 'documents' && $action === 'dashboard') ? 'active' : ''; ?>">
+                                    <i class="fas fa-folder-open"></i>
+                                    <span>Documentos</span>
+                                </a>
+                            </li>
+                            <li>
                                 <a href="index.php?page=suppliers&action=dashboard" class="nav-link <?php echo ($page === 'suppliers' && ($action === 'dashboard')) ? 'active' : ''; ?>">
                                     <i class="fas fa-truck"></i>
                                     <span>Dashboard Proveedores</span>

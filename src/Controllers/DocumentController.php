@@ -623,4 +623,328 @@ class DocumentController {
         
         require_once __DIR__ . '/../Views/documents/preview.php';
     }
+    
+    /**
+     * Dashboard de estadísticas de documentos
+     */
+    public function dashboard() {
+        // Estadísticas generales
+        $stats = $this->getGeneralStats();
+        
+        // Documentos más descargados
+        $mostDownloaded = $this->getMostDownloaded(10);
+        
+        // Documentos recientes
+        $recentDocuments = $this->getRecentDocuments(10);
+        
+        // Actividad reciente (usando sistema de auditoría)
+        $recentActivity = $this->getRecentActivity(20);
+        
+        // Estadísticas por tipo de archivo
+        $fileTypeStats = $this->getFileTypeStats();
+        
+        // Estadísticas por categoría
+        $categoryStats = $this->getCategoryStats();
+        
+        // Estadísticas por mes (últimos 12 meses)
+        $monthlyStats = $this->getMonthlyStats();
+        
+        // Usuarios más activos
+        $topUsers = $this->getTopUsers(10);
+        
+        // Carpetas más usadas
+        $topFolders = $this->getTopFolders(10);
+        
+        // Tags más usados
+        $topTags = $this->getTopTags(10);
+        
+        require_once __DIR__ . '/../Views/documents/dashboard.php';
+    }
+    
+    /**
+     * Obtener estadísticas generales
+     */
+    private function getGeneralStats() {
+        $query = "SELECT 
+                    COUNT(*) as total_documents,
+                    SUM(file_size) as total_size,
+                    SUM(downloads) as total_downloads,
+                    AVG(downloads) as avg_downloads,
+                    COUNT(DISTINCT uploaded_by) as total_contributors,
+                    COUNT(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) THEN 1 END) as new_this_week,
+                    COUNT(CASE WHEN created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) THEN 1 END) as new_this_month
+                  FROM documents 
+                  WHERE deleted_at IS NULL";
+        
+        $stmt = $this->db->query($query);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    
+    /**
+     * Obtener documentos más descargados
+     */
+    private function getMostDownloaded($limit = 10) {
+        $query = "SELECT d.*, m.first_name, m.last_name,
+                         dc.name as category_name, dc.color as category_color
+                  FROM documents d
+                  JOIN members m ON d.uploaded_by = m.id
+                  LEFT JOIN document_categories dc ON d.category_id = dc.id
+                  WHERE d.deleted_at IS NULL
+                  ORDER BY d.downloads DESC
+                  LIMIT :limit";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    /**
+     * Obtener documentos recientes
+     */
+    private function getRecentDocuments($limit = 10) {
+        $query = "SELECT d.*, m.first_name, m.last_name,
+                         dc.name as category_name, dc.color as category_color
+                  FROM documents d
+                  JOIN members m ON d.uploaded_by = m.id
+                  LEFT JOIN document_categories dc ON d.category_id = dc.id
+                  WHERE d.deleted_at IS NULL
+                  ORDER BY d.created_at DESC
+                  LIMIT :limit";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    /**
+     * Obtener actividad reciente del sistema de auditoría
+     */
+    private function getRecentActivity($limit = 20) {
+        $query = "SELECT dal.*, d.title as document_title, d.file_name,
+                         m.first_name, m.last_name
+                  FROM document_activity_log dal
+                  LEFT JOIN documents d ON dal.document_id = d.id
+                  LEFT JOIN members m ON dal.user_id = m.id
+                  ORDER BY dal.created_at DESC
+                  LIMIT :limit";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    /**
+     * Obtener estadísticas por tipo de archivo
+     */
+    private function getFileTypeStats() {
+        $query = "SELECT 
+                    file_extension,
+                    COUNT(*) as count,
+                    SUM(file_size) as total_size,
+                    SUM(downloads) as total_downloads
+                  FROM documents
+                  WHERE deleted_at IS NULL
+                  GROUP BY file_extension
+                  ORDER BY count DESC";
+        
+        $stmt = $this->db->query($query);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    /**
+     * Obtener estadísticas por categoría
+     */
+    private function getCategoryStats() {
+        $query = "SELECT 
+                    dc.id, dc.name, dc.color,
+                    COUNT(DISTINCT dcr.document_id) as count,
+                    SUM(d.file_size) as total_size,
+                    SUM(d.downloads) as total_downloads
+                  FROM document_categories dc
+                  LEFT JOIN document_category_rel dcr ON dc.id = dcr.category_id
+                  LEFT JOIN documents d ON dcr.document_id = d.id AND d.deleted_at IS NULL
+                  GROUP BY dc.id
+                  ORDER BY count DESC";
+        
+        $stmt = $this->db->query($query);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    /**
+     * Obtener estadísticas mensuales
+     */
+    private function getMonthlyStats() {
+        $query = "SELECT 
+                    DATE_FORMAT(created_at, '%Y-%m') as month,
+                    COUNT(*) as count,
+                    SUM(file_size) as total_size
+                  FROM documents
+                  WHERE deleted_at IS NULL
+                  AND created_at >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+                  GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+                  ORDER BY month ASC";
+        
+        $stmt = $this->db->query($query);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    /**
+     * Obtener usuarios más activos
+     */
+    private function getTopUsers($limit = 10) {
+        $query = "SELECT 
+                    m.id, m.first_name, m.last_name, m.email,
+                    COUNT(d.id) as document_count,
+                    SUM(d.file_size) as total_size,
+                    SUM(d.downloads) as total_downloads
+                  FROM members m
+                  JOIN documents d ON m.id = d.uploaded_by AND d.deleted_at IS NULL
+                  GROUP BY m.id
+                  ORDER BY document_count DESC
+                  LIMIT :limit";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    /**
+     * Obtener carpetas más usadas
+     */
+    private function getTopFolders($limit = 10) {
+        $query = "SELECT 
+                    f.id, f.name, f.path,
+                    COUNT(d.id) as document_count,
+                    SUM(d.file_size) as total_size
+                  FROM document_folders f
+                  JOIN documents d ON f.id = d.folder_id AND d.deleted_at IS NULL
+                  GROUP BY f.id
+                  ORDER BY document_count DESC
+                  LIMIT :limit";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    /**
+     * Obtener tags más usados
+     */
+    private function getTopTags($limit = 10) {
+        $query = "SELECT 
+                    t.id, t.name, t.color, t.slug,
+                    COUNT(DISTINCT dtr.document_id) as document_count,
+                    t.usage_count
+                  FROM document_tags t
+                  LEFT JOIN document_tag_rel dtr ON t.id = dtr.tag_id
+                  LEFT JOIN documents d ON dtr.document_id = d.id AND d.deleted_at IS NULL
+                  GROUP BY t.id
+                  ORDER BY document_count DESC
+                  LIMIT :limit";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    /**
+     * Obtener clase CSS para icono de actividad
+     */
+    private function getActivityIconClass($action) {
+        $classes = [
+            'uploaded' => 'uploaded',
+            'downloaded' => 'downloaded',
+            'deleted' => 'deleted',
+            'edited' => 'edited',
+            'updated' => 'edited',
+            'previewed' => 'previewed',
+            'viewed' => 'previewed'
+        ];
+        
+        return $classes[$action] ?? 'uploaded';
+    }
+    
+    /**
+     * Obtener icono Font Awesome para acción
+     */
+    private function getActivityIcon($action) {
+        $icons = [
+            'uploaded' => 'fa-upload',
+            'downloaded' => 'fa-download',
+            'deleted' => 'fa-trash',
+            'edited' => 'fa-edit',
+            'updated' => 'fa-edit',
+            'previewed' => 'fa-eye',
+            'viewed' => 'fa-eye',
+            'created' => 'fa-plus',
+            'restored' => 'fa-undo'
+        ];
+        
+        return $icons[$action] ?? 'fa-file';
+    }
+    
+    /**
+     * Obtener texto descriptivo para acción
+     */
+    private function getActivityText($action) {
+        $texts = [
+            'uploaded' => 'subió',
+            'downloaded' => 'descargó',
+            'deleted' => 'eliminó',
+            'edited' => 'editó',
+            'updated' => 'actualizó',
+            'previewed' => 'previsualizó',
+            'viewed' => 'visualizó',
+            'created' => 'creó',
+            'restored' => 'restauró'
+        ];
+        
+        return $texts[$action] ?? 'realizó una acción en';
+    }
+    
+    /**
+     * Formatear tiempo relativo (hace X tiempo)
+     */
+    private function timeAgo($datetime) {
+        $timestamp = strtotime($datetime);
+        $diff = time() - $timestamp;
+        
+        if ($diff < 60) {
+            return 'hace ' . $diff . ' segundo' . ($diff != 1 ? 's' : '');
+        }
+        
+        $diff = floor($diff / 60);
+        if ($diff < 60) {
+            return 'hace ' . $diff . ' minuto' . ($diff != 1 ? 's' : '');
+        }
+        
+        $diff = floor($diff / 60);
+        if ($diff < 24) {
+            return 'hace ' . $diff . ' hora' . ($diff != 1 ? 's' : '');
+        }
+        
+        $diff = floor($diff / 24);
+        if ($diff < 7) {
+            return 'hace ' . $diff . ' día' . ($diff != 1 ? 's' : '');
+        }
+        
+        $diff = floor($diff / 7);
+        if ($diff < 4) {
+            return 'hace ' . $diff . ' semana' . ($diff != 1 ? 's' : '');
+        }
+        
+        return date('d/m/Y', $timestamp);
+    }
 }

@@ -332,6 +332,7 @@ switch ($page) {
         else if ($action === 'favorite') $controller->toggleFavorite();
         else if ($action === 'favorites') $controller->favorites();
         else if ($action === 'preview') $controller->preview();
+        else if ($action === 'dashboard') $controller->dashboard();
         else $controller->index();
         break;
     case 'document_folders':
