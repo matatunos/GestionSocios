@@ -364,12 +364,35 @@ class MemberController {
     public function markPaid($id) {
         $this->checkAdmin();
         $currentYear = date('Y');
-        // Check if fee for current year exists
-        $feeStmt = $this->db->prepare("SELECT amount FROM annual_fees WHERE year = ?");
-        $feeStmt->execute([$currentYear]);
-        $fee = $feeStmt->fetch(PDO::FETCH_ASSOC);
         
-        if (!$fee) {
+        // Obtener la categoría del socio
+        $memberStmt = $this->db->prepare("SELECT category_id FROM members WHERE id = ?");
+        $memberStmt->execute([$id]);
+        $member = $memberStmt->fetch(PDO::FETCH_ASSOC);
+        
+        // Obtener la cuota correcta según la categoría del socio
+        $paymentAmount = 0;
+        if ($member && !empty($member['category_id'])) {
+            // Intentar obtener cuota específica de la categoría
+            $categoryFeeStmt = $this->db->prepare("SELECT amount FROM category_fee_history WHERE category_id = ? AND year = ?");
+            $categoryFeeStmt->execute([$member['category_id'], $currentYear]);
+            $categoryFee = $categoryFeeStmt->fetch(PDO::FETCH_ASSOC);
+            if ($categoryFee) {
+                $paymentAmount = $categoryFee['amount'];
+            }
+        }
+        
+        // Si no hay cuota de categoría, usar cuota por defecto
+        if ($paymentAmount == 0) {
+            $feeStmt = $this->db->prepare("SELECT amount FROM annual_fees WHERE year = ?");
+            $feeStmt->execute([$currentYear]);
+            $fee = $feeStmt->fetch(PDO::FETCH_ASSOC);
+            if ($fee) {
+                $paymentAmount = $fee['amount'];
+            }
+        }
+        
+        if ($paymentAmount == 0) {
             $_SESSION['error'] = "No hay cuota definida para el año $currentYear. Por favor, define la cuota en Configuración > Socios.";
             
             // Preserve current filters
@@ -393,40 +416,59 @@ class MemberController {
             $checkStmt->execute([$id, $currentYear]);
             $existingPayment = $checkStmt->fetch(PDO::FETCH_ASSOC);
             
+            $paymentId = null;
+            $paymentDate = date('Y-m-d');
+            $paymentConcept = "Cuota Anual " . $currentYear;
+            
             if ($existingPayment) {
                 // Update existing payment to paid
                 $updateStmt = $this->db->prepare("UPDATE payments SET status = 'paid', payment_date = ? WHERE id = ?");
-                $success = $updateStmt->execute([date('Y-m-d'), $existingPayment['id']]);
+                $success = $updateStmt->execute([$paymentDate, $existingPayment['id']]);
                 if (!$success) {
                     throw new Exception("Error al actualizar el pago existente");
                 }
+                $paymentId = $existingPayment['id'];
                 // Registrar en audit_log
                 require_once __DIR__ . '/../Models/AuditLog.php';
                 $audit = new AuditLog($this->db);
-                $audit->create($_SESSION['user_id'], 'markPaid', 'member_payment', $existingPayment['id'], 'Pago marcado como realizado por el usuario ' . ($_SESSION['username'] ?? '')); 
+                $audit->create($_SESSION['user_id'], 'markPaid', 'member_payment', $paymentId, 'Pago marcado como realizado por el usuario ' . ($_SESSION['username'] ?? ''));
             } else {
                 // Create new payment as paid
                 $insertStmt = $this->db->prepare("INSERT INTO payments (member_id, amount, payment_date, concept, status, fee_year, payment_type) VALUES (?, ?, ?, ?, 'paid', ?, 'fee')");
                 $success = $insertStmt->execute([
                     $id,
-                    $fee['amount'],
-                    date('Y-m-d'),
-                    "Cuota Anual " . $currentYear,
+                    $paymentAmount,
+                    $paymentDate,
+                    $paymentConcept,
                     $currentYear
                 ]);
                 if (!$success) {
                     throw new Exception("Error al crear el nuevo pago");
                 }
+                $paymentId = $this->db->lastInsertId();
                 // Registrar en audit_log
                 require_once __DIR__ . '/../Models/AuditLog.php';
                 $audit = new AuditLog($this->db);
-                $lastId = $this->db->lastInsertId();
-                $audit->create($_SESSION['user_id'], 'markPaid', 'member_payment', $lastId, 'Pago creado y marcado como realizado por el usuario ' . ($_SESSION['username'] ?? ''));
+                $audit->create($_SESSION['user_id'], 'markPaid', 'member_payment', $paymentId, 'Pago creado y marcado como realizado por el usuario ' . ($_SESSION['username'] ?? ''));
             }
             
-            $_SESSION['success'] = 'Pago marcado correctamente';
+            // Crear asiento contable automático
+            require_once __DIR__ . '/../Helpers/AccountingHelper.php';
+            $accountingCreated = AccountingHelper::createEntryFromPayment(
+                $this->db,
+                $paymentId,
+                $paymentAmount,
+                $paymentConcept,
+                $paymentDate,
+                'transfer', // Método de pago por defecto
+                'fee'
+            );
             
-        } catch (Exception $e) {
+            if (!$accountingCreated) {
+                error_log("No se pudo crear el asiento contable para el pago de cuota #$paymentId");
+            }
+            
+            $_SESSION['success'] = 'Pago marcado correctamente' . ($accountingCreated ? ' y registrado en contabilidad' : '');        } catch (Exception $e) {
             error_log("Error in markPaid: " . $e->getMessage());
             $_SESSION['error'] = 'Error al marcar el pago: ' . $e->getMessage();
         }
