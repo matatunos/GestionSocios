@@ -43,6 +43,7 @@
                     <th>Expira</th>
                     <th>Creado</th>
                     <th>Acciones</th>
+                    <th>Compartir</th>
                 </tr>
             </thead>
             <tbody>
@@ -99,12 +100,50 @@
                                 </form>
                             </div>
                         </td>
+                        <td>
+                            <?php if ($ann['is_active']): ?>
+                                <button class="btn btn-sm btn-info" 
+                                        onclick="shareAnnouncement(<?php echo $ann['id']; ?>, '<?php echo addslashes($ann['title']); ?>')"
+                                        title="Compartir">
+                                    <i class="fas fa-share-alt"></i>
+                                </button>
+                            <?php endif; ?>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
     <?php endif; ?>
 </div>
+
+<script src="js/social-share.js"></script>
+<script>
+function shareAnnouncement(id, title) {
+    const shareUrl = window.location.origin + window.location.pathname + '?page=announcements&id=' + id;
+    const share = new SocialMediaShare({
+        url: shareUrl,
+        title: 'Anuncio: ' + title,
+        description: 'Revisa este importante anuncio de nuestra asociación'
+    });
+    
+    // Create modal for share buttons
+    const modal = document.createElement('div');
+    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;';
+    modal.innerHTML = '<div style="background:white;padding:2rem;border-radius:0.5rem;max-width:500px;width:90%;"><h3 style="margin-bottom:1rem;"><i class="fas fa-share-alt"></i> Compartir Anuncio</h3><div id="modal-share-buttons"></div><button onclick="this.parentElement.parentElement.remove()" style="margin-top:1rem;padding:0.5rem 1rem;background:#6c757d;color:white;border:none;border-radius:0.25rem;cursor:pointer;">Cerrar</button></div>';
+    document.body.appendChild(modal);
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+    
+    share.initButtons('#modal-share-buttons', {
+        platforms: ['facebook', 'twitter', 'whatsapp', 'telegram', 'copy'],
+        size: 'medium',
+        showLabels: true
+    });
+}
+</script>
 
 <?php
 $content = ob_get_clean();
