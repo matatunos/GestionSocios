@@ -199,9 +199,9 @@ if (isset($_SESSION['user_id'])) {
                         </a>
                     </li>
                     <li>
-                        <a href="index.php?page=suppliers" class="nav-link <?php echo ($page === 'suppliers') ? 'active' : ''; ?>">
-                            <i class="fas fa-truck"></i>
-                            <span>Proveedores</span>
+                        <a href="index.php?page=suppliers" class="nav-link <?php echo ($page === 'suppliers' && $action !== 'dashboard') ? 'active' : ''; ?>">
+                            <i class="fas fa-list"></i>
+                            <span>Gestión Proveedores</span>
                         </a>
                     </li>
                     <li>
@@ -319,9 +319,9 @@ if (isset($_SESSION['user_id'])) {
                                 </a>
                             </li>
                             <li>
-                                <a href="index.php?page=suppliers&action=dashboard" class="nav-link <?php echo ($page === 'suppliers' && $action === 'dashboard') ? 'active' : ''; ?>">
+                                <a href="index.php?page=suppliers&action=dashboard" class="nav-link <?php echo ($page === 'suppliers' && ($action === 'dashboard')) ? 'active' : ''; ?>">
                                     <i class="fas fa-truck"></i>
-                                    <span>Proveedores</span>
+                                    <span>Dashboard Proveedores</span>
                                 </a>
                             </li>
                         </ul>
@@ -385,9 +385,9 @@ if (isset($_SESSION['user_id'])) {
                        </li>
 
                     <li>
-                        <a href="index.php?page=suppliers" class="nav-link <?php echo ($page === 'suppliers') ? 'active' : ''; ?>">
-                            <i class="fas fa-truck"></i>
-                            <span>Proveedores</span>
+                        <a href="index.php?page=suppliers" class="nav-link <?php echo ($page === 'suppliers' && $action !== 'dashboard') ? 'active' : ''; ?>">
+                            <i class="fas fa-list"></i>
+                            <span>Gestión Proveedores</span>
                         </a>
                     </li>
 
