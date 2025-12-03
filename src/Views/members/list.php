@@ -228,11 +228,11 @@ try {
                                 $memberFeeAmount = $feeAmount; // Default
                                 if (!empty($row['category_id'])) {
                                     try {
-                                        $categoryFeeStmt = $GLOBALS['db']->prepare("SELECT amount FROM category_fee_history WHERE category_id = ? AND year = ?");
+                                        $categoryFeeStmt = $GLOBALS['db']->prepare("SELECT fee_amount FROM category_fee_history WHERE category_id = ? AND year = ?");
                                         $categoryFeeStmt->execute([$row['category_id'], $currentYear]);
                                         $categoryFee = $categoryFeeStmt->fetch(PDO::FETCH_ASSOC);
                                         if ($categoryFee) {
-                                            $memberFeeAmount = $categoryFee['amount'];
+                                            $memberFeeAmount = $categoryFee['fee_amount'];
                                         }
                                     } catch (Exception $e) {
                                         // Si falla, usar cuota por defecto

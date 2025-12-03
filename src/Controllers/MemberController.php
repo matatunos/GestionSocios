@@ -383,12 +383,12 @@ class MemberController {
         $paymentAmount = null;
         if (!empty($member['category_id'])) {
             // Intentar obtener cuota específica de la categoría
-            $categoryFeeStmt = $this->db->prepare("SELECT amount FROM category_fee_history WHERE category_id = ? AND year = ?");
+            $categoryFeeStmt = $this->db->prepare("SELECT fee_amount FROM category_fee_history WHERE category_id = ? AND year = ?");
             $categoryFeeStmt->execute([$member['category_id'], $currentYear]);
             $categoryFee = $categoryFeeStmt->fetch(PDO::FETCH_ASSOC);
             error_log("DEBUG markPaid - Consulta categoría: category_id={$member['category_id']}, year=$currentYear, resultado: " . json_encode($categoryFee));
-            if ($categoryFee && isset($categoryFee['amount'])) {
-                $paymentAmount = floatval($categoryFee['amount']);
+            if ($categoryFee && isset($categoryFee['fee_amount'])) {
+                $paymentAmount = floatval($categoryFee['fee_amount']);
                 error_log("DEBUG markPaid - Cuota de categoría encontrada: $paymentAmount");
             }
         }
