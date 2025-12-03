@@ -508,15 +508,121 @@ CREATE TABLE IF NOT EXISTS suppliers (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     cif_nif VARCHAR(20),
+    tax_id VARCHAR(50), -- NIF/VAT completo para facturación
     email VARCHAR(255),
     phone VARCHAR(20),
     address TEXT,
+    postal_code VARCHAR(10),
+    city VARCHAR(100),
+    province VARCHAR(100),
+    country VARCHAR(100) DEFAULT 'España',
     website VARCHAR(255),
     logo_path VARCHAR(255),
+    tipo_proveedor ENUM('servicios', 'productos', 'mixto', 'profesional') DEFAULT 'servicios',
+    categoria VARCHAR(100), -- Categoría de proveedor (tecnología, papelería, etc)
+    estado ENUM('activo', 'inactivo', 'bloqueado') DEFAULT 'activo',
+    payment_terms INT DEFAULT 30, -- Días de plazo de pago
+    default_payment_method ENUM('transfer', 'cash', 'card', 'check', 'other') DEFAULT 'transfer',
+    iban VARCHAR(34),
+    swift VARCHAR(11),
+    bank_name VARCHAR(255),
+    default_discount DECIMAL(5,2) DEFAULT 0.00, -- Descuento por defecto en %
+    credit_limit DECIMAL(10,2), -- Límite de crédito
+    contact_person VARCHAR(255),
+    contact_email VARCHAR(255),
+    contact_phone VARCHAR(20),
+    rating TINYINT CHECK (rating >= 1 AND rating <= 5), -- Valoración del proveedor
     notes TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_tipo (tipo_proveedor),
+    INDEX idx_estado (estado),
+    INDEX idx_categoria (categoria)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de contactos de proveedores
+CREATE TABLE IF NOT EXISTS supplier_contacts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    supplier_id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    position VARCHAR(100), -- Cargo
+    email VARCHAR(255),
+    phone VARCHAR(20),
+    mobile VARCHAR(20),
+    is_primary BOOLEAN DEFAULT 0, -- Contacto principal
+    notes TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (supplier_id) REFERENCES suppliers(id) ON DELETE CASCADE,
+    INDEX idx_supplier (supplier_id),
+    INDEX idx_primary (is_primary)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de documentos de proveedores
+CREATE TABLE IF NOT EXISTS supplier_documents (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    supplier_id INT NOT NULL,
+    document_id INT, -- Referencia al gestor documental general si existe
+    document_type ENUM('contrato', 'certificado', 'seguro', 'licencia', 'otro') DEFAULT 'otro',
+    name VARCHAR(255) NOT NULL,
+    file_path VARCHAR(255),
+    description TEXT,
+    upload_date DATE,
+    expiry_date DATE, -- Fecha de caducidad (para seguros, certificados, etc)
+    status ENUM('vigente', 'caducado', 'renovado', 'cancelado') DEFAULT 'vigente',
+    tags VARCHAR(255), -- Tags separados por comas para búsqueda
+    uploaded_by INT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (supplier_id) REFERENCES suppliers(id) ON DELETE CASCADE,
+    FOREIGN KEY (uploaded_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_supplier (supplier_id),
+    INDEX idx_type (document_type),
+    INDEX idx_status (status),
+    INDEX idx_expiry (expiry_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de órdenes de compra
+CREATE TABLE IF NOT EXISTS supplier_orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    supplier_id INT NOT NULL,
+    order_number VARCHAR(50) NOT NULL UNIQUE,
+    order_date DATE NOT NULL,
+    expected_delivery_date DATE,
+    status ENUM('draft', 'sent', 'confirmed', 'received', 'cancelled') DEFAULT 'draft',
+    subtotal DECIMAL(10,2) DEFAULT 0.00,
+    tax_amount DECIMAL(10,2) DEFAULT 0.00,
+    discount_amount DECIMAL(10,2) DEFAULT 0.00,
+    total_amount DECIMAL(10,2) DEFAULT 0.00,
+    notes TEXT,
+    approved_by INT,
+    approved_at DATETIME,
+    created_by INT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (supplier_id) REFERENCES suppliers(id) ON DELETE CASCADE,
+    FOREIGN KEY (approved_by) REFERENCES users(id) ON DELETE SET NULL,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_supplier (supplier_id),
+    INDEX idx_order_number (order_number),
+    INDEX idx_status (status),
+    INDEX idx_order_date (order_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de líneas de órdenes de compra
+CREATE TABLE IF NOT EXISTS supplier_order_lines (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL,
+    line_number INT NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    quantity DECIMAL(10,2) NOT NULL,
+    unit_price DECIMAL(10,2) NOT NULL,
+    tax_rate DECIMAL(5,2) DEFAULT 21.00, -- % IVA
+    discount_rate DECIMAL(5,2) DEFAULT 0.00,
+    line_total DECIMAL(10,2),
+    notes TEXT,
+    FOREIGN KEY (order_id) REFERENCES supplier_orders(id) ON DELETE CASCADE,
+    INDEX idx_order (order_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Tabla de cuotas anuales
 CREATE TABLE IF NOT EXISTS annual_fees (
      year INT PRIMARY KEY,
@@ -527,17 +633,30 @@ CREATE TABLE IF NOT EXISTS annual_fees (
 CREATE TABLE IF NOT EXISTS supplier_invoices (
     id INT AUTO_INCREMENT PRIMARY KEY,
     supplier_id INT NOT NULL,
+    order_id INT, -- Referencia a orden de compra si viene de una
     invoice_number VARCHAR(50) NOT NULL,
     invoice_date DATE NOT NULL,
-    amount DECIMAL(10, 2),
-    status ENUM('paid', 'pending', 'cancelled') DEFAULT 'pending',
+    due_date DATE, -- Fecha de vencimiento
+    payment_date DATE, -- Fecha real de pago
+    subtotal DECIMAL(10,2) DEFAULT 0.00,
+    tax_amount DECIMAL(10,2) DEFAULT 0.00,
+    discount_amount DECIMAL(10,2) DEFAULT 0.00,
+    amount DECIMAL(10, 2), -- Total
+    status ENUM('paid', 'pending', 'overdue', 'cancelled') DEFAULT 'pending',
+    payment_method ENUM('transfer', 'cash', 'card', 'check', 'other') DEFAULT 'transfer',
+    bank_reference VARCHAR(100), -- Referencia bancaria del pago
+    tipo_factura ENUM('normal', 'rectificativa', 'abono') DEFAULT 'normal',
     file_path VARCHAR(255),
     notes TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (supplier_id) REFERENCES suppliers(id) ON DELETE CASCADE,
+    FOREIGN KEY (order_id) REFERENCES supplier_orders(id) ON DELETE SET NULL,
     INDEX idx_supplier (supplier_id),
     INDEX idx_invoice_number (invoice_number),
-    INDEX idx_invoice_date (invoice_date)
+    INDEX idx_invoice_date (invoice_date),
+    INDEX idx_due_date (due_date),
+    INDEX idx_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabla de anuncios públicos

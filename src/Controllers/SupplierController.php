@@ -328,13 +328,89 @@ class SupplierController {
         $supplierId = $this->invoice->supplier_id;
         $filePath = $this->invoice->file_path;
         
+        // Cancelar asiento contable asociado si existe
+        require_once __DIR__ . '/../Models/AccountingEntry.php';
+        $stmt = $this->db->prepare("SELECT id FROM accounting_entries WHERE source_type = 'supplier_invoice' AND source_id = ?");
+        $stmt->execute([$id]);
+        $entry = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($entry) {
+            $entryModel = new AccountingEntry($this->db);
+            $entryModel->id = $entry['id'];
+            $entryModel->cancel();
+        }
+        
         if ($this->invoice->delete()) {
             if (file_exists($filePath)) {
                 unlink($filePath);
             }
+            
+            // Audit log
+            require_once __DIR__ . '/../Models/AuditLog.php';
+            $audit = new AuditLog($this->db);
+            $audit->create($_SESSION['user_id'], 'delete', 'supplier_invoice', $id, 'Factura de proveedor eliminada por el usuario ' . ($_SESSION['username'] ?? ''));
+            
             $_SESSION['success'] = "Factura eliminada.";
         } else {
             $_SESSION['error'] = "Error al eliminar factura.";
+        }
+        
+        header("Location: index.php?page=suppliers&action=show&id=" . $supplierId);
+        exit;
+    }
+
+    public function updateInvoiceStatus() {
+        CsrfHelper::validateRequest();
+        
+        $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+        $status = isset($_GET['status']) ? $_GET['status'] : '';
+        
+        if ($id <= 0 || !in_array($status, ['paid', 'pending', 'cancelled'])) {
+            $_SESSION['error'] = "Parámetros inválidos.";
+            header("Location: index.php?page=suppliers");
+            exit;
+        }
+        
+        $this->invoice->id = $id;
+        $this->invoice->readOne();
+        
+        $supplierId = $this->invoice->supplier_id;
+        $previousStatus = $this->invoice->status;
+        
+        // Cargar datos del proveedor
+        $this->supplier->id = $supplierId;
+        $this->supplier->readOne();
+        
+        // Actualizar estado
+        $query = "UPDATE supplier_invoices SET status = :status WHERE id = :id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':status', $status);
+        $stmt->bindParam(':id', $id);
+        
+        if ($stmt->execute()) {
+            // Si se marca como pagada, crear asiento contable
+            if ($previousStatus !== 'paid' && $status === 'paid') {
+                require_once __DIR__ . '/../Helpers/AccountingHelper.php';
+                $accountingCreated = AccountingHelper::createEntryFromSupplierInvoice(
+                    $this->db,
+                    $id,
+                    $this->invoice->amount,
+                    'Factura ' . $this->invoice->invoice_number . ' - ' . $this->supplier->name,
+                    $this->invoice->invoice_date,
+                    date('Y-m-d'), // Fecha de pago = hoy
+                    'transfer'
+                );
+                
+                if (!$accountingCreated) {
+                    error_log("No se pudo crear el asiento contable para la factura #$id");
+                }
+                
+                $_SESSION['success'] = "Factura marcada como pagada" . ($accountingCreated ? " y registrada en contabilidad" : "") . ".";
+            } else {
+                $_SESSION['success'] = "Estado de factura actualizado.";
+            }
+        } else {
+            $_SESSION['error'] = "Error al actualizar el estado.";
         }
         
         header("Location: index.php?page=suppliers&action=show&id=" . $supplierId);
