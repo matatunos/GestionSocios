@@ -1,0 +1,39 @@
+# Git
+.git
+.gitignore
+
+# Docker
+docker-compose.yml
+Dockerfile
+.dockerignore
+
+# IDE
+.vscode
+.idea
+
+# Logs
+*.log
+
+# Archivos temporales
+*.tmp
+*.temp
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Backups
+*.sql
+*.backup
+backup_*.sql
+
+# Node modules (si los hubiera)
+node_modules
+
+# Vendor (se instalará en build)
+# vendor
+
+# Uploads (se manejan por volumen)
+# public/uploads/*
+# !public/uploads/.gitkeep

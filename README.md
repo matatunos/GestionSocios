@@ -199,7 +199,31 @@ php-xml (para exportación DOCX)
 
 ## 🛠️ Instalación
 
-### Método Rápido          
+### 🐳 Instalación con Docker (Recomendado)
+
+La forma más fácil y rápida de instalar la aplicación es usando Docker. **No necesitas instalar Apache, PHP o MySQL manualmente**.
+
+**Ver guía completa**: [DOCKER_INSTALLATION.md](DOCKER_INSTALLATION.md)
+
+**Instalación en 3 pasos:**
+```bash
+# 1. Clonar repositorio
+git clone https://github.com/matatunos/GestionSocios.git
+cd GestionSocios
+
+# 2. Levantar contenedores
+docker compose up -d
+
+# 3. Acceder a http://localhost:8080
+```
+
+**Requisitos**: Solo necesitas tener instalado Docker y Docker Compose.
+
+---
+
+### 💻 Instalación Manual (Sin Docker)
+
+Si prefieres instalación tradicional en tu servidor:
 
 #### 1. Clonar el Repositorio
 

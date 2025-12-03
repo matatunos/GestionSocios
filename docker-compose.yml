@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: gestion-socios-web
+    ports:
+      - "8080:80"
+    volumes:
+      - ./public/uploads:/var/www/html/public/uploads
+      - ./src/Config:/var/www/html/src/Config
+    environment:
+      - DB_HOST=db
+      - DB_NAME=asociacion
+      - DB_USER=gestion_user
+      - DB_PASS=gestion_password_2025
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - gestion-network
+    restart: unless-stopped
+
+  db:
+    image: mariadb:10.11
+    container_name: gestion-socios-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password_2025
+      MYSQL_DATABASE: asociacion
+      MYSQL_USER: gestion_user
+      MYSQL_PASSWORD: gestion_password_2025
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    ports:
+      - "3306:3306"
+    networks:
+      - gestion-network
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: gestion-socios-phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: root_password_2025
+    ports:
+      - "8081:80"
+    depends_on:
+      - db
+    networks:
+      - gestion-network
+    restart: unless-stopped
+
+volumes:
+  db-data:
+    driver: local
+
+networks:
+  gestion-network:
+    driver: bridge
