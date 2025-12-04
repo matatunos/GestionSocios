@@ -224,8 +224,8 @@ class FinancialDashboardController {
         // Subvenciones próximas a vencer
         $query = "SELECT COUNT(*) as count FROM grants 
                   WHERE status = 'abierta' 
-                  AND deadline BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 15 DAY)
-                  AND (deadline_alert_sent = 0 OR deadline_alert_sent IS NULL)";
+                  AND application_deadline BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 15 DAY)
+                  AND (alert_sent = 0 OR alert_sent IS NULL)";
         $stmt = $this->db->query($query);
         $expiringGrants = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
         

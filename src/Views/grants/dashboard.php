@@ -51,7 +51,7 @@
                     <div style="font-size: 0.875rem; opacity: 0.9; margin-bottom: 0.5rem;">Concedidas</div>
                     <div style="font-size: 2rem; font-weight: bold;"><?php echo number_format($applicationStats['granted']); ?></div>
                     <div style="font-size: 0.75rem; opacity: 0.9; margin-top: 0.25rem;">
-                        <?php echo number_format($applicationStats['total_granted_amount'], 2); ?> €
+                        <?php echo number_format($applicationStats['total_granted_amount'] ?? 0, 2); ?> €
                     </div>
                 </div>
                 <i class="fas fa-check-circle" style="font-size: 3rem; opacity: 0.3;"></i>
@@ -92,10 +92,10 @@
                                             <?php echo htmlspecialchars($grant['organization']); ?>
                                         </div>
                                     </td>
-                                    <td><?php echo date('d/m/Y', strtotime($grant['deadline'])); ?></td>
+                                    <td><?php echo $grant['application_deadline'] ? date('d/m/Y', strtotime($grant['application_deadline'])) : '-'; ?></td>
                                     <td>
                                         <?php 
-                                        $days = $grant['days_remaining'];
+                                        $days = $grant['days_remaining'] ?? 0;
                                         $color = $days <= 7 ? '#dc3545' : ($days <= 15 ? '#ffc107' : '#28a745');
                                         ?>
                                         <span style="color: <?php echo $color; ?>; font-weight: 600;">
@@ -104,10 +104,10 @@
                                     </td>
                                     <td>
                                         <span class="badge badge-<?php 
-                                            echo $grant['our_status'] === 'solicitada' ? 'info' : 
-                                                ($grant['our_status'] === 'en_revision' ? 'warning' : 'secondary'); 
+                                            echo $grant['status'] === 'concedida' ? 'success' : 
+                                                ($grant['status'] === 'en_proceso' ? 'warning' : 'info'); 
                                         ?>">
-                                            <?php echo ucfirst($grant['our_status']); ?>
+                                            <?php echo ucfirst($grant['status']); ?>
                                         </span>
                                     </td>
                                 </tr>
@@ -201,20 +201,20 @@
                                         <?php echo htmlspecialchars($grant['title']); ?>
                                     </a>
                                 </td>
-                                <td><?php echo htmlspecialchars($grant['organization']); ?></td>
+                                <td><?php echo htmlspecialchars($grant['organization'] ?? '-'); ?></td>
                                 <td>
                                     <span class="badge badge-secondary">
-                                        <?php echo ucfirst($grant['grant_type']); ?>
+                                        <?php echo ucfirst($grant['category'] ?? 'general'); ?>
                                     </span>
                                 </td>
                                 <td>
-                                    <?php if ($grant['max_amount']): ?>
-                                        <?php echo number_format($grant['max_amount'], 2); ?> €
+                                    <?php if (isset($grant['amount']) && $grant['amount']): ?>
+                                        <?php echo number_format($grant['amount'], 2); ?> €
                                     <?php else: ?>
                                         -
                                     <?php endif; ?>
                                 </td>
-                                <td><?php echo date('d/m/Y', strtotime($grant['deadline'])); ?></td>
+                                <td><?php echo $grant['application_deadline'] ? date('d/m/Y', strtotime($grant['application_deadline'])) : '-'; ?></td>
                                 <td>
                                     <span class="badge badge-<?php 
                                         echo $grant['status'] === 'abierta' ? 'success' : 
@@ -225,7 +225,7 @@
                                 </td>
                                 <td>
                                     <?php 
-                                    $score = $grant['relevance_score'];
+                                    $score = $grant['tracked'] ? 100 : 50;
                                     $color = $score >= 70 ? '#28a745' : ($score >= 50 ? '#ffc107' : '#6c757d');
                                     ?>
                                     <div style="display: flex; align-items: center; gap: 0.5rem;">
@@ -282,5 +282,5 @@
 
 <?php
 $content = ob_get_clean();
-include __DIR__ . '/../../layouts/main.php';
+include __DIR__ . '/../layout.php';
 ?>

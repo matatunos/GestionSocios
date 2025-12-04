@@ -197,13 +197,9 @@ class Grant {
             $params[] = $searchTerm;
         }
         
-        if (isset($filters['auto_discovered'])) {
-            $query .= " AND g.auto_discovered = ?";
-            $params[] = $filters['auto_discovered'];
-        }
         
         // Ordenar
-        $orderBy = $filters['order_by'] ?? 'deadline';
+        $orderBy = $filters['order_by'] ?? 'application_deadline';
         $orderDir = $filters['order_dir'] ?? 'ASC';
         $query .= " ORDER BY g.{$orderBy} {$orderDir}";
         
