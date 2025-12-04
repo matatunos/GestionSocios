@@ -1,16 +1,13 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Cuentas Bancarias</title>
-    <link rel="stylesheet" href="css/bank.css">
-</head>
-<body>
-    <div class="container">
-        <div class="page-header">
-            <h1>💳 Cuentas Bancarias</h1>
-            <a href="index.php?page=bank&subpage=accounts&action=create" class="btn-primary">➕ Nueva Cuenta</a>
-        </div>
+<?php
+$pageTitle = 'Cuentas Bancarias';
+ob_start();
+?>
+
+<div class="container">
+    <div class="page-header">
+        <h1>💳 Cuentas Bancarias</h1>
+        <a href="index.php?page=bank&subpage=accounts&action=create" class="btn btn-primary">➕ Nueva Cuenta</a>
+    </div>
         
         <?php if (isset($_SESSION['message'])): ?>
             <div class="alert alert-success"><?= $_SESSION['message']; unset($_SESSION['message']); ?></div>
@@ -59,6 +56,9 @@
                 </tbody>
             </table>
         <?php endif; ?>
-    </div>
-</body>
-</html>
+</div>
+
+<?php
+$content = ob_get_clean();
+include __DIR__ . '/../../layout.php';
+?>

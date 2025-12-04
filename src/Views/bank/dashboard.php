@@ -1,10 +1,9 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Bancario</title>
-    <style>
+<?php
+$pageTitle = 'Dashboard Bancario';
+ob_start();
+?>
+
+<style>
         .bank-dashboard {
             max-width: 1400px;
             margin: 20px auto;
@@ -375,5 +374,8 @@
             </a>
         </div>
     </div>
-</body>
-</html>
+
+<?php
+$content = ob_get_clean();
+include __DIR__ . '/../layout.php';
+?>

@@ -1,12 +1,10 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Importar Extracto Bancario</title>
-</head>
-<body>
-    <div class="container">
-        <h1>📥 Importar Extracto Bancario</h1>
+<?php
+$pageTitle = 'Importar Extracto Bancario';
+ob_start();
+?>
+
+<div class="container">
+    <h1>📥 Importar Extracto Bancario</h1>
         
         <div class="info-box">
             <p><strong>Formatos soportados:</strong></p>
@@ -61,6 +59,9 @@
                 <a href="index.php?page=bank" class="btn-secondary">Cancelar</a>
             </div>
         </form>
-    </div>
-</body>
-</html>
+</div>
+
+<?php
+$content = ob_get_clean();
+include __DIR__ . '/../../layout.php';
+?>

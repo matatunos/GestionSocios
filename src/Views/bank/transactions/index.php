@@ -1,18 +1,16 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Transacciones Bancarias</title>
-</head>
-<body>
-    <div class="container">
-        <div class="page-header">
-            <h1>💸 Transacciones Bancarias</h1>
-            <div>
-                <a href="index.php?page=bank&subpage=transactions&action=create" class="btn-primary">➕ Nueva Transacción</a>
-                <a href="index.php?page=bank&subpage=import" class="btn-secondary">📥 Importar</a>
-            </div>
+<?php
+$pageTitle = 'Transacciones Bancarias';
+ob_start();
+?>
+
+<div class="container">
+    <div class="page-header">
+        <h1>💸 Transacciones Bancarias</h1>
+        <div>
+            <a href="index.php?page=bank&subpage=transactions&action=create" class="btn btn-primary">➕ Nueva Transacción</a>
+            <a href="index.php?page=bank&subpage=import" class="btn btn-secondary">📥 Importar</a>
         </div>
+    </div>
         
         <form method="GET" class="filter-form">
             <input type="hidden" name="page" value="bank">
@@ -83,6 +81,9 @@
                 </div>
             <?php endif; ?>
         <?php endif; ?>
-    </div>
-</body>
-</html>
+</div>
+
+<?php
+$content = ob_get_clean();
+include __DIR__ . '/../../layout.php';
+?>

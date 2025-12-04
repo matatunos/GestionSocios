@@ -1,15 +1,13 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Conciliaciones Bancarias</title>
-</head>
-<body>
-    <div class="container">
-        <div class="page-header">
-            <h1>✓ Conciliaciones Bancarias</h1>
-            <a href="index.php?page=bank&subpage=reconciliation&action=start" class="btn-primary">Iniciar Conciliación</a>
-        </div>
+<?php
+$pageTitle = 'Conciliaciones Bancarias';
+ob_start();
+?>
+
+<div class="container">
+    <div class="page-header">
+        <h1>✓ Conciliaciones Bancarias</h1>
+        <a href="index.php?page=bank&subpage=reconciliation&action=start" class="btn btn-primary">Iniciar Conciliación</a>
+    </div>
         
         <?php if (empty($reconciliations)): ?>
             <p>No hay conciliaciones registradas</p>
@@ -55,6 +53,9 @@
                 </tbody>
             </table>
         <?php endif; ?>
-    </div>
-</body>
-</html>
+</div>
+
+<?php
+$content = ob_get_clean();
+include __DIR__ . '/../../layout.php';
+?>
