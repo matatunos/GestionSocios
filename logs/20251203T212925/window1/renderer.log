@@ -1,0 +1,18 @@
+2025-12-03 21:29:29.925 [info] ChatSessionStore: Migrating 0 chat sessions from storage service to file system
+2025-12-03 21:29:30.536 [info] Started local extension host with pid 66200.
+2025-12-03 21:29:30.972 [info] MCP Registry configured: https://api.mcp.github.com
+2025-12-03 21:29:32.681 [info] Settings Sync: Account status changed from uninitialized to unavailable
+2025-12-03 21:29:36.604 [info] [perf] Render performance baseline is 37ms
+2025-12-03 21:29:39.658 [error] [Extension Host] (node:66200) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `exe --trace-deprecation ...` to show where the warning was created)
+2025-12-03 21:29:39.661 [error] [Extension Host] (node:66200) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2025-12-03 21:29:44.448 [error] chatParticipant must be declared in package.json: claude-code
+2025-12-03 21:31:05.984 [warning] No extension contribution found for chat session type: copilot-cloud-agent
+2025-12-03 21:31:05.997 [warning] No extension contribution found for chat session type: copilot-cloud-agent
+2025-12-03 22:05:55.727 [error] [Extension Host] Failed to fetch remote embeddings cache from https://embeddings.vscode-cdn.net/text-3-small/v1.106/tools/latest.txt
+2025-12-03 22:05:55.730 [error] [Extension Host] Response status: 404, status text: 
+2025-12-03 22:05:56.313 [error] [Extension Host] Failed to fetch remote embeddings cache from https://embeddings.vscode-cdn.net/text-3-small/v1.106/tools/core.json
+2025-12-03 22:05:56.313 [error] [Extension Host] Response status: 404, status text: 
+2025-12-03 22:13:09.629 [error] [LanguageModelToolsService#invokeTool] Error from tool copilot_readFile with parameters {"startLine":1,"endLine":100,"filePath":"/root/Documentos/github/GestionSocios/src/Views/map.php"}:
+cannot open file:///root/Documentos/github/GestionSocios/src/Views/map.php. Detail: Unable to read file '/root/Documentos/github/GestionSocios/src/Views/map.php' (Error: Unable to resolve nonexistent file '/root/Documentos/github/GestionSocios/src/Views/map.php'): CodeExpectedError: cannot open file:///root/Documentos/github/GestionSocios/src/Views/map.php. Detail: Unable to read file '/root/Documentos/github/GestionSocios/src/Views/map.php' (Error: Unable to resolve nonexistent file '/root/Documentos/github/GestionSocios/src/Views/map.php')
+    at G3e.$tryOpenDocument (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:533:8532)

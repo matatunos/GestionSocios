@@ -1,0 +1,143 @@
+2025-12-03 22:55:03.003 [info] Started local extension host with pid 97723.
+2025-12-03 22:55:07.569 [error] [Extension Host] (node:97723) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `exe --trace-deprecation ...` to show where the warning was created)
+2025-12-03 22:55:07.585 [error] [Extension Host] (node:97723) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+2025-12-03 22:55:08.213 [info] MCP Registry configured: https://api.mcp.github.com
+2025-12-03 22:55:08.794 [info] Settings Sync: Account status changed from uninitialized to unavailable
+2025-12-03 22:55:08.819 [info] Auto updating outdated extensions. github.copilot-chat
+2025-12-03 22:55:10.950 [error] chatParticipant must be declared in package.json: claude-code
+2025-12-03 22:55:13.792 [info] [perf] Render performance baseline is 120ms
+2025-12-03 22:55:56.762 [error] [Extension Host] RangeError: Maximum call stack size exceeded
+	at TK._getUntrackedChangePatch (/root/.vscode/extensions/github.copilot-chat-0.33.3/dist/extension.js:5719:3315)
+	at async TK.getChangeDiffs (/root/.vscode/extensions/github.copilot-chat-0.33.3/dist/extension.js:5719:2784)
+	at async jue.invoke (/root/.vscode/extensions/github.copilot-chat-0.33.3/dist/extension.js:5005:3077)
+	at async tQ.$invokeTool (file:///usr/share/code/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:192:3195) Failed to generate patch file for untracked file: file:///root/Documentos/github/GestionSocios/User/workspaceStorage/91570e3aac97b09b000b86470d1f8e4a/chatSessions/f0f33394-42f5-4d59-9b31-2ae2f9b8ccd1.json
+2025-12-03 22:55:57.247 [error] [12d] potential listener LEAK detected, having 175 listeners already. MOST frequent listener (1):: Error
+    at pFi.create (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:27:12071)
+    at f9e.u [as onDidChangeReadonly] (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:29:1377)
+    at kye.wb (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:9406)
+    at new kye (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:9274)
+    at ETt.o (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1399:1716)
+    at ETt.createInstance (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1399:1213)
+    at axt.W (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:3833:6473)
+    at axt.resolve (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:3833:6173)
+    at kYe.r (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:21429)
+    at kYe.f (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:21043)
+2025-12-03 22:55:57.276 [error] [12c] potential listener LEAK detected, having 175 listeners already. MOST frequent listener (1):: Error
+    at pFi.create (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:27:12071)
+    at f9e.u [as onDidChangeFilesAssociation] (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:29:1377)
+    at kye.wb (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:9347)
+    at new kye (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:9274)
+    at ETt.o (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1399:1716)
+    at ETt.createInstance (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1399:1213)
+    at axt.W (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:3833:6473)
+    at axt.resolve (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:3833:6173)
+    at kYe.r (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:21429)
+    at kYe.f (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:21043)
+2025-12-03 22:55:57.405 [error] [12d] potential listener LEAK detected, having 261 listeners already. MOST frequent listener (89):: Error
+    at pFi.create (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:27:12071)
+    at f9e.u [as onDidChangeReadonly] (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:29:1377)
+    at kye.wb (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:9406)
+    at new kye (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:9274)
+    at ETt.o (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1399:1716)
+    at ETt.createInstance (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1399:1213)
+    at axt.W (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:3833:6473)
+    at axt.resolve (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:3833:6173)
+    at kYe.r (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:21429)
+    at kYe.f (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:21043)
+2025-12-03 22:55:57.407 [error] [12c] potential listener LEAK detected, having 261 listeners already. MOST frequent listener (89):: Error
+    at pFi.create (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:27:12071)
+    at f9e.u [as onDidChangeFilesAssociation] (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:29:1377)
+    at kye.wb (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:9347)
+    at new kye (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:9274)
+    at ETt.o (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1399:1716)
+    at ETt.createInstance (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1399:1213)
+    at axt.W (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:3833:6473)
+    at axt.resolve (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:3833:6173)
+    at kYe.r (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:21429)
+    at kYe.f (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:21043)
+2025-12-03 23:14:25.353 [error] [LanguageModelToolsService#invokeTool] Error from tool copilot_getChangedFiles with parameters {"repositoryPath":"/root/Documentos/github/GestionSocios"}:
+Canceled: Canceled: Canceled
+	at tQ.$invokeTool (file:///usr/share/code/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:192:3257)
+2025-12-03 23:40:41.217 [error] [Extension Host] Failed to fetch remote embeddings cache from https://embeddings.vscode-cdn.net/text-3-small/v1.106/tools/latest.txt
+2025-12-03 23:40:41.223 [error] [Extension Host] Response status: 404, status text: 
+2025-12-03 23:40:41.399 [error] [Extension Host] Failed to fetch remote embeddings cache from https://embeddings.vscode-cdn.net/text-3-small/v1.106/tools/core.json
+2025-12-03 23:40:41.400 [error] [Extension Host] Response status: 404, status text: 
+2025-12-04 00:09:08.632 [error] [LanguageModelToolsService#invokeTool] Error from tool copilot_listDirectory with parameters {"path":"/root/Documentos/github/GestionSocios/src/Views/layout"}:
+Error: ENOENT: no such file or directory, scandir '/root/Documentos/github/GestionSocios/src/Views/layout': EntryNotFound (FileSystemError): Error: ENOENT: no such file or directory, scandir '/root/Documentos/github/GestionSocios/src/Views/layout'
+	at Ms.e (file:///usr/share/code/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:114:18064)
+	at Object.readDirectory (file:///usr/share/code/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:114:16201)
+	at async Due.invoke (/root/.vscode/extensions/github.copilot-chat-0.33.3/dist/extension.js:4803:7705)
+	at async tQ.$invokeTool (file:///usr/share/code/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:192:3195)
+2025-12-04 00:28:22.042 [error] [Extension Host] (node:97723) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `exe --trace-warnings ...` to show where the warning was created)
+2025-12-04 00:31:55.542 [error] [76f] potential listener LEAK detected, having 175 listeners already. MOST frequent listener (1):: Error
+    at pFi.create (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:27:12071)
+    at K2e.u [as onDidChange] (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:29:1377)
+    at new sg (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:275:31449)
+    at ETt.o (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1399:1716)
+    at ETt.createInstance (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1399:1213)
+    at BYe.I (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1337:1910)
+    at BYe.createModel (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1338:870)
+    at kye.I (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:509:27205)
+    at kye.H (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:509:27097)
+    at kye.Gb (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:13400)
+2025-12-04 00:31:56.226 [error] [1b4] potential listener LEAK detected, having 175 listeners already. MOST frequent listener (1):: Error
+    at pFi.create (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:27:12071)
+    at e5i.u (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:29:1377)
+    at new m8e (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:495:24324)
+    at a (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:495:22764)
+    at Ple.value (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:495:23006)
+    at I.C (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:29:2392)
+    at I.D (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:29:2462)
+    at I.fire (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:29:2680)
+    at BYe.createModel (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1338:907)
+    at kye.I (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:509:27205)
+2025-12-04 00:46:16.146 [error] [76f] potential listener LEAK detected, having 221 listeners already. MOST frequent listener (23):: Error
+    at pFi.create (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:27:12071)
+    at K2e.u [as onDidChange] (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:29:1377)
+    at new sg (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:275:31449)
+    at ETt.o (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1399:1716)
+    at ETt.createInstance (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1399:1213)
+    at BYe.I (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1337:1910)
+    at BYe.createModel (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1338:870)
+    at kye.I (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:509:27205)
+    at kye.H (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:509:27097)
+    at kye.Gb (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:13400)
+2025-12-04 01:01:00.265 [error] [1b4] potential listener LEAK detected, having 235 listeners already. MOST frequent listener (24):: Error
+    at pFi.create (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:27:12071)
+    at e5i.u (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:29:1377)
+    at new m8e (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:495:24324)
+    at a (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:495:22764)
+    at Ple.value (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:495:23006)
+    at I.C (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:29:2392)
+    at I.D (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:29:2462)
+    at I.fire (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:29:2680)
+    at BYe.createModel (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1338:907)
+    at kye.I (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:509:27205)
+2025-12-04 01:02:53.208 [error] [76f] potential listener LEAK detected, having 248 listeners already. MOST frequent listener (29):: Error
+    at pFi.create (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:27:12071)
+    at K2e.u [as onDidChange] (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:29:1377)
+    at new sg (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:275:31449)
+    at ETt.o (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1399:1716)
+    at ETt.createInstance (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1399:1213)
+    at BYe.I (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1337:1910)
+    at BYe.createModel (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1338:870)
+    at kye.I (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:509:27205)
+    at kye.H (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:509:27097)
+    at kye.Gb (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:13400)
+2025-12-04 01:03:49.705 [error] [LanguageModelToolsService#invokeTool] Error from tool copilot_createFile with parameters {"content":"# Sistema de Migraciones de Base de Datos\n\n## Resumen\n\nSistema automatizado de migraciones para mantener sincronizada la base de datos con el código de la aplicación.\n\n---\n\n## 📋 Migraciones Disponibles\n\n### 1. `2025_12_03_professional_suppliers_SAFE.sql`\n**Descripción**: Profesionaliza el módulo de proveedores\n\n**Cambios**:\n- ✅ 19 nuevas columnas en `suppliers` (tax_id, postal_code, city, province, country, etc.)\n- ✅ 3 índices optimizados (tipo, estado, categoría)\n- ✅ Tabla `supplier_contacts` (múltiples contactos por proveedor)\n- ✅ Tabla `supplier_documents` (gestión documental)\n- ✅ Tabla `supplier_categories` (10 categorías predefinidas)\n- ✅ Tabla `supplier_ratings` (sistema de valoración)\n\n**Estado**: ✅ Aplicada\n\n---\n\n### 2. `2025_12_04_create_grants_tables.sql`\n**Descripción**: Crea tablas para el módulo de subvenciones\n\n**Cambios**:\n- ✅ Tabla `grants` (gestión completa de subvenciones)\n- ✅ Tabla `grant_documents` (documentación asociada)\n- ✅ Tabla `grant_activities` (seguimiento de actividades)\n- ✅ Tabla `grant_reminders` (recordatorios automáticos)\n- ✅ 3 subvenciones de ejemplo insertadas\n\n**Estado**: ✅ Aplicada\n\n**Registros**: 3 subvenciones ejemplo\n\n---\n\n### 3. `2025_12_04_create_bank_tables.sql`\n**Descripción**: Crea tablas para el módulo bancario\n\n**Cambios**:\n- ✅ Tabla `bank_accounts` (cuentas bancarias)\n- ✅ Tabla `bank_transactions` (movimientos bancarios)\n- ✅ Tabla `bank_reconciliations` (conciliaciones)\n- ✅ Tabla `bank_transaction_matches` (matching automático)\n- ✅ Tabla `bank_import_rules` (reglas de categorización)\n- ✅ 1 cuenta bancaria ejemplo\n- ✅ 4 reglas de categorización predefinidas\n\n**Estado**: ✅ Aplicada\n\n**Registros**: 1 cuenta + 4 reglas\n\n---\n\n## 🚀 Uso del Sistema de Migraciones\n\n### Opción 1: Script Automático (Recomendado)\n\n```bash\n# Aplicar todas las migraciones pendientes\n./database/apply_migrations.sh\n\n# Con parámetros personalizados\n./database/apply_migrations.sh [host] [user] [database]\n\n# Ejemplo:\n./database/apply_migrations.sh 192.168.1.22 root asociacion\n```\n\n**Ventajas**:\n- ✅ Detecta automáticamente migraciones pendientes\n- ✅ Evita aplicar migraciones duplicadas\n- ✅ Registro de migraciones aplicadas en `schema_migrations`\n- ✅ Reporte de estado con colores\n- ✅ Safe to run múltiples veces (idempotente)\n\n**Salida del Script**:\n```\n==================================================\nSistema de Migraciones - GestionSocios\n==================================================\n\nHost: 192.168.1.22\nUsuario: root\nBase de datos: asociacion\n\n✓ Conexión exitosa\n✓ Sistema de migraciones listo\n\nBuscando migraciones pendientes...\n\n⊙ 2025_12_03_professional_suppliers_SAFE.sql (ya aplicada)\n→ Aplicando 2025_12_04_create_grants_tables.sql...\n✓ 2025_12_04_create_grants_tables.sql aplicada exitosamente\n\n==================================================\nResumen\n==================================================\nMigraciones ya aplicadas: 1\nMigraciones aplicadas ahora: 1\nErrores: 0\n\n✓ Todas las migraciones se aplicaron correctamente\n```\n\n---\n\n### Opción 2: Manual (Individual)\n\n```bash\n# Aplicar una migración específica\nmysql -u root -psatriani -h 192.168.1.22 asociacion < \\\n  database/migrations/2025_12_04_create_grants_tables.sql\n```\n\n---\n\n## 📊 Estado de las Tablas\n\n### Verificar Tablas Creadas\n\n```bash\n# Ver todas las tablas de proveedores\nmysql -u root -psatriani -h 192.168.1.22 asociacion -e \"SHOW TABLES LIKE 'supplier%';\"\n\n# Ver todas las tablas de subvenciones\nmysql -u root -psatriani -h 192.168.1.22 asociacion -e \"SHOW TABLES LIKE 'grant%';\"\n\n# Ver todas las tablas bancarias\nmysql -u root -psatriani -h 192.168.1.22 asociacion -e \"SHOW TABLES LIKE 'bank%';\"\n```\n\n### Verificar Migraciones Aplicadas\n\n```bash\nmysql -u root -psatriani -h 192.168.1.22 asociacion -e \\\n  \"SELECT * FROM schema_migrations ORDER BY applied_at DESC;\"\n```\n\n---\n\n## 🔧 Solución de Problemas\n\n### Error: \"Duplicate column name\"\n**Solución**: Las migraciones SAFE ya incluyen verificaciones. Usa el script `apply_migrations.sh` que detecta duplicados.\n\n### Error: \"Table doesn't exist\"\n**Causa**: Falta aplicar las migraciones de creación de tablas.\n\n**Solución**:\n```bash\n./database/apply_migrations.sh\n```\n\n### Error: \"SQLSTATE[42000]: Syntax error\"\n**Causa**: Error en la sintaxis SQL de la migración.\n\n**Solución**: Revisar el archivo de migración y corregir el SQL.\n\n---\n\n## 📝 Crear Nueva Migración\n\n### Convención de Nombres\n```\nYYYY_MM_DD_descripcion_corta.sql\n```\n\nEjemplo: `2025_12_05_add_invoice_numbers.sql`\n\n### Plantilla de Migración\n\n```sql\n-- Migración: [Descripción breve]\n-- Fecha: [YYYY-MM-DD]\n-- Descripción: [Descripción detallada]\n\n-- Verificar si la tabla/columna ya existe (opcional pero recomendado)\nSET @dbname = DATABASE();\n\n-- Tus cambios aquí...\nCREATE TABLE IF NOT EXISTS nueva_tabla (\n    id INT AUTO_INCREMENT PRIMARY KEY,\n    -- ... columnas ...\n    created_at DATETIME DEFAULT CURRENT_TIMESTAMP\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;\n\n-- Mensaje de finalización\nSELECT '✓ Migración completada exitosamente' AS Status;\n```\n\n### Aplicar Nueva Migración\n\n```bash\n# Método automático (recomendado)\n./database/apply_migrations.sh\n\n# Método manual\nmysql -u root -psatriani -h 192.168.1.22 asociacion < \\\n  database/migrations/2025_12_05_nueva_migracion.sql\n```\n\n---\n\n## 🗂️ Estructura de Tablas Actual\n\n### Módulo de Proveedores (8 tablas)\n```\nsuppliers (30 columnas)\n├── supplier_contacts\n├── supplier_documents\n├── supplier_categories\n├── supplier_ratings\n├── supplier_invoices\n├── supplier_orders\n└── supplier_order_lines\n```\n\n### Módulo de Subvenciones (4 tablas)\n```\ngrants\n├── grant_documents\n├── grant_activities\n└── grant_reminders\n```\n\n### Módulo Bancario (5 tablas)\n```\nbank_accounts\n├── bank_transactions\n├── bank_reconciliations\n├── bank_transaction_matches\n└── bank_import_rules\n```\n\n---\n\n## ⚠️ Notas Importantes\n\n1. **Backups**: Siempre hacer backup antes de aplicar migraciones en producción\n   ```bash\n   mysqldump -u root -psatriani -h 192.168.1.22 asociacion > backup_$(date +%Y%m%d_%H%M%S).sql\n   ```\n\n2. **Testing**: Probar migraciones en desarrollo antes de producción\n\n3. **Rollback**: No hay rollback automático. Crear migraciones de reversión si es necesario.\n\n4. **Idempotencia**: Las migraciones SAFE son idempotentes (se pueden ejecutar múltiples veces sin problemas)\n\n---\n\n## 📈 Estadísticas\n\n| Módulo | Tablas | Migraciones | Estado |\n|--------|--------|-------------|--------|\n| Proveedores | 8 | 1 | ✅ Completo |\n| Subvenciones | 4 | 1 | ✅ Completo |\n| Bancario | 5 | 1 | ✅ Completo |\n| **Total** | **17** | **3** | ✅ **100%** |\n\n---\n\n## 🔗 Referencias\n\n- [Guía de Navegación](../NAVIGATION_GUIDE.md)\n- [Documentación API](../API_DOCUMENTATION.md)\n- [Schema Principal](schema.sql)\n\n---\n\n**Última actualización**: 4 de Diciembre de 2025\n","filePath":"/root/Documentos/github/GestionSocios/database/migrations/README.md"}:
+File already exists. You must use an edit tool to modify it.: Error: File already exists. You must use an edit tool to modify it.
+	at lue.invoke (/root/.vscode/extensions/github.copilot-chat-0.33.3/dist/extension.js:4791:2886)
+	at async tQ.$invokeTool (file:///usr/share/code/resources/app/out/vs/workbench/api/node/extensionHostProcess.js:192:3195)
+2025-12-04 01:15:31.407 [error] [76f] potential listener LEAK detected, having 266 listeners already. MOST frequent listener (33):: Error
+    at pFi.create (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:27:12071)
+    at K2e.u [as onDidChange] (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:29:1377)
+    at new sg (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:275:31449)
+    at ETt.o (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1399:1716)
+    at ETt.createInstance (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1399:1213)
+    at BYe.I (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1337:1910)
+    at BYe.createModel (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1338:870)
+    at kye.I (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:509:27205)
+    at kye.H (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:509:27097)
+    at kye.Gb (vscode-file://vscode-app/usr/share/code/resources/app/out/vs/workbench/workbench.desktop.main.js:1313:13400)

@@ -1,0 +1,113 @@
+<?php
+
+class FeeController {
+    private $db;
+    private $fee;
+
+    public function __construct() {
+        $database = new Database();
+        $this->db = $database->getConnection();
+        $this->fee = new Fee($this->db);
+    }
+
+    private function checkAdmin() {
+        if (($_SESSION['role'] ?? '') !== 'admin') {
+            header('Location: index.php?page=dashboard');
+            exit;
+        }
+    }
+
+    public function index() {
+        $this->checkAdmin();
+        // Redirect to settings as fees are now managed there
+        header('Location: index.php?page=settings&tab=fees');
+        exit;
+    }
+
+    public function store() {
+        $this->checkAdmin();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Validate CSRF token
+            require_once __DIR__ . '/../Helpers/CsrfHelper.php';
+            CsrfHelper::validateRequest();
+            
+            try {
+                $year = $_POST['year'];
+                $this->fee->year = $year;
+                $this->fee->amount = $_POST['amount'];
+
+                // Check if fee already exists to provide appropriate message
+                $exists = $this->fee->exists($year);
+
+                if ($this->fee->createOrUpdate()) {
+                    // Auditoría de alta/modificación de tarifa
+                    require_once __DIR__ . '/../Models/AuditLog.php';
+                    $audit = new AuditLog($this->db);
+                    $action = $exists ? 'update' : 'create';
+                    $audit->create($_SESSION['user_id'], $action, 'fee', $year, 'Tarifa de socio ' . ($exists ? 'modificada' : 'creada') . ' por el usuario ' . ($_SESSION['username'] ?? ''));
+                    header("Location: index.php?page=settings&tab=fees&success=$action&year=$year");
+                    exit;
+                } else {
+                    // In case of error, we might want to redirect back with error param
+                    header("Location: index.php?page=settings&tab=fees&error=save_failed");
+                    exit;
+                }
+            } catch (Exception $e) {
+                header("Location: index.php?page=settings&tab=fees&error=" . urlencode($e->getMessage()));
+                exit;
+            }
+        }
+    }
+
+    public function generatePayments($year) {
+        $this->checkAdmin();
+        
+        // Get fee amount for the year
+        $this->fee->year = $year;
+        // Simple query to get amount (should add readOne to model, but this works for now)
+        $stmt = $this->db->prepare("SELECT amount FROM annual_fees WHERE year = ?");
+        $stmt->execute([$year]);
+        $fee = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$fee) {
+            header('Location: index.php?page=settings&tab=fees&error=no_fee_defined');
+            exit;
+        }
+
+        $amount = $fee['amount'];
+        $concept = "Cuota Anual " . $year;
+
+        // Get all active members
+        $memberModel = new Member($this->db);
+        $stmt = $memberModel->readAll();
+        $members = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $count = 0;
+        foreach ($members as $member) {
+            if ($member['status'] !== 'active') continue;
+
+            // Check if payment already exists for this member and year
+            $check = $this->db->prepare("SELECT id FROM payments WHERE member_id = ? AND fee_year = ?");
+            $check->execute([$member['id'], $year]);
+            
+            if (!$check->fetch()) {
+                // Create pending payment
+                $payment = new Payment($this->db);
+                $payment->member_id = $member['id'];
+                $payment->amount = $amount;
+                $payment->payment_date = date('Y-m-d'); // Or maybe null? Let's say today.
+                $payment->concept = $concept;
+                $payment->status = 'pending';
+                // We need to add fee_year and payment_type to Payment model create method first!
+                // For now, let's do a direct insert to ensure it works with the new columns
+                $query = "INSERT INTO payments (member_id, amount, payment_date, concept, status, fee_year, payment_type) 
+                          VALUES (?, ?, ?, ?, 'pending', ?, 'fee')";
+                $ins = $this->db->prepare($query);
+                $ins->execute([$member['id'], $amount, date('Y-m-d'), $concept, $year]);
+                $count++;
+            }
+        }
+
+        header("Location: index.php?page=settings&tab=fees&success=generated&count=$count&year=$year");
+    }
+}

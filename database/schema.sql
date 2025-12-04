@@ -508,15 +508,121 @@ CREATE TABLE IF NOT EXISTS suppliers (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     cif_nif VARCHAR(20),
+    tax_id VARCHAR(50), -- NIF/VAT completo para facturación
     email VARCHAR(255),
     phone VARCHAR(20),
     address TEXT,
+    postal_code VARCHAR(10),
+    city VARCHAR(100),
+    province VARCHAR(100),
+    country VARCHAR(100) DEFAULT 'España',
     website VARCHAR(255),
     logo_path VARCHAR(255),
+    tipo_proveedor ENUM('servicios', 'productos', 'mixto', 'profesional') DEFAULT 'servicios',
+    categoria VARCHAR(100), -- Categoría de proveedor (tecnología, papelería, etc)
+    estado ENUM('activo', 'inactivo', 'bloqueado') DEFAULT 'activo',
+    payment_terms INT DEFAULT 30, -- Días de plazo de pago
+    default_payment_method ENUM('transfer', 'cash', 'card', 'check', 'other') DEFAULT 'transfer',
+    iban VARCHAR(34),
+    swift VARCHAR(11),
+    bank_name VARCHAR(255),
+    default_discount DECIMAL(5,2) DEFAULT 0.00, -- Descuento por defecto en %
+    credit_limit DECIMAL(10,2), -- Límite de crédito
+    contact_person VARCHAR(255),
+    contact_email VARCHAR(255),
+    contact_phone VARCHAR(20),
+    rating TINYINT CHECK (rating >= 1 AND rating <= 5), -- Valoración del proveedor
     notes TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_tipo (tipo_proveedor),
+    INDEX idx_estado (estado),
+    INDEX idx_categoria (categoria)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de contactos de proveedores
+CREATE TABLE IF NOT EXISTS supplier_contacts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    supplier_id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    position VARCHAR(100), -- Cargo
+    email VARCHAR(255),
+    phone VARCHAR(20),
+    mobile VARCHAR(20),
+    is_primary BOOLEAN DEFAULT 0, -- Contacto principal
+    notes TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (supplier_id) REFERENCES suppliers(id) ON DELETE CASCADE,
+    INDEX idx_supplier (supplier_id),
+    INDEX idx_primary (is_primary)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de documentos de proveedores
+CREATE TABLE IF NOT EXISTS supplier_documents (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    supplier_id INT NOT NULL,
+    document_id INT, -- Referencia al gestor documental general si existe
+    document_type ENUM('contrato', 'certificado', 'seguro', 'licencia', 'otro') DEFAULT 'otro',
+    name VARCHAR(255) NOT NULL,
+    file_path VARCHAR(255),
+    description TEXT,
+    upload_date DATE,
+    expiry_date DATE, -- Fecha de caducidad (para seguros, certificados, etc)
+    status ENUM('vigente', 'caducado', 'renovado', 'cancelado') DEFAULT 'vigente',
+    tags VARCHAR(255), -- Tags separados por comas para búsqueda
+    uploaded_by INT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (supplier_id) REFERENCES suppliers(id) ON DELETE CASCADE,
+    FOREIGN KEY (uploaded_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_supplier (supplier_id),
+    INDEX idx_type (document_type),
+    INDEX idx_status (status),
+    INDEX idx_expiry (expiry_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de órdenes de compra
+CREATE TABLE IF NOT EXISTS supplier_orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    supplier_id INT NOT NULL,
+    order_number VARCHAR(50) NOT NULL UNIQUE,
+    order_date DATE NOT NULL,
+    expected_delivery_date DATE,
+    status ENUM('draft', 'sent', 'confirmed', 'received', 'cancelled') DEFAULT 'draft',
+    subtotal DECIMAL(10,2) DEFAULT 0.00,
+    tax_amount DECIMAL(10,2) DEFAULT 0.00,
+    discount_amount DECIMAL(10,2) DEFAULT 0.00,
+    total_amount DECIMAL(10,2) DEFAULT 0.00,
+    notes TEXT,
+    approved_by INT,
+    approved_at DATETIME,
+    created_by INT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (supplier_id) REFERENCES suppliers(id) ON DELETE CASCADE,
+    FOREIGN KEY (approved_by) REFERENCES users(id) ON DELETE SET NULL,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_supplier (supplier_id),
+    INDEX idx_order_number (order_number),
+    INDEX idx_status (status),
+    INDEX idx_order_date (order_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de líneas de órdenes de compra
+CREATE TABLE IF NOT EXISTS supplier_order_lines (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT NOT NULL,
+    line_number INT NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    quantity DECIMAL(10,2) NOT NULL,
+    unit_price DECIMAL(10,2) NOT NULL,
+    tax_rate DECIMAL(5,2) DEFAULT 21.00, -- % IVA
+    discount_rate DECIMAL(5,2) DEFAULT 0.00,
+    line_total DECIMAL(10,2),
+    notes TEXT,
+    FOREIGN KEY (order_id) REFERENCES supplier_orders(id) ON DELETE CASCADE,
+    INDEX idx_order (order_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Tabla de cuotas anuales
 CREATE TABLE IF NOT EXISTS annual_fees (
      year INT PRIMARY KEY,
@@ -527,17 +633,30 @@ CREATE TABLE IF NOT EXISTS annual_fees (
 CREATE TABLE IF NOT EXISTS supplier_invoices (
     id INT AUTO_INCREMENT PRIMARY KEY,
     supplier_id INT NOT NULL,
+    order_id INT, -- Referencia a orden de compra si viene de una
     invoice_number VARCHAR(50) NOT NULL,
     invoice_date DATE NOT NULL,
-    amount DECIMAL(10, 2),
-    status ENUM('paid', 'pending', 'cancelled') DEFAULT 'pending',
+    due_date DATE, -- Fecha de vencimiento
+    payment_date DATE, -- Fecha real de pago
+    subtotal DECIMAL(10,2) DEFAULT 0.00,
+    tax_amount DECIMAL(10,2) DEFAULT 0.00,
+    discount_amount DECIMAL(10,2) DEFAULT 0.00,
+    amount DECIMAL(10, 2), -- Total
+    status ENUM('paid', 'pending', 'overdue', 'cancelled') DEFAULT 'pending',
+    payment_method ENUM('transfer', 'cash', 'card', 'check', 'other') DEFAULT 'transfer',
+    bank_reference VARCHAR(100), -- Referencia bancaria del pago
+    tipo_factura ENUM('normal', 'rectificativa', 'abono') DEFAULT 'normal',
     file_path VARCHAR(255),
     notes TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (supplier_id) REFERENCES suppliers(id) ON DELETE CASCADE,
+    FOREIGN KEY (order_id) REFERENCES supplier_orders(id) ON DELETE SET NULL,
     INDEX idx_supplier (supplier_id),
     INDEX idx_invoice_number (invoice_number),
-    INDEX idx_invoice_date (invoice_date)
+    INDEX idx_invoice_date (invoice_date),
+    INDEX idx_due_date (due_date),
+    INDEX idx_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabla de anuncios públicos
@@ -755,6 +874,196 @@ SELECT
     MIN(id)
 FROM users
 WHERE EXISTS (SELECT 1 FROM users LIMIT 1);
+
+-- ============================================================================
+-- MÓDULO DE FACTURACIÓN (ISSUED INVOICES)
+-- ============================================================================
+-- Facturas emitidas por la asociación a clientes/terceros
+-- ============================================================================
+
+-- Tabla de series de facturación
+CREATE TABLE IF NOT EXISTS invoice_series (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    code VARCHAR(10) NOT NULL UNIQUE,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    prefix VARCHAR(20) NOT NULL,
+    next_number INT NOT NULL DEFAULT 1,
+    is_default BOOLEAN DEFAULT 0,
+    is_active BOOLEAN DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_code (code),
+    INDEX idx_default (is_default)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Insertar series por defecto
+INSERT INTO invoice_series (code, name, description, prefix, next_number, is_default, is_active) VALUES
+('NORMAL', 'Serie Normal', 'Facturas ordinarias', 'F', 1, 1, 1),
+('RECT', 'Serie Rectificativa', 'Facturas rectificativas y abonos', 'R', 1, 0, 1),
+('SIMP', 'Serie Simplificada', 'Facturas simplificadas (tickets)', 'S', 1, 0, 1);
+
+-- Tabla de facturas emitidas
+CREATE TABLE IF NOT EXISTS issued_invoices (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    series_id INT NOT NULL,
+    invoice_number VARCHAR(50) NOT NULL,
+    full_number VARCHAR(100) NOT NULL,
+    issue_date DATE NOT NULL,
+    due_date DATE,
+    
+    -- Cliente
+    customer_type ENUM('member', 'external') DEFAULT 'external',
+    member_id INT NULL,
+    customer_name VARCHAR(200) NOT NULL,
+    customer_tax_id VARCHAR(50),
+    customer_address TEXT,
+    customer_city VARCHAR(100),
+    customer_postal_code VARCHAR(20),
+    customer_country VARCHAR(100) DEFAULT 'España',
+    customer_email VARCHAR(200),
+    customer_phone VARCHAR(50),
+    
+    -- Concepto y observaciones
+    description TEXT NOT NULL,
+    notes TEXT,
+    
+    -- Importes
+    subtotal DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    tax_rate DECIMAL(5,2) NOT NULL DEFAULT 0.00,
+    tax_amount DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    discount_rate DECIMAL(5,2) DEFAULT 0.00,
+    discount_amount DECIMAL(10,2) DEFAULT 0.00,
+    total DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    
+    -- Estado y pago
+    status ENUM('draft', 'issued', 'paid', 'cancelled', 'overdue') DEFAULT 'draft',
+    payment_method ENUM('cash', 'transfer', 'card', 'check', 'other') DEFAULT 'transfer',
+    payment_date DATE NULL,
+    
+    -- Referencias
+    reference VARCHAR(100),
+    accounting_entry_id INT NULL,
+    
+    -- PDF
+    pdf_path VARCHAR(500),
+    
+    -- Auditoría
+    created_by INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    issued_by INT NULL,
+    issued_at TIMESTAMP NULL,
+    cancelled_by INT NULL,
+    cancelled_at TIMESTAMP NULL,
+    cancellation_reason TEXT,
+    
+    FOREIGN KEY (series_id) REFERENCES invoice_series(id) ON DELETE RESTRICT,
+    FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE SET NULL,
+    FOREIGN KEY (accounting_entry_id) REFERENCES accounting_entries(id) ON DELETE SET NULL,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (issued_by) REFERENCES users(id) ON DELETE SET NULL,
+    FOREIGN KEY (cancelled_by) REFERENCES users(id) ON DELETE SET NULL,
+    
+    UNIQUE KEY unique_full_number (full_number),
+    INDEX idx_invoice_number (invoice_number),
+    INDEX idx_series (series_id),
+    INDEX idx_issue_date (issue_date),
+    INDEX idx_customer (customer_type, member_id),
+    INDEX idx_status (status),
+    INDEX idx_payment (payment_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de líneas de factura
+CREATE TABLE IF NOT EXISTS issued_invoice_lines (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    invoice_id INT NOT NULL,
+    line_order INT DEFAULT 0,
+    
+    -- Concepto
+    concept VARCHAR(500) NOT NULL,
+    description TEXT,
+    
+    -- Cantidades y precios
+    quantity DECIMAL(10,2) NOT NULL DEFAULT 1.00,
+    unit_price DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    discount_rate DECIMAL(5,2) DEFAULT 0.00,
+    
+    -- Impuestos
+    tax_rate DECIMAL(5,2) NOT NULL DEFAULT 0.00,
+    
+    -- Totales calculados
+    subtotal DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    discount_amount DECIMAL(10,2) DEFAULT 0.00,
+    tax_amount DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    total DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (invoice_id) REFERENCES issued_invoices(id) ON DELETE CASCADE,
+    INDEX idx_invoice (invoice_id),
+    INDEX idx_order (line_order)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================================
+-- VERIFACTU - Sistema Antifraude AEAT (Obligatorio 2025)
+-- ============================================================================
+-- Tabla para almacenar las firmas digitales y huellas de Verifactu
+CREATE TABLE IF NOT EXISTS verifactu_signatures (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    
+    -- Relación con factura
+    invoice_id INT NOT NULL,
+    
+    -- Datos de la cadena de bloques
+    hash VARCHAR(64) NOT NULL COMMENT 'Hash SHA-256 de esta factura',
+    previous_hash VARCHAR(64) DEFAULT NULL COMMENT 'Hash de la factura anterior (cadena)',
+    signature TEXT NOT NULL COMMENT 'Firma electrónica completa',
+    
+    -- Código QR para verificación
+    qr_code TEXT COMMENT 'Código QR en base64 con URL de verificación AEAT',
+    qr_url VARCHAR(500) COMMENT 'URL de verificación en sede electrónica AEAT',
+    
+    -- Datos para envío a AEAT
+    csv VARCHAR(100) COMMENT 'Código Seguro de Verificación',
+    registration_number VARCHAR(100) COMMENT 'Número de registro en sistema Verifactu',
+    sent_to_aeat BOOLEAN DEFAULT FALSE,
+    sent_at DATETIME NULL,
+    aeat_response TEXT COMMENT 'Respuesta del SII/Verifactu',
+    aeat_status ENUM('pending', 'accepted', 'rejected', 'error') DEFAULT 'pending',
+    
+    -- Metadatos de la firma
+    signature_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    signature_algorithm VARCHAR(50) DEFAULT 'SHA256-RSA',
+    certificate_id VARCHAR(100) COMMENT 'ID del certificado digital usado',
+    
+    -- Control de versiones (por si cambia normativa)
+    verifactu_version VARCHAR(10) DEFAULT '1.0',
+    
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (invoice_id) REFERENCES issued_invoices(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_invoice (invoice_id),
+    INDEX idx_hash (hash),
+    INDEX idx_sent (sent_to_aeat, sent_at),
+    INDEX idx_status (aeat_status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Configuración de Verifactu en settings
+INSERT INTO organization_settings (category, setting_key, setting_value, setting_type, description) VALUES
+('verifactu', 'enabled', '0', 'boolean', 'Activar sistema Verifactu'),
+('verifactu', 'nif_emisor', '', 'text', 'NIF del emisor registrado en AEAT'),
+('verifactu', 'certificate_path', '', 'text', 'Ruta al certificado digital'),
+('verifactu', 'certificate_password', '', 'password', 'Contraseña del certificado (encriptada)'),
+('verifactu', 'environment', 'test', 'select', 'Entorno: test o production'),
+('verifactu', 'sistema_id', '', 'text', 'ID del sistema informático registrado'),
+('verifactu', 'version', '1.0', 'text', 'Versión del sistema Verifactu'),
+('verifactu', 'auto_send', '0', 'boolean', 'Enviar automáticamente al emitir factura'),
+('verifactu', 'qr_enabled', '1', 'boolean', 'Incluir código QR en facturas'),
+('verifactu', 'test_url', 'https://prewww1.aeat.es/wlpl/TIKE-CONT/ValidarQR', 'text', 'URL de verificación (pruebas)'),
+('verifactu', 'production_url', 'https://www.agenciatributaria.gob.es/wlpl/TIKE-CONT/ValidarQR', 'text', 'URL de verificación (producción)')
+ON DUPLICATE KEY UPDATE setting_key=setting_key;
 
 -- ============================================================================
 -- Social Media Sharing Integration
@@ -1246,3 +1555,465 @@ BEGIN
 END//
 
 DELIMITER ;
+
+-- ============================================================================
+-- MÓDULO DE GESTIÓN DE SUBVENCIONES
+-- ============================================================================
+-- Gestión completa de subvenciones: búsqueda, solicitud, seguimiento, justificación
+-- ============================================================================
+
+-- Tabla principal de subvenciones
+CREATE TABLE IF NOT EXISTS grants (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    
+    -- Información básica
+    title VARCHAR(500) NOT NULL,
+    description TEXT,
+    organization VARCHAR(300) NOT NULL COMMENT 'Organismo convocante',
+    
+    -- Tipo y ámbito
+    grant_type ENUM('estatal', 'autonomica', 'provincial', 'local', 'europea', 'privada') NOT NULL,
+    scope VARCHAR(200) COMMENT 'Ámbito geográfico específico',
+    category VARCHAR(100) COMMENT 'Categoría: cultura, deporte, social, etc.',
+    
+    -- Importes
+    min_amount DECIMAL(12,2) COMMENT 'Importe mínimo',
+    max_amount DECIMAL(12,2) COMMENT 'Importe máximo',
+    total_budget DECIMAL(15,2) COMMENT 'Presupuesto total de la convocatoria',
+    
+    -- Plazos
+    announcement_date DATE COMMENT 'Fecha de publicación',
+    open_date DATE COMMENT 'Fecha de apertura de solicitudes',
+    deadline DATE NOT NULL COMMENT 'Fecha límite de solicitud',
+    resolution_date DATE COMMENT 'Fecha prevista de resolución',
+    
+    -- URLs y referencias
+    url VARCHAR(500) COMMENT 'URL de la convocatoria',
+    official_document VARCHAR(500) COMMENT 'URL del documento oficial (BOE, DOGC, etc.)',
+    reference_code VARCHAR(100) COMMENT 'Código de referencia oficial',
+    
+    -- Requisitos
+    requirements TEXT COMMENT 'Requisitos principales',
+    eligibility TEXT COMMENT 'Criterios de elegibilidad',
+    excluded_activities TEXT COMMENT 'Actividades excluidas',
+    
+    -- Documentación requerida
+    required_documents TEXT COMMENT 'Lista de documentos necesarios',
+    
+    -- Estado de la convocatoria
+    status ENUM('prospecto', 'abierta', 'cerrada', 'resuelta', 'archivada') DEFAULT 'prospecto',
+    
+    -- Nuestro estado interno
+    our_status ENUM('identificada', 'en_revision', 'solicitada', 'concedida', 'denegada', 'descartada') DEFAULT 'identificada',
+    
+    -- Metadatos de búsqueda automática
+    auto_discovered BOOLEAN DEFAULT FALSE COMMENT 'Encontrada automáticamente',
+    search_keywords TEXT COMMENT 'Keywords usadas para encontrarla',
+    relevance_score INT DEFAULT 0 COMMENT 'Puntuación de relevancia (0-100)',
+    
+    -- Localización para búsqueda personalizada
+    province VARCHAR(100),
+    municipality VARCHAR(100),
+    
+    -- Alertas
+    alert_sent BOOLEAN DEFAULT FALSE,
+    alert_days_before INT DEFAULT 7 COMMENT 'Días de antelación para alertas',
+    
+    -- Auditoría
+    created_by INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_deadline (deadline),
+    INDEX idx_type (grant_type),
+    INDEX idx_status (status, our_status),
+    INDEX idx_location (province, municipality),
+    INDEX idx_auto_discovered (auto_discovered, relevance_score),
+    FULLTEXT idx_search (title, description, organization)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de solicitudes de subvenciones
+CREATE TABLE IF NOT EXISTS grant_applications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    
+    grant_id INT NOT NULL,
+    
+    -- Datos de la solicitud
+    application_number VARCHAR(100) COMMENT 'Número de registro de solicitud',
+    application_date DATE NOT NULL,
+    requested_amount DECIMAL(12,2) NOT NULL,
+    
+    -- Estado de la solicitud
+    status ENUM('borrador', 'presentada', 'subsanacion', 'en_evaluacion', 'concedida', 'denegada', 'desistida') DEFAULT 'borrador',
+    
+    -- Resolución
+    resolution_date DATE,
+    granted_amount DECIMAL(12,2) COMMENT 'Importe concedido',
+    resolution_text TEXT COMMENT 'Texto de la resolución',
+    
+    -- Justificación
+    justification_deadline DATE COMMENT 'Plazo de justificación',
+    justification_status ENUM('pendiente', 'en_curso', 'presentada', 'aceptada', 'rechazada', 'subsanacion') DEFAULT 'pendiente',
+    justification_date DATE,
+    
+    -- Pagos
+    payment_type ENUM('anticipo', 'unico', 'fraccionado') DEFAULT 'unico',
+    advance_payment DECIMAL(12,2) DEFAULT 0 COMMENT 'Anticipo recibido',
+    final_payment DECIMAL(12,2) DEFAULT 0 COMMENT 'Pago final',
+    
+    -- Documentos adjuntos
+    documents_folder VARCHAR(255) COMMENT 'Carpeta en sistema de documentos',
+    
+    -- Notas internas
+    notes TEXT,
+    internal_notes TEXT COMMENT 'Notas privadas del equipo',
+    
+    -- Responsable
+    responsible_user_id INT COMMENT 'Usuario responsable del seguimiento',
+    
+    -- Auditoría
+    created_by INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (grant_id) REFERENCES grants(id) ON DELETE CASCADE,
+    FOREIGN KEY (responsible_user_id) REFERENCES users(id) ON DELETE SET NULL,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_status (status),
+    INDEX idx_justification (justification_status, justification_deadline),
+    INDEX idx_grant (grant_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de documentos requeridos y estado
+CREATE TABLE IF NOT EXISTS grant_documents (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    
+    application_id INT NOT NULL,
+    
+    -- Documento
+    document_name VARCHAR(300) NOT NULL,
+    document_type ENUM('solicitud', 'estatutos', 'memoria', 'presupuesto', 'certificados', 'justificacion', 'otro') NOT NULL,
+    required BOOLEAN DEFAULT TRUE,
+    
+    -- Estado
+    status ENUM('pendiente', 'en_preparacion', 'completado', 'validado') DEFAULT 'pendiente',
+    
+    -- Archivo asociado
+    document_id INT COMMENT 'ID en tabla documents',
+    file_path VARCHAR(500),
+    
+    -- Fechas
+    due_date DATE,
+    uploaded_at DATETIME,
+    
+    -- Notas
+    notes TEXT,
+    
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (application_id) REFERENCES grant_applications(id) ON DELETE CASCADE,
+    FOREIGN KEY (document_id) REFERENCES documents(id) ON DELETE SET NULL,
+    INDEX idx_application (application_id),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de hitos y seguimiento
+CREATE TABLE IF NOT EXISTS grant_milestones (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    
+    application_id INT NOT NULL,
+    
+    -- Hito
+    milestone_type ENUM('solicitud', 'subsanacion', 'evaluacion', 'resolucion', 'pago', 'justificacion', 'otro') NOT NULL,
+    title VARCHAR(300) NOT NULL,
+    description TEXT,
+    
+    -- Fechas
+    due_date DATE,
+    completed_at DATETIME,
+    
+    -- Estado
+    status ENUM('pendiente', 'en_curso', 'completado', 'vencido') DEFAULT 'pendiente',
+    
+    -- Alertas
+    alert_enabled BOOLEAN DEFAULT TRUE,
+    alert_days_before INT DEFAULT 7,
+    alert_sent BOOLEAN DEFAULT FALSE,
+    
+    -- Responsable
+    responsible_user_id INT,
+    
+    -- Notas
+    notes TEXT,
+    
+    created_by INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (application_id) REFERENCES grant_applications(id) ON DELETE CASCADE,
+    FOREIGN KEY (responsible_user_id) REFERENCES users(id) ON DELETE SET NULL,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_application (application_id),
+    INDEX idx_status (status, due_date),
+    INDEX idx_alerts (alert_enabled, alert_sent, due_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de búsquedas automáticas
+CREATE TABLE IF NOT EXISTS grant_searches (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    
+    -- Parámetros de búsqueda
+    search_name VARCHAR(200) NOT NULL,
+    keywords TEXT NOT NULL,
+    grant_type VARCHAR(50),
+    province VARCHAR(100),
+    municipality VARCHAR(100),
+    min_amount DECIMAL(12,2),
+    category VARCHAR(100),
+    
+    -- Configuración
+    active BOOLEAN DEFAULT TRUE,
+    frequency ENUM('daily', 'weekly', 'monthly') DEFAULT 'weekly',
+    
+    -- Última ejecución
+    last_run DATETIME,
+    last_results INT DEFAULT 0,
+    
+    -- Notificaciones
+    notify_users TEXT COMMENT 'IDs de usuarios a notificar (JSON)',
+    
+    created_by INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_active (active, last_run)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Configuración de localización para búsquedas
+INSERT INTO organization_settings (category, setting_key, setting_value, setting_type, description) VALUES
+('location', 'province', '', 'text', 'Provincia de la organización'),
+('location', 'municipality', '', 'text', 'Municipio de la organización'),
+('location', 'autonomous_community', '', 'text', 'Comunidad Autónoma'),
+('grants', 'search_enabled', '1', 'boolean', 'Habilitar búsqueda automática de subvenciones'),
+('grants', 'alert_days_before', '7', 'number', 'Días de antelación para alertas de vencimiento'),
+('grants', 'auto_notify', '1', 'boolean', 'Notificar automáticamente nuevas subvenciones'),
+('grants', 'min_relevance_score', '50', 'number', 'Puntuación mínima de relevancia para mostrar (0-100)')
+ON DUPLICATE KEY UPDATE setting_key=setting_key;
+
+-- ============================================================================
+-- MÓDULO DE GESTIÓN BANCARIA
+-- ============================================================================
+-- Gestión completa de cuentas bancarias, movimientos, conciliación, integración financiera
+-- ============================================================================
+
+-- Tabla de cuentas bancarias
+CREATE TABLE IF NOT EXISTS bank_accounts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    
+    -- Identificación de la cuenta
+    account_name VARCHAR(200) NOT NULL COMMENT 'Nombre descriptivo',
+    account_number VARCHAR(100) NOT NULL COMMENT 'Número de cuenta',
+    iban VARCHAR(34) COMMENT 'IBAN',
+    swift_bic VARCHAR(11) COMMENT 'SWIFT/BIC',
+    
+    -- Entidad bancaria
+    bank_name VARCHAR(200) NOT NULL,
+    bank_branch VARCHAR(200) COMMENT 'Sucursal',
+    
+    -- Tipo y moneda
+    account_type ENUM('corriente', 'ahorro', 'credito', 'paypal', 'otra') DEFAULT 'corriente',
+    currency VARCHAR(3) DEFAULT 'EUR',
+    
+    -- Saldos
+    initial_balance DECIMAL(15,2) DEFAULT 0 COMMENT 'Saldo inicial al crear la cuenta',
+    current_balance DECIMAL(15,2) DEFAULT 0 COMMENT 'Saldo actual (calculado)',
+    balance_date DATE COMMENT 'Fecha del último saldo conocido',
+    
+    -- Límites y control
+    overdraft_limit DECIMAL(15,2) DEFAULT 0 COMMENT 'Límite de descubierto',
+    monthly_fee DECIMAL(10,2) DEFAULT 0 COMMENT 'Comisión mensual',
+    
+    -- Vinculación contable
+    accounting_account_id INT COMMENT 'ID en accounting_accounts (572, etc.)',
+    
+    -- Estado
+    is_active BOOLEAN DEFAULT TRUE,
+    is_default BOOLEAN DEFAULT FALSE COMMENT 'Cuenta principal',
+    
+    -- Conciliación
+    last_reconciliation_date DATE COMMENT 'Última conciliación bancaria',
+    last_reconciliation_balance DECIMAL(15,2),
+    
+    -- Notas
+    notes TEXT,
+    
+    -- Auditoría
+    created_by INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (accounting_account_id) REFERENCES accounting_accounts(id) ON DELETE SET NULL,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_active (is_active),
+    INDEX idx_iban (iban),
+    UNIQUE KEY uk_account_number (account_number)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de movimientos bancarios
+CREATE TABLE IF NOT EXISTS bank_transactions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    
+    account_id INT NOT NULL,
+    
+    -- Datos de la transacción
+    transaction_date DATE NOT NULL,
+    value_date DATE COMMENT 'Fecha valor',
+    description TEXT NOT NULL,
+    reference VARCHAR(200) COMMENT 'Referencia/concepto del banco',
+    concept VARCHAR(500) COMMENT 'Concepto de la operación',
+    
+    -- Importes
+    amount DECIMAL(15,2) NOT NULL COMMENT 'Importe (positivo=ingreso, negativo=gasto)',
+    balance_after DECIMAL(15,2) COMMENT 'Saldo resultante tras la operación',
+    
+    -- Tipo de movimiento
+    transaction_type ENUM('debit', 'credit', 'transfer_in', 'transfer_out', 'fee', 'interest', 'other') NOT NULL,
+    category VARCHAR(100) COMMENT 'Categoría: cuotas, subvenciones, gastos_operativos, etc.',
+    
+    -- Información adicional
+    payee VARCHAR(255) COMMENT 'Contraparte (quien paga/cobra)',
+    counterpart_account VARCHAR(100) COMMENT 'Cuenta de la contraparte',
+    
+    -- Estado de conciliación
+    is_reconciled BOOLEAN DEFAULT FALSE,
+    reconciliation_date DATE,
+    reconciliation_id INT COMMENT 'ID de la conciliación bancaria',
+    reconciled_at DATETIME,
+    reconciled_by INT,
+    
+    -- Matching automático
+    is_matched BOOLEAN DEFAULT FALSE,
+    matched_with_type ENUM('issued_invoice', 'payment', 'donation', 'grant_payment', 'expense', 'other') COMMENT 'Tipo de operación vinculada',
+    matched_with_id INT COMMENT 'ID de la operación vinculada',
+    match_confidence INT DEFAULT 0 COMMENT 'Confianza del matching automático (0-100)',
+    invoice_id INT COMMENT 'ID de factura vinculada',
+    
+    -- Importación
+    imported BOOLEAN DEFAULT FALSE,
+    import_file VARCHAR(255),
+    import_date DATETIME,
+    imported_from VARCHAR(50),
+    imported_at DATETIME,
+    
+    -- Notas adicionales
+    notes TEXT,
+    
+    -- Auditoría
+    created_by INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (account_id) REFERENCES bank_accounts(id) ON DELETE CASCADE,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_account_date (account_id, transaction_date),
+    INDEX idx_account (account_id),
+    INDEX idx_date (transaction_date),
+    INDEX idx_type (transaction_type),
+    INDEX idx_reconciled (is_reconciled, account_id),
+    INDEX idx_matched (is_matched, matched_with_type, matched_with_id),
+    INDEX idx_amount (amount),
+    INDEX idx_reference (reference),
+    FULLTEXT idx_search (description, reference, payee)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de conciliaciones bancarias
+CREATE TABLE IF NOT EXISTS bank_reconciliations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    
+    account_id INT NOT NULL,
+    
+    -- Período de conciliación
+    period_start DATE NOT NULL,
+    period_end DATE NOT NULL,
+    reconciliation_date DATE NOT NULL,
+    
+    -- Saldos
+    opening_balance DECIMAL(15,2) NOT NULL COMMENT 'Saldo inicial',
+    closing_balance DECIMAL(15,2) NOT NULL COMMENT 'Saldo final según extracto',
+    calculated_balance DECIMAL(15,2) COMMENT 'Saldo calculado desde movimientos',
+    
+    -- Estadísticas
+    total_credits DECIMAL(15,2) DEFAULT 0 COMMENT 'Total ingresos del período',
+    total_debits DECIMAL(15,2) DEFAULT 0 COMMENT 'Total gastos del período',
+    transactions_reconciled INT DEFAULT 0,
+    transactions_pending INT DEFAULT 0,
+    
+    -- Diferencias
+    difference DECIMAL(15,2) DEFAULT 0 COMMENT 'Diferencia entre extracto y calculado',
+    is_balanced BOOLEAN DEFAULT FALSE COMMENT 'TRUE si difference = 0',
+    
+    -- Estado
+    status ENUM('en_proceso', 'completada', 'con_diferencias', 'cancelada') DEFAULT 'en_proceso',
+    
+    -- Observaciones
+    notes TEXT,
+    adjustments TEXT COMMENT 'Ajustes realizados para cuadrar',
+    
+    -- Auditoría
+    reconciled_by INT,
+    started_at DATETIME,
+    completed_at DATETIME,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (account_id) REFERENCES bank_accounts(id) ON DELETE CASCADE,
+    FOREIGN KEY (reconciled_by) REFERENCES users(id) ON DELETE SET NULL,
+    INDEX idx_account (account_id),
+    INDEX idx_account_period (account_id, period_end),
+    INDEX idx_date (reconciliation_date),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de matching entre transacciones y facturas/movimientos
+CREATE TABLE IF NOT EXISTS bank_transaction_matches (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_id INT NOT NULL,
+    match_type ENUM('invoice', 'payment', 'expense', 'transfer', 'manual') NOT NULL,
+    match_id INT NOT NULL,
+    match_amount DECIMAL(12,2) NOT NULL,
+    matched_by INT,
+    matched_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    confidence DECIMAL(3,2) DEFAULT 1.00,
+    notes TEXT,
+    FOREIGN KEY (transaction_id) REFERENCES bank_transactions(id) ON DELETE CASCADE,
+    INDEX idx_transaction (transaction_id),
+    INDEX idx_match (match_type, match_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de reglas de importación/categorización
+CREATE TABLE IF NOT EXISTS bank_import_rules (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    rule_name VARCHAR(100) NOT NULL,
+    pattern VARCHAR(255) NOT NULL,
+    pattern_field ENUM('concept', 'description', 'reference', 'payee') DEFAULT 'concept',
+    category VARCHAR(100),
+    transaction_type ENUM('debit', 'credit', 'transfer_in', 'transfer_out', 'fee', 'interest', 'other'),
+    auto_apply BOOLEAN DEFAULT 1,
+    priority INT DEFAULT 0,
+    is_active BOOLEAN DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_active (is_active),
+    INDEX idx_priority (priority)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Configuración del módulo bancario
+INSERT INTO organization_settings (category, setting_key, setting_value, setting_type, description) VALUES
+('banking', 'auto_matching_enabled', '1', 'boolean', 'Habilitar matching automático de transacciones'),
+('banking', 'auto_match_threshold', '85', 'number', 'Confianza mínima para matching automático (0-100)'),
+('banking', 'reconciliation_frequency', 'monthly', 'select', 'Frecuencia de conciliación bancaria: daily, weekly, monthly'),
+('banking', 'alert_unmatched_days', '7', 'number', 'Alertar transacciones sin vincular tras X días'),
+('banking', 'default_currency', 'EUR', 'text', 'Moneda por defecto')
+ON DUPLICATE KEY UPDATE setting_key=setting_key;
