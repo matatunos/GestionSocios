@@ -120,7 +120,7 @@ class Grant {
             $this->amount = $row['amount'];
             $this->start_date = $row['start_date'];
             $this->end_date = $row['end_date'];
-            $this->application_deadline = $row['application_deadline'];
+            $this->application_deadline = $row['deadline'];
             $this->status = $row['status'];
             $this->category = $row['category'];
             $this->source = $row['source'];
@@ -152,7 +152,7 @@ class Grant {
     public function readAll($filters = [], $limit = 20, $offset = 0) {
         $query = "SELECT g.*, 
                          (SELECT COUNT(*) FROM grant_applications WHERE grant_id = g.id) as applications_count,
-                         DATEDIFF(g.application_deadline, CURDATE()) as days_remaining
+                         DATEDIFF(g.deadline, CURDATE()) as days_remaining
                   FROM grants g
                   WHERE 1=1";
         
@@ -199,10 +199,10 @@ class Grant {
         
         
         // Ordenar - validar columnas permitidas
-        $allowedOrderColumns = ['application_deadline', 'created_at', 'title', 'amount', 'status'];
-        $orderBy = $filters['order_by'] ?? 'application_deadline';
+        $allowedOrderColumns = ['deadline', 'created_at', 'title', 'max_amount', 'status'];
+        $orderBy = $filters['order_by'] ?? 'deadline';
         if (!in_array($orderBy, $allowedOrderColumns)) {
-            $orderBy = 'application_deadline';
+            $orderBy = 'deadline';
         }
         $orderDir = strtoupper($filters['order_dir'] ?? 'ASC');
         if (!in_array($orderDir, ['ASC', 'DESC'])) {
@@ -336,12 +336,12 @@ class Grant {
      */
     public static function getExpiring($db, $days = 7) {
         $query = "SELECT g.*, 
-                         DATEDIFF(g.application_deadline, CURDATE()) as days_remaining,
+                         DATEDIFF(g.deadline, CURDATE()) as days_remaining,
                          (SELECT COUNT(*) FROM grant_applications WHERE grant_id = g.id AND status IN ('borrador', 'presentada')) as active_applications
                   FROM grants g
                   WHERE g.status = 'abierta'
-                  AND g.application_deadline BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL ? DAY)
-                  ORDER BY g.application_deadline ASC";
+                  AND g.deadline BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL ? DAY)
+                  ORDER BY g.deadline ASC";
         
         $stmt = $db->prepare($query);
         $stmt->execute([$days]);

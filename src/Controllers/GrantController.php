@@ -815,7 +815,7 @@ class GrantController {
         $grantModel->description = $data['description'] ?? null;
         $grantModel->organization = $data['organization'] ?? null;
         $grantModel->amount = $data['amount'] ?? null;
-        $grantModel->application_deadline = $data['deadline'] ?? null;
+        $grantModel->deadline = $data['deadline'] ?? null;
         $grantModel->source = $data['source'] ?? 'scraper';
         $grantModel->source_url = $data['url'] ?? null;
         $grantModel->bdns_code = $data['bdns_code'] ?? null;

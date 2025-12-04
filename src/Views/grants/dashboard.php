@@ -92,7 +92,7 @@
                                             <?php echo htmlspecialchars($grant['organization']); ?>
                                         </div>
                                     </td>
-                                    <td><?php echo $grant['application_deadline'] ? date('d/m/Y', strtotime($grant['application_deadline'])) : '-'; ?></td>
+                                    <td><?php echo $grant['deadline'] ? date('d/m/Y', strtotime($grant['deadline'])) : '-'; ?></td>
                                     <td>
                                         <?php 
                                         $days = $grant['days_remaining'] ?? 0;
@@ -214,7 +214,7 @@
                                         -
                                     <?php endif; ?>
                                 </td>
-                                <td><?php echo $grant['application_deadline'] ? date('d/m/Y', strtotime($grant['application_deadline'])) : '-'; ?></td>
+                                <td><?php echo $grant['deadline'] ? date('d/m/Y', strtotime($grant['deadline'])) : '-'; ?></td>
                                 <td>
                                     <span class="badge badge-<?php 
                                         echo $grant['status'] === 'abierta' ? 'success' : 

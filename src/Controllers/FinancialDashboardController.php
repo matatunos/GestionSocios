@@ -206,8 +206,8 @@ class FinancialDashboardController {
         $tableCheck = $this->db->query("SHOW TABLES LIKE 'issued_invoices'");
         if ($tableCheck->rowCount() > 0) {
             $query = "SELECT COUNT(*) as count FROM issued_invoices 
-                      WHERE payment_status = 'pending' 
-                      AND invoice_date < DATE_SUB(CURDATE(), INTERVAL 30 DAY)";
+                      WHERE status IN ('draft', 'issued', 'overdue') 
+                      AND issue_date < DATE_SUB(CURDATE(), INTERVAL 30 DAY)";
             $stmt = $this->db->query($query);
             $overdueInvoices = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
             
@@ -224,7 +224,7 @@ class FinancialDashboardController {
         // Subvenciones próximas a vencer
         $query = "SELECT COUNT(*) as count FROM grants 
                   WHERE status = 'abierta' 
-                  AND application_deadline BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 15 DAY)
+                  AND deadline BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 15 DAY)
                   AND (alert_sent = 0 OR alert_sent IS NULL)";
         $stmt = $this->db->query($query);
         $expiringGrants = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
