@@ -345,9 +345,12 @@ class IssuedInvoice {
             $params[] = $searchTerm;
         }
         
-        $query .= " ORDER BY i.issue_date DESC, i.id DESC LIMIT ? OFFSET ?";
-        $params[] = $limit;
-        $params[] = $offset;
+        $query .= " ORDER BY i.issue_date DESC, i.id DESC";
+        
+        // Añadir LIMIT/OFFSET como integers directos (PDO no acepta placeholders para esto)
+        $limit = (int)$limit;
+        $offset = (int)$offset;
+        $query .= " LIMIT $limit OFFSET $offset";
         
         $stmt = $this->conn->prepare($query);
         $stmt->execute($params);

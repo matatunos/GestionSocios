@@ -180,8 +180,8 @@ class BankAccount {
 
         $query = "SELECT ba.*, 
                          aa.code as accounting_code, aa.name as accounting_name,
-                         (SELECT COUNT(*) FROM bank_transactions WHERE bank_account_id = ba.id) as transaction_count,
-                         (SELECT COUNT(*) FROM bank_transactions WHERE bank_account_id = ba.id AND is_reconciled = 0) as unreconciled_count
+                         (SELECT COUNT(*) FROM bank_transactions WHERE account_id = ba.id) as transaction_count,
+                         (SELECT COUNT(*) FROM bank_transactions WHERE account_id = ba.id AND is_reconciled = 0) as unreconciled_count
                   FROM " . $this->table_name . " ba
                   LEFT JOIN accounting_accounts aa ON ba.accounting_account_id = aa.id
                   $whereClause
