@@ -701,4 +701,125 @@ class GrantController {
         }
         exit;
     }
+
+    /**
+     * Vista de calendario de subvenciones
+     */
+    public function calendar() {
+        // Obtener subvenciones con fechas
+        $query = "SELECT id, title, organization, amount, status, 
+                         application_deadline, start_date, end_date, 
+                         tracked, applied
+                  FROM grants 
+                  WHERE application_deadline IS NOT NULL 
+                     OR start_date IS NOT NULL 
+                     OR end_date IS NOT NULL
+                  ORDER BY application_deadline ASC";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        $grants = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        // Preparar eventos para el calendario
+        $events = [];
+        foreach ($grants as $grant) {
+            // Evento de deadline
+            if ($grant['application_deadline']) {
+                $events[] = [
+                    'id' => $grant['id'],
+                    'title' => 'Plazo: ' . $grant['title'],
+                    'start' => $grant['application_deadline'],
+                    'backgroundColor' => $grant['tracked'] ? '#dc3545' : '#6c757d',
+                    'borderColor' => $grant['tracked'] ? '#dc3545' : '#6c757d',
+                    'type' => 'deadline',
+                    'grant' => $grant
+                ];
+            }
+            
+            // Evento de inicio
+            if ($grant['start_date']) {
+                $events[] = [
+                    'id' => $grant['id'],
+                    'title' => 'Inicio: ' . $grant['title'],
+                    'start' => $grant['start_date'],
+                    'backgroundColor' => '#28a745',
+                    'borderColor' => '#28a745',
+                    'type' => 'start',
+                    'grant' => $grant
+                ];
+            }
+            
+            // Evento de fin
+            if ($grant['end_date']) {
+                $events[] = [
+                    'id' => $grant['id'],
+                    'title' => 'Fin: ' . $grant['title'],
+                    'start' => $grant['end_date'],
+                    'backgroundColor' => '#ffc107',
+                    'borderColor' => '#ffc107',
+                    'type' => 'end',
+                    'grant' => $grant
+                ];
+            }
+        }
+        
+        require_once __DIR__ . '/../Views/grants/calendar.php';
+    }
+
+    /**
+     * Scraper de subvenciones de BDNS y otras fuentes
+     */
+    public function scrapeGrants() {
+        // Esta funcionalidad requiere la implementación completa del scraper
+        // Por ahora, mostramos la interfaz para configurar el scraping
+        
+        $message = null;
+        $type = null;
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $source = $_POST['source'] ?? 'bdns';
+            $keywords = $_POST['keywords'] ?? '';
+            $autoSave = isset($_POST['auto_save']);
+            
+            try {
+                // Aquí iría la lógica de scraping
+                // Por ahora, solo simulamos
+                $message = "Scraping configurado. En producción, esto buscaría subvenciones en $source con palabras clave: $keywords";
+                $type = 'success';
+                
+                // Ejemplo de cómo se usaría el helper de scraping
+                // $scraper = new GrantScraperHelper();
+                // $results = $scraper->scrape($source, $keywords);
+                // foreach ($results as $result) {
+                //     if ($autoSave) {
+                //         $this->saveScrapedGrant($result);
+                //     }
+                // }
+                
+            } catch (Exception $e) {
+                $message = "Error: " . $e->getMessage();
+                $type = 'error';
+            }
+        }
+        
+        require_once __DIR__ . '/../Views/grants/scrape.php';
+    }
+    
+    /**
+     * Guardar subvención scrapeada
+     */
+    private function saveScrapedGrant($data) {
+        $grantModel = new Grant($this->db);
+        $grantModel->title = $data['title'];
+        $grantModel->description = $data['description'] ?? null;
+        $grantModel->organization = $data['organization'] ?? null;
+        $grantModel->amount = $data['amount'] ?? null;
+        $grantModel->application_deadline = $data['deadline'] ?? null;
+        $grantModel->source = $data['source'] ?? 'scraper';
+        $grantModel->source_url = $data['url'] ?? null;
+        $grantModel->bdns_code = $data['bdns_code'] ?? null;
+        $grantModel->status = 'abierta';
+        
+        return $grantModel->create();
+    }
 }

@@ -219,18 +219,14 @@ class Grant {
         $query .= " ORDER BY g.{$orderBy} {$orderDir}";
         
         // Límite
-        $query .= " LIMIT :limit OFFSET :offset";
+        $query .= " LIMIT ? OFFSET ?";
+        
+        // Agregar limit y offset a params
+        $params[] = (int)$limit;
+        $params[] = (int)$offset;
         
         $stmt = $this->db->prepare($query);
-        
-        // Bind parameters with explicit types
-        foreach ($params as $key => $value) {
-            $stmt->bindValue($key + 1, $value);
-        }
-        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
-        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
-        
-        $stmt->execute();
+        $stmt->execute($params);
         
         return $stmt;
     }
@@ -380,9 +376,9 @@ class Grant {
         $query = "SELECT 
                     COUNT(*) as total,
                     SUM(CASE WHEN status = 'abierta' THEN 1 ELSE 0 END) as open,
-                    SUM(CASE WHEN our_status = 'solicitada' THEN 1 ELSE 0 END) as applied,
-                    SUM(CASE WHEN our_status = 'concedida' THEN 1 ELSE 0 END) as granted,
-                    SUM(CASE WHEN deadline < CURDATE() AND status = 'abierta' THEN 1 ELSE 0 END) as expired
+                    SUM(CASE WHEN applied = 1 THEN 1 ELSE 0 END) as applied,
+                    SUM(CASE WHEN status = 'concedida' THEN 1 ELSE 0 END) as granted,
+                    SUM(CASE WHEN application_deadline < CURDATE() AND status = 'abierta' THEN 1 ELSE 0 END) as expired
                   FROM grants";
         
         $stmt = $db->prepare($query);

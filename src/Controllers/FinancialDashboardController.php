@@ -74,9 +74,8 @@ class FinancialDashboardController {
     private function getBankData($startDate, $endDate) {
         $query = "SELECT 
                     COUNT(*) as total_transactions,
-                    SUM(CASE WHEN type = 'ingreso' THEN amount ELSE 0 END) as total_ingresos,
-                    SUM(CASE WHEN type = 'egreso' THEN ABS(amount) ELSE 0 END) as total_egresos,
-                    SUM(CASE WHEN is_matched = 0 THEN 1 ELSE 0 END) as unmatched_count,
+                    SUM(CASE WHEN transaction_type IN ('credit', 'transfer_in') THEN amount ELSE 0 END) as total_ingresos,
+                    SUM(CASE WHEN transaction_type IN ('debit', 'transfer_out', 'fee') THEN ABS(amount) ELSE 0 END) as total_egresos,
                     SUM(CASE WHEN is_reconciled = 0 THEN 1 ELSE 0 END) as unreconciled_count
                   FROM bank_transactions
                   WHERE transaction_date BETWEEN :start_date AND :end_date";
