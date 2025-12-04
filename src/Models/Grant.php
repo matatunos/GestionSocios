@@ -218,12 +218,10 @@ class Grant {
         $orderDir = $filters['order_dir'] ?? 'ASC';
         $query .= " ORDER BY g.{$orderBy} {$orderDir}";
         
-        // Límite
-        $query .= " LIMIT ? OFFSET ?";
-        
-        // Agregar limit y offset a params
-        $params[] = (int)$limit;
-        $params[] = (int)$offset;
+        // Límite (validar y construir directamente - PDO no acepta placeholders para LIMIT)
+        $limit = (int)$limit;
+        $offset = (int)$offset;
+        $query .= " LIMIT $limit OFFSET $offset";
         
         $stmt = $this->db->prepare($query);
         $stmt->execute($params);
