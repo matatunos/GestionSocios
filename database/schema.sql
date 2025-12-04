@@ -1866,62 +1866,74 @@ CREATE TABLE IF NOT EXISTS bank_accounts (
 CREATE TABLE IF NOT EXISTS bank_transactions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     
-    bank_account_id INT NOT NULL,
+    account_id INT NOT NULL,
     
     -- Datos de la transacción
     transaction_date DATE NOT NULL,
     value_date DATE COMMENT 'Fecha valor',
     description TEXT NOT NULL,
     reference VARCHAR(200) COMMENT 'Referencia/concepto del banco',
+    concept VARCHAR(500) COMMENT 'Concepto de la operación',
     
     -- Importes
     amount DECIMAL(15,2) NOT NULL COMMENT 'Importe (positivo=ingreso, negativo=gasto)',
     balance_after DECIMAL(15,2) COMMENT 'Saldo resultante tras la operación',
     
     -- Tipo de movimiento
-    transaction_type ENUM('ingreso', 'gasto', 'transferencia_entrada', 'transferencia_salida', 'comision', 'interes', 'otro') NOT NULL,
+    transaction_type ENUM('debit', 'credit', 'transfer_in', 'transfer_out', 'fee', 'interest', 'other') NOT NULL,
     category VARCHAR(100) COMMENT 'Categoría: cuotas, subvenciones, gastos_operativos, etc.',
     
     -- Información adicional
-    counterpart VARCHAR(300) COMMENT 'Contraparte (quien paga/cobra)',
+    payee VARCHAR(255) COMMENT 'Contraparte (quien paga/cobra)',
     counterpart_account VARCHAR(100) COMMENT 'Cuenta de la contraparte',
     
     -- Estado de conciliación
     is_reconciled BOOLEAN DEFAULT FALSE,
     reconciliation_date DATE,
     reconciliation_id INT COMMENT 'ID de la conciliación bancaria',
+    reconciled_at DATETIME,
+    reconciled_by INT,
     
     -- Matching automático
     is_matched BOOLEAN DEFAULT FALSE,
     matched_with_type ENUM('issued_invoice', 'payment', 'donation', 'grant_payment', 'expense', 'other') COMMENT 'Tipo de operación vinculada',
     matched_with_id INT COMMENT 'ID de la operación vinculada',
     match_confidence INT DEFAULT 0 COMMENT 'Confianza del matching automático (0-100)',
+    invoice_id INT COMMENT 'ID de factura vinculada',
     
     -- Importación
     imported BOOLEAN DEFAULT FALSE,
     import_file VARCHAR(255),
     import_date DATETIME,
+    imported_from VARCHAR(50),
+    imported_at DATETIME,
+    
+    -- Notas adicionales
+    notes TEXT,
     
     -- Auditoría
     created_by INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     
-    FOREIGN KEY (bank_account_id) REFERENCES bank_accounts(id) ON DELETE CASCADE,
+    FOREIGN KEY (account_id) REFERENCES bank_accounts(id) ON DELETE CASCADE,
     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL,
-    INDEX idx_account_date (bank_account_id, transaction_date),
-    INDEX idx_type (transaction_type),
-    INDEX idx_reconciled (is_reconciled, bank_account_id),
-    INDEX idx_matched (is_matched, matched_with_type, matched_with_id),
+    INDEX idx_account_date (account_id, transaction_date),
+    INDEX idx_account (account_id),
     INDEX idx_date (transaction_date),
-    FULLTEXT idx_search (description, reference, counterpart)
+    INDEX idx_type (transaction_type),
+    INDEX idx_reconciled (is_reconciled, account_id),
+    INDEX idx_matched (is_matched, matched_with_type, matched_with_id),
+    INDEX idx_amount (amount),
+    INDEX idx_reference (reference),
+    FULLTEXT idx_search (description, reference, payee)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabla de conciliaciones bancarias
 CREATE TABLE IF NOT EXISTS bank_reconciliations (
     id INT AUTO_INCREMENT PRIMARY KEY,
     
-    bank_account_id INT NOT NULL,
+    account_id INT NOT NULL,
     
     -- Período de conciliación
     period_start DATE NOT NULL,
@@ -1952,49 +1964,49 @@ CREATE TABLE IF NOT EXISTS bank_reconciliations (
     
     -- Auditoría
     reconciled_by INT,
+    started_at DATETIME,
+    completed_at DATETIME,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     
-    FOREIGN KEY (bank_account_id) REFERENCES bank_accounts(id) ON DELETE CASCADE,
+    FOREIGN KEY (account_id) REFERENCES bank_accounts(id) ON DELETE CASCADE,
     FOREIGN KEY (reconciled_by) REFERENCES users(id) ON DELETE SET NULL,
-    INDEX idx_account_period (bank_account_id, period_end),
+    INDEX idx_account (account_id),
+    INDEX idx_account_period (account_id, period_end),
+    INDEX idx_date (reconciliation_date),
     INDEX idx_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabla de vinculaciones entre movimientos bancarios y operaciones
-CREATE TABLE IF NOT EXISTS transaction_matches (
+-- Tabla de matching entre transacciones y facturas/movimientos
+CREATE TABLE IF NOT EXISTS bank_transaction_matches (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    
-    bank_transaction_id INT NOT NULL,
-    
-    -- Operación vinculada
-    related_type ENUM('issued_invoice', 'payment', 'donation', 'grant_payment', 'expense', 'other') NOT NULL,
-    related_id INT NOT NULL COMMENT 'ID de la factura, pago, etc.',
-    
-    -- Detalles del matching
-    match_type ENUM('automatic', 'manual', 'suggested') DEFAULT 'manual',
-    match_confidence INT DEFAULT 100 COMMENT 'Confianza (0-100)',
-    match_criteria TEXT COMMENT 'Criterios usados para el matching',
-    
-    -- Importes
-    matched_amount DECIMAL(15,2) NOT NULL COMMENT 'Importe vinculado (puede ser parcial)',
-    
-    -- Estado
-    status ENUM('confirmed', 'pending_review', 'rejected') DEFAULT 'confirmed',
-    
-    -- Notas
-    notes TEXT,
-    
-    -- Auditoría
+    transaction_id INT NOT NULL,
+    match_type ENUM('invoice', 'payment', 'expense', 'transfer', 'manual') NOT NULL,
+    match_id INT NOT NULL,
+    match_amount DECIMAL(12,2) NOT NULL,
     matched_by INT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    
-    FOREIGN KEY (bank_transaction_id) REFERENCES bank_transactions(id) ON DELETE CASCADE,
-    FOREIGN KEY (matched_by) REFERENCES users(id) ON DELETE SET NULL,
-    INDEX idx_transaction (bank_transaction_id),
-    INDEX idx_related (related_type, related_id),
-    INDEX idx_status (status)
+    matched_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    confidence DECIMAL(3,2) DEFAULT 1.00,
+    notes TEXT,
+    FOREIGN KEY (transaction_id) REFERENCES bank_transactions(id) ON DELETE CASCADE,
+    INDEX idx_transaction (transaction_id),
+    INDEX idx_match (match_type, match_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla de reglas de importación/categorización
+CREATE TABLE IF NOT EXISTS bank_import_rules (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    rule_name VARCHAR(100) NOT NULL,
+    pattern VARCHAR(255) NOT NULL,
+    pattern_field ENUM('concept', 'description', 'reference', 'payee') DEFAULT 'concept',
+    category VARCHAR(100),
+    transaction_type ENUM('debit', 'credit', 'transfer_in', 'transfer_out', 'fee', 'interest', 'other'),
+    auto_apply BOOLEAN DEFAULT 1,
+    priority INT DEFAULT 0,
+    is_active BOOLEAN DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_active (is_active),
+    INDEX idx_priority (priority)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Configuración del módulo bancario
