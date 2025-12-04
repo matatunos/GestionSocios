@@ -219,12 +219,18 @@ class Grant {
         $query .= " ORDER BY g.{$orderBy} {$orderDir}";
         
         // Límite
-        $query .= " LIMIT ? OFFSET ?";
-        $params[] = (int)$limit;
-        $params[] = (int)$offset;
+        $query .= " LIMIT :limit OFFSET :offset";
         
         $stmt = $this->db->prepare($query);
-        $stmt->execute($params);
+        
+        // Bind parameters with explicit types
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key + 1, $value);
+        }
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        
+        $stmt->execute();
         
         return $stmt;
     }

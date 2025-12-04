@@ -96,7 +96,7 @@ class CategoryFeeHistory {
             $this->year = $row['year'];
             $this->fee_amount = $row['fee_amount'];
             $this->created_at = $row['created_at'];
-            $this->updated_at = $row['updated_at'];
+            $this->updated_at = $row['updated_at'] ?? null;
             return true;
         }
         return false;
