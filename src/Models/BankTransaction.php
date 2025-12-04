@@ -791,14 +791,14 @@ class BankTransaction {
      * Obtener transacciones recientes
      */
     public function readRecent($limit = 20) {
+        $limit = (int)$limit; // Sanitizar como entero
         $query = "SELECT bt.*, ba.account_name, ba.account_number
                   FROM bank_transactions bt
                   LEFT JOIN bank_accounts ba ON bt.account_id = ba.id
                   ORDER BY bt.transaction_date DESC, bt.created_at DESC
-                  LIMIT ?";
+                  LIMIT $limit";
         
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute([$limit]);
+        $stmt = $this->conn->query($query);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
