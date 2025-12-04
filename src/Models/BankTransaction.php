@@ -13,7 +13,7 @@ class BankTransaction {
 
     // Propiedades
     public $id;
-    public $bank_account_id;
+    public $account_id;
     public $transaction_date;
     public $value_date;
     public $description;
@@ -47,7 +47,7 @@ class BankTransaction {
      */
     public function create() {
         $query = "INSERT INTO " . $this->table_name . " 
-                  SET bank_account_id = :bank_account_id,
+                  SET account_id = :account_id,
                       transaction_date = :transaction_date,
                       value_date = :value_date,
                       description = :description,
@@ -76,7 +76,7 @@ class BankTransaction {
         $this->counterpart = htmlspecialchars(strip_tags($this->counterpart));
 
         // Bind
-        $stmt->bindParam(":bank_account_id", $this->bank_account_id);
+        $stmt->bindParam(":account_id", $this->account_id);
         $stmt->bindParam(":transaction_date", $this->transaction_date);
         $stmt->bindParam(":value_date", $this->value_date);
         $stmt->bindParam(":description", $this->description);
@@ -117,7 +117,7 @@ class BankTransaction {
                          u.first_name, u.last_name,
                          br.period_start, br.period_end
                   FROM " . $this->table_name . " bt
-                  LEFT JOIN bank_accounts ba ON bt.bank_account_id = ba.id
+                  LEFT JOIN bank_accounts ba ON bt.account_id = ba.id
                   LEFT JOIN users u ON bt.created_by = u.id
                   LEFT JOIN bank_reconciliations br ON bt.reconciliation_id = br.id
                   WHERE bt.id = :id
@@ -130,7 +130,7 @@ class BankTransaction {
         if ($stmt->rowCount() > 0) {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             
-            $this->bank_account_id = $row['bank_account_id'];
+            $this->account_id = $row['account_id'];
             $this->transaction_date = $row['transaction_date'];
             $this->value_date = $row['value_date'];
             $this->description = $row['description'];
@@ -168,9 +168,9 @@ class BankTransaction {
         $where = [];
         $params = [];
 
-        if (!empty($filters['bank_account_id'])) {
-            $where[] = "bt.bank_account_id = :bank_account_id";
-            $params[':bank_account_id'] = $filters['bank_account_id'];
+        if (!empty($filters['account_id'])) {
+            $where[] = "bt.account_id = :account_id";
+            $params[':account_id'] = $filters['account_id'];
         }
 
         if (!empty($filters['start_date'])) {
@@ -216,7 +216,7 @@ class BankTransaction {
         $query = "SELECT bt.*, 
                          ba.account_name, ba.account_number, ba.bank_name
                   FROM " . $this->table_name . " bt
-                  LEFT JOIN bank_accounts ba ON bt.bank_account_id = ba.id
+                  LEFT JOIN bank_accounts ba ON bt.account_id = ba.id
                   $whereClause
                   ORDER BY bt.$orderBy $orderDir";
 
@@ -246,9 +246,9 @@ class BankTransaction {
         $where = [];
         $params = [];
 
-        if (!empty($filters['bank_account_id'])) {
-            $where[] = "bank_account_id = :bank_account_id";
-            $params[':bank_account_id'] = $filters['bank_account_id'];
+        if (!empty($filters['account_id'])) {
+            $where[] = "account_id = :account_id";
+            $params[':account_id'] = $filters['account_id'];
         }
 
         if (!empty($filters['start_date'])) {
@@ -440,14 +440,14 @@ class BankTransaction {
     private function updateAccountBalance() {
         require_once __DIR__ . '/BankAccount.php';
         $account = new BankAccount($this->conn);
-        $account->id = $this->bank_account_id;
+        $account->id = $this->account_id;
         $account->recalculateBalance();
     }
 
     /**
      * Importar transacciones desde array (CSV/OFX)
      */
-    public static function importFromArray($db, $bank_account_id, $transactions, $filename, $user_id) {
+    public static function importFromArray($db, $account_id, $transactions, $filename, $user_id) {
         $imported = 0;
         $skipped = 0;
         $errors = [];
@@ -455,7 +455,7 @@ class BankTransaction {
         foreach ($transactions as $data) {
             // Verificar duplicados (por fecha + importe + referencia)
             $checkQuery = "SELECT id FROM bank_transactions 
-                           WHERE bank_account_id = :account_id
+                           WHERE account_id = :account_id
                              AND transaction_date = :date
                              AND amount = :amount
                              AND reference = :reference
@@ -463,7 +463,7 @@ class BankTransaction {
             
             $checkStmt = $db->prepare($checkQuery);
             $checkStmt->execute([
-                ':account_id' => $bank_account_id,
+                ':account_id' => $account_id,
                 ':date' => $data['transaction_date'],
                 ':amount' => $data['amount'],
                 ':reference' => $data['reference'] ?? ''
@@ -476,7 +476,7 @@ class BankTransaction {
 
             // Crear transacción
             $transaction = new BankTransaction($db);
-            $transaction->bank_account_id = $bank_account_id;
+            $transaction->account_id = $account_id;
             $transaction->transaction_date = $data['transaction_date'];
             $transaction->value_date = $data['value_date'] ?? $data['transaction_date'];
             $transaction->description = $data['description'] ?? '';
@@ -750,9 +750,9 @@ class BankTransaction {
         $where = [];
         $params = [];
 
-        if (!empty($filters['bank_account_id'])) {
-            $where[] = "bank_account_id = :bank_account_id";
-            $params[':bank_account_id'] = $filters['bank_account_id'];
+        if (!empty($filters['account_id'])) {
+            $where[] = "account_id = :account_id";
+            $params[':account_id'] = $filters['account_id'];
         }
 
         if (!empty($filters['start_date'])) {
@@ -785,5 +785,47 @@ class BankTransaction {
         
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    
+    /**
+     * Obtener transacciones recientes
+     */
+    public function readRecent($limit = 20) {
+        $query = "SELECT bt.*, ba.account_name, ba.account_number
+                  FROM bank_transactions bt
+                  LEFT JOIN bank_accounts ba ON bt.account_id = ba.id
+                  ORDER BY bt.transaction_date DESC, bt.created_at DESC
+                  LIMIT ?";
+        
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([$limit]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    /**
+     * Contar transacciones sin vincular
+     */
+    public function countUnmatched() {
+        $query = "SELECT COUNT(*) as count 
+                  FROM bank_transactions 
+                  WHERE is_matched = 0 
+                  AND transaction_date < DATE_SUB(CURDATE(), INTERVAL 7 DAY)";
+        
+        $stmt = $this->db->query($query);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['count'] ?? 0;
+    }
+    
+    /**
+     * Contar transacciones sin conciliar
+     */
+    public function countUnreconciled() {
+        $query = "SELECT COUNT(*) as count 
+                  FROM bank_transactions 
+                  WHERE is_reconciled = 0";
+        
+        $stmt = $this->db->query($query);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['count'] ?? 0;
     }
 }
