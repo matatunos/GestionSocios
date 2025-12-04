@@ -3,6 +3,7 @@
  * Vista de Scraper de Subvenciones
  * Interfaz para buscar y scraper subvenciones de fuentes externas
  */
+ob_start();
 ?>
 <div class="content-wrapper">
     <div class="content-header">
@@ -226,3 +227,8 @@
         color: #856404;
     }
 </style>
+
+<?php
+$content = ob_get_clean();
+include __DIR__ . '/../layout.php';
+?>

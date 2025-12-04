@@ -3,16 +3,11 @@
  * Vista de Calendario de Subvenciones
  * Muestra subvenciones en un calendario con fechas de plazos, inicio y fin
  */
+ob_start();
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendario de Subvenciones</title>
-    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/es.js'></script>
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/es.js'></script>
     <style>
         .calendar-container {
             max-width: 1200px;
@@ -113,5 +108,8 @@
             calendar.render();
         });
     </script>
-</body>
-</html>
+
+<?php
+$content = ob_get_clean();
+include __DIR__ . '/../layout.php';
+?>

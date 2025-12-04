@@ -1,10 +1,5 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Financiero Consolidado</title>
-    <style>
+<?php ob_start(); ?>
+<style>
         .financial-dashboard {
             max-width: 1600px;
             margin: 20px auto;
@@ -496,5 +491,8 @@
             </p>
         </div>
     </div>
-</body>
-</html>
+
+<?php
+$content = ob_get_clean();
+include __DIR__ . '/../layout.php';
+?>
