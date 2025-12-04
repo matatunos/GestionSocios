@@ -797,7 +797,7 @@ class BankTransaction {
                   ORDER BY bt.transaction_date DESC, bt.created_at DESC
                   LIMIT ?";
         
-        $stmt = $this->db->prepare($query);
+        $stmt = $this->conn->prepare($query);
         $stmt->execute([$limit]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -811,7 +811,7 @@ class BankTransaction {
                   WHERE is_matched = 0 
                   AND transaction_date < DATE_SUB(CURDATE(), INTERVAL 7 DAY)";
         
-        $stmt = $this->db->query($query);
+        $stmt = $this->conn->query($query);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result['count'] ?? 0;
     }
@@ -824,7 +824,7 @@ class BankTransaction {
                   FROM bank_transactions 
                   WHERE is_reconciled = 0";
         
-        $stmt = $this->db->query($query);
+        $stmt = $this->conn->query($query);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result['count'] ?? 0;
     }
