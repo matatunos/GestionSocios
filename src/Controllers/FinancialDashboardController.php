@@ -252,8 +252,8 @@ class FinancialDashboardController {
             $endDate = date('Y-m-t', strtotime($startDate));
             
             $query = "SELECT 
-                        SUM(CASE WHEN type = 'ingreso' THEN amount ELSE 0 END) as ingresos,
-                        SUM(CASE WHEN type = 'egreso' THEN ABS(amount) ELSE 0 END) as egresos
+                        SUM(CASE WHEN transaction_type IN ('credit', 'transfer_in') THEN amount ELSE 0 END) as ingresos,
+                        SUM(CASE WHEN transaction_type IN ('debit', 'transfer_out', 'fee') THEN ABS(amount) ELSE 0 END) as egresos
                       FROM bank_transactions
                       WHERE transaction_date BETWEEN :start_date AND :end_date";
             

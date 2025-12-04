@@ -149,17 +149,18 @@
                                     </span>
                                     <div style="margin-top: 0.25rem;">
                                         <span class="badge badge-<?php 
-                                            echo $grant['our_status'] === 'solicitada' ? 'info' : 
-                                                ($grant['our_status'] === 'concedida' ? 'success' : 
-                                                ($grant['our_status'] === 'denegada' ? 'danger' : 'secondary')); 
+                                            echo ($grant['status'] ?? 'abierta') === 'concedida' ? 'success' : 
+                                                (($grant['status'] ?? 'abierta') === 'denegada' ? 'danger' : 
+                                                (($grant['status'] ?? 'abierta') === 'en_proceso' ? 'info' : 'secondary')); 
                                         ?>" style="font-size: 0.75rem;">
-                                            <?php echo ucfirst(str_replace('_', ' ', $grant['our_status'])); ?>
+                                            <?php echo ucfirst(str_replace('_', ' ', $grant['status'] ?? 'abierta')); ?>
                                         </span>
                                     </div>
                                 </td>
                                 <td>
                                     <?php 
-                                    $score = $grant['relevance_score'];
+                                    $tracked = $grant['tracked'] ?? 0;
+                                    $score = $tracked ? 100 : 0;
                                     $color = $score >= 70 ? '#28a745' : ($score >= 50 ? '#ffc107' : '#6c757d');
                                     ?>
                                     <div style="display: flex; align-items: center; gap: 0.5rem;">
@@ -167,7 +168,7 @@
                                             <div style="width: <?php echo $score; ?>%; height: 100%; background: <?php echo $color; ?>;"></div>
                                         </div>
                                         <span style="font-size: 0.75rem; font-weight: 600; color: <?php echo $color; ?>;">
-                                            <?php echo $score; ?>
+                                            <?php echo $tracked ? 'Seguida' : 'No'; ?>
                                         </span>
                                     </div>
                                 </td>
@@ -235,5 +236,5 @@
 
 <?php
 $content = ob_get_clean();
-include __DIR__ . '/../../layouts/main.php';
+include __DIR__ . '/../layout.php';
 ?>
