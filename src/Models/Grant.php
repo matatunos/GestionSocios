@@ -105,10 +105,8 @@ class Grant {
      */
     public function readOne() {
         $query = "SELECT g.*, 
-                         u.first_name, u.last_name,
                          (SELECT COUNT(*) FROM grant_applications WHERE grant_id = g.id) as applications_count
                   FROM grants g
-                  LEFT JOIN users u ON g.created_by = u.id
                   WHERE g.id = ?
                   LIMIT 1";
         
@@ -119,34 +117,27 @@ class Grant {
             $this->title = $row['title'];
             $this->description = $row['description'];
             $this->organization = $row['organization'];
-            $this->grant_type = $row['grant_type'];
-            $this->scope = $row['scope'];
-            $this->category = $row['category'];
-            $this->min_amount = $row['min_amount'];
-            $this->max_amount = $row['max_amount'];
-            $this->total_budget = $row['total_budget'];
-            $this->announcement_date = $row['announcement_date'];
-            $this->open_date = $row['open_date'];
-            $this->deadline = $row['deadline'];
-            $this->resolution_date = $row['resolution_date'];
-            $this->url = $row['url'];
-            $this->official_document = $row['official_document'];
-            $this->reference_code = $row['reference_code'];
-            $this->requirements = $row['requirements'];
-            $this->eligibility = $row['eligibility'];
-            $this->excluded_activities = $row['excluded_activities'];
-            $this->required_documents = $row['required_documents'];
+            $this->amount = $row['amount'];
+            $this->start_date = $row['start_date'];
+            $this->end_date = $row['end_date'];
+            $this->application_deadline = $row['application_deadline'];
             $this->status = $row['status'];
-            $this->our_status = $row['our_status'];
-            $this->auto_discovered = $row['auto_discovered'];
-            $this->search_keywords = $row['search_keywords'];
-            $this->relevance_score = $row['relevance_score'];
-            $this->province = $row['province'];
-            $this->municipality = $row['municipality'];
-            $this->alert_sent = $row['alert_sent'];
-            $this->alert_days_before = $row['alert_days_before'];
-            $this->created_by = $row['created_by'];
-            $this->creator_name = $row['first_name'] . ' ' . $row['last_name'];
+            $this->category = $row['category'];
+            $this->source = $row['source'];
+            $this->source_url = $row['source_url'];
+            $this->bdns_code = $row['bdns_code'];
+            $this->requirements = $row['requirements'];
+            $this->documentation_needed = $row['documentation_needed'];
+            $this->contact_info = $row['contact_info'];
+            $this->notes = $row['notes'];
+            $this->tracked = $row['tracked'];
+            $this->applied = $row['applied'];
+            $this->application_date = $row['application_date'];
+            $this->result_date = $row['result_date'];
+            $this->awarded_amount = $row['awarded_amount'];
+            $this->alert_sent = $row['alert_sent'] ?? 0;
+            $this->alert_days_before = $row['alert_days_before'] ?? 7;
+            $this->created_by = $row['created_by'] ?? null;
             $this->applications_count = $row['applications_count'];
             
             return true;
@@ -160,11 +151,9 @@ class Grant {
      */
     public function readAll($filters = [], $limit = 20, $offset = 0) {
         $query = "SELECT g.*, 
-                         u.first_name, u.last_name,
                          (SELECT COUNT(*) FROM grant_applications WHERE grant_id = g.id) as applications_count,
-                         DATEDIFF(g.deadline, CURDATE()) as days_remaining
+                         DATEDIFF(g.application_deadline, CURDATE()) as days_remaining
                   FROM grants g
-                  LEFT JOIN users u ON g.created_by = u.id
                   WHERE 1=1";
         
         $params = [];
@@ -344,13 +333,12 @@ class Grant {
      */
     public static function getExpiring($db, $days = 7) {
         $query = "SELECT g.*, 
-                         DATEDIFF(g.deadline, CURDATE()) as days_remaining,
+                         DATEDIFF(g.application_deadline, CURDATE()) as days_remaining,
                          (SELECT COUNT(*) FROM grant_applications WHERE grant_id = g.id AND status IN ('borrador', 'presentada')) as active_applications
                   FROM grants g
                   WHERE g.status = 'abierta'
-                  AND g.deadline BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL ? DAY)
-                  AND g.alert_sent = FALSE
-                  ORDER BY g.deadline ASC";
+                  AND g.application_deadline BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL ? DAY)
+                  ORDER BY g.application_deadline ASC";
         
         $stmt = $db->prepare($query);
         $stmt->execute([$days]);

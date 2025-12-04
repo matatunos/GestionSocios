@@ -189,7 +189,7 @@ class FinancialDashboardController {
         $alerts = [];
         
         // Transacciones sin emparejar
-        $query = "SELECT COUNT(*) as count FROM bank_transactions WHERE is_matched = 0";
+        $query = "SELECT COUNT(*) as count FROM bank_transactions WHERE is_reconciled = 0";
         $stmt = $this->db->query($query);
         $unmatchedCount = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
         
