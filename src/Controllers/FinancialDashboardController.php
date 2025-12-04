@@ -103,11 +103,11 @@ class FinancialDashboardController {
         
         $query = "SELECT 
                     COUNT(*) as total_invoices,
-                    SUM(total_amount) as total_amount,
-                    SUM(CASE WHEN payment_status = 'paid' THEN total_amount ELSE 0 END) as paid_amount,
-                    SUM(CASE WHEN payment_status = 'pending' THEN total_amount ELSE 0 END) as pending_amount
+                    SUM(total) as total_amount,
+                    SUM(CASE WHEN status = 'paid' THEN total ELSE 0 END) as paid_amount,
+                    SUM(CASE WHEN status IN ('draft', 'issued', 'overdue') THEN total ELSE 0 END) as pending_amount
                   FROM issued_invoices
-                  WHERE invoice_date BETWEEN :start_date AND :end_date";
+                  WHERE issue_date BETWEEN :start_date AND :end_date";
         
         $stmt = $this->db->prepare($query);
         $stmt->execute([':start_date' => $startDate, ':end_date' => $endDate]);

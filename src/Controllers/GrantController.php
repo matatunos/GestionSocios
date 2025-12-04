@@ -707,14 +707,13 @@ class GrantController {
      */
     public function calendar() {
         // Obtener subvenciones con fechas
-        $query = "SELECT id, title, organization, amount, status, 
-                         application_deadline, start_date, end_date, 
-                         tracked, applied
+        $query = "SELECT id, title, organization, max_amount, status, our_status,
+                         deadline, open_date, resolution_date
                   FROM grants 
-                  WHERE application_deadline IS NOT NULL 
-                     OR start_date IS NOT NULL 
-                     OR end_date IS NOT NULL
-                  ORDER BY application_deadline ASC";
+                  WHERE deadline IS NOT NULL 
+                     OR open_date IS NOT NULL 
+                     OR resolution_date IS NOT NULL
+                  ORDER BY deadline ASC";
         
         $stmt = $this->db->prepare($query);
         $stmt->execute();
@@ -724,24 +723,26 @@ class GrantController {
         $events = [];
         foreach ($grants as $grant) {
             // Evento de deadline
-            if ($grant['application_deadline']) {
+            if (!empty($grant['deadline'])) {
+                // Determinar si está siendo seguida (aplicada o concedida)
+                $isTracked = in_array($grant['our_status'], ['solicitada', 'concedida']);
                 $events[] = [
                     'id' => $grant['id'],
                     'title' => 'Plazo: ' . $grant['title'],
-                    'start' => $grant['application_deadline'],
-                    'backgroundColor' => $grant['tracked'] ? '#dc3545' : '#6c757d',
-                    'borderColor' => $grant['tracked'] ? '#dc3545' : '#6c757d',
+                    'start' => $grant['deadline'],
+                    'backgroundColor' => $isTracked ? '#dc3545' : '#6c757d',
+                    'borderColor' => $isTracked ? '#dc3545' : '#6c757d',
                     'type' => 'deadline',
                     'grant' => $grant
                 ];
             }
             
             // Evento de inicio
-            if ($grant['start_date']) {
+            if (!empty($grant['open_date'])) {
                 $events[] = [
                     'id' => $grant['id'],
                     'title' => 'Inicio: ' . $grant['title'],
-                    'start' => $grant['start_date'],
+                    'start' => $grant['open_date'],
                     'backgroundColor' => '#28a745',
                     'borderColor' => '#28a745',
                     'type' => 'start',
@@ -749,15 +750,15 @@ class GrantController {
                 ];
             }
             
-            // Evento de fin
-            if ($grant['end_date']) {
+            // Evento de fin/resolución
+            if (!empty($grant['resolution_date'])) {
                 $events[] = [
                     'id' => $grant['id'],
-                    'title' => 'Fin: ' . $grant['title'],
-                    'start' => $grant['end_date'],
+                    'title' => 'Resolución: ' . $grant['title'],
+                    'start' => $grant['resolution_date'],
                     'backgroundColor' => '#ffc107',
                     'borderColor' => '#ffc107',
-                    'type' => 'end',
+                    'type' => 'resolution',
                     'grant' => $grant
                 ];
             }
